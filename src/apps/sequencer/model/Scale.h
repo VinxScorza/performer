@@ -38,10 +38,12 @@ public:
     static const char *name(int index);
 
     bool operator==(const Scale& rhs) const
-    {
-        return (_displayName == rhs._displayName);
-    
+{
+    if (_displayName == nullptr || rhs._displayName == nullptr) {
+        return false;  // o: _displayName == rhs._displayName
     }
+    return std::strcmp(_displayName, rhs._displayName) == 0;
+}
 
 private:
     const char *displayName() const { return _displayName; }
