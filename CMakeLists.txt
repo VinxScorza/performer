@@ -17,4 +17,9 @@ endif()
 
 project(sequencer)
 enable_testing()
+
+# Fix per pybind11
+set(PYBIND11_FINDPYTHON ON)
+find_package(Python REQUIRED COMPONENTS Interpreter Development)
+
 add_subdirectory(src)
