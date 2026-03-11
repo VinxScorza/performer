@@ -295,10 +295,15 @@ public:
     int scale() const { return _scale.get(isRouted(Routing::Target::Scale)); }
     void setScale(int s, bool routed = false, int defaultScale = 0) {
 
-        auto &pScale = selectedScale(defaultScale);
-
+        int prev = _scale.get(false);
         _scale.set(clamp(s, -1, Scale::Count - 1), routed);
 
+        if (_previousScale == -2 || prev == _scale.get(false)) {
+            _previousScale = _scale.get(false);
+            return;
+        }
+
+        auto &pScale = selectedScale(defaultScale);
         auto &aScale = selectedScale(s);
 
         if (pScale == aScale) {
@@ -531,7 +536,7 @@ public:
     // Methods
     //----------------------------------------
 
-    NoteSequence() { clear(); }
+    NoteSequence() : _previousScale(-2) { clear(); }
 
     void clear();
     void clearSteps();
