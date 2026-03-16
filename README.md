@@ -1,14 +1,25 @@
 ![Build Status](https://github.com/westlicht/performer/actions/workflows/ci.yml/badge.svg?branch=master)
 
-# Improvements
+# Vinx Scorza Fork
 
-This is a fork of the [original repository](https://github.com/westlicht/performer), with some improvements that I personally find essential.
+This is a personal fork of the [Mebitek fork](https://github.com/mebitek/performer) of the original [Westlicht Performer firmware](https://westlicht.github.io/performer).
+Current fork version: `0.3.2-vinx.1`.
 
-[Full updated documentation](https://mebitek.github.io/performer/manual/)
+The Vinx Scorza fork starts from `v0.3.2-vinx.1`.
+Everything before that version in this repository history and changelog comes from the Mebitek fork and is preserved as upstream reference.
 
-To find out more about improvements changes, check [changelog](https://github.com/mebitek/performer/blob/master/CHANGELOG.md)
+I’m very grateful to Mebitek for the work done on his fork.
+This fork would not exist without the fundamental help of AI agents during development and debugging.
 
---- original documentation below ---
+There will be no documentation for the moment, as there will be no public release. I created this fork to experiment with this awesome project.
+
+You can find the full updated Mebitek documentation here:
+https://mebitek.github.io/performer/manual/
+
+You can also find the changelog for the Mebitek fork here:
+https://github.com/mebitek/performer/blob/master/CHANGELOG.md
+
+--- ORIGINAL DOCUMENTATION BELOW (Westlicht Performer) ---
 
 # PER|FORMER
 

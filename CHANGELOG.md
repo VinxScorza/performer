@@ -1,5 +1,18 @@
 # Changelog
 
+## Vinx Scorza fork
+
+Starting from `v0.3.2-vinx.1`, this changelog includes changes specific to the Vinx Scorza fork.
+
+All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference.
+
+# v0.3.2-vinx.1 (16 March 2026)
+- Fix crash/reboot when shifting 64-step note sequences with `shift + <` / `shift + >`
+- Fix step shifting range handling across note, logic, curve, stochastic and arp sequences
+- Fix selected-step shifting inside non-zero subranges
+
+## Mebitek fork history
+
 # v0.3.2 ()
 - issue #123 - request - launchpad X step page responsive
 

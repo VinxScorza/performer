@@ -531,7 +531,7 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
         if (key.shiftModifier()) {
             _inMemorySequence = _project.selectedLogicSequence();
             sequence.shiftSteps(_stepSelection.selected(), -1);
-            _stepSelection.shiftLeft(sequence.firstStep(), sequence.lastStep()-1);
+            _stepSelection.shiftLeft(sequence.firstStep(), sequence.lastStep() + 1);
         } else {
             track.setPatternFollowDisplay(false);
              sequence.setSecion(std::max(0, sequence.section() - 1));
@@ -542,7 +542,7 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
         if (key.shiftModifier()) {
             _inMemorySequence = _project.selectedLogicSequence();
             sequence.shiftSteps(_stepSelection.selected(), 1);
-            _stepSelection.shiftRight(sequence.firstStep(), sequence.lastStep()-1);
+            _stepSelection.shiftRight(sequence.firstStep(), sequence.lastStep() + 1);
         } else {
             track.setPatternFollowDisplay(false);
             sequence.setSecion(std::min(3, sequence.section() + 1));

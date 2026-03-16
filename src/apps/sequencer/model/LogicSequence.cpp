@@ -294,9 +294,9 @@ void LogicSequence::setNotes(std::initializer_list<int> notes) {
 
 void LogicSequence::shiftSteps(const std::bitset<CONFIG_STEP_COUNT> &selected, int direction) {
     if (selected.any()) {
-        ModelUtils::shiftSteps(_steps, selected, firstStep(), lastStep(), direction);
+        ModelUtils::shiftSteps(_steps, selected, firstStep(), lastStep() + 1, direction);
     } else {
-        ModelUtils::shiftSteps(_steps, firstStep(), lastStep(), direction);
+        ModelUtils::shiftSteps(_steps, firstStep(), lastStep() + 1, direction);
     }
 }
 

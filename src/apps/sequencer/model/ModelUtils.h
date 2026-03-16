@@ -57,12 +57,16 @@ static void shiftSteps(std::array<Step, N> &steps, int direction) {
 template<typename Step, size_t N>
 static void shiftSteps(std::array<Step, N> &steps, int first, int last, int direction)
 {
+    if (last - first <= 1) {
+        return;
+    }
+
     if (direction == 1) {
-        for (int i = last - 1; i >= first; --i) {
+        for (int i = last - 2; i >= first; --i) {
             std::swap(steps[i], steps[i + 1]);
         }
     } else if (direction == -1) {
-        for (int i = first; i < last; ++i) {
+        for (int i = first; i < last - 1; ++i) {
             std::swap(steps[i], steps[i + 1]);
         }
     }
@@ -75,7 +79,21 @@ static void shiftSteps(std::array<Step, N> &steps, const std::bitset<N> &selecte
     // direction L = -1 ; R = 1
 
     int distance = last - first;
+    if (distance <= 1) {
+        return;
+    }
+
     int starting_point = -1; // from where we'll swap. -1 means everything is selected
+
+    auto wrap = [first, last, distance] (int index) {
+        while (index < first) {
+            index += distance;
+        }
+        while (index >= last) {
+            index -= distance;
+        }
+        return index;
+    };
 
     if (direction == -1) {
         // Find a starting point (the closest step to the left that we don't shift)
@@ -93,9 +111,9 @@ static void shiftSteps(std::array<Step, N> &steps, const std::bitset<N> &selecte
         }
 
         // scan and swap the whole range, from left to right
-        for(int i=starting_point; i<distance; i++) {
-            int idx = (i + starting_point + last) % last;
-            int previous_idx = ((idx - 1) + last) % last;
+        for (int i = 1; i < distance; ++i) {
+            int idx = wrap(starting_point + i);
+            int previous_idx = wrap(idx - 1);
 
             if (selected[idx])
                 std::swap(steps[previous_idx], steps[idx]);
@@ -116,9 +134,9 @@ static void shiftSteps(std::array<Step, N> &steps, const std::bitset<N> &selecte
         }
 
         // scan and swap the whole range, from right to left
-        for(int i=distance-1; i>=0; i--) {
-            int idx = (i + starting_point + last) % last;
-            int next_idx = ((idx + 1) + last) % last;
+        for (int i = 1; i < distance; ++i) {
+            int idx = wrap(starting_point - i);
+            int next_idx = wrap(idx + 1);
 
             if (selected[idx])
                 std::swap(steps[next_idx], steps[idx]);

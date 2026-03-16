@@ -1,3 +1,5 @@
+#pragma once
+
 enum ProjectVersion {
     // added NoteTrack::cvUpdateMode
     Version4 = 4,

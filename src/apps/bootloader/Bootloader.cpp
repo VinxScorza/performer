@@ -15,6 +15,7 @@
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/stm32/flash.h>
 
+#include <cctype>
 #include <cstring>
 
 // version tag of firmware in flash
@@ -75,7 +76,11 @@ static void deinit() {
 
 static void formatVersion(const VersionTag &version, char *str, size_t len) {
     if (version.isValid()) {
-        snprintf(str, len, "%s (%d.%d.%d)", version.name, version.major, version.minor, version.revision);
+        if (version.name[0] != '\0' && (std::isdigit(version.name[0]) || std::strchr(version.name, '-'))) {
+            snprintf(str, len, "%s", version.name);
+        } else {
+            snprintf(str, len, "%s (%d.%d.%d)", version.name, version.major, version.minor, version.revision);
+        }
     } else {
         snprintf(str, len, "invalid image");
     }
