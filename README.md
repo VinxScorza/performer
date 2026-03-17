@@ -9,8 +9,8 @@ The Vinx Scorza fork starts at `v0.3.2-vinx.1`.
 Everything before that version in this repository history and changelog is inherited from the Mebitek fork and preserved as upstream reference.
 Vinx Scorza Fork changelog: [CHANGELOG.md](CHANGELOG.md)
 
-I’m very grateful to Mebitek for the work done on his fork.
 This fork would not exist without the fundamental help of AI agents during development and debugging.
+I’m very grateful to Mebitek for the work done on his fork.
 
 There will be no documentation for the moment, as there will be no public release. I created this fork to experiment with this awesome project.
 
