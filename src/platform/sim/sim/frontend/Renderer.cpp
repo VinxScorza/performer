@@ -19,12 +19,17 @@
 #include "nanovg_gl.h"
 #include "nanovg_gl_utils.h"
 
+#include <stdexcept>
+
 namespace sim {
 
 Renderer::Renderer(SDL_Window *window) :
     _window(window)
 {
-    SDL_GL_CreateContext(_window);
+    _context = SDL_GL_CreateContext(_window);
+    if (!_context) {
+        throw std::runtime_error(std::string("SDL_GL_CreateContext failed: ") + SDL_GetError());
+    }
 
 #ifdef __EMSCRIPTEN__
     _nvg = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
@@ -32,10 +37,13 @@ Renderer::Renderer(SDL_Window *window) :
     _nvg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 #endif
     if (!_nvg) {
-        std::cerr << "Failed to create NanoVG context!" << std::endl;
+        throw std::runtime_error("Failed to create NanoVG context");
     }
 
     _font = nvgCreateFont(_nvg, "monospace", "assets/fonts/inconsolata.ttf");
+    if (_font < 0) {
+        throw std::runtime_error("Failed to load simulator font assets/fonts/inconsolata.ttf");
+    }
 }
 
 Renderer::~Renderer() {

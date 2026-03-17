@@ -235,7 +235,8 @@ void LogicSequence::writeRouted(Routing::Target target, int intValue, float floa
 
 void LogicSequence::clear() {
     setName("INIT");
-    setScale(-1);
+    _scale.base = -1;
+    _scale.routed = -1;
     setRootNote(-1);
     setDivisor(12);
     setResetMeasure(0);

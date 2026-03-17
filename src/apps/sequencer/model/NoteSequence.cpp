@@ -289,7 +289,8 @@ void NoteSequence::writeRouted(Routing::Target target, int intValue, float float
 
 void NoteSequence::clear() {
     setName("INIT");
-    setScale(-1);
+    _scale.base = -1;
+    _scale.routed = -1;
     setRootNote(-1);
     setDivisor(12);
     setResetMeasure(0);

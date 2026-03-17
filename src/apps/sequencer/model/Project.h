@@ -98,7 +98,8 @@ public:
 
     void printSwing(StringBuilder &str) const {
         printRouted(str, Routing::Target::Swing);
-        str("%d%%", swing());
+        int swingAmount = ((swing() - 50) * 99 + 12) / 25;
+        str("%d%%", swingAmount);
     }
 
     // timeSignature

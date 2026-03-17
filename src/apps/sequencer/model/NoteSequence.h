@@ -294,18 +294,24 @@ public:
 
     int scale() const { return _scale.get(isRouted(Routing::Target::Scale)); }
     void setScale(int s, bool routed = false, int defaultScale = 0) {
+        int previousScaleIndex = scale();
+        int newScaleIndex = clamp(s, -1, Scale::Count - 1);
 
-        auto &pScale = selectedScale(defaultScale);
+        _scale.set(newScaleIndex, routed);
 
-        _scale.set(clamp(s, -1, Scale::Count - 1), routed);
-
-        auto &aScale = selectedScale(s);
-
-        if (pScale == aScale) {
+        if (previousScaleIndex == newScaleIndex) {
             return;
         }
 
-        if (s != -1 && aScale.isChromatic() && pScale.isChromatic() > 0) {
+        if (previousScaleIndex < 0 || previousScaleIndex >= Scale::Count ||
+            newScaleIndex < 0 || newScaleIndex >= Scale::Count) {
+            return;
+        }
+
+        const auto &pScale = Scale::get(previousScaleIndex);
+        const auto &aScale = Scale::get(newScaleIndex);
+
+        if (aScale.isChromatic() && pScale.isChromatic() > 0) {
             for (int i = 0; i < 64; ++i) {
 
                 auto pStep = _steps[i];

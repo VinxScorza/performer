@@ -19,6 +19,7 @@
 #include <memory>
 #include <sstream>
 #include <iomanip>
+#include <stdexcept>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -39,7 +40,9 @@ static void addWidget(std::vector<T> &list, T widget, int index) {
 Frontend::Frontend(Simulator &simulator) :
     _simulator(simulator)
 {
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
+        throw std::runtime_error(std::string("SDL_Init failed: ") + SDL_GetError());
+    }
 
 #ifdef __EMSCRIPTEN__
     g_instance = this;
@@ -73,7 +76,12 @@ int Frontend::main(int argc, char *argv[]) {
 
 
 
-    run();
+    try {
+        run();
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }

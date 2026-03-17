@@ -99,4 +99,3 @@ class ProjectPageTest(tf.UiTest):
         p.swing = 75
         c.encoder().right().encoder()
         self.assertEqual(p.swing, 75, "maximum")
-

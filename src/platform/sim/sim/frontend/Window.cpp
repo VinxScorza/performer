@@ -1,11 +1,16 @@
 #include "Window.h"
 
+#include <stdexcept>
+
 namespace sim {
 
 Window::Window(const std::string &title, const Vector2i &size) :
     _window(SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size.x(), size.y(), SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI)),
     _renderer(_window)
 {
+    if (!_window) {
+        throw std::runtime_error(std::string("SDL_CreateWindow failed: ") + SDL_GetError());
+    }
 }
 
 Window::~Window() {

@@ -8,7 +8,7 @@ void ClockSetup::clear() {
     _clockInputMode = ClockInputMode::Reset;
     _clockOutputDivisor = 12;
     _clockOutputSwing = false;
-    _clockOutputPulse = 1;
+    _clockOutputPulse = 10;
     _clockOutputMode = ClockOutputMode::Reset;
     _midiRx = true;
     _midiTx = true;
