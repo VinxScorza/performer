@@ -6,6 +6,9 @@ Starting from `v0.3.2-vinx.1`, this changelog includes changes specific to the V
 
 All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference.
 
+# v0.3.2-vinx.1.2 (17 March 2026)
+- With "Dim Sequence" enabled, step LEDs are slightly dimmed, which may help reduce electrical noise and interference. This option is now enabled by default.
+
 # v0.3.2-vinx.1.1 (17 March 2026)
 - Change default output clock pulse from 1ms to 10ms, because some modules require an input pulse clock of at least 10ms
 - Rescale the Swing UI from the previous 50%-75% display to 0%-99%, while keeping the engine timing range unchanged at 50%-75% for full compatibility with older projects. Existing projects keep the same timing behavior; only the displayed UI values are rescaled.
