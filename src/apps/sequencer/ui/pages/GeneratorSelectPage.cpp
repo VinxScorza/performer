@@ -61,6 +61,6 @@ void GeneratorSelectPage::keyPress(KeyPressEvent &event) {
 void GeneratorSelectPage::closeWithResult(bool result) {
     Page::close();
     if (_callback) {
-        _callback(result, Generator::Mode(selectedRow()));
+        _callback(result, GeneratorSelectListModel::rowToMode(selectedRow()));
     }
 }

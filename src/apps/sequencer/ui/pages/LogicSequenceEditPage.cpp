@@ -534,7 +534,8 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
             _stepSelection.shiftLeft(sequence.firstStep(), sequence.lastStep() + 1);
         } else {
             track.setPatternFollowDisplay(false);
-             sequence.setSecion(std::max(0, sequence.section() - 1));
+             int sectionCount = sequence.lastStep() / StepCount + 1;
+             sequence.setSecion((sequence.section() + sectionCount - 1) % sectionCount);
         }
         event.consume();
     }
@@ -545,7 +546,8 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
             _stepSelection.shiftRight(sequence.firstStep(), sequence.lastStep() + 1);
         } else {
             track.setPatternFollowDisplay(false);
-            sequence.setSecion(std::min(3, sequence.section() + 1));
+            int sectionCount = sequence.lastStep() / StepCount + 1;
+            sequence.setSecion((sequence.section() + 1) % sectionCount);
         }
         event.consume();
     }

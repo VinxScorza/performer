@@ -14,6 +14,7 @@ public:
         Smooth,
         Bias,
         Scale,
+        Variation,
         Last
     };
 
@@ -22,6 +23,7 @@ public:
         uint8_t smooth = 0;
         int8_t bias = 0;
         uint8_t scale = 5;
+        uint8_t variation = 100;
     };
 
     RandomGenerator(SequenceBuilder &builder, Params &params, std::bitset<CONFIG_STEP_COUNT> &selected);
@@ -57,6 +59,11 @@ public:
 
     int scale() const { return _params.scale; }
     void setScale(int scale) { _params.scale = clamp(scale, 0, 100); }
+
+    // variation
+
+    int variation() const { return _params.variation; }
+    void setVariation(int variation) { _params.variation = clamp(variation, 0, 100); }
 
     // pattern
 

@@ -6,6 +6,12 @@ Starting from `v0.3.2-vinx.1`, this changelog includes changes specific to the V
 
 All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference.
 
+# v0.3.2-vinx.1.3 (18 March 2026)
+- Add non-destructive preview workflow to `Generate -> Random`, with safe `A/B`, `Regenerate`, `Cancel`, and `Apply`
+- Add `Variation` to the Random generator for controlled deviation from the original sequence
+- Reorder the generator menu to `Random`, `Euclidean`, `Init`
+- Make `prev` / `next` sequence page navigation cyclic, wrapping around according to the current sequence length
+
 # v0.3.2-vinx.1.2 (17 March 2026)
 - With "Dim Sequence" enabled, step LEDs are slightly dimmed, which may help reduce electrical noise and interference. This option is now enabled by default.
 

@@ -19,6 +19,7 @@ const char *RandomGenerator::paramName(int index) const {
     case Param::Smooth: return "Smooth";
     case Param::Bias:   return "Bias";
     case Param::Scale:  return "Scale";
+    case Param::Variation: return "Var";
     case Param::Last:   break;
     }
     return nullptr;
@@ -30,6 +31,7 @@ void RandomGenerator::editParam(int index, int value, bool shift) {
     case Param::Smooth: setSmooth(smooth() + value); break;
     case Param::Bias:   setBias(bias() + value); break;
     case Param::Scale:  setScale(scale() + value); break;
+    case Param::Variation: setVariation(variation() + value); break;
     case Param::Last:   break;
     }
 }
@@ -40,6 +42,7 @@ void RandomGenerator::printParam(int index, StringBuilder &str) const {
     case Param::Smooth: str("%d", smooth()); break;
     case Param::Bias:   str("%d", bias()); break;
     case Param::Scale:  str("%d", scale()); break;
+    case Param::Variation: str("%d%%", variation()); break;
     case Param::Last:   break;
     }
 }
@@ -78,6 +81,7 @@ void RandomGenerator::update() {
 
     int bias = (_params.bias * 255) / 10;
     int scale = _params.scale;
+    float variation = _params.variation * 0.01f;
 
     for (int i = 0; i < size; ++i) {
         if (_selected[i]) {
@@ -90,7 +94,10 @@ void RandomGenerator::update() {
 
     for (size_t i = 0; i < _pattern.size(); ++i) {
         if (_selected[i]) {
-            _builder.setValue(i, _pattern[i] * (1.f / 255.f));
+            float original = _builder.originalValue(i);
+            float generated = _pattern[i] * (1.f / 255.f);
+            float blended = original + (generated - original) * variation;
+            _builder.setValue(i, blended);
         }
     }
 }

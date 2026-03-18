@@ -49,6 +49,22 @@ public:
         _builder.revert();
     }
 
+    virtual void apply() {
+        _builder.apply();
+    }
+
+    void showOriginal() {
+        _builder.showOriginal();
+    }
+
+    void showPreview() {
+        _builder.showPreview();
+    }
+
+    bool showingPreview() const {
+        return _builder.showingPreview();
+    }
+
     virtual void update() = 0;
 
     static Generator *execute(Generator::Mode mode, SequenceBuilder &builder, std::bitset<CONFIG_STEP_COUNT> &selected);

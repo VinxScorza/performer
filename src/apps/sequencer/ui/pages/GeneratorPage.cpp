@@ -9,8 +9,8 @@
 
 enum class ContextAction {
     Init,
-    Reserved1,
-    Reserved2,
+    TogglePreview,
+    Regenerate,
     Revert,
     Commit,
     Last
@@ -18,10 +18,10 @@ enum class ContextAction {
 
 static const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
-    { nullptr },
-    { nullptr },
-    { "REVERT" },
-    { "COMMIT" },
+    { "A/B" },
+    { "REGEN" },
+    { "CANCEL" },
+    { "APPLY" },
 };
 
 GeneratorPage::GeneratorPage(PageManager &manager, PageContext &context) :
@@ -31,6 +31,7 @@ GeneratorPage::GeneratorPage(PageManager &manager, PageContext &context) :
 void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> *stepSelection) {
     _generator = generator;
     _stepSelection = stepSelection;
+    _applied = false;
 
     BasePage::show();
 }
@@ -38,9 +39,13 @@ void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> 
 void GeneratorPage::enter() {
     _valueRange.first = 0;
     _valueRange.second = 7;
+    _generator->showPreview();
 }
 
 void GeneratorPage::exit() {
+    if (!_applied) {
+        _generator->revert();
+    }
 }
 
 void GeneratorPage::draw(Canvas &canvas) {
@@ -176,6 +181,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
     if (key.isStep() && key.shiftModifier()) {
         _generator->update();
+        _generator->showPreview();
         event.consume();
         return;
     }
@@ -184,6 +190,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         if (_stepSelection->none()) {
             _stepSelection->selectAll();
             _generator->update();
+            _generator->showPreview();
         } else {
             _stepSelection->clear();
             _generator->update();
@@ -219,6 +226,7 @@ void GeneratorPage::encoder(EncoderEvent &event) {
 
     if (changed) {
         _generator->update();
+        _generator->showPreview();
     }
 }
 
@@ -285,8 +293,11 @@ void GeneratorPage::contextAction(int index) {
     case ContextAction::Init:
         init();
         break;
-    case ContextAction::Reserved1:
-    case ContextAction::Reserved2:
+    case ContextAction::TogglePreview:
+        togglePreview();
+        break;
+    case ContextAction::Regenerate:
+        regenerate();
         break;
     case ContextAction::Revert:
         revert();
@@ -300,21 +311,47 @@ void GeneratorPage::contextAction(int index) {
 }
 
 bool GeneratorPage::contextActionEnabled(int index) const {
+    if (ContextAction(index) == ContextAction::Regenerate) {
+        return _generator->mode() == Generator::Mode::Random;
+    }
     return true;
 }
 
 void GeneratorPage::init() {
     _stepSelection->clear();
     _generator->init();
+    _generator->showPreview();
 }
 
 void GeneratorPage::revert() {
     _stepSelection->clear();
     _generator->revert();
+    _applied = false;
     close();
 }
 
 void GeneratorPage::commit() {
     _stepSelection->clear();
+    _generator->apply();
+    _applied = true;
     close();
+}
+
+void GeneratorPage::togglePreview() {
+    if (_generator->showingPreview()) {
+        _generator->showOriginal();
+        showMessage("ORIGINAL");
+    } else {
+        _generator->showPreview();
+        showMessage("PREVIEW");
+    }
+}
+
+void GeneratorPage::regenerate() {
+    if (_generator->mode() == Generator::Mode::Random) {
+        auto *random = static_cast<RandomGenerator *>(_generator);
+        random->randomizeSeed();
+        random->update();
+        _generator->showPreview();
+    }
 }
