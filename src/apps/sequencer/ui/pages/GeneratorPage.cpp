@@ -7,21 +7,15 @@
 #include "engine/generators/EuclideanGenerator.h"
 #include "engine/generators/RandomGenerator.h"
 
+#include <cstdio>
+
 enum class ContextAction {
+    RandomizeSeed,
     Init,
-    TogglePreview,
-    Regenerate,
     Revert,
     Commit,
+    VariationInfo,
     Last
-};
-
-static const ContextMenuModel::Item contextMenuItems[] = {
-    { "INIT" },
-    { "A/B" },
-    { "REGEN" },
-    { "CANCEL" },
-    { "APPLY" },
 };
 
 GeneratorPage::GeneratorPage(PageManager &manager, PageContext &context) :
@@ -39,6 +33,11 @@ void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> 
 void GeneratorPage::enter() {
     _valueRange.first = 0;
     _valueRange.second = 7;
+    if (_generator->mode() == Generator::Mode::Random) {
+        auto *random = static_cast<RandomGenerator *>(_generator);
+        random->randomizeSeed();
+        random->update();
+    }
     _generator->showPreview();
 }
 
@@ -51,7 +50,18 @@ void GeneratorPage::exit() {
 void GeneratorPage::draw(Canvas &canvas) {
     const char *functionNames[5];
     for (int i = 0; i < 5; ++i) {
-        functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
+        functionNames[i] = nullptr;
+    }
+
+    if (_generator->mode() == Generator::Mode::Random) {
+        functionNames[0] = "A/B";
+        for (int i = 1; i < 5; ++i) {
+            functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
+        }
+    } else {
+        for (int i = 0; i < 5; ++i) {
+            functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
+        }
     }
 
     WindowPainter::clear(canvas);
@@ -59,15 +69,20 @@ void GeneratorPage::draw(Canvas &canvas) {
     WindowPainter::drawActiveFunction(canvas, _generator->name());
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
-    canvas.setFont(Font::Small);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(Color::Bright);
 
     auto drawValue = [&] (int index, const char *str) {
+        Font prevFont = canvas.font();
+        Font font = (_generator->mode() == Generator::Mode::Random && index == 0) ? Font::Tiny : Font::Small;
+        canvas.setFont(font);
+
         int w = Width / 5;
         int x = (Width * index) / 5;
         int y = Height - 16;
         canvas.drawText(x + (w - canvas.textWidth(str)) / 2, y, str);
+
+        canvas.setFont(prevFont);
     };
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
@@ -179,6 +194,12 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (_generator->mode() == Generator::Mode::Random && key.isFunction() && key.function() == 0) {
+        togglePreview();
+        event.consume();
+        return;
+    }
+
     if (key.isStep() && key.shiftModifier()) {
         _generator->update();
         _generator->showPreview();
@@ -216,6 +237,14 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
 void GeneratorPage::encoder(EncoderEvent &event) {
     bool changed = false;
+
+    if (_generator->mode() == Generator::Mode::Random && !pageKeyState()[Key::F0]) {
+        if (event.value() != 0) {
+            auto *random = static_cast<RandomGenerator *>(_generator);
+            random->randomizeSeed();
+            changed = true;
+        }
+    }
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
         if (pageKeyState()[Key::F0 + i]) {
@@ -279,8 +308,21 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
 }
 
 void GeneratorPage::contextShow(bool doubleClick) {
+    _contextMenuItems[0] = { "NEW SEED" };
+    _contextMenuItems[1] = { "INIT" };
+    _contextMenuItems[2] = { "CANCEL" };
+    _contextMenuItems[3] = { "APPLY" };
+
+    if (_generator->mode() == Generator::Mode::Random) {
+        const auto *random = static_cast<const RandomGenerator *>(_generator);
+        std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR %d%%", random->variation());
+    } else {
+        std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR");
+    }
+    _contextMenuItems[4] = { _variationMenuLabel };
+
     showContextMenu(ContextMenu(
-        contextMenuItems,
+        _contextMenuItems,
         int(ContextAction::Last),
         [&] (int index) { contextAction(index); },
         [&] (int index) { return contextActionEnabled(index); },
@@ -290,14 +332,16 @@ void GeneratorPage::contextShow(bool doubleClick) {
 
 void GeneratorPage::contextAction(int index) {
     switch (ContextAction(index)) {
+    case ContextAction::RandomizeSeed:
+        if (_generator->mode() == Generator::Mode::Random) {
+            auto *random = static_cast<RandomGenerator *>(_generator);
+            random->randomizeSeed();
+            random->update();
+            _generator->showPreview();
+        }
+        break;
     case ContextAction::Init:
         init();
-        break;
-    case ContextAction::TogglePreview:
-        togglePreview();
-        break;
-    case ContextAction::Regenerate:
-        regenerate();
         break;
     case ContextAction::Revert:
         revert();
@@ -305,16 +349,14 @@ void GeneratorPage::contextAction(int index) {
     case ContextAction::Commit:
         commit();
         break;
+    case ContextAction::VariationInfo:
     case ContextAction::Last:
         break;
     }
 }
 
 bool GeneratorPage::contextActionEnabled(int index) const {
-    if (ContextAction(index) == ContextAction::Regenerate) {
-        return _generator->mode() == Generator::Mode::Random;
-    }
-    return true;
+    return ContextAction(index) != ContextAction::VariationInfo;
 }
 
 void GeneratorPage::init() {
@@ -343,15 +385,6 @@ void GeneratorPage::togglePreview() {
         showMessage("ORIGINAL");
     } else {
         _generator->showPreview();
-        showMessage("PREVIEW");
-    }
-}
-
-void GeneratorPage::regenerate() {
-    if (_generator->mode() == Generator::Mode::Random) {
-        auto *random = static_cast<RandomGenerator *>(_generator);
-        random->randomizeSeed();
-        random->update();
-        _generator->showPreview();
+        showMessage("CURRENT SEED");
     }
 }

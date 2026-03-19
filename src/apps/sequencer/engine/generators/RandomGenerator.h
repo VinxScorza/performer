@@ -19,7 +19,7 @@ public:
     };
 
     struct Params {
-        uint16_t seed = 0;
+        uint32_t seed = 0;
         uint8_t smooth = 0;
         int8_t bias = 0;
         uint8_t scale = 5;
@@ -43,7 +43,7 @@ public:
     // seed
 
     int seed() const { return _params.seed; }
-    void setSeed(int seed) { _params.seed = clamp(seed, 0, 1000); }
+    void setSeed(uint32_t seed) { _params.seed = seed; }
 
     // smooth
 

@@ -2,9 +2,16 @@
 
 ## Vinx Scorza fork
 
-Starting from `v0.3.2-vinx.1`, this changelog includes changes specific to the Vinx Scorza fork.
+<sub>Starting from `v0.3.2-vinx.1`, this changelog includes changes specific to the Vinx Scorza fork.</sub>
 
-All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference.
+<sub>All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference.</sub>
+
+# v0.3.2-vinx.1.4 (19 March 2026)
+- Expand `Generate -> Random` to full 32-bit seed randomization (`2^32` values), shown as 8-digit hexadecimal seeds
+- Randomize the seed automatically when entering `Generate -> Random`, and whenever the `Seed` parameter is changed
+- Remove the old linear seed stepping behavior and simplify the Random generator workflow around `NEW SEED`, `INIT`, `CANCEL`, and `APPLY`
+- Map `F1` to `A/B` for faster comparison between `ORIGINAL` and `CURRENT SEED`
+- Update startup branding and version strings to `v0.3.2-vinx.1.4`
 
 # v0.3.2-vinx.1.3 (18 March 2026)
 - Add non-destructive preview workflow to `Generate -> Random`, with safe `A/B`, `Regenerate`, `Cancel`, and `Apply`

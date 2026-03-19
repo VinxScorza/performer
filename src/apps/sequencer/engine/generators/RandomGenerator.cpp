@@ -27,7 +27,11 @@ const char *RandomGenerator::paramName(int index) const {
 
 void RandomGenerator::editParam(int index, int value, bool shift) {
     switch (Param(index)) {
-    case Param::Seed:   setSeed(seed() + value); break;
+    case Param::Seed:
+        if (value != 0) {
+            randomizeSeed();
+        }
+        break;
     case Param::Smooth: setSmooth(smooth() + value); break;
     case Param::Bias:   setBias(bias() + value); break;
     case Param::Scale:  setScale(scale() + value); break;
@@ -38,7 +42,7 @@ void RandomGenerator::editParam(int index, int value, bool shift) {
 
 void RandomGenerator::printParam(int index, StringBuilder &str) const {
     switch (Param(index)) {
-    case Param::Seed:   str("%d", seed()); break;
+    case Param::Seed:   str("%08X", seed()); break;
     case Param::Smooth: str("%d", smooth()); break;
     case Param::Bias:   str("%d", bias()); break;
     case Param::Scale:  str("%d", scale()); break;
@@ -54,8 +58,16 @@ void RandomGenerator::init() {
 }
 
 void RandomGenerator::randomizeSeed() {
-    srand((unsigned int)time(NULL));
-    _params.seed = 0 + ( std::rand() % ( 999 - 0 + 1 ) );
+    static uint32_t entropy = 0;
+
+    if (entropy == 0) {
+        entropy = uint32_t(time(NULL)) ^ uint32_t(clock()) ^ 0xA341316Cu;
+    }
+
+    entropy = entropy * 1664525u + 1013904223u + uint32_t(clock());
+    Random rng(entropy);
+    _params.seed = rng.next();
+    entropy = rng.next();
 }
 
 void RandomGenerator::update() {
