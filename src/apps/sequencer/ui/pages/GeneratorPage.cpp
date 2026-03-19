@@ -33,6 +33,30 @@ void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> 
 void GeneratorPage::enter() {
     _valueRange.first = 0;
     _valueRange.second = 7;
+
+    switch (_project.selectedTrack().trackMode()) {
+    case Track::TrackMode::Note:
+        _section = _project.selectedNoteSequence().section();
+        break;
+    case Track::TrackMode::Curve:
+        _section = _project.selectedCurveSequence().section();
+        break;
+    case Track::TrackMode::Logic:
+        _section = _project.selectedLogicSequence().section();
+        break;
+    case Track::TrackMode::Stochastic:
+    case Track::TrackMode::Arp:
+        if (_stepSelection && !_stepSelection->none()) {
+            _section = _stepSelection->first() / StepCount;
+        } else {
+            _section = 0;
+        }
+        break;
+    default:
+        _section = 0;
+        break;
+    }
+
     if (_generator->mode() == Generator::Mode::Random) {
         auto *random = static_cast<RandomGenerator *>(_generator);
         random->randomizeSeed();
@@ -163,7 +187,7 @@ void GeneratorPage::updateLeds(Leds &leds) {
             return;
     }
 
-    
+    LedPainter::drawSelectedSequenceSection(leds, _section);
 }
 
 void GeneratorPage::keyDown(KeyEvent &event) {
@@ -223,11 +247,11 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isLeft()) {
-        _section = std::max(0, _section - 1);
+        _section = (_section + 3) % 4;
         event.consume();
     }
     if (key.isRight()) {
-        _section = std::min(3, _section + 1);
+        _section = (_section + 1) % 4;
         event.consume();
     }
     
@@ -237,8 +261,16 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
 void GeneratorPage::encoder(EncoderEvent &event) {
     bool changed = false;
+    bool functionKeyHeld = false;
 
-    if (_generator->mode() == Generator::Mode::Random && !pageKeyState()[Key::F0]) {
+    for (int i = 0; i < _generator->paramCount(); ++i) {
+        if (pageKeyState()[Key::F0 + i]) {
+            functionKeyHeld = true;
+            break;
+        }
+    }
+
+    if (_generator->mode() == Generator::Mode::Random && !functionKeyHeld) {
         if (event.value() != 0) {
             auto *random = static_cast<RandomGenerator *>(_generator);
             random->randomizeSeed();

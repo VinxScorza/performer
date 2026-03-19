@@ -11,6 +11,8 @@
 - Randomize the seed automatically when entering `Generate -> Random`, and whenever the `Seed` parameter is changed
 - Remove the old linear seed stepping behavior and simplify the Random generator workflow around `NEW SEED`, `INIT`, `CANCEL`, and `APPLY`
 - Map `F1` to `A/B` for faster comparison between `ORIGINAL` and `CURRENT SEED`
+- Make `Generate` open on the current 16-step bank instead of always starting from the first page
+- Make `Generate` page LEDs follow the selected 16-step bank, with cyclic `prev` / `next` bank navigation
 - Update startup branding and version strings to `v0.3.2-vinx.1.4`
 
 # v0.3.2-vinx.1.3 (18 March 2026)
