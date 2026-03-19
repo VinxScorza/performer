@@ -4,15 +4,15 @@
 
 > **[CHANGELOG](CHANGELOG.md)**
 
-This is a <u>personal fork</u> of the [Mebitek fork](https://github.com/mebitek/performer), itself based on the original [Westlicht Performer firmware](https://westlicht.github.io/performer).
+This is a <u>personal fork</u> of the [Mebitek fork](https://github.com/mebitek/performer), itself based on the original [Westlicht Performer firmware](https://github.com/westlicht/performer).
 Current fork version: `0.3.2-vinx.1.4`.
 
 The Vinx Scorza fork starts at `v0.3.2-vinx.1`.
 Everything before that version in this repository history and changelog is inherited from the Mebitek fork and preserved as upstream reference.
 This fork would not exist without the fundamental help of AI agents during development and debugging.
-I’m very grateful to Mebitek for the work done on his fork.
+I’m very grateful to [Mebitek](https://mebitek.github.io/performer/) for the work done on his fork, and of course to [Simon](https://westlicht.github.io/performer/) for creating and developing the Westlicht Performer.
 
-There will be no documentation for the moment, as there will be no public release. I created this fork to experiment with this awesome project.
+There is no dedicated documentation for the moment, as this fork is not intended for public release. I created this fork to experiment with this awesome project.
 
 You can find the full updated Mebitek documentation here:
 https://mebitek.github.io/performer/manual/
