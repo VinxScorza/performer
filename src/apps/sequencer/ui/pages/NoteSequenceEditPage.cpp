@@ -155,15 +155,18 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
             canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
-            int gateOffsetShift = (step.gateOffset() * 4) / (NoteSequence::GateOffset::Max + 1);
-            int gateWidth = 3 + (((stepWidth - 8) - 3) * (step.length() + 1)) / NoteSequence::Length::Range;
-            int gateX = x + 4 + gateOffsetShift + ((stepWidth - 8) - gateWidth) / 2;
+            constexpr int gateInset = 3;
+            constexpr int gateShiftRange = 3;
+            int gateArea = stepWidth - 2 * gateInset;
+            int gateOffsetShift = (step.gateOffset() * gateShiftRange) / (NoteSequence::GateOffset::Max + 1);
+            int gateWidth = 3 + ((gateArea - 3) * (step.length() + 1)) / NoteSequence::Length::Range;
+            int gateX = x + gateInset + gateOffsetShift + (gateArea - gateWidth) / 2;
             if (step.retrigger() > 0) {
                 for (int stripeX = gateX; stripeX < gateX + gateWidth; stripeX += 2) {
-                    canvas.fillRect(stripeX, y + 4, 1, stepWidth - 8);
+                    canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
                 }
             } else {
-                canvas.fillRect(gateX, y + 4, gateWidth, stepWidth - 8);
+                canvas.fillRect(gateX, y + gateInset, gateWidth, gateArea);
             }
         }
 
