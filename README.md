@@ -22,7 +22,12 @@ If you would like to support their incredible work financially, you can donate h
 
 Personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
 
-Core firmware documentation is inherited from the original projects:
+Primary documentation for this fork:
+- [Vinx Scorza fork website](https://vinxscorza.github.io/performer/)
+- [Vinx Scorza user manual](https://vinxscorza.github.io/performer/manual/)
+- [Vinx Scorza changelog](https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md)
+
+Upstream reference documentation:
 - [Westlicht Performer firmware](https://github.com/westlicht/performer)
 - [Mebitek Performer fork](https://github.com/mebitek/performer)
 
@@ -36,16 +41,17 @@ This fork is driven by a simple principle:
 
 ## Notes
 
-If you're looking for a stable, fully documented firmware, you may prefer the upstream versions.
+If you're looking for a stable, conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines.
 
 If you're interested in a more hands-on, performance-oriented evolution, you're in the right place.
 
-You can find the current Vinx Scorza fork documentation here:
+The Vinx Scorza website should be considered the main user-facing documentation entry point for this fork:
+https://vinxscorza.github.io/performer/
+
+The manual lives here:
 https://vinxscorza.github.io/performer/manual/
 
-The website above should be considered the main user-facing documentation entry point for this fork.
-
-You can also find the changelog for this fork here:
+The changelog for this fork lives here:
 https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md
 
 If you need historical upstream reference material, the Mebitek manual is still available here:
