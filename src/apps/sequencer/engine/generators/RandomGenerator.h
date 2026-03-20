@@ -23,7 +23,7 @@ public:
         uint8_t smooth = 0;
         int8_t bias = 0;
         uint8_t scale = 5;
-        uint8_t variation = 50;
+        uint8_t variation = 100;
     };
 
     RandomGenerator(SequenceBuilder &builder, Params &params, std::bitset<CONFIG_STEP_COUNT> &selected);

@@ -167,12 +167,6 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
         int x = i * stepWidth;
         int y = 20;
 
-        // loop
-        if (stepIndex > sequence.firstStep() && stepIndex <= sequence.lastStep()) {
-            canvas.setColor(Color::Bright);
-            canvas.point(x, loopY);
-        }
-
         // step index
         {
             canvas.setColor(_stepSelection[stepIndex] ? Color::Bright : Color::Medium);
