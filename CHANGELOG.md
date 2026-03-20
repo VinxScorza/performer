@@ -9,8 +9,6 @@
 <sub>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes.</sub>
 
 # v0.3.2-vinx.1.4.2 (20 March 2026)
-
-### Fixed
 - Saving a project no longer stops playback. Project data is snapshotted under a short engine lock before asynchronous SD write.
 
 # v0.3.2-vinx.1.4.1 (20 March 2026)
