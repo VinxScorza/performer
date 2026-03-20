@@ -22,14 +22,38 @@ If you would like to support their incredible work financially, you can donate h
 
 Personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
 
+Core firmware documentation is inherited from the original projects:
+- [Westlicht Performer firmware](https://github.com/westlicht/performer)
+- [Mebitek Performer fork](https://github.com/mebitek/performer)
+
+## Philosophy
+
+This fork is driven by a simple principle:
+
+> Make the Performer more predictable, more playable, more useful, more fun, in a live modular context.
+>
+> Not more features -- better behavior.
+
+## Notes
+
+If you're looking for a stable, fully documented firmware, you may prefer the upstream versions.
+
+If you're interested in a more hands-on, performance-oriented evolution, you're in the right place.
+
 You can find the full updated Mebitek documentation here:
 https://mebitek.github.io/performer/manual/
 
 You can also find the changelog for the Mebitek fork here:
 https://github.com/mebitek/performer/blob/master/CHANGELOG.md
 
-Additional Vinx-specific notes and resources can be found in:
-- `doc/`
+Clone this repository:
+
+```bash
+git clone https://github.com/VinxScorza/performer.git
+cd performer
+```
+
+Then follow the standard build instructions for Westlicht Performer below.
 
 --- ORIGINAL DOCUMENTATION BELOW (Westlicht Performer) ---
 
@@ -54,7 +78,7 @@ If you want to do development on the firmware, the following is a quick guide on
 First you have to clone this repository (make sure to add the `--recursive` option to also clone all the submodules):
 
 ```
-git clone --recursive https://github.com/VinxScorza/performer.git
+git clone --recursive https://github.com/westlicht/performer.git
 ```
 
 After cloning, enter the performer directory:
@@ -96,7 +120,7 @@ Currently, there is no native support for compiling the firmware on Windows. As 
 First you have to clone this repository (make sure to add the `--recursive` option to also clone all the submodules):
 
 ```
-git clone --recursive https://github.com/VinxScorza/performer.git
+git clone --recursive https://github.com/westlicht/performer.git
 ```
 
 Next, go to https://www.vagrantup.com/downloads.html and download the latest Vagrant release. Once installed, use the following to setup the Vagrant machine:
