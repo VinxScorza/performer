@@ -11,9 +11,11 @@
 - Randomize the seed automatically when entering `Generate -> Random`, and whenever the `Seed` parameter is changed
 - Remove the old linear seed stepping behavior and simplify the Random generator workflow around `NEW SEED`, `INIT`, `CANCEL`, and `APPLY`
 - Map `F1` to `A/B` for faster comparison between `ORIGINAL` and `CURRENT SEED`
+- Prevent `Seed` from changing while editing other Random generator parameters such as `Smooth`, `Bias`, `Scale`, and `Variation`
 - Make `Generate` open on the current 16-step bank instead of always starting from the first page
 - Make `Generate` page LEDs follow the selected 16-step bank, with cyclic `prev` / `next` bank navigation
 - Change the default `Reset CV` project setting to `Off`, so Note tracks keep their last CV value on stop
+- Change `Dim Sequence` back to `Off` by default
 - Improve step visualization across sequence views: gate offset shifts the inner gate block, length changes its width, and retrigger is shown as a striped pattern
 - Update startup branding and version strings to `v0.3.2-vinx.1.4`
 
