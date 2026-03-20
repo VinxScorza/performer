@@ -61,6 +61,8 @@ a:hover {
   gap: 10px 20px;
   margin-bottom: 28px;
   font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .site-nav a {
@@ -92,14 +94,15 @@ a:hover {
   margin: 4px 0 0;
   font-size: 20px;
   font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: #d2d2d2;
 }
 
 #project_credit {
   margin: 8px 0 0;
   font-size: 13px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: #b8c4cc;
 }
 
