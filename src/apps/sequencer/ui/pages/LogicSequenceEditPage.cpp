@@ -185,6 +185,12 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (evalStep.logicStep() && !globalKeyState()[Key::Shift]) {
             canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
+            constexpr int gateInset = 3;
+            constexpr int gateShiftRange = 3;
+            int gateArea = stepWidth - 2 * gateInset;
+            int gateOffsetShift = (sequence.step(stepIndex).gateOffset() * gateShiftRange) / (LogicSequence::GateOffset::Max + 1);
+            int gateWidth = 3 + ((gateArea - 3) * (sequence.step(stepIndex).length() + 1)) / LogicSequence::Length::Range;
+            int gateX = x + gateInset + gateOffsetShift + (gateArea - gateWidth) / 2;
             if (stepIndex == currentStep) {
                 if (trackEngine.gateOutput(currentStep)) {
                     canvas.fillRect(x + 6, y + 6, stepWidth - 12, stepWidth - 12);
@@ -194,10 +200,30 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
                     canvas.vline(x + 5, y + 7, 2);
                     canvas.vline(x + 10, y + 7, 2);
                 } else {
-                    canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
+                    if (sequence.step(stepIndex).retrigger() > 0) {
+                        int stripeStart = gateX;
+                        if (gateWidth >= 8) {
+                            stripeStart += 1;
+                        }
+                        for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
+                            canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
+                        }
+                    } else {
+                        canvas.fillRect(gateX, y + gateInset, gateWidth, gateArea);
+                    }
                 }
             } else {
-                canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
+                if (sequence.step(stepIndex).retrigger() > 0) {
+                    int stripeStart = gateX;
+                    if (gateWidth >= 8) {
+                        stripeStart += 1;
+                    }
+                    for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
+                        canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
+                    }
+                } else {
+                    canvas.fillRect(gateX, y + gateInset, gateWidth, gateArea);
+                }
             }
         } else {
             if (track.detailedView()) {
@@ -534,7 +560,8 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
             _stepSelection.shiftLeft(sequence.firstStep(), sequence.lastStep() + 1);
         } else {
             track.setPatternFollowDisplay(false);
-             sequence.setSecion(std::max(0, sequence.section() - 1));
+             int sectionCount = sequence.lastStep() / StepCount + 1;
+             sequence.setSecion((sequence.section() + sectionCount - 1) % sectionCount);
         }
         event.consume();
     }
@@ -545,7 +572,8 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
             _stepSelection.shiftRight(sequence.firstStep(), sequence.lastStep() + 1);
         } else {
             track.setPatternFollowDisplay(false);
-            sequence.setSecion(std::min(3, sequence.section() + 1));
+            int sectionCount = sequence.lastStep() / StepCount + 1;
+            sequence.setSecion((sequence.section() + 1) % sectionCount);
         }
         event.consume();
     }

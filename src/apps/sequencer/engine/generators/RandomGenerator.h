@@ -14,14 +14,16 @@ public:
         Smooth,
         Bias,
         Scale,
+        Variation,
         Last
     };
 
     struct Params {
-        uint16_t seed = 0;
+        uint32_t seed = 0;
         uint8_t smooth = 0;
         int8_t bias = 0;
         uint8_t scale = 5;
+        uint8_t variation = 50;
     };
 
     RandomGenerator(SequenceBuilder &builder, Params &params, std::bitset<CONFIG_STEP_COUNT> &selected);
@@ -41,7 +43,7 @@ public:
     // seed
 
     int seed() const { return _params.seed; }
-    void setSeed(int seed) { _params.seed = clamp(seed, 0, 1000); }
+    void setSeed(uint32_t seed) { _params.seed = seed; }
 
     // smooth
 
@@ -58,9 +60,15 @@ public:
     int scale() const { return _params.scale; }
     void setScale(int scale) { _params.scale = clamp(scale, 0, 100); }
 
+    // variation
+
+    int variation() const { return _params.variation; }
+    void setVariation(int variation) { _params.variation = clamp(variation, 0, 100); }
+
     // pattern
 
     const GeneratorPattern &pattern() const { return _pattern; }
+    int displayValue(int index) const;
 
 private:
     Params &_params;

@@ -8,6 +8,15 @@
 
 class GeneratorSelectListModel : public ListModel {
 public:
+    static Generator::Mode rowToMode(int row) {
+        switch (row) {
+        case 0: return Generator::Mode::Random;
+        case 1: return Generator::Mode::Euclidean;
+        case 2: return Generator::Mode::InitLayer;
+        default: return Generator::Mode::Random;
+        }
+    }
+
     virtual int rows() const override {
         return int(Generator::Mode::Last);
     }
@@ -18,7 +27,7 @@ public:
 
     virtual void cell(int row, int column, StringBuilder &str) const override {
         if (column == 0) {
-            str(Generator::modeName(Generator::Mode(row)));
+            str(Generator::modeName(rowToMode(row)));
         }
     }
 

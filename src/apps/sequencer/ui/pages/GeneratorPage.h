@@ -2,6 +2,7 @@
 
 #include "BasePage.h"
 #include "ui/StepSelection.h"
+#include "ui/pages/ContextMenu.h"
 #include "engine/generators/SequenceBuilder.h"
 
 class Generator;
@@ -38,6 +39,7 @@ public:
     void init();
     void revert();
     void commit();
+    void togglePreview();
 
 private:
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;
@@ -48,6 +50,9 @@ private:
     std::pair<uint8_t, uint8_t> _valueRange;
     StepSelection<CONFIG_STEP_COUNT> *_stepSelection;
     int _section = 0;
+    bool _applied = false;
+    char _variationMenuLabel[16] = "VAR";
+    ContextMenuModel::Item _contextMenuItems[5];
 
     Container<NoteSequenceBuilder> _builderContainer;
 };

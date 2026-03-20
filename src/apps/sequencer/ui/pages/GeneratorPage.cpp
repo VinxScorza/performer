@@ -7,21 +7,15 @@
 #include "engine/generators/EuclideanGenerator.h"
 #include "engine/generators/RandomGenerator.h"
 
+#include <cstdio>
+
 enum class ContextAction {
+    RandomizeSeed,
     Init,
-    Reserved1,
-    Reserved2,
     Revert,
     Commit,
+    VariationInfo,
     Last
-};
-
-static const ContextMenuModel::Item contextMenuItems[] = {
-    { "INIT" },
-    { nullptr },
-    { nullptr },
-    { "REVERT" },
-    { "COMMIT" },
 };
 
 GeneratorPage::GeneratorPage(PageManager &manager, PageContext &context) :
@@ -31,6 +25,7 @@ GeneratorPage::GeneratorPage(PageManager &manager, PageContext &context) :
 void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> *stepSelection) {
     _generator = generator;
     _stepSelection = stepSelection;
+    _applied = false;
 
     BasePage::show();
 }
@@ -38,15 +33,59 @@ void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> 
 void GeneratorPage::enter() {
     _valueRange.first = 0;
     _valueRange.second = 7;
+
+    switch (_project.selectedTrack().trackMode()) {
+    case Track::TrackMode::Note:
+        _section = _project.selectedNoteSequence().section();
+        break;
+    case Track::TrackMode::Curve:
+        _section = _project.selectedCurveSequence().section();
+        break;
+    case Track::TrackMode::Logic:
+        _section = _project.selectedLogicSequence().section();
+        break;
+    case Track::TrackMode::Stochastic:
+    case Track::TrackMode::Arp:
+        if (_stepSelection && !_stepSelection->none()) {
+            _section = _stepSelection->first() / StepCount;
+        } else {
+            _section = 0;
+        }
+        break;
+    default:
+        _section = 0;
+        break;
+    }
+
+    if (_generator->mode() == Generator::Mode::Random) {
+        auto *random = static_cast<RandomGenerator *>(_generator);
+        random->randomizeSeed();
+        random->update();
+    }
+    _generator->showPreview();
 }
 
 void GeneratorPage::exit() {
+    if (!_applied) {
+        _generator->revert();
+    }
 }
 
 void GeneratorPage::draw(Canvas &canvas) {
     const char *functionNames[5];
     for (int i = 0; i < 5; ++i) {
-        functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
+        functionNames[i] = nullptr;
+    }
+
+    if (_generator->mode() == Generator::Mode::Random) {
+        functionNames[0] = "A/B";
+        for (int i = 1; i < 5; ++i) {
+            functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
+        }
+    } else {
+        for (int i = 0; i < 5; ++i) {
+            functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
+        }
     }
 
     WindowPainter::clear(canvas);
@@ -54,20 +93,29 @@ void GeneratorPage::draw(Canvas &canvas) {
     WindowPainter::drawActiveFunction(canvas, _generator->name());
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
-    canvas.setFont(Font::Small);
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(Color::Bright);
 
     auto drawValue = [&] (int index, const char *str) {
+        Font prevFont = canvas.font();
+        Font font = (_generator->mode() == Generator::Mode::Random && index == 0) ? Font::Tiny : Font::Small;
+        canvas.setFont(font);
+
         int w = Width / 5;
         int x = (Width * index) / 5;
         int y = Height - 16;
         canvas.drawText(x + (w - canvas.textWidth(str)) / 2, y, str);
+
+        canvas.setFont(prevFont);
     };
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
         FixedStringBuilder<8> str;
-        _generator->printParam(i, str);
+        if (_generator->mode() == Generator::Mode::Random && i == 0 && !_generator->showingPreview()) {
+            str("ORIGINAL");
+        } else {
+            _generator->printParam(i, str);
+        }
         drawValue(i, str);
     }
 
@@ -143,7 +191,7 @@ void GeneratorPage::updateLeds(Leds &leds) {
             return;
     }
 
-    
+    LedPainter::drawSelectedSequenceSection(leds, _section);
 }
 
 void GeneratorPage::keyDown(KeyEvent &event) {
@@ -174,8 +222,15 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (_generator->mode() == Generator::Mode::Random && key.isFunction() && key.function() == 0) {
+        togglePreview();
+        event.consume();
+        return;
+    }
+
     if (key.isStep() && key.shiftModifier()) {
         _generator->update();
+        _generator->showPreview();
         event.consume();
         return;
     }
@@ -184,6 +239,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         if (_stepSelection->none()) {
             _stepSelection->selectAll();
             _generator->update();
+            _generator->showPreview();
         } else {
             _stepSelection->clear();
             _generator->update();
@@ -195,11 +251,11 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isLeft()) {
-        _section = std::max(0, _section - 1);
+        _section = (_section + 3) % 4;
         event.consume();
     }
     if (key.isRight()) {
-        _section = std::min(3, _section + 1);
+        _section = (_section + 1) % 4;
         event.consume();
     }
     
@@ -209,6 +265,22 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
 void GeneratorPage::encoder(EncoderEvent &event) {
     bool changed = false;
+    bool functionKeyHeld = false;
+
+    for (int i = 0; i < _generator->paramCount(); ++i) {
+        if (pageKeyState()[Key::F0 + i]) {
+            functionKeyHeld = true;
+            break;
+        }
+    }
+
+    if (_generator->mode() == Generator::Mode::Random && !functionKeyHeld) {
+        if (event.value() != 0) {
+            auto *random = static_cast<RandomGenerator *>(_generator);
+            random->randomizeSeed();
+            changed = true;
+        }
+    }
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
         if (pageKeyState()[Key::F0 + i]) {
@@ -219,6 +291,7 @@ void GeneratorPage::encoder(EncoderEvent &event) {
 
     if (changed) {
         _generator->update();
+        _generator->showPreview();
     }
 }
 
@@ -243,8 +316,7 @@ void GeneratorPage::drawEuclideanGenerator(Canvas &canvas, const EuclideanGenera
 }
 
 void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &generator) const {
-    const auto &pattern = generator.pattern();
-    int steps = pattern.size();
+    int steps = generator.pattern().size();
     if (_project.selectedTrack().trackMode() == Track::TrackMode::Stochastic || _project.selectedTrack().trackMode() == Track::TrackMode::Arp) {
         steps = 12;
     } 
@@ -256,7 +328,7 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
 
     for (int i = 0; i < steps; ++i) {
         int h = stepHeight - 2;
-        int h2 = (h * pattern[i]) / 255;
+        int h2 = (h * generator.displayValue(i)) / 255;
         if ( i / 16 == _section ) {
             canvas.setColor(Color::Medium);
         } else {
@@ -271,8 +343,21 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
 }
 
 void GeneratorPage::contextShow(bool doubleClick) {
+    _contextMenuItems[0] = { "NEW SEED" };
+    _contextMenuItems[1] = { "INIT" };
+    _contextMenuItems[2] = { "CANCEL" };
+    _contextMenuItems[3] = { "APPLY" };
+
+    if (_generator->mode() == Generator::Mode::Random) {
+        const auto *random = static_cast<const RandomGenerator *>(_generator);
+        std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR %d%%", random->variation());
+    } else {
+        std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR");
+    }
+    _contextMenuItems[4] = { _variationMenuLabel };
+
     showContextMenu(ContextMenu(
-        contextMenuItems,
+        _contextMenuItems,
         int(ContextAction::Last),
         [&] (int index) { contextAction(index); },
         [&] (int index) { return contextActionEnabled(index); },
@@ -282,11 +367,16 @@ void GeneratorPage::contextShow(bool doubleClick) {
 
 void GeneratorPage::contextAction(int index) {
     switch (ContextAction(index)) {
+    case ContextAction::RandomizeSeed:
+        if (_generator->mode() == Generator::Mode::Random) {
+            auto *random = static_cast<RandomGenerator *>(_generator);
+            random->randomizeSeed();
+            random->update();
+            _generator->showPreview();
+        }
+        break;
     case ContextAction::Init:
         init();
-        break;
-    case ContextAction::Reserved1:
-    case ContextAction::Reserved2:
         break;
     case ContextAction::Revert:
         revert();
@@ -294,27 +384,42 @@ void GeneratorPage::contextAction(int index) {
     case ContextAction::Commit:
         commit();
         break;
+    case ContextAction::VariationInfo:
     case ContextAction::Last:
         break;
     }
 }
 
 bool GeneratorPage::contextActionEnabled(int index) const {
-    return true;
+    return ContextAction(index) != ContextAction::VariationInfo;
 }
 
 void GeneratorPage::init() {
     _stepSelection->clear();
     _generator->init();
+    _generator->showPreview();
 }
 
 void GeneratorPage::revert() {
     _stepSelection->clear();
     _generator->revert();
+    _applied = false;
     close();
 }
 
 void GeneratorPage::commit() {
     _stepSelection->clear();
+    _generator->apply();
+    _applied = true;
     close();
+}
+
+void GeneratorPage::togglePreview() {
+    if (_generator->showingPreview()) {
+        _generator->showOriginal();
+        showMessage("ORIGINAL");
+    } else {
+        _generator->showPreview();
+        showMessage("CURRENT SEED");
+    }
 }

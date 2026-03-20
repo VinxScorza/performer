@@ -36,7 +36,7 @@ void StartupPage::draw(Canvas &canvas) {
     canvas.setFont(Font::Small);
     canvas.drawTextCentered(0, 0, Width, 32, "PERFORMER");
     canvas.setFont(Font::Tiny);
-    canvas.drawTextCentered(0, 20, Width, 8, "Vinx Custom Firmware");
+    canvas.drawTextCentered(0, 20, Width, 8, "Vinx FW v0.3.2-vinx.1.4");
 
     canvas.setFont(Font::Tiny);
     canvas.drawTextCentered(0, 32, Width, 32, "LOADING ...");

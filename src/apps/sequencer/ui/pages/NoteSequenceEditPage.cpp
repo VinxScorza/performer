@@ -155,7 +155,23 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
             canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
-            canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
+            constexpr int gateInset = 3;
+            constexpr int gateShiftRange = 3;
+            int gateArea = stepWidth - 2 * gateInset;
+            int gateOffsetShift = (step.gateOffset() * gateShiftRange) / (NoteSequence::GateOffset::Max + 1);
+            int gateWidth = 3 + ((gateArea - 3) * (step.length() + 1)) / NoteSequence::Length::Range;
+            int gateX = x + gateInset + gateOffsetShift + (gateArea - gateWidth) / 2;
+            if (step.retrigger() > 0) {
+                int stripeStart = gateX;
+                if (gateWidth >= 8) {
+                    stripeStart += 1;
+                }
+                for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
+                    canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
+                }
+            } else {
+                canvas.fillRect(gateX, y + gateInset, gateWidth, gateArea);
+            }
         }
 
         // record step
@@ -503,7 +519,8 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
             }
         } else {
              track.setPatternFollowDisplay(false);
-             sequence.setSecion(std::max(0, sequence.section() - 1));
+             int sectionCount = sequence.lastStep() / StepCount + 1;
+             sequence.setSecion((sequence.section() + sectionCount - 1) % sectionCount);
         }
         event.consume();
     }
@@ -523,7 +540,8 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
             }
         } else {
             track.setPatternFollowDisplay(false);
-            sequence.setSecion(std::min(3, sequence.section() + 1));
+            int sectionCount = sequence.lastStep() / StepCount + 1;
+            sequence.setSecion((sequence.section() + 1) % sectionCount);
         }
         event.consume();
     }

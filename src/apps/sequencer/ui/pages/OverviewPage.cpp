@@ -781,19 +781,22 @@ void OverviewPage::keyPress(KeyPressEvent &event) {
         switch (track.trackMode()) {
             case Track::TrackMode::Note: {
                 auto &sequence = _project.selectedNoteSequence();
-                sequence.setSecion(std::max(0, sequence.section() - 1));
+                int sectionCount = sequence.lastStep() / 16 + 1;
+                sequence.setSecion((sequence.section() + sectionCount - 1) % sectionCount);
                  track.noteTrack().setPatternFollowDisplay(false);
                 break;
             }
              case Track::TrackMode::Curve: {
                 auto &sequence = _project.selectedCurveSequence();
-                sequence.setSecion(std::max(0, sequence.section() - 1));
+                int sectionCount = sequence.lastStep() / 16 + 1;
+                sequence.setSecion((sequence.section() + sectionCount - 1) % sectionCount);
                  track.curveTrack().setPatternFollowDisplay(false);
                 break;
             }
             case Track::TrackMode::Logic: {
                 auto &sequence = _project.selectedLogicSequence();
-                sequence.setSecion(std::max(0, sequence.section() - 1));
+                int sectionCount = sequence.lastStep() / 16 + 1;
+                sequence.setSecion((sequence.section() + sectionCount - 1) % sectionCount);
                 track.logicTrack().setPatternFollowDisplay(false);
                 break;
             }
@@ -807,19 +810,22 @@ void OverviewPage::keyPress(KeyPressEvent &event) {
         switch (track.trackMode()) {
             case Track::TrackMode::Note: {
                 auto &sequence = _project.selectedNoteSequence();
-                sequence.setSecion(std::min(3, sequence.section() + 1));
+                int sectionCount = sequence.lastStep() / 16 + 1;
+                sequence.setSecion((sequence.section() + 1) % sectionCount);
                 track.noteTrack().setPatternFollowDisplay(false);
                 break;
             }
             case Track::TrackMode::Curve: {
                 auto &sequence = _project.selectedCurveSequence();
-                sequence.setSecion(std::min(3, sequence.section() + 1));
+                int sectionCount = sequence.lastStep() / 16 + 1;
+                sequence.setSecion((sequence.section() + 1) % sectionCount);
                 track.curveTrack().setPatternFollowDisplay(false);
                 break;
             }
             case Track::TrackMode::Logic: {
                 auto &sequence = _project.selectedLogicSequence();
-                sequence.setSecion(std::max(0, sequence.section() + 1));
+                int sectionCount = sequence.lastStep() / 16 + 1;
+                sequence.setSecion((sequence.section() + 1) % sectionCount);
                 track.logicTrack().setPatternFollowDisplay(false);
                 break;
             }

@@ -42,7 +42,7 @@ void Project::clear() {
     setMidiProgramOffset(0);
     setCvGateInput(Types::CvGateInput::Off);
     setCurveCvInput(Types::CurveCvInput::Off);
-    setResetCvOnStop(true);
+    setResetCvOnStop(false);
     setUseMultiCvRec(true);
 
     _clockSetup.clear();
