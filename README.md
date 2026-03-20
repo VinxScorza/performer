@@ -11,6 +11,7 @@ IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve h
 
 The Vinx Scorza fork starts at `v0.3.2-vinx.1`.
 Everything before that version in this repository history and changelog is inherited from the Mebitek fork and preserved as upstream reference.
+This fork is maintained for personal use. Backward compatibility with older projects, settings, or workflows is not guaranteed, and I do not assume responsibility for regressions or incompatibilities introduced by Vinx-specific changes.
 This fork would not exist without the fundamental help of AI agents during development and debugging.
 I’m very grateful to [Mebitek](https://mebitek.github.io/performer/) for the work done on his fork, and of course to [Simon](https://westlicht.github.io/performer/) for creating and developing the Westlicht Performer.
 If you would like to support their incredible work financially, you can donate here:

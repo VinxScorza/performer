@@ -6,6 +6,8 @@
 
 <sub>All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference.</sub>
 
+<sub>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes.</sub>
+
 # v0.3.2-vinx.1.4 (19 March 2026)
 - Expand `Generate -> Random` to full 32-bit seed randomization (`2^32` values), shown as 8-digit hexadecimal seeds
 - Randomize the seed automatically when entering `Generate -> Random`, and whenever the `Seed` parameter is changed
