@@ -7,6 +7,8 @@
 This is a <u>personal fork</u> of the [Mebitek fork](https://github.com/mebitek/performer), itself based on the original [Westlicht Performer firmware](https://github.com/westlicht/performer).
 Current fork version: `0.3.2-vinx.1.4`.
 
+IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
+
 The Vinx Scorza fork starts at `v0.3.2-vinx.1`.
 Everything before that version in this repository history and changelog is inherited from the Mebitek fork and preserved as upstream reference.
 This fork would not exist without the fundamental help of AI agents during development and debugging.
