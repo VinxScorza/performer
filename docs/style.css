@@ -41,12 +41,8 @@ a:hover {
 }
 
 .inner {
-  width: min(860px, calc(100vw - 32px));
-  margin: 0 auto;
-}
-
-.manual-page .inner {
   width: min(1260px, calc(100vw - 32px));
+  margin: 0 auto;
 }
 
 #header_wrap {
