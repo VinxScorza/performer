@@ -277,6 +277,16 @@ strong {
   color: #fff2b0;
 }
 
+.simulator-frame {
+  display: block;
+  width: 100%;
+  min-height: 820px;
+  margin-top: 18px;
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  background: #101112;
+}
+
 .svg-embed {
   display: block;
   width: 100%;

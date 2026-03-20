@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10...3.30)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -19,7 +19,9 @@ project(sequencer)
 enable_testing()
 
 # Fix per pybind11
-set(PYBIND11_FINDPYTHON ON)
-find_package(Python REQUIRED COMPONENTS Interpreter Development)
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Emscripten")
+    set(PYBIND11_FINDPYTHON ON)
+    find_package(Python REQUIRED COMPONENTS Interpreter Development)
+endif()
 
 add_subdirectory(src)

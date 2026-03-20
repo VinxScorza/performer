@@ -61,13 +61,22 @@
         <div class="simulator-shell">
           <h4>Phase 1 Status</h4>
           <p>
-            The local Vinx browser build is not embedded yet in this published page because the web artifacts have
-            not been generated in this checkout.
+            The local Vinx browser build is now embedded below as a first recovery milestone for this fork.
           </p>
           <p>
-            Once the browser build is produced, it will be published under <code>docs/testdrive/sim/</code> and
-            embedded here as the primary local test drive for this fork.
+            This Phase 1 build focuses on startup stability, rendering and interaction. Browser audio remains
+            intentionally disabled for now while we validate the rest of the simulator stack.
           </p>
+          <p>
+            If the embed does not start correctly in your browser, open the standalone build:
+            <a href="./sim/sequencer.html">local simulator shell</a>.
+          </p>
+          <iframe
+            class="simulator-frame"
+            src="./sim/sequencer.html"
+            title="PER|FORMER browser simulator"
+            loading="lazy">
+          </iframe>
         </div>
       </section>
 

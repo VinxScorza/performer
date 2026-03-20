@@ -10,3 +10,5 @@ src/platform/sim/sim/TargetTrace.cpp
 src/platform/sim/sim/frontend/MidiConfig.h
 *.iml
 submodules/
+.emcache/
+/Users
