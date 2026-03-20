@@ -81,7 +81,7 @@ a:hover {
 
 #project_title {
   margin: 0;
-  font-size: clamp(46px, 9vw, 78px);
+  font-size: clamp(38px, 7vw, 62px);
   line-height: 1;
   letter-spacing: 0.04em;
   color: #ffffff;
@@ -90,9 +90,17 @@ a:hover {
 
 #project_tagline {
   margin: 4px 0 0;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 400;
   color: #d2d2d2;
+}
+
+#project_credit {
+  margin: 8px 0 0;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b8c4cc;
 }
 
 #main_content_wrap {
@@ -304,6 +312,11 @@ strong {
 
   #project_tagline {
     font-size: 18px;
+  }
+
+  #project_credit {
+    font-size: 12px;
+    letter-spacing: 0.08em;
   }
 
   .manual-layout {
