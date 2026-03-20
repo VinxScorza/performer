@@ -29,6 +29,20 @@ namespace sim {
 
 #ifdef __EMSCRIPTEN__
 static Frontend *g_instance;
+
+extern "C" {
+EMSCRIPTEN_KEEPALIVE int sim_enable_audio() {
+    return g_instance && g_instance->setAudioEnabled(true) ? 1 : 0;
+}
+
+EMSCRIPTEN_KEEPALIVE int sim_disable_audio() {
+    return g_instance && g_instance->setAudioEnabled(false) ? 1 : 0;
+}
+
+EMSCRIPTEN_KEEPALIVE int sim_audio_enabled() {
+    return g_instance && g_instance->audioEnabled() ? 1 : 0;
+}
+}
 #endif
 
 template<typename T>
@@ -107,6 +121,26 @@ void Frontend::run() {
 
 void Frontend::close() {
     _window->close();
+}
+
+bool Frontend::setAudioEnabled(bool enabled) {
+    if (enabled == _audio.enabled()) {
+        return true;
+    }
+
+    _instruments.reset();
+
+    if (enabled) {
+        if (!_audio.enable()) {
+            setupInstruments();
+            return false;
+        }
+    } else {
+        _audio.disable();
+    }
+
+    setupInstruments();
+    return true;
 }
 
 bool Frontend::terminate() const {

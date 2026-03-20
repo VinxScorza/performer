@@ -34,6 +34,8 @@ public:
     void run();
 
     void close();
+    bool setAudioEnabled(bool enabled);
+    bool audioEnabled() const { return _audio.enabled(); }
 
 private:
     bool terminate() const;

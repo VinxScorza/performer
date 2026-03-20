@@ -56,17 +56,18 @@
           <p>
             Upstream browser builds currently fail at runtime for different reasons, so this page is being prepared
             for a local Vinx build that favors stability first: memory growth enabled, extra runtime checks during
-            bring-up, and browser audio temporarily disabled during Phase 1.
+            bring-up, and browser audio reintroduced cautiously behind explicit user controls.
           </p>
         </div>
         <div class="simulator-shell">
-          <h4>Phase 1 Status</h4>
+          <h4>Phase 2 Status</h4>
           <p>
-            The local Vinx browser build is now embedded below as a first recovery milestone for this fork.
+            The local Vinx browser build is now embedded below with a dedicated simulator toolbar.
           </p>
           <p>
-            This Phase 1 build focuses on startup stability, rendering and interaction. Browser audio remains
-            intentionally disabled for now while we validate the rest of the simulator stack.
+            Audio is no longer auto-started at boot. Use <strong>Enable audio</strong> after a direct click/tap to
+            initialize browser sound safely, and use <strong>Reset simulator</strong> or <strong>Load demo state</strong>
+            to return to a known startup state.
           </p>
           <p>
             If the embed does not start correctly in your browser, open the standalone build:
@@ -88,9 +89,8 @@
           gates and CV can be heard immediately.
         </p>
         <p>
-          For Phase 1 browser recovery, audio output is intentionally disabled in the Emscripten build so we can
-          stabilize startup, rendering and interaction first. The mapping below remains the intended simulator
-          instrument layout for later phases.
+          In the current browser build, audio is opt-in and starts only after a direct user gesture through the
+          simulator toolbar. This keeps startup safer while still allowing real browser sound output during Phase 2.
         </p>
         <ul>
           <li>Track 1: Kick</li>
@@ -125,11 +125,12 @@
       <section>
         <h3>Notes</h3>
         <p>
-          Phase 1 is specifically about recovering a working local browser build before chasing feature parity.
+          The current browser path is being hardened around user-initiated audio, clearer runtime status, and
+          reliable re-entry into a known demo state.
         </p>
         <p>
-          The first goal is a stable visual simulator for this fork. Audio can return later once the browser build is
-          known to boot reliably.
+          Browser behavior can still vary between engines. If keyboard control feels unresponsive after clicking
+          elsewhere, use the simulator toolbar to focus the canvas again.
         </p>
       </section>
     </main>

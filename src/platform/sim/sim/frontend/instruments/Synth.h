@@ -34,8 +34,11 @@ public:
     virtual void setCv(float cv) override;
 
 private:
+    void ensurePlayback();
+
     Audio &_audio;
-    int _handle;
+    int _handle = 0;
+    bool _playing = false;
     bool _gate = false;
     float _cv = 0.f;
 

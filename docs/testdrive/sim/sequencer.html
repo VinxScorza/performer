@@ -75,6 +75,79 @@
       color: var(--muted);
     }
 
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px 0;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .toolbar-status {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .toolbar button {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      padding: 9px 14px;
+      font: inherit;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .toolbar button:hover:not(:disabled) {
+      background: rgba(93, 192, 255, 0.12);
+      border-color: rgba(93, 192, 255, 0.5);
+    }
+
+    .toolbar button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .pill strong {
+      color: var(--text);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill[data-state="ready"],
+    .pill[data-state="on"] {
+      border-color: rgba(93, 192, 255, 0.35);
+      color: #d7f4ff;
+    }
+
+    .pill[data-state="error"] {
+      border-color: rgba(255, 118, 118, 0.4);
+      color: #ffd2d2;
+    }
+
     .stage {
       position: relative;
       padding: 18px;
@@ -184,6 +257,15 @@
         align-items: flex-start;
       }
 
+      .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .toolbar-status {
+        margin-left: 0;
+      }
+
       .stage {
         padding: 10px;
       }
@@ -195,7 +277,19 @@
     <div class="panel">
       <div class="panel-head">
         <h1>PER|FORMER Browser Test Drive</h1>
-        <p>Phase 1 preview: browser audio is intentionally disabled for stability.</p>
+        <p>Phase 2 preview: audio now starts only after an explicit user gesture.</p>
+      </div>
+      <div class="toolbar">
+        <div class="toolbar-actions">
+          <button id="audio-toggle" type="button" disabled>Enable audio</button>
+          <button id="focus-toggle" type="button" disabled>Focus keyboard</button>
+          <button id="reset-sim" type="button">Reset simulator</button>
+          <button id="load-demo" type="button">Load demo state</button>
+        </div>
+        <div class="toolbar-status">
+          <div class="pill" id="sim-pill" data-state="loading"><strong>Simulator</strong> <span id="sim-state">Loading</span></div>
+          <div class="pill" id="audio-pill" data-state="off"><strong>Audio</strong> <span id="audio-state">Off</span></div>
+        </div>
       </div>
       <div class="stage">
         <canvas class="emscripten" id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
@@ -218,6 +312,32 @@
     var spinnerElement = document.getElementById("spinner");
     var outputElement = document.getElementById("output");
     var canvasElement = document.getElementById("canvas");
+    var audioToggle = document.getElementById("audio-toggle");
+    var focusToggle = document.getElementById("focus-toggle");
+    var resetButton = document.getElementById("reset-sim");
+    var loadDemoButton = document.getElementById("load-demo");
+    var simPill = document.getElementById("sim-pill");
+    var simStateElement = document.getElementById("sim-state");
+    var audioPill = document.getElementById("audio-pill");
+    var audioStateElement = document.getElementById("audio-state");
+    var runtimeReady = false;
+    var audioEnabled = false;
+
+    function setSimulatorState(state, label) {
+      simPill.dataset.state = state;
+      simStateElement.textContent = label;
+    }
+
+    function setAudioState(state, label) {
+      audioPill.dataset.state = state;
+      audioStateElement.textContent = label;
+    }
+
+    function refreshControls() {
+      audioToggle.disabled = !runtimeReady;
+      focusToggle.disabled = !runtimeReady;
+      audioToggle.textContent = audioEnabled ? "Disable audio" : "Enable audio";
+    }
 
     function setStatus(text) {
       if (!text) {
@@ -241,10 +361,15 @@
       shell.classList.add("is-error");
       spinnerElement.style.display = "none";
       progressElement.style.display = "none";
+      setSimulatorState("error", "Error");
       setStatus("The simulator hit an error.");
       if (text) {
         outputElement.textContent += text + "\n";
       }
+    }
+
+    function focusCanvas() {
+      canvasElement.focus();
     }
 
     var Module = {
@@ -262,13 +387,18 @@
           text = Array.prototype.slice.call(arguments).join(" ");
         }
         outputElement.textContent += text + "\n";
-        shell.classList.add("is-error");
+        showError(text);
       },
       setStatus: function(text) {
         if (!text) {
+          runtimeReady = true;
+          audioEnabled = Module._sim_audio_enabled ? !!Module._sim_audio_enabled() : false;
           spinnerElement.style.display = "none";
           progressElement.style.display = "none";
-          setStatus("Simulator ready.");
+          setSimulatorState("ready", "Ready");
+          setAudioState(audioEnabled ? "on" : "off", audioEnabled ? "Enabled" : "Off");
+          refreshControls();
+          setStatus("Simulator ready. Click inside to focus keyboard input.");
           return;
         }
 
@@ -295,6 +425,62 @@
       totalDependencies: 0
     };
 
+    audioToggle.addEventListener("click", function() {
+      if (!runtimeReady) {
+        return;
+      }
+
+      audioToggle.disabled = true;
+
+      try {
+        if (audioEnabled) {
+          if (Module._sim_disable_audio) {
+            Module._sim_disable_audio();
+          }
+          audioEnabled = false;
+          setAudioState("off", "Off");
+          setStatus("Browser audio disabled.");
+        } else {
+          var enabled = Module._sim_enable_audio ? Module._sim_enable_audio() : 0;
+          if (enabled) {
+            audioEnabled = true;
+            setAudioState("on", "Enabled");
+            setStatus("Audio enabled. Click the simulator to focus keyboard input.");
+          } else {
+            setAudioState("error", "Failed");
+            setStatus("Audio could not start. Try again after interacting with the page.");
+          }
+        }
+      } catch (error) {
+        setAudioState("error", "Failed");
+        showError(error && error.message ? error.message : String(error));
+      } finally {
+        refreshControls();
+        focusCanvas();
+      }
+    });
+
+    focusToggle.addEventListener("click", function() {
+      focusCanvas();
+      setStatus("Keyboard focus moved to the simulator.");
+    });
+
+    resetButton.addEventListener("click", function() {
+      setStatus("Resetting simulator...");
+      window.location.reload();
+    });
+
+    loadDemoButton.addEventListener("click", function() {
+      setStatus("Reloading built-in demo state...");
+      window.location.reload();
+    });
+
+    canvasElement.addEventListener("mousedown", function() {
+      if (runtimeReady) {
+        focusCanvas();
+      }
+    });
+
     canvasElement.addEventListener("webglcontextlost", function(event) {
       event.preventDefault();
       showError("WebGL context lost. Please reload the page.");
@@ -309,6 +495,15 @@
       showError(reason && reason.message ? reason.message : String(reason));
     });
 
+    window.addEventListener("resize", function() {
+      if (runtimeReady) {
+        setStatus("Window resized. Click the simulator again if keyboard focus feels lost.");
+      }
+    });
+
+    setSimulatorState("loading", "Loading");
+    setAudioState("off", "Off");
+    refreshControls();
     Module.setStatus("Downloading simulator...");
   </script>
   <script async src="sequencer.js"></script>

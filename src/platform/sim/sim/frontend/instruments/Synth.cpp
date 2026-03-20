@@ -301,11 +301,13 @@ Synth::Synth(Audio &audio) :
     _audio(audio)
 {
     setSingleInstance(true);
-    _handle = _audio.engine().play(*this);
+    ensurePlayback();
 }
 
 Synth::~Synth() {
-    _audio.engine().stop(_handle);
+    if (_audio.enabled() && _playing) {
+        _audio.engine().stop(_handle);
+    }
 }
 
 SoLoud::AudioSourceInstance *Synth::createInstance() {
@@ -313,11 +315,20 @@ SoLoud::AudioSourceInstance *Synth::createInstance() {
 }
 
 void Synth::setGate(bool gate) {
+    ensurePlayback();
     _gate = gate;
 }
 
 void Synth::setCv(float cv) {
+    ensurePlayback();
     _cv = cv;
+}
+
+void Synth::ensurePlayback() {
+    if (_audio.enabled() && !_playing) {
+        _handle = _audio.engine().play(*this);
+        _playing = true;
+    }
 }
 
 } // namespace sim
