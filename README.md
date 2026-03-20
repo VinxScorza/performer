@@ -43,11 +43,15 @@ If you're interested in a more hands-on, performance-oriented evolution, you're 
 You can find the current Vinx Scorza fork documentation here:
 https://vinxscorza.github.io/performer/manual/
 
+The website above should be considered the main user-facing documentation entry point for this fork.
+
 You can also find the changelog for this fork here:
 https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md
 
 If you need historical upstream reference material, the Mebitek manual is still available here:
 https://mebitek.github.io/performer/manual/
+
+Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
 
 Clone this repository:
 
