@@ -5,7 +5,7 @@
 ## [CHANGELOG](CHANGELOG.md)
 
 This is a <u>personal fork</u> of the [Mebitek fork](https://github.com/mebitek/performer), itself based on the original [Westlicht Performer firmware](https://github.com/westlicht/performer).
-Current fork version: `0.3.2-vinx.1.4.1`.
+Current fork version: `0.3.2-vinx.1.4.2`.
 
 IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
 
@@ -22,9 +22,15 @@ If you would like to support their incredible work financially, you can donate h
 
 Personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
 
-Core firmware documentation is inherited from the original projects:
-- [Westlicht Performer firmware](https://github.com/westlicht/performer)
+Primary documentation for this fork:
+- [Vinx Scorza fork site](https://vinxscorza.github.io/performer/)
+- [User Manual](https://vinxscorza.github.io/performer/manual/)
+- [Test Drive](https://vinxscorza.github.io/performer/testdrive/)
+- [Changelog](https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md)
+
+Upstream references:
 - [Mebitek Performer fork](https://github.com/mebitek/performer)
+- [Westlicht Performer firmware](https://github.com/westlicht/performer)
 
 ## Philosophy
 
@@ -40,11 +46,8 @@ If you're looking for a stable, fully documented firmware, you may prefer the up
 
 If you're interested in a more hands-on, performance-oriented evolution, you're in the right place.
 
-You can find the full updated Mebitek documentation here:
-https://mebitek.github.io/performer/manual/
-
-You can also find the changelog for the Mebitek fork here:
-https://github.com/mebitek/performer/blob/master/CHANGELOG.md
+The current `v0.3.2-vinx.1.4.2` branch includes a playback workflow fix:
+- Saving a project no longer stops playback. Project data is snapshotted under a short engine lock before asynchronous SD write.
 
 Clone this repository:
 

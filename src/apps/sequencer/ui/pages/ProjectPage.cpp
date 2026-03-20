@@ -196,20 +196,26 @@ void ProjectPage::initRoute() {
 }
 
 void ProjectPage::saveProjectToSlot(int slot) {
-    _engine.suspend();
+    // Keep playback running by snapshotting the project under a short engine lock,
+    // then write that snapshot asynchronously to the SD card.
+    _engine.lock();
+    auto projectSnapshot = _project;
+    _engine.unlock();
+
     _manager.pages().busy.show("SAVING PROJECT ...");
 
-    FileManager::task([this, slot] () {
-        return FileManager::writeProject(_project, slot);
-    }, [this] (fs::Error result) {
+    FileManager::task([slot, projectSnapshot] () mutable {
+        return FileManager::writeProject(projectSnapshot, slot);
+    }, [this, slot] (fs::Error result) {
         if (result == fs::OK) {
+            _project.setSlot(slot);
+            _project.setAutoLoaded(false);
             showMessage("PROJECT SAVED");
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
         }
         // TODO lock ui mutex
         _manager.pages().busy.close();
-        _engine.resume();
     });
 }
 
