@@ -312,8 +312,7 @@ void GeneratorPage::drawEuclideanGenerator(Canvas &canvas, const EuclideanGenera
 }
 
 void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &generator) const {
-    const auto &pattern = generator.pattern();
-    int steps = pattern.size();
+    int steps = generator.pattern().size();
     if (_project.selectedTrack().trackMode() == Track::TrackMode::Stochastic || _project.selectedTrack().trackMode() == Track::TrackMode::Arp) {
         steps = 12;
     } 
@@ -325,7 +324,7 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
 
     for (int i = 0; i < steps; ++i) {
         int h = stepHeight - 2;
-        int h2 = (h * pattern[i]) / 255;
+        int h2 = (h * generator.displayValue(i)) / 255;
         if ( i / 16 == _section ) {
             canvas.setColor(Color::Medium);
         } else {

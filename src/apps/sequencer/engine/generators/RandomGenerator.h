@@ -68,6 +68,7 @@ public:
     // pattern
 
     const GeneratorPattern &pattern() const { return _pattern; }
+    int displayValue(int index) const;
 
 private:
     Params &_params;

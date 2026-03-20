@@ -113,3 +113,8 @@ void RandomGenerator::update() {
         }
     }
 }
+
+int RandomGenerator::displayValue(int index) const {
+    float value = showingPreview() ? _builder.value(index) : _builder.originalValue(index);
+    return clamp(int(std::round(value * 255.f)), 0, 255);
+}
