@@ -143,7 +143,7 @@ public:
             "Dim Sequence",
             {"off", "on"},
             {false, true},
-            true
+            false
     ) {}
 };
 

@@ -185,6 +185,9 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (evalStep.logicStep() && !globalKeyState()[Key::Shift]) {
             canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
+            int gateOffsetShift = (sequence.step(stepIndex).gateOffset() * 4) / (LogicSequence::GateOffset::Max + 1);
+            int gateWidth = 3 + (((stepWidth - 8) - 3) * (sequence.step(stepIndex).length() + 1)) / LogicSequence::Length::Range;
+            int gateX = x + 4 + gateOffsetShift + ((stepWidth - 8) - gateWidth) / 2;
             if (stepIndex == currentStep) {
                 if (trackEngine.gateOutput(currentStep)) {
                     canvas.fillRect(x + 6, y + 6, stepWidth - 12, stepWidth - 12);
@@ -194,10 +197,22 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
                     canvas.vline(x + 5, y + 7, 2);
                     canvas.vline(x + 10, y + 7, 2);
                 } else {
-                    canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
+                    if (sequence.step(stepIndex).retrigger() > 0) {
+                        for (int stripeX = gateX; stripeX < gateX + gateWidth; stripeX += 2) {
+                            canvas.fillRect(stripeX, y + 4, 1, stepWidth - 8);
+                        }
+                    } else {
+                        canvas.fillRect(gateX, y + 4, gateWidth, stepWidth - 8);
+                    }
                 }
             } else {
-                canvas.fillRect(x + 4, y + 4, stepWidth - 8, stepWidth - 8);
+                if (sequence.step(stepIndex).retrigger() > 0) {
+                    for (int stripeX = gateX; stripeX < gateX + gateWidth; stripeX += 2) {
+                        canvas.fillRect(stripeX, y + 4, 1, stepWidth - 8);
+                    }
+                } else {
+                    canvas.fillRect(gateX, y + 4, gateWidth, stepWidth - 8);
+                }
             }
         } else {
             if (track.detailedView()) {

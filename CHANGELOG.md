@@ -14,6 +14,7 @@
 - Make `Generate` open on the current 16-step bank instead of always starting from the first page
 - Make `Generate` page LEDs follow the selected 16-step bank, with cyclic `prev` / `next` bank navigation
 - Change the default `Reset CV` project setting to `Off`, so Note tracks keep their last CV value on stop
+- Improve step visualization across sequence views: gate offset shifts the inner gate block, length changes its width, and retrigger is shown as a striped pattern
 - Update startup branding and version strings to `v0.3.2-vinx.1.4`
 
 # v0.3.2-vinx.1.3 (18 March 2026)
