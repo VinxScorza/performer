@@ -111,7 +111,11 @@ void GeneratorPage::draw(Canvas &canvas) {
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
         FixedStringBuilder<8> str;
-        _generator->printParam(i, str);
+        if (_generator->mode() == Generator::Mode::Random && i == 0 && !_generator->showingPreview()) {
+            str("ORIGINAL");
+        } else {
+            _generator->printParam(i, str);
+        }
         drawValue(i, str);
     }
 

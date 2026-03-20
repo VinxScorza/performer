@@ -162,7 +162,11 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             int gateWidth = 3 + ((gateArea - 3) * (step.length() + 1)) / NoteSequence::Length::Range;
             int gateX = x + gateInset + gateOffsetShift + (gateArea - gateWidth) / 2;
             if (step.retrigger() > 0) {
-                for (int stripeX = gateX; stripeX < gateX + gateWidth; stripeX += 2) {
+                int stripeStart = gateX;
+                if (gateWidth >= 8) {
+                    stripeStart += 1;
+                }
+                for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
                     canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
                 }
             } else {

@@ -201,7 +201,11 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
                     canvas.vline(x + 10, y + 7, 2);
                 } else {
                     if (sequence.step(stepIndex).retrigger() > 0) {
-                        for (int stripeX = gateX; stripeX < gateX + gateWidth; stripeX += 2) {
+                        int stripeStart = gateX;
+                        if (gateWidth >= 8) {
+                            stripeStart += 1;
+                        }
+                        for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
                             canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
                         }
                     } else {
@@ -210,7 +214,11 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
                 }
             } else {
                 if (sequence.step(stepIndex).retrigger() > 0) {
-                    for (int stripeX = gateX; stripeX < gateX + gateWidth; stripeX += 2) {
+                    int stripeStart = gateX;
+                    if (gateWidth >= 8) {
+                        stripeStart += 1;
+                    }
+                    for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
                         canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
                     }
                 } else {

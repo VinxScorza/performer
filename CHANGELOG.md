@@ -15,6 +15,7 @@
 - Map `F1` to `A/B` for faster comparison between `ORIGINAL` and `CURRENT SEED`
 - Prevent `Seed` from changing while editing other Random generator parameters such as `Smooth`, `Bias`, `Scale`, and `Variation`
 - Make `Variation` update the Random generator LCD preview graph correctly
+- Set Random `Variation` to `50%` by default, show `ORIGINAL` in the Seed slot during A/B comparison, and further refine retrigger alignment in step visualization
 - Make `Generate` open on the current 16-step bank instead of always starting from the first page
 - Make `Generate` page LEDs follow the selected 16-step bank, with cyclic `prev` / `next` bank navigation
 - Change the default `Reset CV` project setting to `Off`, so Note tracks keep their last CV value on stop
