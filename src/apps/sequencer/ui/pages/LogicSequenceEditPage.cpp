@@ -178,7 +178,12 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
         canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (evalStep.logicStep() && !globalKeyState()[Key::Shift]) {
-            canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
+            switch (_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue()) {
+            default:
+            case 0: canvas.setColor(Color::Bright); break;
+            case 1: canvas.setColor(Color::MediumLow); break;
+            case 2: canvas.setColor(Color::Low); break;
+            }
             constexpr int gateInset = 3;
             constexpr int gateShiftRange = 3;
             int gateArea = stepWidth - 2 * gateInset;

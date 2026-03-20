@@ -136,14 +136,14 @@ public:
     ) {}
 };
 
-class DimSequenceSetting : public Setting<bool> {
+class DimSequenceSetting : public Setting<uint8_t> {
 public:
     DimSequenceSetting() : Setting(
             SettingDimSequence,
             "Dim Sequence",
-            {"off", "on"},
-            {false, true},
-            false
+            {"off", "dim", "dim+"},
+            {uint8_t(0), uint8_t(1), uint8_t(2)},
+            uint8_t(1)
     ) {}
 };
 

@@ -10,6 +10,7 @@
 
 # v0.3.2-vinx.1.4.2 (20 March 2026)
 - Saving a project no longer stops playback. Project data is snapshotted under a short engine lock before asynchronous SD write
+- Expand `Dim Sequence` from a binary toggle to `off`, `dim`, and `dim+`, defaulting to `dim` to better tame display noise leaking into the audio band
 
 # v0.3.2-vinx.1.4.1 (20 March 2026)
 - Remove the small step markers between step numbers in Note and Logic step views
