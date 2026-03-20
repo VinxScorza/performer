@@ -1,10 +1,10 @@
-![Build Status](https://github.com/VinxScorza/performer/actions/workflows/ci.yml/badge.svg?branch=master)
+<img src="https://github.com/VinxScorza/performer/actions/workflows/ci.yml/badge.svg?branch=master" alt="Build Status">
 
 # Vinx Scorza Fork
 
-## [CHANGELOG](CHANGELOG.md)
+## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
 
-This is a <u>personal fork</u> of the [Mebitek fork](https://github.com/mebitek/performer), itself based on the original [Westlicht Performer firmware](https://github.com/westlicht/performer).
+This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a>, itself based on the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>.
 Current fork version: `0.3.2-vinx.1.4.1`.
 
 IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
@@ -16,20 +16,20 @@ This fork is not a general-purpose extension, but a targeted refinement of speci
 This fork is maintained for personal use. Backward compatibility with older projects, settings, or workflows is not guaranteed, and I do not assume responsibility for regressions or incompatibilities introduced by Vinx-specific changes.
 The firmware is actively used and tested in practice, since PER|FORMER is the main sequencer in my live sets.
 This fork would not exist without the fundamental help of AI agents during development and debugging.
-I’m very grateful to [Mebitek](https://mebitek.github.io/performer/) for the work done on his fork, and of course to [Simon Kallweit](https://westlicht.github.io/performer/) for creating and developing the Westlicht Performer.
+I’m very grateful to <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a> for the work done on his fork, and of course to <a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Simon Kallweit</a> for creating and developing the Westlicht Performer.
 If you would like to support their incredible work financially, you can donate here:
-[Donate to Mebitek](https://mebitek.github.io/performer/donate/) · [Donate to Simon Kallweit / Westlicht](https://westlicht.github.io/performer/donate/)
+<a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Mebitek</a> · <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Simon Kallweit / Westlicht</a>
 
 Personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
 
 Primary documentation for this fork:
-- [Vinx Scorza fork website](https://vinxscorza.github.io/performer/)
-- [Vinx Scorza user manual](https://vinxscorza.github.io/performer/manual/)
-- [Vinx Scorza changelog](https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md)
+- <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">Vinx Scorza fork website</a>
+- <a href="https://vinxscorza.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Vinx Scorza user manual</a>
+- <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Vinx Scorza changelog</a>
 
 Upstream reference documentation:
-- [Westlicht Performer firmware](https://github.com/westlicht/performer)
-- [Mebitek Performer fork](https://github.com/mebitek/performer)
+- <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>
+- <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek Performer fork</a>
 
 ## Philosophy
 
@@ -46,16 +46,16 @@ If you're looking for a stable, conservative upstream baseline, you may prefer t
 If you're interested in a more hands-on, performance-oriented evolution, you're in the right place.
 
 The Vinx Scorza website should be considered the main user-facing documentation entry point for this fork:
-https://vinxscorza.github.io/performer/
+<a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">https://vinxscorza.github.io/performer/</a>
 
 The manual lives here:
-https://vinxscorza.github.io/performer/manual/
+<a href="https://vinxscorza.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">https://vinxscorza.github.io/performer/manual/</a>
 
 The changelog for this fork lives here:
-https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md
+<a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md</a>
 
 If you need historical upstream reference material, the Mebitek manual is still available here:
-https://mebitek.github.io/performer/manual/
+<a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">https://mebitek.github.io/performer/manual/</a>
 
 Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
 
@@ -72,15 +72,15 @@ Then follow the standard build instructions for Westlicht Performer below.
 
 # PER|FORMER
 
-<a href="doc/sequencer.jpg"><img src="doc/sequencer.jpg"/></a>
+<a href="doc/sequencer.jpg" target="_blank" rel="noopener noreferrer"><img src="doc/sequencer.jpg"/></a>
 
 ## Overview
 
 This repository contains the firmware for the **PER|FORMER** eurorack sequencer.
 
-For more information on the project go [here](https://westlicht.github.io/performer).
+For more information on the project go <a href="https://westlicht.github.io/performer" target="_blank" rel="noopener noreferrer">here</a>.
 
-The hardware design files are hosted in a separate repository [here](https://github.com/westlicht/performer-hardware).
+The hardware design files are hosted in a separate repository <a href="https://github.com/westlicht/performer-hardware" target="_blank" rel="noopener noreferrer">here</a>.
 
 ## Development
 
@@ -136,7 +136,7 @@ First you have to clone this repository (make sure to add the `--recursive` opti
 git clone --recursive https://github.com/VinxScorza/performer.git
 ```
 
-Next, go to https://www.vagrantup.com/downloads.html and download the latest Vagrant release. Once installed, use the following to setup the Vagrant machine:
+Next, go to <a href="https://www.vagrantup.com/downloads.html" target="_blank" rel="noopener noreferrer">https://www.vagrantup.com/downloads.html</a> and download the latest Vagrant release. Once installed, use the following to setup the Vagrant machine:
 
 ```
 cd performer
@@ -275,21 +275,21 @@ The main sequencer application has the following structure:
 
 The following third party libraries are used in this project.
 
-- [FreeRTOS](http://www.freertos.org)
-- [libopencm3](https://github.com/libopencm3/libopencm3)
-- [libusbhost](https://github.com/libusbhost/libusbhost)
-- [NanoVG](https://github.com/memononen/nanovg)
-- [FatFs](http://elm-chan.org/fsw/ff/00index_e.html)
-- [stb_sprintf](https://github.com/nothings/stb/blob/master/stb_sprintf.h)
-- [stb_image_write](https://github.com/nothings/stb/blob/master/stb_image_write.h)
-- [soloud](https://sol.gfxile.net/soloud/)
-- [RtMidi](https://www.music.mcgill.ca/~gary/rtmidi/)
-- [pybind11](https://github.com/pybind/pybind11)
-- [tinyformat](https://github.com/c42f/tinyformat)
-- [args](https://github.com/Taywee/args)
+- <a href="http://www.freertos.org" target="_blank" rel="noopener noreferrer">FreeRTOS</a>
+- <a href="https://github.com/libopencm3/libopencm3" target="_blank" rel="noopener noreferrer">libopencm3</a>
+- <a href="https://github.com/libusbhost/libusbhost" target="_blank" rel="noopener noreferrer">libusbhost</a>
+- <a href="https://github.com/memononen/nanovg" target="_blank" rel="noopener noreferrer">NanoVG</a>
+- <a href="http://elm-chan.org/fsw/ff/00index_e.html" target="_blank" rel="noopener noreferrer">FatFs</a>
+- <a href="https://github.com/nothings/stb/blob/master/stb_sprintf.h" target="_blank" rel="noopener noreferrer">stb_sprintf</a>
+- <a href="https://github.com/nothings/stb/blob/master/stb_image_write.h" target="_blank" rel="noopener noreferrer">stb_image_write</a>
+- <a href="https://sol.gfxile.net/soloud/" target="_blank" rel="noopener noreferrer">soloud</a>
+- <a href="https://www.music.mcgill.ca/~gary/rtmidi/" target="_blank" rel="noopener noreferrer">RtMidi</a>
+- <a href="https://github.com/pybind/pybind11" target="_blank" rel="noopener noreferrer">pybind11</a>
+- <a href="https://github.com/c42f/tinyformat" target="_blank" rel="noopener noreferrer">tinyformat</a>
+- <a href="https://github.com/Taywee/args" target="_blank" rel="noopener noreferrer">args</a>
 
 ## License
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
 
-This work is licensed under a [MIT License](https://opensource.org/licenses/MIT).
+This work is licensed under a <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT License</a>.
