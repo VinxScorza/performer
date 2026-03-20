@@ -284,7 +284,7 @@ void Frontend::setupFrontpanel() {
         }
         case Frontpanel::Widget::Lcd: {
             Vector2i resolution(TargetConfig::LcdWidth, TargetConfig::LcdHeight);
-            _lcd = _window->createWidget<Display>(origin, size, resolution, Color(0.2f, 0.9f, 1.0f, 1.f));
+            _lcd = _window->createWidget<Display>(origin, size, resolution, Color(0.1f, 0.95f, 1.0f, 1.f));
             break;
         }
         }
