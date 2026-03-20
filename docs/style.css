@@ -23,7 +23,7 @@ body {
   margin: 0;
   background: #1f1f1f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23272727' d='M0 0h12v12H0z'/%3E%3Cpath fill='%23222222' d='M0 0h6v6H0zM6 6h6v6H6z'/%3E%3C/svg%3E");
   color: var(--text);
-  font: 16px/1.6 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 16px/1.45 "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 a {
