@@ -71,6 +71,18 @@ a:hover {
   color: #f0f0f0;
 }
 
+.site-nav a[aria-current="page"] {
+  color: #ffffff;
+  text-decoration: none;
+  text-shadow: 0 0 12px rgba(228, 211, 138, 0.35);
+}
+
+.site-nav a[aria-current="page"]::before {
+  content: ">";
+  margin-right: 6px;
+  color: var(--accent);
+}
+
 #project_title {
   margin: 0;
   font-size: clamp(46px, 9vw, 78px);
@@ -224,6 +236,45 @@ strong {
   border: 1px solid #3a3a3a;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.notice {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.notice.warning {
+  border-left-color: #d6a44d;
+  background: rgba(214, 164, 77, 0.08);
+}
+
+.notice p:last-child,
+.simulator-shell p:last-child {
+  margin-bottom: 0;
+}
+
+.simulator-shell {
+  margin-top: 18px;
+  min-height: 280px;
+  padding: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 10px 30px rgba(0, 0, 0, 0.22);
+}
+
+.simulator-shell h4 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.simulator-shell code {
+  color: #fff2b0;
 }
 
 .svg-embed {

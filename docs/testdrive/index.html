@@ -16,7 +16,7 @@
         <a href="../manual/index.html">User Manual</a>
         <a href="../cheatsheet/index.html">Cheat Sheet</a>
         <a href="../build-guide/index.html">Build Guide</a>
-        <a href="../testdrive/index.html">Test Drive</a>
+        <a href="../testdrive/index.html" aria-current="page">Test Drive</a>
         <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
         <a href="../license/index.html">License</a>
         <a href="../donate/index.html">Donate</a>
@@ -44,8 +44,31 @@
         </p>
         <p>
           Historical simulator reference:
+          <a href="https://mebitek.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Mebitek Test Drive</a>
+          and
           <a href="https://westlicht.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Westlicht Test Drive</a>
         </p>
+        <div class="notice warning">
+          <p>
+            We are actively trying to bring the browser Test Drive back to life for the Vinx Scorza fork.
+          </p>
+          <p>
+            Upstream browser builds currently fail at runtime for different reasons, so this page is being prepared
+            for a local Vinx build that favors stability first: memory growth enabled, extra runtime checks during
+            bring-up, and browser audio temporarily disabled during Phase 1.
+          </p>
+        </div>
+        <div class="simulator-shell">
+          <h4>Phase 1 Status</h4>
+          <p>
+            The local Vinx browser build is not embedded yet in this published page because the web artifacts have
+            not been generated in this checkout.
+          </p>
+          <p>
+            Once the browser build is produced, it will be published under <code>docs/testdrive/sim/</code> and
+            embedded here as the primary local test drive for this fork.
+          </p>
+        </div>
       </section>
 
       <section>
@@ -53,6 +76,11 @@
         <p>
           In the browser simulator, a small sound engine is attached to the sequencer outputs so the generated
           gates and CV can be heard immediately.
+        </p>
+        <p>
+          For Phase 1 browser recovery, audio output is intentionally disabled in the Emscripten build so we can
+          stabilize startup, rendering and interaction first. The mapping below remains the intended simulator
+          instrument layout for later phases.
         </p>
         <ul>
           <li>Track 1: Kick</li>
@@ -87,8 +115,11 @@
       <section>
         <h3>Notes</h3>
         <p>
-          This local page is intentionally kept close to the original simulator reference and can later be adapted to
-          Vinx-specific simulator behavior if needed.
+          Phase 1 is specifically about recovering a working local browser build before chasing feature parity.
+        </p>
+        <p>
+          The first goal is a stable visual simulator for this fork. Audio can return later once the browser build is
+          known to boot reliably.
         </p>
       </section>
     </main>

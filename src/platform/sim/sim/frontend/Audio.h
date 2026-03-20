@@ -18,9 +18,11 @@ public:
 
     void play(Sample &sample);
     void stopAll();
+    bool enabled() const { return _enabled; }
 
 private:
     SoLoud::Soloud _engine;
+    bool _enabled = false;
 };
 
 class Sample {

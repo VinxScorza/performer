@@ -2,12 +2,14 @@
 # SDL2
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-    set(SDL_FLAGS "-s USE_SDL=2 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
+    set(EMSCRIPTEN_COMPILE_FLAGS "-sUSE_SDL=2")
+    set(EMSCRIPTEN_LINK_FLAGS "-sUSE_SDL=2 -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=134217728 -sMAXIMUM_MEMORY=1073741824 -sSTACK_SIZE=1048576 -sASSERTIONS=1 -sFULL_ES2=1 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/assets@/assets")
     set(CMAKE_EXECUTABLE_SUFFIX ".html" PARENT_SCOPE)
 else()
     find_package(SDL2 REQUIRED)
     find_package(OpenGL REQUIRED)
-    set(SDL_FLAGS "")
+    set(EMSCRIPTEN_COMPILE_FLAGS "")
+    set(EMSCRIPTEN_LINK_FLAGS "")
 endif()
 
 # RtMidi
@@ -17,8 +19,8 @@ add_subdirectory(libs/rtmidi)
 # platform
 
 set(platform_dependencies "" PARENT_SCOPE)
-set(platform_compiler_flags "-fPIC -Wno-unknown-pragmas -Wno-unknown-attributes ${SDL_FLAGS}" PARENT_SCOPE)
-set(platform_linker_flags "" PARENT_SCOPE)
+set(platform_compiler_flags "-fPIC -Wno-unknown-pragmas -Wno-unknown-attributes ${EMSCRIPTEN_COMPILE_FLAGS}" PARENT_SCOPE)
+set(platform_linker_flags "${EMSCRIPTEN_LINK_FLAGS}" PARENT_SCOPE)
 
 set(platform_sources
     # soloud
