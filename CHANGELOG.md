@@ -8,6 +8,10 @@
 
 <sub>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.4.1 (20 March 2026)
+- Remove the small step markers between step numbers in Note and Logic step views
+- Restore Random `Variation` to `100%` by default
+
 # v0.3.2-vinx.1.4 (19 March 2026)
 - Expand `Generate -> Random` to full 32-bit seed randomization (`2^32` values), shown as 8-digit hexadecimal seeds
 - Randomize the seed automatically when entering `Generate -> Random`, and whenever the `Seed` parameter is changed

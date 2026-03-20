@@ -5,25 +5,31 @@
 ## [CHANGELOG](CHANGELOG.md)
 
 This is a <u>personal fork</u> of the [Mebitek fork](https://github.com/mebitek/performer), itself based on the original [Westlicht Performer firmware](https://github.com/westlicht/performer).
-Current fork version: `0.3.2-vinx.1.4`.
+Current fork version: `0.3.2-vinx.1.4.1`.
 
 IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
 
 The Vinx Scorza fork starts at `v0.3.2-vinx.1`.
 Everything before that version in this repository history and changelog is inherited from the Mebitek fork and preserved as upstream reference.
+This project focuses on live performance workflow, timing reliability, and UI/interaction improvements, with particular attention to modular techno and improvisation use cases.
+This fork is not a general-purpose extension, but a targeted refinement of specific behaviors that come to mind while I am actively using the sequencer.
 This fork is maintained for personal use. Backward compatibility with older projects, settings, or workflows is not guaranteed, and I do not assume responsibility for regressions or incompatibilities introduced by Vinx-specific changes.
+The firmware is actively used and tested in practice, since PER|FORMER is the main sequencer in my live sets.
 This fork would not exist without the fundamental help of AI agents during development and debugging.
 I’m very grateful to [Mebitek](https://mebitek.github.io/performer/) for the work done on his fork, and of course to [Simon](https://westlicht.github.io/performer/) for creating and developing the Westlicht Performer.
 If you would like to support their incredible work financially, you can donate here:
 [Donate to Mebitek](https://mebitek.github.io/performer/donate/) · [Donate to Simon / Westlicht](https://westlicht.github.io/performer/donate/)
 
-There is no dedicated documentation for the moment, as this fork is not intended for public release. I created this fork to experiment with this awesome project.
+Personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
 
 You can find the full updated Mebitek documentation here:
 https://mebitek.github.io/performer/manual/
 
 You can also find the changelog for the Mebitek fork here:
 https://github.com/mebitek/performer/blob/master/CHANGELOG.md
+
+Additional Vinx-specific notes and resources can be found in:
+- `doc/`
 
 --- ORIGINAL DOCUMENTATION BELOW (Westlicht Performer) ---
 
@@ -48,7 +54,7 @@ If you want to do development on the firmware, the following is a quick guide on
 First you have to clone this repository (make sure to add the `--recursive` option to also clone all the submodules):
 
 ```
-git clone --recursive https://github.com/westlicht/performer.git
+git clone --recursive https://github.com/VinxScorza/performer.git
 ```
 
 After cloning, enter the performer directory:
@@ -90,7 +96,7 @@ Currently, there is no native support for compiling the firmware on Windows. As 
 First you have to clone this repository (make sure to add the `--recursive` option to also clone all the submodules):
 
 ```
-git clone --recursive https://github.com/westlicht/performer.git
+git clone --recursive https://github.com/VinxScorza/performer.git
 ```
 
 Next, go to https://www.vagrantup.com/downloads.html and download the latest Vagrant release. Once installed, use the following to setup the Vagrant machine:
