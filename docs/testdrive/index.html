@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test Drive | PER FORMER eurorack sequencer</title>
+  <meta name="description" content="Test drive reference for the Vinx Scorza PER|FORMER fork.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div id="header_wrap" class="outer">
+    <header class="inner">
+      <nav class="site-nav" aria-label="Main">
+        <a href="../index.html">PER|FORMER</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About</a>
+        <a href="../manual/index.html">User Manual</a>
+        <a href="../cheatsheet/index.html">Cheat Sheet</a>
+        <a href="../build-guide/index.html">Build Guide</a>
+        <a href="../testdrive/index.html">Test Drive</a>
+        <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
+        <a href="../license/index.html">License</a>
+        <a href="../donate/index.html">Donate</a>
+      </nav>
+      <h1 id="project_title">PER|FORMER</h1>
+      <h2 id="project_tagline">test drive</h2>
+    </header>
+  </div>
+
+  <div id="main_content_wrap" class="outer">
+    <main id="main_content" class="inner">
+      <section>
+        <h3>Description</h3>
+        <p>
+          This simulator is used for development and testing of the PER|FORMER sequencer. It allows shorter
+          iteration times during development and makes it possible to work on the firmware without having direct
+          access to the hardware module.
+        </p>
+        <p>
+          Note that this simulator is not intended to replace the hardware unit, and timing accuracy is not
+          comparable to the real module, especially when running in the browser.
+        </p>
+        <p>
+          Upstream reference:
+          <a href="https://westlicht.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Westlicht Test Drive</a>
+        </p>
+      </section>
+
+      <section>
+        <h3>Sound Engine</h3>
+        <p>
+          In the browser simulator, a small sound engine is attached to the sequencer outputs so the generated
+          gates and CV can be heard immediately.
+        </p>
+        <ul>
+          <li>Track 1: Kick</li>
+          <li>Track 2: Snare</li>
+          <li>Track 3: Rimshot</li>
+          <li>Track 4: Clap</li>
+          <li>Track 5: Closed Hat</li>
+          <li>Track 6: Open Hat</li>
+          <li>Track 7: Tom</li>
+          <li>Track 8: Simple Monosynth Voice</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Controls</h3>
+        <ul>
+          <li>Mouse wheel: encoder rotate</li>
+          <li>Space: encoder press</li>
+          <li>1: Play</li>
+          <li>2: Temp</li>
+          <li>3: Patt</li>
+          <li>4: Perf</li>
+          <li>Left / Right: Prev / Next</li>
+          <li>Shift: Shift</li>
+          <li>Alt: Page</li>
+          <li>Q W E R T Y U I: T1-T8</li>
+          <li>A S D F G H J K: S1-S8</li>
+          <li>Z X C V B N M , : S9-S16</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Notes</h3>
+        <p>
+          This local page is intentionally based on the original Test Drive page and can later be adapted to
+          Vinx-specific simulator behavior if needed.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <div id="footer_wrap" class="outer">
+    <footer class="inner">
+      <p class="copyright">
+        Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

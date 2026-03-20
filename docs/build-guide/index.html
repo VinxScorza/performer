@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build Guide | PER FORMER eurorack sequencer</title>
+  <meta name="description" content="Build guide for the Vinx Scorza PER|FORMER fork.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div id="header_wrap" class="outer">
+    <header class="inner">
+      <nav class="site-nav" aria-label="Main">
+        <a href="../index.html">PER|FORMER</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About</a>
+        <a href="../manual/index.html">User Manual</a>
+        <a href="../cheatsheet/index.html">Cheat Sheet</a>
+        <a href="../build-guide/index.html">Build Guide</a>
+        <a href="../testdrive/index.html">Test Drive</a>
+        <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
+        <a href="../license/index.html">License</a>
+        <a href="../donate/index.html">Donate</a>
+      </nav>
+      <h1 id="project_title">PER|FORMER</h1>
+      <h2 id="project_tagline">build guide</h2>
+    </header>
+  </div>
+
+  <div id="main_content_wrap" class="outer">
+    <main id="main_content" class="inner">
+      <section>
+        <h3>Introduction</h3>
+        <p>
+          DISCLAIMER: Building the PER|FORMER sequencer is not recommended for beginners.
+        </p>
+        <p>
+          This page is based on the original Westlicht build guide and kept here as a local reference for the
+          Vinx Scorza fork.
+        </p>
+      </section>
+
+      <section>
+        <h3>Sourcing Parts</h3>
+        <p>
+          To build the sequencer you first need to source all the required parts. The original build guide
+          references the complete BOM, Octopart BOM, and assembly resources for the hardware project.
+        </p>
+        <p>
+          For the hardware build process and sourcing details, the original upstream guide remains the main
+          reference:
+          <a href="https://westlicht.github.io/performer/build/" target="_blank" rel="noopener noreferrer">Westlicht Build Guide</a>
+        </p>
+      </section>
+
+      <section>
+        <h3>Setup on macOS and Linux</h3>
+        <p>
+          Clone this repository:
+        </p>
+        <pre><code>git clone --recursive https://github.com/VinxScorza/performer.git
+cd performer</code></pre>
+        <p>Make sure you have a recent version of CMake installed. On Debian-based systems you may also need:</p>
+        <pre><code>sudo apt-get install libtool autoconf cmake libusb-1.0.0-dev libftdi-dev pkg-config</code></pre>
+        <p>To compile for hardware and allow flashing firmware:</p>
+        <pre><code>make tools_install</code></pre>
+        <p>Then set up the build directories:</p>
+        <pre><code>make setup_stm32
+make setup_sim</code></pre>
+      </section>
+
+      <section>
+        <h3>Setup on Windows</h3>
+        <p>
+          There is currently no native Windows build flow. The standard workaround is the Vagrant virtual machine,
+          as in the original Westlicht documentation.
+        </p>
+        <pre><code>git clone --recursive https://github.com/VinxScorza/performer.git
+cd performer
+vagrant up
+vagrant ssh</code></pre>
+      </section>
+
+      <section>
+        <h3>Build directories</h3>
+        <p>
+          After setup, build directories are available under <code>build/[stm32|sim]/[release|debug]</code>.
+          Use <code>release</code> for hardware builds and <code>debug</code> for the simulator.
+        </p>
+      </section>
+
+      <section>
+        <h3>Build for hardware</h3>
+        <pre><code>cd build/stm32/release
+make -j
+</code></pre>
+        <p>
+          The sequencer build generates an <code>UPDATE.DAT</code> file suitable for firmware updates through the bootloader.
+        </p>
+        <p>
+          For full hardware assembly, flashing, and sourcing notes, refer to the original build guide:
+          <a href="https://westlicht.github.io/performer/build/" target="_blank" rel="noopener noreferrer">Westlicht Build Guide</a>
+        </p>
+      </section>
+
+      <section>
+        <h3>Build for simulator</h3>
+        <pre><code>cd build/sim/debug
+make -j
+./src/apps/sequencer/sequencer</code></pre>
+      </section>
+
+      <section>
+        <h3>Upstream reference</h3>
+        <p>
+          This page is intentionally close to the original Westlicht build documentation and will be diversified
+          only where the Vinx fork requires different build or release behavior.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <div id="footer_wrap" class="outer">
+    <footer class="inner">
+      <p class="copyright">
+        Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

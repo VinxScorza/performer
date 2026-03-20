@@ -1,0 +1,2475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Manual | PER FORMER eurorack sequencer</title>
+  <meta name="description" content="User manual reference for the Vinx Scorza PER|FORMER fork.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body class="manual-page">
+  <div id="header_wrap" class="outer">
+    <header class="inner">
+      <nav class="site-nav" aria-label="Main">
+        <a href="../index.html">PER|FORMER</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About</a>
+        <a href="../manual/index.html">User Manual</a>
+        <a href="../cheatsheet/index.html">Cheat Sheet</a>
+        <a href="../build-guide/index.html">Build Guide</a>
+        <a href="../testdrive/index.html">Test Drive</a>
+        <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
+        <a href="../license/index.html">License</a>
+        <a href="../donate/index.html">Donate</a>
+      </nav>
+      <h1 id="project_title">PER|FORMER</h1>
+      <h2 id="project_tagline">user manual</h2>
+    </header>
+  </div>
+
+  <div id="main_content_wrap" class="outer">
+    <main id="main_content" class="inner">
+      <div class="manual-layout">
+        <aside class="manual-sidebar" aria-label="Manual contents">
+          <div class="manual-sidebar-panel">
+            <p class="manual-sidebar-title">On This Page</p>
+            <nav class="manual-sidebar-nav">
+              <ul>
+                <li><a href="#introduction">Introduction</a>
+                  <ul>
+                    <li><a href="#introduction-overview">Overview</a></li>
+                  </ul>
+                </li>
+                <li><a href="#concepts">Concepts</a>
+                  <ul>
+                    <li><a href="#concepts-project">Project</a></li>
+                    <li><a href="#concepts-track">Track</a></li>
+                    <li><a href="#concepts-note-track">Note Track</a></li>
+                    <li><a href="#concepts-curve-track">Curve Track</a></li>
+                    <li><a href="#concepts-midi-cv-track">MIDI/CV Track</a></li>
+                    <li><a href="#concepts-stochastic-track">Stochastic Track</a></li>
+                    <li><a href="#concepts-logic-track">Logic Track</a></li>
+                    <li><a href="#concepts-arp-track">Arpeggiator Track</a></li>
+                    <li><a href="#concepts-pattern">Pattern</a></li>
+                    <li><a href="#concepts-snapshot">Snapshot</a></li>
+                    <li><a href="#concepts-fills">Fills</a></li>
+                    <li><a href="#concepts-song">Song</a></li>
+                    <li><a href="#concepts-scale">Scale</a></li>
+                    <li><a href="#concepts-clock">Clock</a></li>
+                    <li><a href="#concepts-routing">Routing</a></li>
+                    <li><a href="#concepts-controller">Controller</a></li>
+                    <li><a href="#concepts-file-management">File Management</a></li>
+                  </ul>
+                </li>
+                <li><a href="#ui">User Interface</a>
+                  <ul>
+                    <li><a href="#ui-overview">Overview</a></li>
+                    <li><a href="#ui-navigation">Navigation</a></li>
+                    <li><a href="#ui-page-layout">Page Layout</a></li>
+                    <li><a href="#ui-list-pages">List Pages</a></li>
+                    <li><a href="#ui-copy-paste">Copy/Paste</a></li>
+                  </ul>
+                </li>
+                <li><a href="#pages">Pages</a>
+                  <ul>
+                    <li><a href="#pages-project">Project</a></li>
+                    <li><a href="#pages-layout">Layout</a></li>
+                    <li><a href="#pages-track">Track</a></li>
+                    <li><a href="#pages-sequence">Sequence</a></li>
+                    <li><a href="#pages-steps">Steps</a></li>
+                    <li><a href="#pages-generators">Generators</a></li>
+                    <li><a href="#pages-song">Song</a></li>
+                    <li><a href="#pages-tempo">Tempo</a></li>
+                    <li><a href="#pages-pattern">Pattern</a></li>
+                    <li><a href="#pages-performer">Performer</a></li>
+                    <li><a href="#pages-routing">Routing</a></li>
+                    <li><a href="#pages-midi-output">MIDI Output</a></li>
+                    <li><a href="#pages-user-scale">User Scale</a></li>
+                    <li><a href="#pages-overview">Overview</a></li>
+                    <li><a href="#pages-monitor">Monitor</a></li>
+                    <li><a href="#pages-clock">Clock</a></li>
+                    <li><a href="#pages-system">System</a></li>
+                  </ul>
+                </li>
+                <li><a href="#appendix">Appendix</a>
+                  <ul>
+                    <li><a href="#appendix-recording">Recording</a></li>
+                    <li><a href="#appendix-divisors">Divisors</a></li>
+                    <li><a href="#appendix-run-modes">Run Modes</a></li>
+                    <li><a href="#appendix-play-modes">Play Modes</a></li>
+                    <li><a href="#appendix-rotation">Rotation</a></li>
+                    <li><a href="#appendix-step-conditions">Step Conditions</a></li>
+                    <li><a href="#appendix-metropolix">Metropolix Mode</a></li>
+                    <li><a href="#appendix-scales">Scales</a></li>
+                    <li><a href="#appendix-shapes">Shapes</a></li>
+                    <li><a href="#appendix-arpeggiator-modes">Arpeggiator Modes</a></li>
+                    <li><a href="#appendix-routing-targets">Routing Targets</a></li>
+                    <li><a href="#appendix-logic-operators">Logic Operators</a></li>
+                    <li><a href="#appendix-midi-program-change">MIDI Program Change</a></li>
+                    <li><a href="#appendix-launchpad">Launchpad</a></li>
+                    <li><a href="#appendix-usb-midi-devices">USB MIDI Devices</a></li>
+                    <li><a href="#appendix-calibration-procedure">Calibration Procedure</a></li>
+                    <li><a href="#appendix-firmware-update">Firmware Update</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </aside>
+        <div class="manual-body">
+      <section>
+        <h3>Work in Progress</h3>
+        <p>
+          This manual is being actively adapted for the Vinx Scorza fork.
+        </p>
+        <p>
+          It currently draws on earlier upstream documentation, but is being rewritten section by section for this fork.
+        </p>
+        <p>
+          Images have been removed on purpose; tables, settings and technical descriptions are being kept and cleaned up.
+        </p>
+        <p>
+          Historical upstream reference:
+          <a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Mebitek User Manual</a>
+        </p>
+      </section>
+
+      <section>
+        <h3>User Manual</h3>
+        <p>
+          The goal of this page is to consolidate and adapt the manual structure and content for the
+          Vinx Scorza fork, while preserving the technical detail needed to use the module confidently.
+        </p>
+      </section>
+
+      <section>
+        <h3>Table of Contents</h3>
+        <ul>
+          <li><a href="#introduction">Introduction</a>
+            <ul>
+              <li><a href="#introduction-overview">Overview</a></li>
+            </ul>
+          </li>
+          <li><a href="#concepts">Concepts</a>
+            <ul>
+              <li><a href="#concepts-project">Project</a></li>
+              <li><a href="#concepts-track">Track</a></li>
+              <li><a href="#concepts-note-track">Note Track</a></li>
+              <li><a href="#concepts-curve-track">Curve Track</a></li>
+              <li><a href="#concepts-midi-cv-track">MIDI/CV Track</a></li>
+              <li><a href="#concepts-stochastic-track">Stochastic Track</a></li>
+              <li><a href="#concepts-logic-track">Logic Track</a></li>
+              <li><a href="#concepts-arp-track">Arpeggiator Track</a></li>
+              <li><a href="#concepts-pattern">Pattern</a></li>
+              <li><a href="#concepts-snapshot">Snapshot</a></li>
+              <li><a href="#concepts-fills">Fills</a></li>
+              <li><a href="#concepts-song">Song</a></li>
+              <li><a href="#concepts-scale">Scale</a></li>
+              <li><a href="#concepts-clock">Clock</a></li>
+              <li><a href="#concepts-routing">Routing</a></li>
+              <li><a href="#concepts-controller">Controller</a></li>
+              <li><a href="#concepts-file-management">File Management</a></li>
+            </ul>
+          </li>
+          <li><a href="#ui">User Interface</a>
+            <ul>
+              <li><a href="#ui-overview">Overview</a></li>
+              <li><a href="#ui-navigation">Navigation</a></li>
+              <li><a href="#ui-page-layout">Page Layout</a></li>
+              <li><a href="#ui-list-pages">List Pages</a></li>
+              <li><a href="#ui-copy-paste">Copy/Paste</a></li>
+            </ul>
+          </li>
+          <li><a href="#pages">Pages</a>
+            <ul>
+              <li><a href="#pages-project">Project</a></li>
+              <li><a href="#pages-layout">Layout</a></li>
+              <li><a href="#pages-track">Track</a></li>
+              <li><a href="#pages-sequence">Sequence</a></li>
+              <li><a href="#pages-steps">Steps</a></li>
+              <li><a href="#pages-generators">Generators</a></li>
+              <li><a href="#pages-song">Song</a></li>
+              <li><a href="#pages-tempo">Tempo</a></li>
+              <li><a href="#pages-pattern">Pattern</a></li>
+              <li><a href="#pages-performer">Performer</a></li>
+              <li><a href="#pages-routing">Routing</a></li>
+              <li><a href="#pages-midi-output">MIDI Output</a></li>
+              <li><a href="#pages-user-scale">User Scale</a></li>
+              <li><a href="#pages-overview">Overview</a></li>
+              <li><a href="#pages-monitor">Monitor</a></li>
+              <li><a href="#pages-clock">Clock</a></li>
+              <li><a href="#pages-system">System</a></li>
+            </ul>
+          </li>
+          <li><a href="#appendix">Appendix</a>
+            <ul>
+              <li><a href="#appendix-recording">Recording</a></li>
+              <li><a href="#appendix-divisors">Divisors</a></li>
+              <li><a href="#appendix-run-modes">Run Modes</a></li>
+              <li><a href="#appendix-play-modes">Play Modes</a></li>
+              <li><a href="#appendix-rotation">Rotation</a></li>
+              <li><a href="#appendix-step-conditions">Step Conditions</a></li>
+              <li><a href="#appendix-metropolix">Metropolix Mode</a></li>
+              <li><a href="#appendix-scales">Scales</a></li>
+              <li><a href="#appendix-shapes">Shapes</a></li>
+              <li><a href="#appendix-arpeggiator-modes">Arpeggiator Modes</a></li>
+              <li><a href="#appendix-routing-targets">Routing Targets</a></li>
+              <li><a href="#appendix-logic-operators">Logic Operators</a></li>
+              <li><a href="#appendix-midi-program-change">MIDI Program Change</a></li>
+              <li><a href="#appendix-launchpad">Launchpad</a></li>
+              <li><a href="#appendix-usb-midi-devices">USB MIDI Devices</a></li>
+              <li><a href="#appendix-calibration-procedure">Calibration Procedure</a></li>
+              <li><a href="#appendix-firmware-update">Firmware Update</a></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="introduction">Introduction</h2>
+        <p>
+          <strong>PER|FORMER</strong> is an open source and open hardware eurorack sequencer module. It packs a lot of functionality into a small form factor and was designed both as a versatile sequencer in the studio as well as for live performance. To fully take advantage of all the features available in this module, it is highly recommended to study this document carefully.
+        </p>
+        <p>
+          The <a href="#concepts">Concepts</a> chapter introduces the overall architecture and functionality of the sequencer. The <a href="#ui">User Interface</a> chapter gives an overview of the user interface and introduces key concepts of how to use the sequencer. The <a href="#pages">Pages</a> chapter goes into more detail in terms of functionality and user interface of the various modes and contexts in the sequencer and introduces common workflows. Finally, the <a href="#appendix">Appendix</a> contains reference tables for some of the parameters commonly used in the sequencer as well as additional information on how to use the Novation Launchpad, calibrate the CV outputs and update the firmware.
+        </p>
+      </section>
+
+      <section>
+        <h3 id="introduction-overview">Overview</h3>
+        <p>Here is a brief summary of what you get with the PER|FORMER sequencer.</p>
+        <h4>Features</h4>
+        <ul>
+          <li>8 track sequencer</li>
+          <li>16 sequences per track</li>
+          <li>64 steps per sequence</li>
+          <li>Multiple track and sequence modes</li>
+          <li>Note and modulation sequencing</li>
+          <li>Arpeggiator</li>
+          <li>Snapshot system</li>
+          <li>Sequence generators</li>
+          <li>Routing system for CV inputs and external MIDI controllers</li>
+          <li>Novation Launchpad support</li>
+          <li>MIDI output generation from multiple sequences</li>
+          <li>Flexible clock system</li>
+        </ul>
+        <h4>User Interface</h4>
+        <ul>
+          <li>Large and bright 256x64 pixel OLED display</li>
+          <li>Encoder with push button</li>
+          <li>32 buttons with bi-color LEDs</li>
+          <li>5 function buttons with labels on display</li>
+        </ul>
+        <h4>Inputs and Outputs</h4>
+        <ul>
+          <li>8 CV outputs (-5V to 5V)</li>
+          <li>8 gate outputs (5V)</li>
+          <li>4 CV inputs (-5V to 5V)</li>
+          <li>Clock and reset/run input</li>
+          <li>Clock and reset/run output</li>
+          <li>MIDI input and output (MIDI TRS 3.5mm jacks)</li>
+          <li>USB Host for MIDI over USB</li>
+          <li>microSD Card Slot</li>
+        </ul>
+        <h4>Specifications</h4>
+        <ul>
+          <li>Width: 34 HP</li>
+          <li>Depth: 25mm</li>
+          <li>Power: 100mA @ +12V, 15mA @ -12V (not including USB host power)</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 id="concepts">Concepts</h2>
+        <p>
+          This chapter introduces the basic concepts of the sequencer and should familiarize readers with the overall functionality of the sequencer. More in-depth information about specific features are provided in the following chapters.
+        </p>
+
+        <h3 id="concepts-project">Project</h3>
+        <p>
+          A project represents the complete state of the sequencer, with the exception of calibration data. Only one project can be loaded at any given time and all data is volatile, meaning that all changes are lost when the unit is powered off. To persist a project it needs to be stored to the SD card (see <a href="#pages-project">Project</a> page).
+        </p>
+        <p>
+          Projects are split into two data regions. The first region contains all the global data such as project settings, layout settings, MIDI output settings, routing settings, song data and play state. The second region contains the data for the 8 tracks, where each track contains the track settings and 16 sequences. Each sequence in turn contains the sequence settings and up to 64 steps.
+        </p>
+        <p>
+          Note: Calibration data is stored in the flash memory of the micro controller and can be backed up and restored from the SD card. This allows exchanging the SD card while running the sequencer or running the sequencer without an SD card at all and still having it properly calibrated.
+        </p>
+
+        <h3 id="concepts-track">Track</h3>
+        <p>
+          A track is responsible for generating note or modulation signals used to control other modules in the eurorack system using the CV/gate outputs. The <strong>PER|FORMER</strong> sequencer can run up to 8 tracks, that primarily use step sequencing to generate these signals, where each track can run independent of the other tracks. This means that every sequence in a track can have a different time division, run mode, duration or scale among other properties.
+        </p>
+        <h4>Track Mode</h4>
+        <p>Each of the 8 tracks can be configured to one of the following modes:</p>
+        <ul>
+          <li>Note</li>
+          <li>Curve</li>
+          <li>MIDI/CV</li>
+          <li>Stochastic</li>
+          <li>Logic</li>
+          <li>Arpeggiator</li>
+        </ul>
+        <p>
+          In <em>Note</em> mode, the default mode, a track uses advanced step sequencing to generate rhythms and melodies. <em>Curve</em> mode also uses step sequencing, but each step is defined as a curve shape, making this mode very versatile for generating modulation signals. In MIDI/CV mode, a track acts as a MIDI to CV converter, which can be useful when attaching a MIDI keyboard to play some voices live or sequence them from an external MIDI sequencer. In <em>Stochastic</em> mode the track acts as a stochastic CV generator based on note probabilities. In <em>Logic</em> mode the track uses two <em>Note</em> tracks as inputs to perform logic operations on gate and note data. In <em>Arpeggiator</em> mode the track generates arpeggios based on selected steps or input notes.
+        </p>
+        <h4>Track Routing</h4>
+        <p>
+          In the default configuration, each track controls one of the CV/gate output pairs of the sequencer to control a single voice. However, this configuration can be changed to allow for more flexible routing of the virtual track outputs to the physical CV/gate outputs. For example, a MIDI/CV track can control more than one physical CV/gate output to allow polyphonic operation or output a velocity signal in addition to the pitch signal.
+        </p>
+        <h4>Track Linking</h4>
+        <p>
+          In <em>Note</em> or <em>Curve</em> mode, a track generates a single CV signal, typically a pitch or modulation signal. To control a voice with multiple signals, for example a pitch and velocity signal, two tracks have to be used in combination. The first track is used to generate the pitch signal while the second track generates the velocity signal. Using two tracks allows different sequence lengths, time division and other properties that affect playback. If that is not desired, the second track can be linked to the first track, essentially doubling the playback behavior.
+        </p>
+        <p>
+          Track modes, the physical routing to CV/gate outputs and track linking can be configured on the <a href="#pages-layout">Layout</a> page.
+        </p>
+
+        <h3 id="concepts-note-track">Note Track</h3>
+        <p>
+          By default, all tracks are configured as note tracks. In this mode, the track uses step sequencing to generate gate and CV signals. A sequence consists of a maximum of 64 steps and there is a total of 16 sequences per track.
+        </p>
+        <p>
+          Each step is defined through a number of properties, also called layers, to control the generated gate and CV signals.
+        </p>
+        <p>
+          The <em>Gate</em> layer defines what steps of the sequence create a gate signal. To introduce some random variation, the <em>Gate Probability</em> layer is used to control how often an active gate is actually generated.
+        </p>
+        <p>
+          The <em>Gate Offset</em> layer is used to offset gate signals into the future, adding a positive or a negative delay before triggering a note.
+        </p>
+        <p>
+          The <em>Length</em> layer controls the duration of the gate signal and allows tying notes together if set to the maximum. Again, to introduce some random variation, the <em>Length Variation Range</em> and <em>Length Variation Probability</em> layers control a maximum random deviation of the gate length and the probability of actually randomizing the gate length.
+        </p>
+        <p>
+          The <em>Retrigger</em> layer allows each gate signal to be retriggered multiple times within the duration of the step, allowing for faster gates and ratcheting effects. Retriggered notes are only output within the current <em>Length</em> of the step. This allows outputting a burst of notes only at the beginning of the step. Retriggering can also be randomized using the <em>Retrigger Probability</em> layer.
+        </p>
+        <p>
+          Inside the <em>Retrigger</em> layer a Metropolix-style mode can be activated when the track is in <em>Free</em> play mode.
+        </p>
+        <p>
+          The generated CV signal is controlled by the <em>Note</em> layer, which basically defines the voltage to be output for each step. Each note is stored as an index to an entry in a <a href="#concepts-scale">Scale</a>, allowing the generated CV signals to be used both for controlling note pitch as well as other arbitrary modulation signals. Using the <em>Note Variation Range</em> and <em>Note Variation Probability</em> layers some random variation can be applied to the CV signal. The <em>Slide</em> layer controls if the generated CV signal is changed immediately at the start of a gate or smoothly slides to the new voltage. Activating a step in the <em>Bypass Scale</em> layer will allow bypassing the selected scale and entering one of the 12 chromatic notes available.
+        </p>
+        <p>
+          Finally, the <em>Condition</em> layer is used to conditionally trigger steps based on certain rules. This allows relatively short sequences to feel more complex, for example by only playing steps every few iterations. See <a href="#appendix-step-conditions">Step Conditions</a> for additional information.
+        </p>
+        <p>The playback of the sequence is controlled by additional parameters:</p>
+        <ul>
+          <li><em>Divisor</em> controls the rate at which steps are played back</li>
+          <li><em>Run Mode</em> controls the order in which steps are played back</li>
+          <li><em>First Step</em> and <em>Last Step</em> control what range of the sequence is played back</li>
+        </ul>
+        <p>
+          Sequences are edited on the <a href="#pages-steps">Steps</a> page and sequence parameters can be edited on the <a href="#pages-sequence">Sequence</a> page.
+        </p>
+
+        <h3 id="concepts-curve-track">Curve Track</h3>
+        <p>
+          In <em>Curve</em> mode, a track also uses step sequencing with similar playback features to the note track. However, in this track mode the CV signal is defined by a series of curve shapes, making this mode useful for generating modulation signals. This mode also allows outputting gate patterns, but it is different from how the <em>Note</em> mode works.
+        </p>
+        <p>
+          The generated CV signal is controlled by the <em>Shape</em> layer, which defines a curve shape to be output over the duration of one step. The <em>Minimum</em> and <em>Maximum</em> layers define the lower and upper voltage that is output for each step. To introduce some random variation, the <em>Shape Variation</em> and <em>Shape Variation Probability</em> layers can be used to define altered shapes that are used instead of the primary shape with some probability.
+        </p>
+        <p>
+          The generated gate signal is controlled by the <em>Gate</em> layer. It allows defining a pattern of up to 4 gate triggers per step. To introduce some random variation, the <em>Gate Probability</em> layer is used to control how often a gate is actually played.
+        </p>
+        <p>
+          The playback of the sequence is controlled by the same set of parameters as in the note track.
+        </p>
+
+        <h3 id="concepts-midi-cv-track">MIDI/CV Track</h3>
+        <p>
+          In MIDI/CV mode, a track acts as a MIDI to CV converter, taking MIDI note data from either the MIDI or USB MIDI input and converting it to voltages at the CV/gate outputs. This allows playing voices live from a keyboard or using an external MIDI sequencer to control them. MIDI/CV mode also provides a powerful arpeggiator to further help during live playing.
+        </p>
+        <p>
+          Note: MIDI/CV mode allows using the <strong>PER|FORMER</strong> module as a pure MIDI/CV converter with up to 8 CV/gate outputs.
+        </p>
+
+        <h3 id="concepts-stochastic-track">Stochastic Track</h3>
+        <p>
+          In Stochastic mode, a track acts as a stochastic CV generator based on note probabilities. Unlike other sequencer views which show blocks as sequence steps, the stochastic sequencer view shows 12 blocks with each block representing the 12 semitones in a western chromatic scale.
+        </p>
+        <p>
+          The <em>Gate</em> layer can be used to enable a note in the scale shown in the <em>Note</em> layer. This layer is also used to configure the probability that a gate is output when the corresponding note is played. Each gate can be configured with an offset which causes the gate to be output before or after the corresponding sequence step.
+        </p>
+        <p>
+          The <em>Retrigger</em> layer is used to create ratcheting effects which output a burst of gates when a note is played. Up to 8 ratchets can be sent per step; the probability of the retrigger happening is configured in the probability section. All ratchets are sent within the length of the specific step and do not overlap into the next step in a sequence. If the track is configured in <em>Free</em> play mode this activates a Metropolix mode in the Retrigger layer.
+        </p>
+        <p>
+          The <em>Length</em> layer is used to define the length of gates. Length probability and length range can also be used to introduce gate-length variations in the generated sequence.
+        </p>
+        <p>
+          The <em>Note</em> layer is used to configure the probability of an enabled note being played in the generated sequence. In addition to note probability, the Note layer is used to configure the probability of an octave shift and the octave range. Slide is also configured for each note in the Note layer, causing the CV voltage to glide up or down to the next note.
+        </p>
+        <p>It offers basically all the Note-track layer features:</p>
+        <p>
+          The <em>Gate</em> layer defines what steps of the sequence create a gate signal. To introduce some random variation, the <em>Gate Probability</em> layer is used to control how often an active gate is actually generated.
+        </p>
+        <p>
+          The <em>Gate Offset</em> layer is used to offset gate signals into the future, adding a positive or a negative delay before triggering a note.
+        </p>
+        <p>
+          The <em>Length</em> layer controls the duration of the gate signal and allows tying notes together if set to the maximum. Again, to introduce some random variation, the <em>Length Variation Range</em> and <em>Length Variation Probability</em> layers control a maximum random deviation of the gate length and the probability of actually randomizing the gate length. In addition a Stochastic Length Modifier parameter is available on the Stochastic Sequence page.
+        </p>
+        <p>
+          The <em>Retrigger</em> layer allows each gate signal to be retriggered multiple times within the duration of the step, allowing for faster gates and ratcheting effects. Retriggered notes are only output within the current <em>Length</em> of the step. This allows outputting a burst of notes only at the beginning of the step. Retriggering can also be randomized using the <em>Retrigger Probability</em> layer.
+        </p>
+        <p>
+          Inside the <em>Retrigger</em> layer a Metropolix-style mode can be activated when the track is in <em>Free</em> play mode.
+        </p>
+        <p>
+          The generated CV signal is controlled by the <em>Note Probability</em> defining the probability that the stochastic generator will pick the selected note. The <em>Slide</em> layer controls if the generated CV signal is changed immediately at the start of a gate or smoothly slides to the new voltage. <em>Bypass Scale</em> is already activated for each step and cannot be disabled. <em>Octave</em> defines the octave of each step and <em>Octave Probability</em> defines the probability that the step changes octave.
+        </p>
+
+        <h3 id="concepts-logic-track">Logic Track</h3>
+        <p>
+          In Logic mode, a track acts as a logic operator using two Note tracks as inputs. This mode inherits all Note-track features and adds two new layouts for the Gate and the Note layer.
+        </p>
+        <p>
+          In the Gate layer there is a new Gate Logic layout defining the boolean logic operator for each step. The gate logic elaborates the stored gate values coming from the two track inputs.
+        </p>
+        <p>
+          In the Note layer there is a new Note Logic layout defining the logic operation for each note step. The note logic elaborates the stored note values coming from the two track inputs.
+        </p>
+        <p>
+          Note: A Note track can only be linked to a subsequent logic track due to the internal architecture of the sequencer. This means that the first available logic track must be track 3, linking to note track 1 and 2.
+        </p>
+
+        <h3 id="concepts-arp-track">Arpeggiator Track</h3>
+        <p>
+          In Arpeggiator mode, a track generates arpeggios based on the selected gates and the input notes coming from the key steps, Launchpad or an external MIDI keyboard. All Note-track layers are available. In addition the track mode offers control over arpeggiator rest, mode, rate, octaves and hold control.
+        </p>
+
+        <h3 id="concepts-pattern">Pattern</h3>
+        <p>
+          In <em>Note</em> and <em>Curve</em> mode, each of the 8 tracks contains up to 16 sequences, also referred to as patterns. During playback, each track is playing one of its 16 patterns. When switching patterns, all tracks can be switched to the same pattern number or specific patterns can be selected for individual tracks. Patterns are controlled from the <a href="#pages-pattern">Pattern</a> page.
+        </p>
+
+        <h3 id="concepts-snapshot">Snapshot</h3>
+        <p>
+          In addition to the 16 patterns per track, there is an additional snapshot pattern which can temporarily be used to edit sequences without affecting the original. When taking a snapshot, all patterns that are currently playing in each track are copied to the snapshot. Snapshots come in handy during live performance for quickly changing sequences on the fly. The changes can later be committed or reverted. Snapshots are controlled from the <a href="#pages-pattern">Pattern</a> page.
+        </p>
+
+        <h3 id="concepts-fills">Fills</h3>
+        <p>
+          Fills can be used as an effective tool during live performance. They allow temporarily changing the playback of a sequence to add some variation or tension. Each track can be configured with a specific fill mode. The default mode will simply trigger every step of a sequence no matter if the gate is enabled or disabled. Other fill modes allow temporarily playing steps from the next sequence or triggering steps that have the <em>Fill</em> condition set. To make things more interesting, each track also has a <em>Fill Amount</em> associated which is a probability value that controls how often a step is affected by the selected fill mode. This for example allows morphing between two patterns by selectively playing a given amount of steps from either pattern. Fills can then be controlled from the <a href="#pages-performer">Performer</a> page.
+        </p>
+
+        <h3 id="concepts-song">Song</h3>
+        <p>
+          Songs are used to chain together a sequence of patterns for each track. This can either be used to quickly chain together patterns during a live performance to get more variation or to create an entire arrangement of a song.
+        </p>
+        <p>
+          A song consists of up to 64 slots, each holding a set of patterns to be played on the 8 tracks in addition to specifying for how many bars or measures the slot is played for. Songs are controlled from the <a href="#pages-song">Song</a> page.
+        </p>
+
+        <h3 id="concepts-scale">Scale</h3>
+        <p>
+          In contrast to many other sequencers that directly operate on chromatic note values, the <strong>PER|FORMER</strong> sequencer is using the concept of voltage tables. Each note is stored as an index into a voltage table that does not necessarily have a specific musical meaning. While offering many of the more commonly used scales in form of presets, the sequencer also provides some scales beyond the typical western chromatic variants, for example a 24-tone equal temperament scale. The additional 4 user scales allow for even more experimentation as well as setting up voltage tables to specifically address discrete values of a CV input on another module. This allows for example selecting a specific sample slot, choosing a wavetable or similar applications.
+        </p>
+        <p>
+          A global default scale and root note can be specified on the <a href="#pages-project">Project</a> page which can be overridden for individual sequences in the <a href="#pages-sequence">Sequence</a> page. The user scales can be edited on the <a href="#pages-user-scale">User Scale</a> page. See <a href="#appendix-scales">Scales</a> appendix for a list of all preset scales.
+        </p>
+
+        <h3 id="concepts-clock">Clock</h3>
+        <p>
+          The sequencer is driven by a flexible clock system. In master mode, the clock is generated internally and can be sent to external gear and modules using MIDI clock and analog clock signals. In slave mode, the clock is received from an external source via MIDI or analog clock signals. For convenience, the clock is set to an auto mode by default that automatically switches to master mode when the sequencer is started manually or switches to slave mode when an external clock signal is detected.
+        </p>
+        <p>
+          To allow for accurate timing, the internal clock is running at a resolution of 192 parts per quarter note (PPQN). In master mode, a hardware timer is used to generate a low-jitter clock signal. To drive external clock signals, the internal clock is divided down to the required PPQN of the external clock signals. In slave mode, the external clock signal is multiplied internally to generate the 192 PPQN internal clock resolution, which in turn is used to clock the sequencer as well as the external clock signals.
+        </p>
+        <p>
+          The clock system is configured on the <a href="#pages-clock">Clock</a> page.
+        </p>
+
+        <h3 id="concepts-routing">Routing</h3>
+        <p>
+          Many of the parameters in the sequencer can be controlled from external signals. This is useful for both experimentation and for controlling the sequencer with additional controllers in a live performance. The following sources can be used in the routing system:
+        </p>
+        <ul>
+          <li>4 CV inputs</li>
+          <li>8 CV outputs (allows for cross modulation without patching)</li>
+          <li>MIDI controllers (pitch bend, controller change, individual notes)</li>
+        </ul>
+        <p>
+          Each <em>route</em> is a mapping from a source signal to a parameter, including a mapping of the source range to a parameter range. For example, an external CV signal can be mapped to the master clock tempo such that -5V to +5V maps to 100 to 140 BPM.
+        </p>
+        <p>
+          The routing system also implements a MIDI learn function, which allows easily mapping MIDI controllers to specific parameters. Routes can be created and edited on the <a href="#pages-routing">Routing</a> page.
+        </p>
+
+        <h3 id="concepts-controller">Controller</h3>
+        <p>
+          In addition to the routing system, specific MIDI controllers such as the Novation Launchpad can be used to control many aspects of the sequencer. This includes editing sequences, controlling mutes, launching patterns among other things.
+        </p>
+        <p>
+          Note: Launchpad is currently the only supported controller but others may follow.
+        </p>
+        <p>
+          See <a href="#appendix-launchpad">Launchpad</a> for more details.
+        </p>
+
+        <h3 id="concepts-file-management">File Management</h3>
+        <p>
+          The SD card can be used to store various resources such as projects, sequences, user scales and system settings. Resources are stored into slots, with each type having a total of 128 slots available. The actual content on the SD card looks as follows:
+        </p>
+        <ul>
+          <li><strong>PROJECTS/</strong>
+            <ul>
+              <li><strong>001.PRO</strong></li>
+              <li><strong>002.PRO</strong></li>
+              <li><strong>...</strong></li>
+            </ul>
+          </li>
+          <li><strong>SEQS/</strong>
+            <ul>
+              <li><strong>001.NSQ</strong></li>
+              <li><strong>001.CSQ</strong></li>
+            </ul>
+          </li>
+          <li><strong>SCALES/</strong>
+            <ul>
+              <li><strong>001.SCA</strong></li>
+              <li><strong>002.SCA</strong></li>
+              <li><strong>...</strong></li>
+            </ul>
+          </li>
+          <li><strong>SETTINGS.DAT</strong></li>
+        </ul>
+        <p>
+          where <strong>001.PRO</strong> is the first project slot, <strong>001.NSQ</strong> is the first note sequence slot, <strong>001.CSQ</strong> is the first curve sequence slot, <strong>002.SCA</strong> is the second user scale slot and <strong>SETTINGS.DAT</strong> is the backup of the system settings, also stored in on-chip flash memory.
+        </p>
+        <p>
+          The reason for using a slot system rather than traditional filenames is in order to allow for a smooth user experience while preserving the limited resources on the system.
+        </p>
+        <p>
+          Note: The SD card can easily be backed up to a computer by just copying the files. Slots can freely be rearranged by simply renaming the files.
+        </p>
+      </section>
+
+      <section>
+        <h2 id="ui">User Interface</h2>
+        <h3 id="ui-overview">Overview</h3>
+        <p>
+          The user interface of the <strong>PER|FORMER</strong> sequencer is made up from the following components:
+        </p>
+        <ul>
+          <li>OLED display</li>
+          <li>Rotary encoder with button</li>
+          <li>5 function buttons</li>
+          <li>32 buttons with bi-color LEDs</li>
+        </ul>
+        <p>
+          The rotary encoder is referred to here as <code>ENCODER</code>. The remaining buttons are grouped into function buttons, global buttons, track buttons and step buttons.
+        </p>
+        <h4>Function Buttons</h4>
+        <p>
+          There are 5 function buttons below the display: <code>F1</code>, <code>F2</code>, <code>F3</code>, <code>F4</code> and <code>F5</code>. The function associated with each button depends on the currently selected page and context. Because each function button is dynamically labeled on the display, it is always possible to see its current assignment directly on screen.
+        </p>
+        <h4>Global Buttons</h4>
+        <p>
+          There are 8 global buttons: <code>PLAY</code>, <code>TEMP</code>, <code>PATT</code>, <code>PERF</code>, <code>PREV</code>, <code>NEXT</code>, <code>SHIFT</code> and <code>PAGE</code>.
+        </p>
+        <p>All global buttons have fixed functions associated with them:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>PLAY</code></td><td style="text-align: left">Starts or stops the master clock.</td></tr>
+            <tr><td style="text-align: left"><code>SHIFT</code> + <code>PLAY</code></td><td style="text-align: left">Pause/continue or restart master clock depending on the configured Shift Mode on the <a href="#pages-clock">Clock</a> page.</td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>PLAY</code></td><td style="text-align: left">Enable or disable recording mode.</td></tr>
+            <tr><td style="text-align: left"><code>TEMP</code></td><td style="text-align: left">Shows the <a href="#pages-tempo">Tempo</a> page while held.</td></tr>
+            <tr><td style="text-align: left"><code>PATT</code></td><td style="text-align: left">Shows the <a href="#pages-pattern">Pattern</a> page while held.</td></tr>
+            <tr><td style="text-align: left"><code>PERF</code></td><td style="text-align: left">Shows the <a href="#pages-performer">Performer</a> page while held.</td></tr>
+            <tr><td style="text-align: left"><code>PREV</code>, <code>NEXT</code></td><td style="text-align: left">Navigate within the current page or context.</td></tr>
+            <tr><td style="text-align: left"><code>SHIFT</code></td><td style="text-align: left">Enable alternate functions depending on the current context.</td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code></td><td style="text-align: left">Switch between pages.</td></tr>
+            <tr><td style="text-align: left"><code>SHIFT</code> + <code>PAGE</code></td><td style="text-align: left">Show the context menu for the active page.</td></tr>
+          </tbody>
+        </table>
+        <h4>Track Buttons</h4>
+        <p>
+          There are 8 track buttons: <code>T1</code> to <code>T8</code>. These buttons are generally used to select the active track, but they are also used to select pages in combination with <code>PAGE</code> and to trigger additional functions depending on the active page.
+        </p>
+        <h4>Step Buttons</h4>
+        <p>
+          There are 16 step buttons: <code>S1</code> to <code>S16</code>. These buttons are generally used to select steps in a sequence, but they are also used to select pages in combination with <code>PAGE</code> and to trigger additional context-specific functions.
+        </p>
+
+        <h3 id="ui-navigation">Navigation</h3>
+        <p>
+          The user interface is organized into multiple pages, each giving access to a different part of the sequencer, including configuration, sequence editing, performance controls and system information.
+        </p>
+        <p>
+          The active page is selected by holding <code>PAGE</code> and pressing the corresponding page button.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Page</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>CLOCK</code> (<code>TEMP</code>)</td><td style="text-align: left"><a href="#pages-clock">Clock</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>PATT</code></td><td style="text-align: left"><a href="#pages-pattern">Pattern</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>PERF</code></td><td style="text-align: left"><a href="#pages-performer">Performer</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>PROJECT</code> (<code>T1</code>)</td><td style="text-align: left"><a href="#pages-project">Project</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>LAYOUT</code> (<code>T2</code>)</td><td style="text-align: left"><a href="#pages-layout">Layout</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>ROUTING</code> (<code>T3</code>)</td><td style="text-align: left"><a href="#pages-routing">Routing</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>MIDIOUT</code> (<code>T4</code>)</td><td style="text-align: left"><a href="#pages-midi-output">MIDI Output</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>U.SCALE</code> (<code>T5</code>)</td><td style="text-align: left"><a href="#pages-user-scale">User Scale</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>STEPS</code> (<code>S1</code>)</td><td style="text-align: left"><a href="#pages-steps">Steps</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>SEQ</code> (<code>S2</code>)</td><td style="text-align: left"><a href="#pages-sequence">Sequence</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>TRACK</code> (<code>S3</code>)</td><td style="text-align: left"><a href="#pages-track">Track</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>SONG</code> (<code>S4</code>)</td><td style="text-align: left"><a href="#pages-song">Song</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>MONITOR</code> (<code>S8</code>)</td><td style="text-align: left"><a href="#pages-monitor">Monitor</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>SYSTEM</code> (<code>T8</code>)</td><td style="text-align: left"><a href="#pages-system">System</a></td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + <code>PREV</code></td><td style="text-align: left"><a href="#pages-overview">Overview</a></td></tr>
+          </tbody>
+        </table>
+        <p>
+          There are 3 special pages that can be entered temporarily by simply holding a single button: <a href="#pages-tempo">Tempo</a>, <a href="#pages-pattern">Pattern</a> and <a href="#pages-performer">Performer</a>. These are optimized for live performance and quick access.
+        </p>
+        <p>
+          Note: while holding <code>PAGE</code>, the LEDs indicate the currently selected page and mark the buttons associated with available pages.
+        </p>
+
+        <h3 id="ui-page-layout">Page Layout</h3>
+        <p>Pages are divided into three sections: header, body and footer.</p>
+        <p>
+          The <em>header</em> displays the global state of the sequencer and information about the active page and context.
+          The <em>body</em> displays the main content for the active page.
+          The <em>footer</em> displays the labels of the function buttons for the current page.
+        </p>
+        <h4>Header</h4>
+        <p>
+          The header shows the current clock mode and tempo in the top-left corner. The clock mode can be one of the following:
+        </p>
+        <ul>
+          <li><strong>A</strong> Auto</li>
+          <li><strong>M</strong> Master</li>
+          <li><strong>S</strong> Slave</li>
+        </ul>
+        <p>
+          Instead of the clock mode, <strong>R</strong> is displayed when recording is enabled.
+        </p>
+        <p>
+          The currently selected track is shown by name. The currently playing pattern on the selected track is shown as <strong>P1</strong> - <strong>P16</strong>. If a song is currently playing, the playing pattern is highlighted. The currently edited pattern is shown as <strong>E1</strong> - <strong>E16</strong> and is highlighted if it matches the pattern currently playing. If a snapshot is active, the pattern info is replaced with <strong>SNAP</strong>.
+        </p>
+        <p>
+          The active page is shown in the top-right corner, optionally with a sub-page or mode immediately to its left.
+        </p>
+        <p>
+          In follow pattern mode, an indicator of the current mode is displayed in the top-right corner:
+        </p>
+        <ul>
+          <li><strong>F</strong> Follow mode</li>
+          <li><strong>F:LP</strong> Launchpad follow mode</li>
+          <li><strong>F:D+LP</strong> Follow mode on display and Launchpad</li>
+        </ul>
+        <p>
+          On a stochastic track, an <strong>L</strong> is displayed in the top-right corner when loop mode is engaged.
+        </p>
+        <h4>Body</h4>
+        <p>
+          The body displays the main content for the active page.
+        </p>
+        <h4>Footer</h4>
+        <p>
+          The footer displays the labels of the function buttons for the current page.
+        </p>
+        <p>
+          On pages such as <a href="#pages-layout">Layout</a>, the function buttons are used to switch between sub-pages. In that case, the active sub-page is highlighted in the footer.
+        </p>
+        <p>
+          On pages with a context menu, the labels dynamically change to the context-menu actions when holding <code>SHIFT</code> + <code>PAGE</code> or when double-clicking <code>PAGE</code> to enter the context menu for 2 seconds.
+        </p>
+
+        <h3 id="ui-list-pages">List Pages</h3>
+        <p>
+          Pages that expose configuration options are typically presented as a list of items, each having the name shown on the left and the value on the right side.
+        </p>
+        <p>
+          Rotate the <code>ENCODER</code> or use <code>PREV</code>, <code>NEXT</code> to navigate through the list. Press <code>ENCODER</code> to enter and leave edit mode, indicated by moving the highlight from the item name to the item value and back. While in edit mode, rotate the <code>ENCODER</code> or use <code>PREV</code>, <code>NEXT</code> to adjust the value. Hold <code>SHIFT</code> to change the value in larger or smaller steps depending on the item being edited.
+        </p>
+
+        <h3 id="ui-copy-paste">Copy/Paste</h3>
+        <p>
+          To allow moving and copying data, a copy/paste system is implemented that allows acting on tracks, sequences, steps, patterns and user scales.
+        </p>
+        <p>
+          Copy/paste actions are available in the context menu when holding <code>SHIFT</code> + <code>PAGE</code> or by double-clicking <code>PAGE</code>.
+        </p>
+        <p>
+          This applies throughout the manual, especially on <a href="#pages-track">Track</a>, <a href="#pages-sequence">Sequence</a>, <a href="#pages-steps">Steps</a>, <a href="#pages-pattern">Pattern</a> and <a href="#pages-user-scale">User Scale</a>.
+        </p>
+        <p>
+          Note: due to memory limitations, the clipboard can only hold one object at a time and shares memory across all different object types. Copying a new object always clears the previously copied one.
+        </p>
+      </section>
+
+      <section>
+        <h2 id="pages">Pages</h2>
+        <p>
+          This chapter summarizes the main operating pages of the sequencer and is being progressively aligned with the current fork.
+        </p>
+
+        <h3 id="pages-project">Project</h3>
+        <p>
+          The <em>Project</em> page is entered with <code>PAGE</code> + <code>PROJECT</code>. It contains project-wide parameters such as tempo, swing, time signature, scale defaults, monitoring, recording behavior and MIDI integration.
+        </p>
+        <p>
+          It is also the main place for loading, saving and initializing projects. Its context menu provides project initialization, SD load/save functions and route creation for the currently selected routable parameter.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Name</td><td style="text-align: left">-</td><td style="text-align: left">Project name edited with the text editor.</td></tr>
+            <tr><td style="text-align: left">Tempo</td><td style="text-align: left">1.0 - 1000.0 BPM</td><td style="text-align: left">Master clock tempo.</td></tr>
+            <tr><td style="text-align: left">Swing</td><td style="text-align: left">50% - 75%</td><td style="text-align: left">Global swing amount.</td></tr>
+            <tr><td style="text-align: left">Time Signature</td><td style="text-align: left">Beats/Note</td><td style="text-align: left">Defines musical bar length for sync and song behavior.</td></tr>
+            <tr><td style="text-align: left">Sync Measure</td><td style="text-align: left">1 - 128 bars</td><td style="text-align: left">Measure multiple used for synced actions.</td></tr>
+            <tr><td style="text-align: left">Scale</td><td style="text-align: left">Preset or user scale</td><td style="text-align: left">Default project scale for note-based tracks.</td></tr>
+            <tr><td style="text-align: left">Root Note</td><td style="text-align: left">C - B</td><td style="text-align: left">Default root note.</td></tr>
+            <tr><td style="text-align: left">Monitor Mode</td><td style="text-align: left">Always, Stopped, Off</td><td style="text-align: left">Controls live monitoring behavior.</td></tr>
+            <tr><td style="text-align: left">Record Mode</td><td style="text-align: left">Overdub, Overwrite, Step Record</td><td style="text-align: left">Selects the recording mode.</td></tr>
+            <tr><td style="text-align: left">MIDI Input</td><td style="text-align: left">Off, All, MIDI, USB</td><td style="text-align: left">Source used for monitoring and recording.</td></tr>
+            <tr><td style="text-align: left">MIDI Integration</td><td style="text-align: left">Off, Program Changes, Malekko</td><td style="text-align: left">Program change or bus integration mode.</td></tr>
+            <tr><td style="text-align: left">CV/Gate Input</td><td style="text-align: left">Off, CV1/CV2, CV3/CV4</td><td style="text-align: left">Enables CV/Gate monitoring and recording.</td></tr>
+            <tr><td style="text-align: left">Steps to Stop</td><td style="text-align: left">Off, 1 - 64</td><td style="text-align: left">Auto-stop after a set step count.</td></tr>
+            <tr><td style="text-align: left">Record Delay</td><td style="text-align: left">Off, 1 - 64</td><td style="text-align: left">Delayed recording start.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>Tempo</em> and <em>Swing</em> are routable parameters.
+        </p>
+        <p>
+          Double-clicking <code>F1</code> - <code>F5</code> provides shortcuts into Project, Layout, Routing, MIDI Output and User Scale.
+        </p>
+        <h4>Context Menu</h4>
+        <p>
+          Hold <code>SHIFT</code> + <code>PAGE</code> or double-click <code>PAGE</code> to open the context menu and access the following functions:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the project to its default state. This reverts all unsaved changes.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Load</td><td style="text-align: left">Load a project from the SD card.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Save</td><td style="text-align: left">Save the project to the SD card and overwrite the previous slot automatically.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Save As</td><td style="text-align: left">Save the project to a new slot on the SD card.</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Route</td><td style="text-align: left">Show or create a route for the currently selected parameter, when routable.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="pages-layout">Layout</h3>
+        <p>
+          The <em>Layout</em> page is entered with <code>PAGE</code> + <code>LAYOUT</code>. It is used to configure how tracks are structurally connected to the hardware outputs and to one another.
+        </p>
+        <ul>
+          <li><strong>Track Mode:</strong> selects Note, Curve, MIDI/CV, Stochastic, Logic or Arpeggiator mode per track.</li>
+          <li><strong>Link Track:</strong> links a track to a previous track so it follows the same playback behavior.</li>
+          <li><strong>Gate Output:</strong> maps virtual gate outputs to physical outputs.</li>
+          <li><strong>CV Output:</strong> maps virtual CV outputs to physical outputs.</li>
+        </ul>
+        <p>
+          This page is especially important for polyphonic MIDI/CV setups, linked tracks and custom CV/gate assignments.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Tab</th>
+              <th style="text-align: left">Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Track Mode</td><td style="text-align: left">Assigns the operating mode of each track. Changing mode clears data for that track and must be committed.</td></tr>
+            <tr><td style="text-align: left">Link Track</td><td style="text-align: left">Links a track to a previous one so playback behavior is inherited.</td></tr>
+            <tr><td style="text-align: left">Gate Output</td><td style="text-align: left">Maps track gate outputs to physical gate jacks.</td></tr>
+            <tr><td style="text-align: left">CV Output</td><td style="text-align: left">Maps track CV outputs to physical CV jacks, useful for polyphony and extra modulation lanes.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Changing track mode erases all data associated with the affected track. For that reason, a new track mode only takes effect after manually committing the change with <code>F5</code>.
+        </p>
+        <p>
+          Note: a track can only be linked to a preceding track due to the internal architecture of the sequencer. Track 1 cannot use track linking, track 2 can only link to track 1, and track 8 can link to any of tracks 1-7.
+        </p>
+
+        <h3 id="pages-track">Track</h3>
+        <p>
+          The <em>Track</em> page is entered with <code>PAGE</code> + <code>TRACK</code>. It exposes parameters that affect the selected track as a whole, and the available parameter list depends on the active track mode.
+        </p>
+        <p>
+          In Note, Logic and Arpeggiator related modes this includes parameters such as play mode, fill mode, slide time, octave, transpose, rotate and multiple performance-oriented probability biases. In Curve mode it additionally includes voltage behavior such as offset and min/max handling. In MIDI/CV mode it becomes a converter and arpeggiator setup page with voice count, note priority, ranges and modulation behavior.
+        </p>
+        <p>
+          The track context menu provides initialization, copy, paste and route creation for routable parameters.
+        </p>
+        <h4>Context Menu</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the selected track and all its content to the default state.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected track and all its content to the clipboard.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste the clipboard contents onto the selected track.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Route</td><td style="text-align: left">Show or create a route for the currently selected parameter, when routable.</td></tr>
+          </tbody>
+        </table>
+        <h4>Note Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
+            <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track.</td></tr>
+            <tr><td style="text-align: left">Fill Mode</td><td style="text-align: left">None, Gates, Next Pattern, Condition</td><td style="text-align: left">Determines what the track does when fill is engaged.</td></tr>
+            <tr><td style="text-align: left">CV Update Mode</td><td style="text-align: left">Gate, Always</td><td style="text-align: left">Updates CV only on active gates or on every step.</td></tr>
+            <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Duration of pitch slides for steps with Slide enabled.</td></tr>
+            <tr><td style="text-align: left">Octave</td><td style="text-align: left">-10 - +10</td><td style="text-align: left">Octave transposition amount.</td></tr>
+            <tr><td style="text-align: left">Transpose</td><td style="text-align: left">-100 - +100</td><td style="text-align: left">Note transposition amount, relative to the active scale.</td></tr>
+            <tr><td style="text-align: left">Rotate</td><td style="text-align: left"><a href="#appendix-rotation">Rotation</a></td><td style="text-align: left">Playback rotation applied to the sequence.</td></tr>
+            <tr><td style="text-align: left">Gate P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Gate probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Retrig P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Retrigger probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Length bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Note variation probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes.</td></tr>
+            <tr><td style="text-align: left">Logic Track</td><td style="text-align: left">1 - 8</td><td style="text-align: left">Select the Logic track whose values should be output.</td></tr>
+            <tr><td style="text-align: left">Logic Track In</td><td style="text-align: left">1 - 2</td><td style="text-align: left">Select the input of the Logic track.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>Slide Time</em>, <em>Octave</em>, <em>Transpose</em>, <em>Rotate</em>, <em>Gate P. Bias</em>, <em>Retrig P. Bias</em>, <em>Length Bias</em> and <em>Note P. Bias</em> are routable parameters and are especially useful in live performance.
+        </p>
+        <h4>Curve Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
+            <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track.</td></tr>
+            <tr><td style="text-align: left">Fill Mode</td><td style="text-align: left">None, Variation, Next Pattern, Invert</td><td style="text-align: left">Determines curve behavior when fill is engaged.</td></tr>
+            <tr><td style="text-align: left">Mute Mode</td><td style="text-align: left">Last Value, 0V, Min, Max</td><td style="text-align: left">Voltage behavior when the track is muted.</td></tr>
+            <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Global slide time applied to the curve.</td></tr>
+            <tr><td style="text-align: left">Offset</td><td style="text-align: left">-5.00V - 5.00V</td><td style="text-align: left">Voltage offset applied to the CV output.</td></tr>
+            <tr><td style="text-align: left">Rotate</td><td style="text-align: left"><a href="#appendix-rotation">Rotation</a></td><td style="text-align: left">Playback rotation applied to the sequence.</td></tr>
+            <tr><td style="text-align: left">Shape P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Shape probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Gate P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Gate probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes.</td></tr>
+            <tr><td style="text-align: left">Curve CV Input</td><td style="text-align: left">Off, CV1, CV2, CV3, CV4</td><td style="text-align: left">Select CV input for curve recording.</td></tr>
+            <tr><td style="text-align: left">Min</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Minimum output voltage percentage for the curve track.</td></tr>
+            <tr><td style="text-align: left">Max</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Maximum output voltage percentage for the curve track.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>Slide Time</em>, <em>Offset</em>, <em>Rotate</em>, <em>Shape P. Bias</em> and <em>Gate P. Bias</em> are routable parameters.
+        </p>
+        <h4>MIDI/CV Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
+            <tr><td style="text-align: left">Source</td><td style="text-align: left">MIDI, USB</td><td style="text-align: left">MIDI source port; hold <code>SHIFT</code> and rotate <code>ENCODER</code> to select channel.</td></tr>
+            <tr><td style="text-align: left">Voices</td><td style="text-align: left">1 - 8</td><td style="text-align: left">Number of voices generated.</td></tr>
+            <tr><td style="text-align: left">Voice Config</td><td style="text-align: left">Pitch, Pitch+Vel, Pitch+Vel+Press</td><td style="text-align: left">CV signals generated for each voice.</td></tr>
+            <tr><td style="text-align: left">Note Priority</td><td style="text-align: left">Last Note, First Note, Lowest Note, Highest Note</td><td style="text-align: left">Determines which notes have priority at the outputs.</td></tr>
+            <tr><td style="text-align: left">Low Note</td><td style="text-align: left">C-1 - G9</td><td style="text-align: left">Lower bound of the key range listened to by this track.</td></tr>
+            <tr><td style="text-align: left">High Note</td><td style="text-align: left">C-1 - G9</td><td style="text-align: left">Upper bound of the key range listened to by this track.</td></tr>
+            <tr><td style="text-align: left">Pitch Bend</td><td style="text-align: left">Off, 1 - 48 semitones</td><td style="text-align: left">Pitch bend range.</td></tr>
+            <tr><td style="text-align: left">Mod Range</td><td style="text-align: left">1-5V Unipolar, 1-5V Bipolar</td><td style="text-align: left">Output range for modulation signals such as velocity and pressure.</td></tr>
+            <tr><td style="text-align: left">Retrigger</td><td style="text-align: left">No, Yes</td><td style="text-align: left">Retrigger voices on every received Note On message.</td></tr>
+            <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Pitch slide duration for legato notes in monophonic operation.</td></tr>
+            <tr><td style="text-align: left">Transpose</td><td style="text-align: left">-100 - +100</td><td style="text-align: left">Note transposition amount.</td></tr>
+            <tr><td style="text-align: left">Arpeggiator</td><td style="text-align: left">No, Yes</td><td style="text-align: left">Enable arpeggiator mode.</td></tr>
+            <tr><td style="text-align: left">Hold</td><td style="text-align: left">No, Yes</td><td style="text-align: left">Hold chords in the arpeggiator after keys are released.</td></tr>
+            <tr><td style="text-align: left">Mode</td><td style="text-align: left"><a href="#appendix-arpeggiator-modes">Arpeggiator Modes</a></td><td style="text-align: left">Arpeggiator playback mode.</td></tr>
+            <tr><td style="text-align: left">Divisor</td><td style="text-align: left"><a href="#appendix-divisors">Divisors</a></td><td style="text-align: left">Arpeggiator divisor.</td></tr>
+            <tr><td style="text-align: left">Gate Length</td><td style="text-align: left">1 - 100%</td><td style="text-align: left">Gate length of generated notes.</td></tr>
+            <tr><td style="text-align: left">Octaves</td><td style="text-align: left">Off, Up 1-5, Up Down 1-5, Down 1-5, Down Up 1-5</td><td style="text-align: left">Octave order and range for the arpeggiator.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>Slide Time</em> and <em>Transpose</em> are routable parameters.
+        </p>
+        <p>
+          Note: <em>Low Note</em> and <em>High Note</em> can be used to create split-keyboard setups with multiple MIDI/CV tracks.
+        </p>
+        <h4>Stochastic Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
+            <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track; fixed to Aligned in practice.</td></tr>
+            <tr><td style="text-align: left">CV Update Mode</td><td style="text-align: left">Gate, Always</td><td style="text-align: left">Updates CV only on active gates or on every step.</td></tr>
+            <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Duration of pitch slides for steps with Slide enabled.</td></tr>
+            <tr><td style="text-align: left">Octave</td><td style="text-align: left">-10 - +10</td><td style="text-align: left">Octave transposition amount.</td></tr>
+            <tr><td style="text-align: left">Transpose</td><td style="text-align: left">-100 - +100</td><td style="text-align: left">Note transposition amount, relative to the active scale.</td></tr>
+            <tr><td style="text-align: left">Rotate</td><td style="text-align: left"><a href="#appendix-rotation">Rotation</a></td><td style="text-align: left">Playback rotation applied to the sequence.</td></tr>
+            <tr><td style="text-align: left">Gate P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Gate probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Retrig P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Retrigger probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Length bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Note variation probability bias added to the sequence.</td></tr>
+          </tbody>
+        </table>
+        <h4>Logic Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
+            <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track.</td></tr>
+            <tr><td style="text-align: left">Fill Mode</td><td style="text-align: left">None, Gates, Next Pattern, Condition</td><td style="text-align: left">Determines what the track does when fill is engaged.</td></tr>
+            <tr><td style="text-align: left">CV Update Mode</td><td style="text-align: left">Gate, Always</td><td style="text-align: left">Updates CV only on active gates or on every step.</td></tr>
+            <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Duration of pitch slides for steps with Slide enabled.</td></tr>
+            <tr><td style="text-align: left">Octave</td><td style="text-align: left">-10 - +10</td><td style="text-align: left">Octave transposition amount.</td></tr>
+            <tr><td style="text-align: left">Transpose</td><td style="text-align: left">-100 - +100</td><td style="text-align: left">Note transposition amount, relative to the active scale.</td></tr>
+            <tr><td style="text-align: left">Rotate</td><td style="text-align: left"><a href="#appendix-rotation">Rotation</a></td><td style="text-align: left">Playback rotation applied to the sequence.</td></tr>
+            <tr><td style="text-align: left">Gate P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Gate probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Retrig P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Retrigger probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Length bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Note variation probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes.</td></tr>
+            <tr><td style="text-align: left">Input Track 1</td><td style="text-align: left">Not selectable</td><td style="text-align: left">Shows the related Note track as input 1.</td></tr>
+            <tr><td style="text-align: left">Input Track 2</td><td style="text-align: left">Not selectable</td><td style="text-align: left">Shows the related Note track as input 2.</td></tr>
+            <tr><td style="text-align: left">Detailed View</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Show a detailed view of the logic track including the two input tracks.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>Slide Time</em>, <em>Octave</em>, <em>Transpose</em>, <em>Rotate</em>, <em>Gate P. Bias</em>, <em>Retrig P. Bias</em>, <em>Length Bias</em> and <em>Note P. Bias</em> are routable parameters.
+        </p>
+        <h4>Arpeggiator Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
+            <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track; fixed to Aligned in practice.</td></tr>
+            <tr><td style="text-align: left">Fill Mode</td><td style="text-align: left">None, Gates, Next Pattern, Condition</td><td style="text-align: left">Determines what the track does when fill is engaged.</td></tr>
+            <tr><td style="text-align: left">CV Update Mode</td><td style="text-align: left">Gate, Always</td><td style="text-align: left">Updates CV only on active gates or on every step.</td></tr>
+            <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Duration of pitch slides for steps with Slide enabled.</td></tr>
+            <tr><td style="text-align: left">Octave</td><td style="text-align: left">-10 - +10</td><td style="text-align: left">Octave transposition amount.</td></tr>
+            <tr><td style="text-align: left">Transpose</td><td style="text-align: left">-100 - +100</td><td style="text-align: left">Note transposition amount, relative to the active scale.</td></tr>
+            <tr><td style="text-align: left">Gate P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Gate probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Retrig P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Retrigger probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Length bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Note variation probability bias added to the sequence.</td></tr>
+            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes.</td></tr>
+            <tr><td style="text-align: left">Mode</td><td style="text-align: left"><a href="#appendix-arpeggiator-modes">Arpeggiator Modes</a></td><td style="text-align: left">Arpeggiator mode.</td></tr>
+            <tr><td style="text-align: left">Hold</td><td style="text-align: left">No, Yes</td><td style="text-align: left">Hold chords in the arpeggiator after keys are released.</td></tr>
+            <tr><td style="text-align: left">Octaves</td><td style="text-align: left">Off, Up 1-5, Up Down 1-5, Down 1-5, Down Up 1-5</td><td style="text-align: left">Octave order and range for the arpeggiator.</td></tr>
+            <tr><td style="text-align: left">Gate Length</td><td style="text-align: left">1 - 100%</td><td style="text-align: left">Gate length of generated notes.</td></tr>
+            <tr><td style="text-align: left">Rate</td><td style="text-align: left"><a href="#appendix-divisors">Divisors</a></td><td style="text-align: left">Arpeggiator divisor.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>Slide Time</em>, <em>Octave</em>, <em>Transpose</em>, <em>Gate P. Bias</em>, <em>Retrig P. Bias</em>, <em>Length Bias</em> and <em>Note P. Bias</em> are routable parameters.
+        </p>
+
+        <h3 id="pages-sequence">Sequence</h3>
+        <p>
+          The <em>Sequence</em> page is entered with <code>PAGE</code> + <code>SEQ</code>. It controls the settings of the currently edited sequence or pattern on the selected track.
+        </p>
+        <p>
+          Typical sequence parameters include first step, last step, run mode, divisor, reset measure and scale or range selection, depending on the track mode. On Note, Stochastic and Arpeggiator tracks, scale and root note are especially important because they define how note indexes become voltages.
+        </p>
+        <p>
+          The context menu allows you to initialize, copy, paste and duplicate sequences. On Note and Curve tracks, save/load shortcuts for sequence files are also available.
+        </p>
+        <h4>Context Menu</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the selected sequence and all its content to the default state.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected sequence and all its content to the clipboard.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste the clipboard contents onto the selected sequence.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Duplicate</td><td style="text-align: left">Copy the selected sequence to the next sequence slot on the selected track.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          On Note or Curve tracks, double-clicking <code>SHIFT</code> opens the save/load context menu:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Load</td><td style="text-align: left">Load a sequence from the SD card.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Save</td><td style="text-align: left">Save the sequence to the SD card and overwrite the previous slot automatically.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Save As</td><td style="text-align: left">Save the sequence to a new slot on the SD card.</td></tr>
+          </tbody>
+        </table>
+        <h4>Note Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the sequence name.</td></tr>
+            <tr><td style="text-align: left">First Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">First step to play. Hold <code>SHIFT</code> to edit first and last step together.</td></tr>
+            <tr><td style="text-align: left">Last Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Last step to play. Hold <code>SHIFT</code> to edit first and last step together.</td></tr>
+            <tr><td style="text-align: left">Run Mode</td><td style="text-align: left"><a href="#appendix-run-modes">Run Modes</a></td><td style="text-align: left">Sequence run mode.</td></tr>
+            <tr><td style="text-align: left">Divisor</td><td style="text-align: left"><a href="#appendix-divisors">Divisors</a></td><td style="text-align: left">Time divisor for the sequence.</td></tr>
+            <tr><td style="text-align: left">Reset Measure</td><td style="text-align: left">Off, 1 - 128 bars</td><td style="text-align: left">Number of bars at which the sequence resets.</td></tr>
+            <tr><td style="text-align: left">Scale</td><td style="text-align: left"><a href="#appendix-scales">Scales</a></td><td style="text-align: left">Scale used by the sequence; if set to Default, uses the Project page scale.</td></tr>
+            <tr><td style="text-align: left">Root Note</td><td style="text-align: left">C, C#, D, D#, E, F, F#, G, G#, A, B</td><td style="text-align: left">Root note used by the sequence; if set to Default, uses the Project page root note.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>First Step</em>, <em>Last Step</em>, <em>Run Mode</em>, <em>Divisor</em>, <em>Scale</em> and <em>Root Note</em> are routable parameters.
+        </p>
+        <h4>Curve Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the sequence name.</td></tr>
+            <tr><td style="text-align: left">First Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">First step to play. Hold <code>SHIFT</code> to edit first and last step together.</td></tr>
+            <tr><td style="text-align: left">Last Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Last step to play. Hold <code>SHIFT</code> to edit first and last step together.</td></tr>
+            <tr><td style="text-align: left">Run Mode</td><td style="text-align: left"><a href="#appendix-run-modes">Run Modes</a></td><td style="text-align: left">Sequence run mode.</td></tr>
+            <tr><td style="text-align: left">Divisor</td><td style="text-align: left"><a href="#appendix-divisors">Divisors</a></td><td style="text-align: left">Time divisor for the sequence.</td></tr>
+            <tr><td style="text-align: left">Reset Measure</td><td style="text-align: left">Off, 1 - 128 bars</td><td style="text-align: left">Number of bars at which the sequence resets.</td></tr>
+            <tr><td style="text-align: left">Range</td><td style="text-align: left">1V - 5V Unipolar, 1V - 5V Bipolar</td><td style="text-align: left">Voltage range used by the sequence.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>First Step</em>, <em>Last Step</em>, <em>Run Mode</em> and <em>Divisor</em> are routable parameters.
+        </p>
+        <h4>Stochastic Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Run Mode</td><td style="text-align: left"><a href="#appendix-run-modes">Run Modes</a></td><td style="text-align: left">Sequence run mode.</td></tr>
+            <tr><td style="text-align: left">Divisor</td><td style="text-align: left"><a href="#appendix-divisors">Divisors</a></td><td style="text-align: left">Time divisor for the sequence.</td></tr>
+            <tr><td style="text-align: left">Reset Measure</td><td style="text-align: left">Off, 1 - 128 bars</td><td style="text-align: left">Number of bars at which the sequence resets.</td></tr>
+            <tr><td style="text-align: left">Scale</td><td style="text-align: left"><a href="#appendix-scales">Scales</a></td><td style="text-align: left">Scale used by the sequence; if set to Default, uses the Project page scale.</td></tr>
+            <tr><td style="text-align: left">Root Note</td><td style="text-align: left">C, C#, D, D#, E, F, F#, G, G#, A, B</td><td style="text-align: left">Root note used by the sequence; if set to Default, uses the Project page root note.</td></tr>
+            <tr><td style="text-align: left">Rest Prob. 2</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 2 steps.</td></tr>
+            <tr><td style="text-align: left">Rest Prob. 4</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 4 steps.</td></tr>
+            <tr><td style="text-align: left">Rest Prob. 8</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 8 steps.</td></tr>
+            <tr><td style="text-align: left">Seq First Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">First step of the locked loop.</td></tr>
+            <tr><td style="text-align: left">Seq Last Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Last step of the locked loop.</td></tr>
+            <tr><td style="text-align: left">L Oct. Range</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Lower octave bound used for random pitch generation.</td></tr>
+            <tr><td style="text-align: left">H Oct. Range</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Upper octave bound used for random pitch generation.</td></tr>
+            <tr><td style="text-align: left">Length Mod</td><td style="text-align: left">-200 - 200%</td><td style="text-align: left">Stochastic length modifier added to the step length.</td></tr>
+          </tbody>
+        </table>
+        <h4>Logic Track</h4>
+        <p>
+          All available options on the Note sequence page are also available on the Logic sequence page.
+        </p>
+        <h4>Arpeggiator Track</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the sequence name.</td></tr>
+            <tr><td style="text-align: left">Divisor</td><td style="text-align: left"><a href="#appendix-divisors">Divisors</a></td><td style="text-align: left">Time divisor for the sequence.</td></tr>
+            <tr><td style="text-align: left">Reset Measure</td><td style="text-align: left">Off, 1 - 128 bars</td><td style="text-align: left">Number of bars at which the sequence resets.</td></tr>
+            <tr><td style="text-align: left">Scale</td><td style="text-align: left"><a href="#appendix-scales">Scales</a></td><td style="text-align: left">Scale used by the sequence; if set to Default, uses the Project page scale.</td></tr>
+            <tr><td style="text-align: left">Root Note</td><td style="text-align: left">C, C#, D, D#, E, F, F#, G, G#, A, B</td><td style="text-align: left">Root note used by the sequence; if set to Default, uses the Project page root note.</td></tr>
+            <tr><td style="text-align: left">Rest Prob. 2</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 2 steps.</td></tr>
+            <tr><td style="text-align: left">Rest Prob. 4</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 4 steps.</td></tr>
+            <tr><td style="text-align: left">Rest Prob. 8</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 8 steps.</td></tr>
+            <tr><td style="text-align: left">Seq First Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">First step of the locked loop.</td></tr>
+            <tr><td style="text-align: left">Seq Last Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Last step of the locked loop.</td></tr>
+            <tr><td style="text-align: left">L Oct. Range</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Lower octave bound used for random pitch generation.</td></tr>
+            <tr><td style="text-align: left">H Oct. Range</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Upper octave bound used for random pitch generation.</td></tr>
+            <tr><td style="text-align: left">Length Mod</td><td style="text-align: left">-200 - 200%</td><td style="text-align: left">Stochastic length modifier added to the step length.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="pages-steps">Steps</h3>
+        <p>
+          The <em>Steps</em> page is entered using <code>PAGE</code> + <code>STEPS</code>.
+        </p>
+        <p>
+          This page allows editing the currently selected sequence on the currently selected track. Depending on the track mode of the selected track, this page shows a different graphical representation of the sequence. If track mode is set to MIDI/CV, the page is not available and selecting it will jump to the <a href="#pages-track">Track</a> page.
+        </p>
+        <p>
+          In a Logic track, if detailed view is enabled, a visual representation of the input tracks is visible for each step: a dot means input track 1 has gate on, an empty square means input track 2 has gate on, a combination of dot and empty square means both input tracks have gate on and finally the full square means logic gate is on. A visual feedback is shown when the logic gate output is on. Use <code>SHIFT</code> to show the status of the inputs instead of the sequence gates.
+        </p>
+        <h4>Layer Selection</h4>
+        <p>
+          Sequence data is organized in layers. Press <code>F1</code>, <code>F2</code>, <code>F3</code>, <code>F4</code> or <code>F5</code> to select different layers. The currently selected layer is shown in the header and the graphical representation of the sequence will change accordingly. Note that each function button can represent a group of layers, in which case pressing the same function button repeatedly will cycle through the layers contained in the group. Press <code>SHIFT</code> + <code>F1</code> to <code>F5</code> to quickly switch to the first layer of a group.
+        </p>
+        <p>The following layers are available in Note mode:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Layers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Gate, Gate Probability, Gate Offset</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Retrigger, Retrigger Probability, Repeat, Repeat Mode</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Length, Length Variation Range, Length Variation Probability</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Note, Note Variation Range, Note Variation Probability, Slide, Bypass Scale</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Condition</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: See <a href="#appendix-step-conditions">Step Conditions</a> for a description of the different step conditions.
+        </p>
+        <p>
+          Note: See <a href="#appendix-metropolix">Metropolix Mode</a> for a description of this feature.
+        </p>
+        <p>The following layers are available in Curve mode:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Layers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Shape, Shape Variation, Shape Variation Probability</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Minimum</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Maximum</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Gate, Gate Probability</td></tr>
+          </tbody>
+        </table>
+        <p>The following layers are available in Stochastic mode:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Layers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Gate, Gate Probability, Gate Offset</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Retrigger, Retrigger Probability</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Length, Length Variation Range, Length Variation Probability</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Note Probability, Octave, Octave Probability, Slide</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Condition</td></tr>
+          </tbody>
+        </table>
+        <p>The following layers are available in Logic mode:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Layers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Gate, Gate Logic, Gate Probability, Gate Offset</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Retrigger, Retrigger Probability, Repeat, Repeat Mode</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Length, Length Variation Range, Length Variation Probability</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Note Logic, Note Variation Range, Note Variation Probability, Slide</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Condition</td></tr>
+          </tbody>
+        </table>
+        <p>The following layers are available in Arpeggiator mode:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Layers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Gate, Gate Probability, Gate Offset</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Retrigger, Retrigger Probability</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Length, Length Variation Range, Length Variation Probability</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Note Probability, Note Variation Range, Note Variation Probability, Octave, Octave Probability, Slide</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Condition</td></tr>
+          </tbody>
+        </table>
+        <h4>Section Selection</h4>
+        <p>
+          Sequences contain up to 64 steps, of which only 16 are shown on the page. Press <code>PREV</code> and <code>NEXT</code> to select one of the 4 available sections: 1-16, 17-32, 33-48 and 49-64. The currently selected section is indicated by the 4 LEDs in the bottom-left corner as well as with the step indices above each step on the page.
+        </p>
+        <h4>Editing Steps</h4>
+        <p>
+          To adjust the values of the currently selected layer, hold <code>S1</code> to <code>S16</code> and rotate the <code>ENCODER</code>. To adjust multiple steps at the same time, hold multiple step buttons and rotate the <code>ENCODER</code>. The currently selected steps are visualized both on the page by highlighting the step indices as well as on the step LEDs which turn orange. When adjusting multiple steps, the values are adjusted relative to their current value. Depending on the track mode and the selected layer, additional functionality is available:
+        </p>
+        <ul>
+          <li>When editing the Gate layer on a sequence of a Note track, pressing <code>S1</code> to <code>S16</code> enables or disables the gate values.</li>
+          <li>When editing a note sequence, double pressing <code>S1</code> to <code>S16</code> can be used to toggle the step gate no matter what layer is edited, other than Gate or Slide.</li>
+          <li>When editing any other layer on a sequence of a Note track, holding one or multiple step buttons and pressing the <code>ENCODER</code> enables or disables the gate values. This is handy for example when editing note values.</li>
+          <li>When editing any layer on a sequence of a Note track, select with <code>SHIFT</code> + step the first step, then again <code>SHIFT</code> + step, also switching page with <code>NEXT</code> or <code>PREV</code>, for the last step. Clicking <code>SHIFT</code> + <code>F3</code> ties all steps in the range: full step length except the last step, same note value to all steps.</li>
+          <li>When editing the Note layer, notes can be entered by holding a step and pressing keys on an external MIDI keyboard.</li>
+          <li>When editing the Note or Note Range layer on a sequence with a chromatic scale, holding <code>SHIFT</code> and rotating the <code>ENCODER</code> moves notes up and down by octaves.</li>
+          <li>When editing layers on a sequence of a Curve track, pressing and rotating the <code>ENCODER</code> adjusts the values in smaller steps.</li>
+          <li>When editing the Min or Max layer on a sequence of a Curve track, pressing <code>SHIFT</code> or the <code>ENCODER</code> while rotating adjusts the value in smaller steps.</li>
+          <li>When editing the Min or Max layer on a sequence of a Curve track while holding <code>F2</code> or <code>F3</code>, the curve shape is offset up and down by adjusting Min and Max at the same time.</li>
+          <li>When editing a Curve track, select multiple steps with <code>SHIFT</code> + step, then hold <code>SHIFT</code> and turn the <code>ENCODER</code> to select a shape. The shape will be spread across the selected steps.</li>
+          <li>When editing a Curve track, select multiple steps with <code>SHIFT</code> + step and press <code>SHIFT</code> + <code>ENCODER</code> to reverse the shapes.</li>
+          <li>When editing a Note track, select any steps you want and press <code>SHIFT</code> + <code>NEXT</code> or <code>PREV</code> to move the selected step by 1 step.</li>
+          <li>When editing a Note or a Curve track, selecting any steps and using the Init context menu function initializes just the selected steps.</li>
+          <li>When editing a Note or a Curve track, pressing <code>PAGE</code> + <code>S7</code> undoes the last change.</li>
+          <li>When editing a Note track, holding a step and pressing <code>F1</code> to <code>F5</code> sets the note octave respectively to 1V, 2V, 3V, 4V or 5V. This can be used to quickly create accents.</li>
+          <li>When editing a Stochastic track, pressing <code>PAGE</code> + <code>S7</code> loops the sequence. Length is calculated by Sequence First Step and Sequence Last Step.</li>
+          <li>When editing a Stochastic track, pressing <code>PAGE</code> + <code>S6</code> clears the loop and enters a new one.</li>
+          <li>When editing a Stochastic track, pressing <code>PAGE</code> + <code>S5</code> reseeds the stochastic generator and picks a random value for the Note Probability Bias parameter.</li>
+          <li>When editing a Logic track, all Note-track features and shortcuts are still available.</li>
+          <li>When editing an Arpeggiator track, pressing <code>PAGE</code> + <code>S16</code> enables keyboard mode. In this mode you cannot edit the sequence but you can play additional arpeggio notes using the step buttons, the Launchpad or an external MIDI keyboard.</li>
+        </ul>
+        <h4>Advanced Step Selection</h4>
+        <p>
+          When holding <code>SHIFT</code> and pressing step buttons, steps are selected in a persistent mode and remain selected after the buttons are released. This makes it possible to build selections across multiple sections. Pressing a selected step again while holding <code>SHIFT</code> removes it from the selection. Press any step without <code>SHIFT</code>, or double-tap <code>SHIFT</code>, to clear the selection. When the selection is empty, double-tap <code>SHIFT</code> to select all 64 steps.
+        </p>
+        <p>
+          There are two additional functions for selecting groups of steps. To select a series of steps, for example steps 1, 5, 9 and 13, hold <code>SHIFT</code> and one step button and then double tap the second step of the interval while holding the other buttons. To select all steps that have the same value on the currently selected layer, hold <code>SHIFT</code> and double tap one of the step keys.
+        </p>
+        <p>
+          Note: When selecting groups of steps they are added to the current selection. This allows quickly combining multiple groups of steps into a single selection.
+        </p>
+        <h4>Shifting Steps</h4>
+        <p>
+          Press <code>SHIFT</code> + <code>PREV</code> or <code>SHIFT</code> + <code>NEXT</code> to shift all steps in the sequence between the current first and last step to the left or right. Steps will wrap around on both sides. This has a similar effect as <a href="#appendix-rotation">Rotation</a>, but instead of changing the playback position, shifting actually moves the steps in the sequence itself.
+        </p>
+        <h4>Context Menu</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize all steps of the current sequence to the default state.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected steps to the clipboard.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste steps in the clipboard to the selected steps.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Duplicate</td><td style="text-align: left">Doubles the length of the sequence between First Step and Last Step and copies the first half to the second half.</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Gen</td><td style="text-align: left">Access generators feature.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Copy and paste only works with steps selected in persistent mode. When more steps are pasted than copied to the clipboard, the steps are repeated multiple times. This means that for example one can copy 2 steps and then paste them to 8 steps, creating a repetition of the two copied steps.
+        </p>
+        <h4>Quick Access</h4>
+        <p>
+          The Steps page is one of the most frequently used pages when operating the sequencer. To change sequence parameters such as Run Mode, First Step, Last Step and others, one normally needs to temporarily switch to the <a href="#pages-sequence">Sequence</a> page. To improve this workflow, most sequence parameters can be accessed through a quick access function. To access a parameter, hold <code>PAGE</code> and press <code>S9</code> to <code>S16</code>, similarly to switching between pages, but keep holding the <code>PAGE</code> button. The page is now overlaid with the selected parameter.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Note Track</th>
+              <th style="text-align: left">Curve Track</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>S9</code></td><td style="text-align: left">First Step</td><td style="text-align: left">First Step</td></tr>
+            <tr><td style="text-align: left"><code>S10</code></td><td style="text-align: left">Last Step</td><td style="text-align: left">Last Step</td></tr>
+            <tr><td style="text-align: left"><code>S11</code></td><td style="text-align: left">Run Mode</td><td style="text-align: left">Run Mode</td></tr>
+            <tr><td style="text-align: left"><code>S12</code></td><td style="text-align: left">Divisor</td><td style="text-align: left">Divisor</td></tr>
+            <tr><td style="text-align: left"><code>S13</code></td><td style="text-align: left">Reset Measure</td><td style="text-align: left">Reset Measure</td></tr>
+            <tr><td style="text-align: left"><code>S14</code></td><td style="text-align: left">Scale</td><td style="text-align: left">Range</td></tr>
+            <tr><td style="text-align: left"><code>S15</code></td><td style="text-align: left">Root Note</td><td style="text-align: left">-</td></tr>
+            <tr><td style="text-align: left"><code>S16</code></td><td style="text-align: left">-</td><td style="text-align: left">-</td></tr>
+          </tbody>
+        </table>
+        <p>
+          While holding the <code>PAGE</code> button, the selected sequence parameter can be adjusted by rotating the <code>ENCODER</code> or by pressing <code>S1</code> to <code>S16</code> to select the most common values. Releasing <code>PAGE</code> returns to the normal state of the Steps page.
+        </p>
+        <p>
+          Note: When quick access is active, the step LEDs indicate the range of values that can be selected in green as well as the current selection in red.
+        </p>
+        <p>
+          Note: Pressing the <code>ENCODER</code> while rotating it has the same effect as pressing <code>SHIFT</code> when editing the same parameter through the menu.
+        </p>
+        <p>
+          Note: In an Arpeggiator track <code>S9</code> changes the arpeggiator rate, <code>S10</code> the arpeggiator mode and <code>S11</code> the arpeggiator octaves.
+        </p>
+
+        <h3 id="pages-generators">Generators</h3>
+        <p>
+          Generators are available to generate steps on the fly for a Note or Curve track sequence.
+        </p>
+        <p>
+          You can access generators in each sequence layer to generate their values through the context menu with <code>SHIFT</code> + <code>PAGE</code>.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Option</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Init Layer</td><td style="text-align: left">Reset the layer.</td></tr>
+            <tr><td style="text-align: left">Euclidean</td><td style="text-align: left">Euclidean generator based on Bjorklund's algorithm.</td></tr>
+            <tr><td style="text-align: left">Random</td><td style="text-align: left">Random generator.</td></tr>
+          </tbody>
+        </table>
+        <h4>Context Menu</h4>
+        <p>
+          Hold <code>SHIFT</code> + <code>PAGE</code> or double click <code>PAGE</code> in each generator page to open the context menu and access the following functions:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize all steps of the current generator to the default state. In the random generator a random seed will be picked.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Revert</td><td style="text-align: left">Revert changes to the last generator state.</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Commit</td><td style="text-align: left">Commit changes to the selected sequence.</td></tr>
+          </tbody>
+        </table>
+        <h4>Euclidean</h4>
+        <p>The following options are available:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Option</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Steps</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Sets the steps of the Euclidean sequence.</td></tr>
+            <tr><td style="text-align: left">Beats</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Sets the gate division of the sequence.</td></tr>
+            <tr><td style="text-align: left">Offset</td><td style="text-align: left">0 - 63</td><td style="text-align: left">Sets the offset of the sequence.</td></tr>
+          </tbody>
+        </table>
+        <h4>Random</h4>
+        <p>The following options are available:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Option</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Seed</td><td style="text-align: left">0 - 1000</td><td style="text-align: left">Set the seed used to generate random values.</td></tr>
+            <tr><td style="text-align: left">Smooth</td><td style="text-align: left">0 - 10</td><td style="text-align: left">Sets how smoothly each step changes in front of the next one.</td></tr>
+            <tr><td style="text-align: left">Bias</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Sets the probability distribution of each random step value.</td></tr>
+            <tr><td style="text-align: left">Scale</td><td style="text-align: left">0 - 100</td><td style="text-align: left">Sets the scale of the probability distribution of each random step value.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: the random generator generates random steps for selected steps only if any are selected; otherwise it applies to the full sequence.
+        </p>
+
+        <h3 id="pages-song">Song</h3>
+        <p>
+          The <em>Song</em> page chains pattern sets across tracks into a longer arrangement. A song consists of slots, and each slot stores which pattern each track should play plus the number of bars for which the slot remains active.
+        </p>
+        <p>
+          Song playback can be started independently of normal sequencer playback, making it useful both for live pattern-set switching and for full arrangements.
+        </p>
+        <p>
+          A song consists of up to 64 slots, each referencing a set of 8 patterns to be played across the 8 tracks. Each slot is played for a number of bars whose duration is defined by the Time Signature on the <a href="#pages-project">Project</a> page.
+        </p>
+        <h4>Context Menu</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the song.</td></tr>
+          </tbody>
+        </table>
+        <h4>Pattern Chaining</h4>
+        <p>
+          Pattern chaining is a quick way to create songs on the fly. Hold <code>F1</code> and press <code>S1</code> - <code>S16</code> to append patterns as slots. Repeatedly pressing the same pattern increases the bar count of the last slot instead of creating a new one.
+        </p>
+        <p>
+          Pattern chains can also be created from the <a href="#pages-pattern">Pattern</a> page by holding one pattern and pressing another to define the chain range.
+        </p>
+        <p>
+          Note: when creating a pattern chain, song playback is activated immediately and the sequencer clock is started if not already running.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Action</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Insert / Remove / Duplicate</td><td style="text-align: left">Manage song slots directly from the page.</td></tr>
+            <tr><td style="text-align: left">Adjust Slot Length</td><td style="text-align: left">Set how many bars a slot should play.</td></tr>
+            <tr><td style="text-align: left">Assign Patterns</td><td style="text-align: left">Set patterns globally or per selected track group.</td></tr>
+            <tr><td style="text-align: left">Mute per Slot</td><td style="text-align: left">Store track mute state inside the slot.</td></tr>
+            <tr><td style="text-align: left">Start / Stop Song</td><td style="text-align: left">Launch immediately or in sync with the global sync measure.</td></tr>
+          </tbody>
+        </table>
+        <h4>Playback</h4>
+        <p>
+          Press <code>F5</code> to start playback of the song from the currently selected slot. This also starts the sequencer if needed. Playback is immediate by default; use <code>SHIFT</code> + <code>F5</code> to start on the next <em>Sync Measure</em>. Press <code>F5</code> again to stop playback.
+        </p>
+        <p>
+          Playback can also be started by selecting a slot and pressing <code>ENCODER</code>. Hold <code>SHIFT</code> while pressing <code>ENCODER</code> to switch slot on the next sync boundary.
+        </p>
+        <p>
+          During playback, the current slot is indicated with a small arrow and a progress bar. The global mute setting of a track is only overridden during song playback if at least one song slot contains a mute for that track.
+        </p>
+        <p>
+          Note: Song mode can also be used to toggle between different sets of patterns. Define pattern sets as slots and use song playback start/stop as a fast scene-switching mechanism.
+        </p>
+
+        <h3 id="pages-tempo">Tempo</h3>
+        <p>
+          The <em>Tempo</em> page is shown while holding <code>TEMP</code>. It is used for quick tempo adjustment, tap tempo, nudging and swing editing.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">How It Works</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Tempo Edit</td><td style="text-align: left">Rotate the encoder, with fine or coarse adjustment available.</td></tr>
+            <tr><td style="text-align: left">Tap Tempo</td><td style="text-align: left">Tap <code>PLAY</code> while holding <code>TEMP</code>.</td></tr>
+            <tr><td style="text-align: left">Nudging</td><td style="text-align: left">Hold <code>TEMP</code> and <code>PREV</code>/<code>NEXT</code> for temporary tempo shifts.</td></tr>
+            <tr><td style="text-align: left">Swing Edit</td><td style="text-align: left">Hold <code>PERF</code> while on the Tempo page.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: the tempo is incrementally increased or decreased up to 10% during nudging, so both buttons must be held briefly before the effect becomes obvious.
+        </p>
+
+        <h3 id="pages-pattern">Pattern</h3>
+        <p>
+          The <em>Pattern</em> page manages pattern launching, edit-target selection, latching, synced changes and the snapshot workflow. It can be entered permanently or used temporarily during performance.
+        </p>
+        <p>
+          Pattern changes can be scheduled either by latching or by sync. The page also lets you select which pattern is currently being edited independently of the one currently playing.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Feature</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Edit Pattern Select</td><td style="text-align: left">Choose which pattern is edited, independently of the one currently playing.</td></tr>
+            <tr><td style="text-align: left">Immediate Launch</td><td style="text-align: left">Press a step button to switch patterns instantly.</td></tr>
+            <tr><td style="text-align: left">Latching</td><td style="text-align: left">Hold <code>F1</code> to queue multiple pattern changes and release together.</td></tr>
+            <tr><td style="text-align: left">Synced Launch</td><td style="text-align: left">Hold <code>F2</code> to execute pattern changes on the next sync boundary.</td></tr>
+            <tr><td style="text-align: left">Snapshots</td><td style="text-align: left">Create a temporary editable copy of the currently playing pattern set and commit or revert later.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: the currently playing Pattern can be selected as a routing target on the <a href="#pages-routing">Routing</a> page.
+        </p>
+        <h4>Editing Pattern</h4>
+        <p>
+          To change the pattern currently selected for editing, rotate the <code>ENCODER</code> or use <code>PREV</code> and <code>NEXT</code>. Alternatively, use <code>SHIFT</code> + <code>S1</code> - <code>S16</code>. The editing pattern is highlighted when it matches the currently playing pattern.
+        </p>
+        <h4>Latching Pattern Changes</h4>
+        <p>
+          Hold <code>F1</code> while scheduling pattern changes. All changes are executed together when <code>F1</code> is released. While <code>F1</code> is held, press <code>F5</code> to cancel the queued changes.
+        </p>
+        <h4>Synced Pattern Changes</h4>
+        <p>
+          Hold <code>F2</code> while scheduling pattern changes. A progress bar indicates the time until execution. While <code>F2</code> is held, press <code>F5</code> to cancel the queued changes.
+        </p>
+        <p>
+          Note: synced actions are triggered at the beginning of a musical measure, configured on the <a href="#pages-project">Project</a> page using <em>Sync Measure</em>.
+        </p>
+        <h4>Snapshots</h4>
+        <p>
+          Press <code>F3</code> to create a snapshot of the patterns currently being played. While snapshot mode is active, the header shows <strong>SNAP</strong>. After editing the snapshot, press <code>F4</code> to commit it back to the original patterns, or press <code>S1</code> - <code>S16</code> + <code>F4</code> to commit it to a new pattern set.
+        </p>
+        <p>
+          Press <code>F3</code> again to revert the snapshot. Press <code>S1</code> - <code>S16</code> + <code>F3</code> to revert it while switching to a different pattern set.
+        </p>
+
+        <h3 id="pages-performer">Performer</h3>
+        <p>
+          The <em>Performer</em> page is designed for live interaction: mutes, solos, fills, fill amount and fast tempo access. Like the Pattern page, it supports immediate, latched and synced actions.
+        </p>
+        <p>
+          The page visualizes the mute state of every track, the currently playing steps and a percentage bar representing fill state and fill amount.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Feature</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Mute / Unmute</td><td style="text-align: left">Toggle tracks with <code>T1</code> - <code>T8</code>.</td></tr>
+            <tr><td style="text-align: left">Solo</td><td style="text-align: left">Use <code>SHIFT</code> + track buttons.</td></tr>
+            <tr><td style="text-align: left">Latch Actions</td><td style="text-align: left">Hold <code>F1</code> to group performer actions.</td></tr>
+            <tr><td style="text-align: left">Sync Actions</td><td style="text-align: left">Hold <code>F2</code> to execute on sync measure.</td></tr>
+            <tr><td style="text-align: left">Fill</td><td style="text-align: left">Trigger temporary or latched fills per track or globally.</td></tr>
+            <tr><td style="text-align: left">Fill Amount</td><td style="text-align: left">Hold step buttons and turn the encoder to adjust fill probability per track.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: <em>Mute</em>, <em>Fill</em> and <em>Fill Amount</em> can be selected as routing targets on the <a href="#pages-routing">Routing</a> page.
+        </p>
+        <h4>Tempo</h4>
+        <p>
+          Turning the encoder changes the project tempo. Pressing the encoder returns to the last tempo value set on the <a href="#pages-project">Project</a> page.
+        </p>
+        <h4>Mutes and Solos</h4>
+        <p>
+          Press <code>T1</code> - <code>T8</code> to mute or unmute tracks. Use <code>SHIFT</code> + track buttons to solo or unsolo a track. Press <code>F3</code> to unmute all tracks at once.
+        </p>
+        <h4>Latching and Synced Actions</h4>
+        <p>
+          Hold <code>F1</code> to latch performer actions and release them together. Hold <code>F2</code> to execute performer actions on the next sync boundary. In both cases, <code>F5</code> cancels pending actions.
+        </p>
+        <h4>Fills</h4>
+        <p>
+          Hold <code>S9</code> - <code>S16</code> to temporarily enable fills per track. Use <code>SHIFT</code> + <code>S9</code> - <code>S16</code> to latch fill on a track. Hold <code>F4</code> to fill all tracks temporarily, or use <code>SHIFT</code> + <code>F4</code> to latch fill globally.
+        </p>
+
+        <h3 id="pages-routing">Routing</h3>
+        <p>
+          The <em>Routing</em> page manages up to 16 routes between signal sources and target parameters. Sources include CV inputs, CV outputs and MIDI events; targets include global, track and sequence parameters.
+        </p>
+        <p>
+          It also includes MIDI learn and commit-based editing, so changes only become active once confirmed.
+        </p>
+        <p>
+          There can be up to 16 routes. Use <code>F1</code> and <code>F2</code>, or hold <code>SHIFT</code> and rotate the encoder, to select the route being edited.
+        </p>
+        <p>
+          Note: most routable parameters can also be reached from their home pages via context menus on the <a href="#pages-project">Project</a> and <a href="#pages-track">Track</a> pages.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Target</td><td style="text-align: left">Parameter affected by the route.</td></tr>
+            <tr><td style="text-align: left">Min / Max</td><td style="text-align: left">Mapped output range for the target.</td></tr>
+            <tr><td style="text-align: left">Tracks</td><td style="text-align: left">Track selection when the target is track-scoped.</td></tr>
+            <tr><td style="text-align: left">Source</td><td style="text-align: left">CV In, CV Out or MIDI.</td></tr>
+            <tr><td style="text-align: left">Range</td><td style="text-align: left">Voltage interpretation for CV sources.</td></tr>
+            <tr><td style="text-align: left">MIDI Source / Event</td><td style="text-align: left">Port, channel and event type for MIDI-based routing.</td></tr>
+            <tr><td style="text-align: left">CC Number / Note</td><td style="text-align: left">Specific MIDI control or note source.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Press <code>F5</code> to commit routing changes. Press <code>F3</code> to reset the selected route to its default state. Press <code>F4</code> to enter MIDI learn mode and assign a MIDI source directly from the controller.
+        </p>
+        <p>
+          Note: routed parameters are marked with an arrow when displayed on other pages.
+        </p>
+
+        <h3 id="pages-midi-output">MIDI Output</h3>
+        <p>
+          The <em>MIDI Output</em> page configures up to 8 generated MIDI outputs derived from sequencer tracks. Outputs can emit note events or control changes to either MIDI TRS or USB MIDI destinations.
+        </p>
+        <p>
+          Use <code>F1</code> and <code>F2</code>, or hold <code>SHIFT</code> and rotate the encoder, to select which MIDI output is being edited.
+        </p>
+        <p>
+          Note generation can combine multiple sequencer tracks, for example using different tracks as gate, note and velocity sources.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Mode</th>
+              <th style="text-align: left">Main Parameters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Note</td><td style="text-align: left">Target, Gate Source, Note Source, Velocity Source.</td></tr>
+            <tr><td style="text-align: left">Control Change</td><td style="text-align: left">Target, Control Number, Control Source.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The Gate Source controls MIDI Note On/Off generation. The Note Source is derived from a V/Oct CV signal, with 0V corresponding to C4. The Velocity Source is derived from a unipolar 5V signal mapped to 0-127. If the Gate Source contains Slide data, slides are emitted as MIDI CC 65 events.
+        </p>
+        <p>
+          Press <code>F5</code> to commit MIDI output changes. Press <code>F3</code> to reset the selected output configuration.
+        </p>
+
+        <h3 id="pages-user-scale">User Scale</h3>
+        <p>
+          The <em>User Scale</em> page edits the four project user scales. These can be chromatic or arbitrary voltage tables and are useful both for conventional tuning and for modular-specific CV-addressing tasks.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Chromatic Mode</td><td style="text-align: left">Build a scale from 12-tone semitone choices.</td></tr>
+            <tr><td style="text-align: left">Voltage Mode</td><td style="text-align: left">Create arbitrary voltage tables.</td></tr>
+            <tr><td style="text-align: left">Size</td><td style="text-align: left">Up to 32 scale items.</td></tr>
+            <tr><td style="text-align: left">Context Menu</td><td style="text-align: left">Init, Copy, Paste, Load and Save user scales.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          In Chromatic mode, each item is one of the 12 semitones. In Voltage mode, each item can be assigned a voltage between -5V and +5V with millivolt accuracy.
+        </p>
+        <p>
+          Note: the items defined in a user scale represent a single octave of the scale. The remaining octaves are inferred by repetition.
+        </p>
+        <h4>Context Menu</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the selected user scale.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected user scale to the clipboard.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste the clipboard contents to the selected user scale.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Load</td><td style="text-align: left">Load a user scale from the SD card.</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Save</td><td style="text-align: left">Save the selected user scale to the SD card.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="pages-overview">Overview</h3>
+        <p>
+          The <em>Overview</em> page provides a dense representation of all currently running sequences, showing patterns, sequence activity and output state at a glance. It also supports a limited set of quick edits.
+        </p>
+        <p>
+          The left section shows the currently playing pattern for each track. The middle section shows a dense representation of sequence data. The right section visualizes current gate and CV output state.
+        </p>
+        <p>
+          The encoder switches between tracks. On Note tracks, <code>STEP</code> + <code>ENCODER</code> changes note values; on Stochastic tracks, the same combination changes note probability. Curve and Logic tracks expose additional quick editing behaviors from this overview page.
+        </p>
+
+        <h3 id="pages-monitor">Monitor</h3>
+        <p>
+          The <em>Monitor</em> page contains tabs for CV inputs, CV outputs, incoming MIDI messages and general system stats.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Tab</th>
+              <th style="text-align: left">Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">CV Inputs</td><td style="text-align: left">Shows live input voltages.</td></tr>
+            <tr><td style="text-align: left">CV Outputs</td><td style="text-align: left">Shows live output voltages.</td></tr>
+            <tr><td style="text-align: left">MIDI</td><td style="text-align: left">Shows incoming MIDI messages.</td></tr>
+            <tr><td style="text-align: left">Stats</td><td style="text-align: left">Shows uptime and internal message queue diagnostics.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="pages-clock">Clock</h3>
+        <p>
+          The <em>Clock</em> page configures master/slave behavior, input and output divisors, run/reset logic, pulse width and MIDI/USB clock receive or transmit options.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Parameter</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Mode</td><td style="text-align: left">Auto, Master or Slave.</td></tr>
+            <tr><td style="text-align: left">Shift Mode</td><td style="text-align: left">Determines how <code>SHIFT</code> + <code>PLAY</code> behaves.</td></tr>
+            <tr><td style="text-align: left">Input Divisor</td><td style="text-align: left">Clock interpretation for incoming pulses.</td></tr>
+            <tr><td style="text-align: left">Input Mode</td><td style="text-align: left">Reset, Run or Start/Stop control logic.</td></tr>
+            <tr><td style="text-align: left">Output Divisor</td><td style="text-align: left">Outgoing clock pulse timing.</td></tr>
+            <tr><td style="text-align: left">Output Swing</td><td style="text-align: left">Applies project swing to analog clock out.</td></tr>
+            <tr><td style="text-align: left">Output Pulse</td><td style="text-align: left">Pulse width in milliseconds.</td></tr>
+            <tr><td style="text-align: left">Output Mode</td><td style="text-align: left">Reset or Run signal on the clock control output.</td></tr>
+            <tr><td style="text-align: left">MIDI RX/TX, USB RX/TX</td><td style="text-align: left">Clock receive or transmit over MIDI and USB.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: to set up a 24 PPQN input or output clock resolution, set the divisor to <code>2</code>. In this context, the divisor is applied to 48 PPQN rather than the internal 192 PPQN resolution.
+        </p>
+
+        <h3 id="pages-system">System</h3>
+        <p>
+          The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Tab</th>
+              <th style="text-align: left">Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Calibration</td><td style="text-align: left">Millivolt calibration of the 8 CV outputs.</td></tr>
+            <tr><td style="text-align: left">Utilities</td><td style="text-align: left">SD card utility functions.</td></tr>
+            <tr><td style="text-align: left">Update</td><td style="text-align: left">Shows firmware version and enters bootloader.</td></tr>
+            <tr><td style="text-align: left">User Settings</td><td style="text-align: left">Brightness, screensaver, wake mode, dim sequence, Launchpad style and pattern change behavior.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The System page requires confirmation before opening to prevent accidental entry.
+        </p>
+        <h4>Calibration</h4>
+        <p>
+          The Calibration tab is used to calibrate the 8 physical CV outputs to millivolt accuracy. Press <code>T1</code> - <code>T8</code> to select the output channel. Each calibration entry stores the DAC value used for a given voltage between -5V and +5V.
+        </p>
+        <p>
+          By default, entries are set to <em>auto</em>, which either uses a reference table or interpolates from nearby manually calibrated values.
+        </p>
+        <h4>Context Menu</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Button</th>
+              <th style="text-align: left">Function</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the settings to their default state.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Save</td><td style="text-align: left">Save the settings to flash memory.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Backup</td><td style="text-align: left">Back up the settings to the SD card.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Restore</td><td style="text-align: left">Restore the settings from the SD card.</td></tr>
+          </tbody>
+        </table>
+        <h4>User Settings</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Setting</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Brightness</td><td style="text-align: left">0 - 10</td><td style="text-align: left">Reduce overall display brightness. Lower brightness may reduce noise.</td></tr>
+            <tr><td style="text-align: left">Screensaver</td><td style="text-align: left">Off, 3s, 5s, 10s, 30s, 1m, 10m, 30m</td><td style="text-align: left">Turn the display off after a period of inactivity.</td></tr>
+            <tr><td style="text-align: left">Wake Mode</td><td style="text-align: left">Always, Required</td><td style="text-align: left">Determine when the display wakes from the screensaver.</td></tr>
+            <tr><td style="text-align: left">Dim Sequence</td><td style="text-align: left">Off, On</td><td style="text-align: left">Reduce sequence-page brightness to lower visual noise.</td></tr>
+            <tr><td style="text-align: left">LP Style</td><td style="text-align: left">Classic, Blue</td><td style="text-align: left">Select Launchpad color scheme.</td></tr>
+            <tr><td style="text-align: left">Pattern Change</td><td style="text-align: left">Immediate, Sync</td><td style="text-align: left">Swap the default pattern launch behavior.</td></tr>
+            <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2 id="appendix">Appendix</h2>
+        <p>
+          This appendix collects reference material and workflow notes for setup and performance, including inherited material where it remains technically relevant.
+        </p>
+
+        <h3 id="appendix-recording">Recording</h3>
+        <p>
+          Recording can be done live or in step-record mode using an external MIDI keyboard. Live recording writes notes into the active sequence while the sequencer is running; step record advances one step at a time and is better suited to precise entry.
+        </p>
+        <p>
+          Recording mode is selected on the Project page, and recording is armed or disarmed with <code>PAGE</code> + <code>PLAY</code>.
+        </p>
+        <h4>Live Recording</h4>
+        <p>
+          <em>Overdub</em> and <em>Overwrite</em> enable live recording. In Overdub mode, played notes are added to the existing sequence, potentially replacing existing steps. In Overwrite mode, steps are cleared as the play head advances and replaced by incoming notes. The sequence length is not changed automatically, so it must be set in advance.
+        </p>
+        <p>
+          Recording can also be controlled through a route, which is useful for foot-pedal punch-in and punch-out control.
+        </p>
+        <p>
+          Note: incoming notes must be translated into the fixed grid of a sequence. Best results are usually obtained with monophonic, well-quantized playing.
+        </p>
+        <h4>Step Recording</h4>
+        <p>
+          In Step Record mode, each played note fills the next step in the active Note sequence. Slides can be recorded by moving pitch bend while holding a note, and ties can be recorded by moving the modulation control while holding a note. Recording starts at the first step and wraps around at the last step.
+        </p>
+
+        <h3 id="appendix-divisors">Divisors</h3>
+        <p>
+          Divisors map the internal clock resolution to musical note lengths. They are used throughout the sequencer for sequence timing, clock input/output behavior and arpeggiator rate.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Divisor</th>
+              <th style="text-align: left">Note</th>
+              <th style="text-align: left">Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">2</td><td style="text-align: left">1/64T</td><td style="text-align: left">Triplet sixty-fourth note</td></tr>
+            <tr><td style="text-align: left">3</td><td style="text-align: left">1/64</td><td style="text-align: left">Sixty-fourth note</td></tr>
+            <tr><td style="text-align: left">4</td><td style="text-align: left">1/32T</td><td style="text-align: left">Triplet thirty-second note</td></tr>
+            <tr><td style="text-align: left">6</td><td style="text-align: left">1/32</td><td style="text-align: left">Thirty-second note</td></tr>
+            <tr><td style="text-align: left">8</td><td style="text-align: left">1/16T</td><td style="text-align: left">Triplet sixteenth note</td></tr>
+            <tr><td style="text-align: left">9</td><td style="text-align: left">1/32.</td><td style="text-align: left">Dotted thirty-second note</td></tr>
+            <tr><td style="text-align: left">12</td><td style="text-align: left">1/16</td><td style="text-align: left">Sixteenth note</td></tr>
+            <tr><td style="text-align: left">16</td><td style="text-align: left">1/8T</td><td style="text-align: left">Triplet eighth note</td></tr>
+            <tr><td style="text-align: left">18</td><td style="text-align: left">1/16.</td><td style="text-align: left">Dotted sixteenth note</td></tr>
+            <tr><td style="text-align: left">24</td><td style="text-align: left">1/8</td><td style="text-align: left">Eighth note</td></tr>
+            <tr><td style="text-align: left">32</td><td style="text-align: left">1/4T</td><td style="text-align: left">Triplet quarter note</td></tr>
+            <tr><td style="text-align: left">36</td><td style="text-align: left">1/8.</td><td style="text-align: left">Dotted eighth note</td></tr>
+            <tr><td style="text-align: left">48</td><td style="text-align: left">1/4</td><td style="text-align: left">Quarter note</td></tr>
+            <tr><td style="text-align: left">64</td><td style="text-align: left">1/2T</td><td style="text-align: left">Triplet half note</td></tr>
+            <tr><td style="text-align: left">72</td><td style="text-align: left">1/4.</td><td style="text-align: left">Dotted quarter note</td></tr>
+            <tr><td style="text-align: left">96</td><td style="text-align: left">1/2</td><td style="text-align: left">Half note</td></tr>
+            <tr><td style="text-align: left">128</td><td style="text-align: left">1T</td><td style="text-align: left">Triplet whole note</td></tr>
+            <tr><td style="text-align: left">144</td><td style="text-align: left">1/2.</td><td style="text-align: left">Dotted half note</td></tr>
+            <tr><td style="text-align: left">192</td><td style="text-align: left">1</td><td style="text-align: left">Whole note</td></tr>
+            <tr><td style="text-align: left">256</td><td style="text-align: left">2T</td><td style="text-align: left">Triplet double note</td></tr>
+            <tr><td style="text-align: left">288</td><td style="text-align: left">1.</td><td style="text-align: left">Dotted whole note</td></tr>
+            <tr><td style="text-align: left">384</td><td style="text-align: left">2</td><td style="text-align: left">Double note</td></tr>
+            <tr><td style="text-align: left">512</td><td style="text-align: left">4T</td><td style="text-align: left">Triplet quadruple note</td></tr>
+            <tr><td style="text-align: left">576</td><td style="text-align: left">2.</td><td style="text-align: left">Dotted double note</td></tr>
+            <tr><td style="text-align: left">768</td><td style="text-align: left">4</td><td style="text-align: left">Quadruple note</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-run-modes">Run Modes</h3>
+        <p>
+          Run modes define the order in which a sequence is traversed. The main modes are Forward, Backward, Pendulum, Ping Pong, Random and Random Walk.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Mode</th>
+              <th style="text-align: left">Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Forward</td><td style="text-align: left">Plays from first to last step and repeats.</td></tr>
+            <tr><td style="text-align: left">Backward</td><td style="text-align: left">Plays from last to first step and repeats.</td></tr>
+            <tr><td style="text-align: left">Pendulum</td><td style="text-align: left">Alternates forward and backward, repeating the end points.</td></tr>
+            <tr><td style="text-align: left">Ping Pong</td><td style="text-align: left">Alternates direction without repeating the end points.</td></tr>
+            <tr><td style="text-align: left">Random</td><td style="text-align: left">Picks a new random step each advance.</td></tr>
+            <tr><td style="text-align: left">Random Walk</td><td style="text-align: left">Moves left or right from the previous step with wraparound.</td></tr>
+          </tbody>
+        </table>
+        <pre><code>Forward:      1 2 3 4 5 6 7 8 | 1 2 3 4 5 6 7 8 | ...
+Backward:     8 7 6 5 4 3 2 1 | 8 7 6 5 4 3 2 1 | ...
+Pendulum:     1 2 3 4 5 6 7 8 8 7 6 5 4 3 2 1 | ...
+Ping Pong:    1 2 3 4 5 6 7 8 7 6 5 4 3 2 | ...
+Random:       4 7 5 3 5 7 5 3 5 6 8 6 4 2 4 1 ...
+Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
+
+        <h3 id="appendix-play-modes">Play Modes</h3>
+        <p>
+          <em>Aligned</em> mode computes the current step from elapsed time since reset and keeps behavior deterministic. <em>Free</em> mode advances from the previously played step and behaves more like an analog sequencer, which can produce more experimental results when parameters change during playback.
+        </p>
+        <p>
+          Example: on a 16-step sequence running in Forward mode, changing the divisor from quarter notes to half notes while the sequence is already running causes different results in the two modes. In Free mode, playback continues from the current step but advances more slowly. In Aligned mode, the current step is recalculated from the elapsed time since reset, so playback can jump to a different position that matches the new divisor mathematically.
+        </p>
+        <p>
+          In practice, Free mode behaves more like an analog sequencer and can produce happy accidents when parameters change during playback, while Aligned mode is usually the safer choice.
+        </p>
+        <p>
+          Note: if play mode is changed during playback, misalignment with other Free-mode tracks can occur. Restarting playback is strongly recommended if tight synchronization matters.
+        </p>
+
+        <h3 id="appendix-rotation">Rotation</h3>
+        <p>
+          Rotation shifts the effective playback start point of a sequence without changing the underlying stored step data. Positive values rotate to the right and negative values rotate to the left.
+        </p>
+
+        <h3 id="appendix-step-conditions">Step Conditions</h3>
+        <p>
+          Step conditions allow a gate to be played only when a rule is satisfied. Available condition types include fill-only, not-fill, first pass, previous-condition result and numbered iteration rules such as <code>N:M</code>.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Condition</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Fill</td><td style="text-align: left">Only plays when Fill is enabled and the track Fill Mode supports conditions.</td></tr>
+            <tr><td style="text-align: left">!Fill</td><td style="text-align: left">Only plays when Fill is disabled.</td></tr>
+            <tr><td style="text-align: left">Pre</td><td style="text-align: left">Only plays if the previously evaluated condition was true.</td></tr>
+            <tr><td style="text-align: left">!Pre</td><td style="text-align: left">Only plays if the previously evaluated condition was false.</td></tr>
+            <tr><td style="text-align: left">First</td><td style="text-align: left">Only plays on the first iteration.</td></tr>
+            <tr><td style="text-align: left">!First</td><td style="text-align: left">Plays on all but the first iteration.</td></tr>
+            <tr><td style="text-align: left">N:M</td><td style="text-align: left">Plays on the Nth iteration every M iterations.</td></tr>
+            <tr><td style="text-align: left">!N:M</td><td style="text-align: left">Skips the Nth iteration every M iterations.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-metropolix">Metropolix Mode</h3>
+        <p>
+          In Free play mode, the retrigger area can expose a Metropolix-style repeat workflow. This adds repeat counts and repeat gate modes such as Each, First, Middle, Last, Odd, Even, Triplet and Random.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Repeat Mode</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Each</td><td style="text-align: left">Sends a gate for each repeat.</td></tr>
+            <tr><td style="text-align: left">First</td><td style="text-align: left">Sends the first gate and waits for the remaining pulses.</td></tr>
+            <tr><td style="text-align: left">Middle</td><td style="text-align: left">Places the gate in the middle of the repeated span.</td></tr>
+            <tr><td style="text-align: left">Last</td><td style="text-align: left">Sends only the final gate.</td></tr>
+            <tr><td style="text-align: left">Odd</td><td style="text-align: left">Sends gates on odd repeats.</td></tr>
+            <tr><td style="text-align: left">Even</td><td style="text-align: left">Sends gates on even repeats.</td></tr>
+            <tr><td style="text-align: left">Triplet</td><td style="text-align: left">Places gates every third repeat position.</td></tr>
+            <tr><td style="text-align: left">Random</td><td style="text-align: left">Chooses among repeat gate modes randomly.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-scales">Scales</h3>
+        <p>
+          The original manual includes extensive voltage tables for the preset scales. The key idea is that note values are stored as indices into a voltage table rather than as raw chromatic note numbers.
+        </p>
+        <table>
+          <thead><tr><th style="text-align: left">Scale</th><th style="text-align: left">Voltages</th></tr></thead>
+          <tbody>
+            <tr><td style="text-align: left">Semitones</td><td style="text-align: left">0.000, 0.083, 0.167, 0.250, 0.333, 0.417, 0.500, 0.583, 0.667, 0.750, 0.833, 0.917</td></tr>
+            <tr><td style="text-align: left">Major</td><td style="text-align: left">0.000, 0.167, 0.333, 0.417, 0.583, 0.750, 0.917</td></tr>
+            <tr><td style="text-align: left">Minor</td><td style="text-align: left">0.000, 0.167, 0.250, 0.417, 0.583, 0.667, 0.833</td></tr>
+            <tr><td style="text-align: left">Major Blues</td><td style="text-align: left">0.000, 0.250, 0.333, 0.583, 0.750, 0.833</td></tr>
+            <tr><td style="text-align: left">Minor Blues</td><td style="text-align: left">0.000, 0.250, 0.417, 0.500, 0.583, 0.833</td></tr>
+            <tr><td style="text-align: left">Major Pent.</td><td style="text-align: left">0.000, 0.167, 0.333, 0.583, 0.750</td></tr>
+            <tr><td style="text-align: left">Minor Pent.</td><td style="text-align: left">0.000, 0.250, 0.417, 0.583, 0.833</td></tr>
+            <tr><td style="text-align: left">Folk</td><td style="text-align: left">0.000, 0.083, 0.250, 0.333, 0.417, 0.583, 0.667, 0.833</td></tr>
+            <tr><td style="text-align: left">Japanese</td><td style="text-align: left">0.000, 0.083, 0.417, 0.583, 0.667</td></tr>
+            <tr><td style="text-align: left">Gamelan</td><td style="text-align: left">0.000, 0.083, 0.250, 0.583, 0.667</td></tr>
+            <tr><td style="text-align: left">Gypsy</td><td style="text-align: left">0.000, 0.167, 0.250, 0.500, 0.583, 0.667, 0.917</td></tr>
+            <tr><td style="text-align: left">Arabian</td><td style="text-align: left">0.000, 0.083, 0.333, 0.417, 0.583, 0.667, 0.917</td></tr>
+            <tr><td style="text-align: left">Flamenco</td><td style="text-align: left">0.000, 0.083, 0.333, 0.417, 0.583, 0.667, 0.833</td></tr>
+            <tr><td style="text-align: left">Whole Tone</td><td style="text-align: left">0.000, 0.167, 0.333, 0.500, 0.667, 0.833</td></tr>
+            <tr><td style="text-align: left">5-tet</td><td style="text-align: left">0.000, 0.200, 0.400, 0.600, 0.800</td></tr>
+            <tr><td style="text-align: left">7-tet</td><td style="text-align: left">0.000, 0.143, 0.286, 0.428, 0.572, 0.714, 0.857</td></tr>
+            <tr><td style="text-align: left">19-tet</td><td style="text-align: left">0.000, 0.053, 0.105, 0.158, 0.210, 0.263, 0.316, 0.368, 0.421, 0.474, 0.526, 0.579, 0.632, 0.684, 0.737, 0.790, 0.842, 0.895, 0.947</td></tr>
+            <tr><td style="text-align: left">22-tet</td><td style="text-align: left">0.000, 0.046, 0.091, 0.136, 0.182, 0.227, 0.273, 0.318, 0.364, 0.409, 0.454, 0.500, 0.546, 0.591, 0.636, 0.682, 0.727, 0.773, 0.818, 0.864, 0.909, 0.954</td></tr>
+            <tr><td style="text-align: left">24-tet</td><td style="text-align: left">0.000, 0.042, 0.083, 0.125, 0.167, 0.208, 0.250, 0.292, 0.333, 0.375, 0.417, 0.458, 0.500, 0.542, 0.583, 0.625, 0.667, 0.708, 0.750, 0.792, 0.833, 0.875, 0.917, 0.958</td></tr>
+            <tr><td style="text-align: left">Voltage</td><td style="text-align: left">0.000, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-shapes">Shapes</h3>
+        <p>
+          The upstream Shapes appendix is entirely graphical. Because this local manual intentionally removes all images, the visual shape atlas is omitted here, but the Curve track still uses the same indexed shape model described in the Mebitek manual.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Reference</th>
+              <th style="text-align: left">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Shape Indexes</td><td style="text-align: left">The original manual presents indexed curve shapes from 1 upward as visual references for Curve track programming.</td></tr>
+            <tr><td style="text-align: left">Local Adaptation</td><td style="text-align: left">Image-only tables have been removed from this version of the manual.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-arpeggiator-modes">Arpeggiator Modes</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Mode</th>
+              <th style="text-align: left">Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Play Order</td><td style="text-align: left">Uses note entry order.</td></tr>
+            <tr><td style="text-align: left">Up</td><td style="text-align: left">Lowest to highest.</td></tr>
+            <tr><td style="text-align: left">Down</td><td style="text-align: left">Highest to lowest.</td></tr>
+            <tr><td style="text-align: left">Up Down</td><td style="text-align: left">Ascends then descends without repeating extremes twice.</td></tr>
+            <tr><td style="text-align: left">Down Up</td><td style="text-align: left">Descends then ascends.</td></tr>
+            <tr><td style="text-align: left">Up &amp; Down</td><td style="text-align: left">Ascends and repeats the top before coming down.</td></tr>
+            <tr><td style="text-align: left">Down &amp; Up</td><td style="text-align: left">Descends and repeats the bottom before going back up.</td></tr>
+            <tr><td style="text-align: left">Converge</td><td style="text-align: left">Alternates from outer notes toward the center.</td></tr>
+            <tr><td style="text-align: left">Diverge</td><td style="text-align: left">Alternates from center outward.</td></tr>
+            <tr><td style="text-align: left">Random</td><td style="text-align: left">Random note order.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-routing-targets">Routing Targets</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Target</th>
+              <th style="text-align: left">Scope</th>
+              <th style="text-align: left">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Play</td><td style="text-align: left">Global</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Play Toggle</td><td style="text-align: left">Global</td><td style="text-align: left">Toggle playing while allowing use of the physical PLAY button.</td></tr>
+            <tr><td style="text-align: left">Record</td><td style="text-align: left">Global</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Record Toggle</td><td style="text-align: left">Global</td><td style="text-align: left">Toggle recording while allowing use of the panel shortcut.</td></tr>
+            <tr><td style="text-align: left">Tap Tempo</td><td style="text-align: left">Global</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Tempo</td><td style="text-align: left">Global</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Swing</td><td style="text-align: left">Global</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Mute</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Fill</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Fill Amount</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Pattern</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Octave</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Transpose</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Offset</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Rotate</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Gate P. Bias</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Retrig P. Bias</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Shape P. Bias</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">First Step</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Last Step</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Run Mode</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Divisor</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Scale</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Root Note</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Rec Step</td><td style="text-align: left">Sequence</td><td style="text-align: left">Controls the current recording step in step-record mode and can be used to insert rests.</td></tr>
+            <tr><td style="text-align: left">Reseed</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Rest Prob 2</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Rest Prob 4</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Rest Prob 8</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Seq First Step</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Seq Last Step</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">L Oct. Range</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">H Oct. Range</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Length Mod</td><td style="text-align: left">Stochastic Sequence</td><td style="text-align: left"></td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-logic-operators">Logic Operators</h3>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Operator</th>
+              <th style="text-align: left">Type</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">1</td><td style="text-align: left">Gate/Note</td><td style="text-align: left">Select input 1.</td></tr>
+            <tr><td style="text-align: left">2</td><td style="text-align: left">Gate/Note</td><td style="text-align: left">Select input 2.</td></tr>
+            <tr><td style="text-align: left">AND</td><td style="text-align: left">Gate</td><td style="text-align: left">Boolean AND between inputs.</td></tr>
+            <tr><td style="text-align: left">OR</td><td style="text-align: left">Gate</td><td style="text-align: left">Boolean OR between inputs.</td></tr>
+            <tr><td style="text-align: left">XOR</td><td style="text-align: left">Gate</td><td style="text-align: left">Exclusive OR between inputs.</td></tr>
+            <tr><td style="text-align: left">NAND</td><td style="text-align: left">Gate</td><td style="text-align: left">Negated AND between inputs.</td></tr>
+            <tr><td style="text-align: left">Random Input</td><td style="text-align: left">Gate/Note</td><td style="text-align: left">Randomly selects input 1 or 2.</td></tr>
+            <tr><td style="text-align: left">Random Logic</td><td style="text-align: left">Gate/Note</td><td style="text-align: left">Randomly selects an available logic operation.</td></tr>
+            <tr><td style="text-align: left">Min / Max / Sum / Avg</td><td style="text-align: left">Note</td><td style="text-align: left">Combines note values numerically.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-midi-program-change">MIDI Program Change</h3>
+        <p>
+          The sequencer can send and receive MIDI program change messages when that behavior is enabled in the Project settings. Program changes are associated with global pattern changes rather than with per-track pattern selection.
+        </p>
+        <p>
+          In sync mode, they are sent slightly before the end of the sequence so the receiving hardware has time to acknowledge the request.
+        </p>
+
+        <h3 id="appendix-launchpad">Launchpad</h3>
+        <p>
+          The Novation Launchpad can be used as an advanced control surface for the sequencer, allowing for editing sequences and launching patterns via the 8x8 button matrix. When a Launchpad is connected to the USB port, the sequencer automatically detects the device and immediately starts using it as a control surface.
+        </p>
+        <p>
+          The following Launchpad controllers have been tested and are working:
+        </p>
+        <ul>
+          <li>Launchpad Mini MK1/MK2/MK3</li>
+          <li>Launchpad S</li>
+          <li>Launchpad Mk2</li>
+          <li>Launchpad Pro</li>
+          <li>Launchpad X</li>
+        </ul>
+        <p>
+          Note: Support for the very first version of Launchpad will never happen, as it is not a USB MIDI class compliant device.
+        </p>
+        <p>
+          Launchpad controllers are exclusively used as control surfaces and cannot be used as standard MIDI devices for the routing system or live recording.
+        </p>
+        <p>
+          When using a Launchpad Mini or Launchpad S, it should preferably be configured to operate in <em>Low Power</em> mode. This is important in order to not draw too much current which can lead to the Launchpad spuriously disconnecting. In addition, make sure that the Launchpad is configured to use ID 1, otherwise it will be detected as a general MIDI controller by the sequencer. The procedure to switch between <em>Low Power</em> and <em>Full Power</em> mode and setting the ID can be looked up here:
+          <a href="https://customer.novationmusic.com/sites/customer/files/novation/downloads/6961/launchpad-s-and-mini-advanced-features-guide_0.pdf" target="_blank" rel="noopener noreferrer">Launchpad S and Mini Advanced Features Guide</a>.
+        </p>
+        <p>
+          For a faster local overview, see also the <a href="../cheatsheet/index.html">Cheat Sheet</a>.
+        </p>
+        <h4>Global Functions</h4>
+        <p>
+          The <code>8</code> button acts as a shift button and can be pressed in combination with other buttons to access secondary functions. The following functions are always available:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Buttons</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>8</code> + <code>7</code></td><td style="text-align: left">Start and stop the sequencer.</td></tr>
+            <tr><td style="text-align: left"><code>8</code> + <code>1</code></td><td style="text-align: left">Switch to sequence mode.</td></tr>
+            <tr><td style="text-align: left"><code>8</code> + <code>2</code></td><td style="text-align: left">Switch to pattern mode.</td></tr>
+            <tr><td style="text-align: left"><code>8</code> + <code>3</code></td><td style="text-align: left">Switch to performance mode.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Because the 8x8 grid of the Launchpad can only represent part of the data to be edited, the grid only acts as a window into a larger virtual 64x64 grid. Hold <code>1</code> to enter navigation mode, where the position of the window can be selected:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Buttons</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>1</code> + <code>2</code></td><td style="text-align: left">Move window left.</td></tr>
+            <tr><td style="text-align: left"><code>1</code> + <code>3</code></td><td style="text-align: left">Move window right.</td></tr>
+            <tr><td style="text-align: left"><code>1</code> + <code>4</code></td><td style="text-align: left">Move window up.</td></tr>
+            <tr><td style="text-align: left"><code>1</code> + <code>5</code></td><td style="text-align: left">Move window down.</td></tr>
+            <tr><td style="text-align: left"><code>1</code> + <code>GRID</code></td><td style="text-align: left">Move window to a specific position.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Note: Navigation is available in both sequence and pattern mode.
+        </p>
+        <p>Both modes also allow controlling track mutes and fills:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Buttons</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>7</code> + <code>GRID</code></td><td style="text-align: left">Toggle selected note to 5V.</td></tr>
+            <tr><td style="text-align: left"><code>7</code> + <code>A</code> - <code>H</code></td><td style="text-align: left">Fill track.</td></tr>
+            <tr><td style="text-align: left"><code>8</code> + <code>A</code> - <code>H</code></td><td style="text-align: left">Mute or unmute track.</td></tr>
+            <tr><td style="text-align: left"><code>6</code> + <code>A</code> - <code>H</code></td><td style="text-align: left">Solo or unsolo track.</td></tr>
+          </tbody>
+        </table>
+        <h4>Sequence Mode</h4>
+        <p>
+          Sequence mode allows for comprehensive editing of the patterns on all tracks. The grid allows editing individual step values on the active track and layer. The following functions are available:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Buttons</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>A</code> - <code>H</code></td><td style="text-align: left">Select active track.</td></tr>
+            <tr><td style="text-align: left"><code>2</code> + <code>GRID</code></td><td style="text-align: left">Select active layer.</td></tr>
+            <tr><td style="text-align: left"><code>3</code> + <code>GRID</code></td><td style="text-align: left">Select first step.</td></tr>
+            <tr><td style="text-align: left"><code>4</code> + <code>GRID</code></td><td style="text-align: left">Select last step.</td></tr>
+            <tr><td style="text-align: left"><code>5</code> + <code>GRID</code></td><td style="text-align: left">Select run mode.</td></tr>
+            <tr><td style="text-align: left"><code>6</code> + <code>GRID</code></td><td style="text-align: left">Select follow mode for the selected track or, in Stochastic mode, set rest probabilities.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The visualization on the grid depends on the selected layer. Binary layers such as <em>Gate</em> and <em>Slide</em> can be visualized directly on the 8x8 grid without the need for navigation. Other layers use navigation to various degrees in order to allow programming the steps. When editing the <em>Note</em> layer, the base note, first note per octave, is visualized to help orientation. When editing a note sequence, double pressing a button can be used to toggle the step gate no matter what layer is edited other than <em>Gate</em> or <em>Slide</em>.
+        </p>
+        <h4>Pattern Mode</h4>
+        <p>
+          Pattern mode allows selecting the currently playing pattern on all tracks. Each column on the <code>GRID</code> represents one track, allowing individual patterns to be launched per track. The <code>A</code> to <code>H</code> buttons represent scenes, allowing the same pattern number to be launched on all tracks simultaneously. This is very similar to how Ableton Live allows launching clips and scenes on a Launchpad. Active patterns are shown as bright green, non-empty patterns are shown in dim colors, yellow for Note tracks and red for Curve tracks.
+        </p>
+        <p>
+          In addition, holding <code>2</code> while selecting patterns and scenes allows using latching mode. This means that the patterns are switched at the moment when <code>2</code> is released. Holding <code>3</code> while selecting patterns and scenes allows launching them synchronized to the global <em>Sync Measure</em>.
+        </p>
+        <p>
+          Requested patterns due to latching or syncing are shown in dim green.
+        </p>
+        <h4>Performance Mode</h4>
+        <p>
+          Performance mode allows the user to perform quick live edits. There are two modes available, accessible by holding <code>2</code> + <code>GRID[1|2]</code>:
+        </p>
+        <ul>
+          <li><code>GRID 1</code> - Sequence Length: Holding a step and then pressing another one sets first step and last step of the sequence, resulting in looping the current slice of the sequence until the grid buttons are released.</li>
+          <li><code>GRID 2</code> - Overview Page: each row represents the track from 1 to 8 and allows gates to be entered quickly. <code>6</code> + <code>ROW3+COL1</code> enables follow mode globally, or you can select per-track follow mode for the overview page. All other functions are still available for the selected track.</li>
+        </ul>
+        <h4 id="appendix-circuit">Circuit Note Editor</h4>
+        <p>The visualization on the grid follows this schema:</p>
+        <ul>
+          <li>The first 2 rows represent the gates from <code>S1</code> to <code>S16</code>.</li>
+          <li>Row 4 represents the semitones of a chromatic scale. The selected note is highlighted and available notes in the scale are highlighted.</li>
+          <li>Row 5 represents the tones of a chromatic scale. The selected note is highlighted and available notes in the scale are highlighted.</li>
+          <li>Row 7 represents the octave switcher from -4 to +3 octaves. The selected octave is highlighted.</li>
+          <li>Row 8 is a quick page-change shortcut.</li>
+          <li>If you press a button in the gates representation you toggle the gate.</li>
+          <li>If you hold an available key in rows 4 or 5 and press a gate you enter a gate with the selected note value plus the selected octave. If the gate is already present you set the selected note plus the selected octave of the selected gate.</li>
+        </ul>
+        <h4 id="appendix-stochastic-circuit">Stochastic Circuit Note Editor</h4>
+        <ul>
+          <li>The first 2 rows represent the probability of the selected note.</li>
+          <li>Row 3 is a quick visual representation of the current sequence step.</li>
+          <li>Row 4 represents the semitones of a chromatic scale, with selected and available notes highlighted.</li>
+          <li>Row 5 represents the tones of a chromatic scale, with selected and available notes highlighted.</li>
+          <li>Row 7 represents the octave switcher from -4 to +3 octaves, with the selected octave highlighted.</li>
+          <li>Row 8 is a quick shortcut for stochastic options: Engage loop, Clear Loop, Reseed.</li>
+          <li>On row 4 the 8th button raises track octave by +1.</li>
+          <li>On row 5 the 8th button decreases track octave by -1.</li>
+        </ul>
+        <h4 id="appendix-arpeggiator-circuit">Arpeggiator Circuit Note Editor</h4>
+        <ul>
+          <li>The first 2 rows represent the probability of the selected gate.</li>
+          <li>Row 3 is a quick visual representation of the current sequence step.</li>
+          <li>Row 4 represents the semitones of a chromatic scale, with selected and available notes highlighted.</li>
+          <li>Row 5 represents the tones of a chromatic scale, with selected and available notes highlighted.</li>
+          <li>Row 7 represents the octave switcher from -4 to +3 octaves, with the selected octave highlighted.</li>
+          <li>Row 8 is a quick shortcut for arp options: Engage keyboard, Hold mode.</li>
+          <li>On row 4 the 8th button raises track octave by +1.</li>
+          <li>On row 5 the 8th button decreases track octave by -1.</li>
+        </ul>
+
+        <h3 id="appendix-usb-midi-devices">USB MIDI Devices</h3>
+        <p>
+          The following is a list of USB MIDI devices known to be compatible with the <strong>PER|FORMER</strong> sequencer:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Manufacturer</th>
+              <th style="text-align: left">Device</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">AKAI</td><td style="text-align: left">APC Mini</td></tr>
+            <tr><td style="text-align: left">Arturia</td><td style="text-align: left">MiniBrute, MiniLab MK2, Keystep</td></tr>
+            <tr><td style="text-align: left">CME</td><td style="text-align: left">XKEY37</td></tr>
+            <tr><td style="text-align: left">Keith McMillen</td><td style="text-align: left">QuNexus</td></tr>
+            <tr><td style="text-align: left">Korg</td><td style="text-align: left">microKey 2, R3</td></tr>
+            <tr><td style="text-align: left">Moog</td><td style="text-align: left">Minitaur</td></tr>
+            <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchkey Mini</td></tr>
+            <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchpad Mini MK1/MK2/MK3, Launchpad S, Launchpad Pro, Launchpad X</td></tr>
+            <tr><td style="text-align: left">Yamaha</td><td style="text-align: left">Modx7</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The following is a list of USB MIDI devices known <strong>not</strong> to be compatible:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Manufacturer</th>
+              <th style="text-align: left">Device</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">AKAI</td><td style="text-align: left">MPK Mini</td></tr>
+            <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchpad</td></tr>
+            <tr><td style="text-align: left">Synthstrom</td><td style="text-align: left">Deluge</td></tr>
+          </tbody>
+        </table>
+
+        <h3 id="appendix-calibration-procedure">Calibration Procedure</h3>
+        <p>
+          The following method allows quickly calibrating the 8 CV outputs of the sequencer to millivolt accuracy. In order to achieve good results you have to use a volt meter capable of measuring within millivolt accuracy.
+        </p>
+        <p>
+          <strong>The calibration will only be as good as the volt meter used to measure the voltages.</strong>
+        </p>
+        <p>
+          Enter the <a href="#pages-system">System</a> page using <code>PAGE</code> + <code>SYSTEM</code>.
+        </p>
+        <p>For each of the 8 channels, perform the following steps:</p>
+        <ul>
+          <li>Select the channel by pressing <code>T1</code> to <code>T8</code>.</li>
+          <li>Connect the volt meter to the given CV output.</li>
+          <li>Select the -5.0V entry and adjust the calibration value such that the volt meter measures as close to -5.000V as possible.</li>
+          <li>Repeat the previous step for the +5.0V entry and then for the +0.0V entry.</li>
+          <li>At this point, calibration should be good enough with all other entries set to <em>auto</em>.</li>
+          <li>Check each entry in-between the calibrated ones and adjust them if the measured voltage deviates too much from the expected value. In general it is a good idea to do this recursively by always selecting the voltage in the middle of two calibrated entries. For example, with +0.0V and +5.0V calibrated, continue with either +2.0V or +3.0V.</li>
+        </ul>
+        <p>
+          With all channels calibrated you should save the data to flash memory by holding <code>SHIFT</code> + <code>PAGE</code> and pressing <code>F2</code>. You can also save the calibration data as a backup to the SD card by holding <code>SHIFT</code> + <code>PAGE</code> and pressing <code>F3</code>.
+        </p>
+
+        <h3 id="appendix-firmware-update">Firmware Update</h3>
+        <p>
+          Use the following steps to upgrade the sequencer:
+        </p>
+        <ul>
+          <li>Download the latest <strong>UPDATE.DAT</strong> file from <a href="https://github.com/VinxScorza/performer/releases" target="_blank" rel="noopener noreferrer">Vinx Scorza Releases</a>.</li>
+          <li>Copy the <strong>UPDATE.DAT</strong> file to the root directory of the SD card.</li>
+          <li>Insert the SD card into the sequencer's SD card slot.</li>
+        </ul>
+        <p>
+          The update procedure is performed by the bootloader on the sequencer. There are two possible ways to enter the bootloader:
+        </p>
+        <ol>
+          <li>Power up the sequencer while pressing down the <code>ENCODER</code>.</li>
+          <li>Enter the <a href="#pages-system">System</a> page and go to the update tab, then press and hold the <code>ENCODER</code> which will initiate a reset and jump to the bootloader.</li>
+        </ol>
+        <p>
+          The bootloader will verify the integrity of the <strong>UPDATE.DAT</strong> file using an MD5 hash. Once verified, a confirmation is requested to actually initiate the update process. Simply rotate the <code>ENCODER</code> to change to <strong>YES</strong> and press the <code>ENCODER</code> to start the update.
+        </p>
+        <p>
+          After the firmware is written to the flash memory, it is verified again to ensure it was written properly. In case the verification fails, the firmware is erased from flash memory. At this point the sequencer will always enter the bootloader when powering up, allowing a different firmware to be loaded.
+        </p>
+        <p>
+          For release history and fork-specific changes, see the <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>.
+        </p>
+      </section>
+        </div>
+      </div>
+      <script>
+        (function() {
+          var header = document.getElementById('header_wrap');
+          function updateSidebarOffset() {
+            if (!header) {
+              return;
+            }
+            document.documentElement.style.setProperty('--manual-sidebar-offset', (header.offsetHeight + 20) + 'px');
+          }
+
+          updateSidebarOffset();
+          window.addEventListener('resize', updateSidebarOffset);
+
+          var sidebarLinks = Array.prototype.slice.call(document.querySelectorAll('.manual-sidebar a[href^="#"]'));
+          if (!sidebarLinks.length || !('IntersectionObserver' in window)) {
+            return;
+          }
+
+          var linkMap = new Map();
+          sidebarLinks.forEach(function(link) {
+            var id = link.getAttribute('href').slice(1);
+            var target = document.getElementById(id);
+            if (target) {
+              linkMap.set(target, link);
+            }
+          });
+
+          var activeLink = null;
+          function setActive(link) {
+            if (activeLink === link) {
+              return;
+            }
+            if (activeLink) {
+              activeLink.classList.remove('is-active');
+            }
+            activeLink = link;
+            if (activeLink) {
+              activeLink.classList.add('is-active');
+            }
+          }
+
+          var observer = new IntersectionObserver(function(entries) {
+            var visible = entries
+              .filter(function(entry) { return entry.isIntersecting; })
+              .sort(function(a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+
+            if (visible.length) {
+              setActive(linkMap.get(visible[0].target) || null);
+            }
+          }, {
+            rootMargin: '-18% 0px -70% 0px',
+            threshold: [0, 1]
+          });
+
+          linkMap.forEach(function(_, target) {
+            observer.observe(target);
+          });
+
+          var fallback = document.getElementById('introduction');
+          if (fallback && linkMap.has(fallback)) {
+            setActive(linkMap.get(fallback));
+          }
+        })();
+      </script>
+    </main>
+  </div>
+
+  <div id="footer_wrap" class="outer">
+    <footer class="inner">
+      <p class="copyright">
+        Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

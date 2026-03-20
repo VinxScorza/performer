@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PER FORMER eurorack sequencer</title>
+  <meta name="description" content="Vinx Scorza fork of the PER|FORMER eurorack sequencer firmware.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="header_wrap" class="outer">
+    <header class="inner">
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html">PER|FORMER</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About</a>
+        <a href="manual/index.html">User Manual</a>
+        <a href="cheatsheet/index.html">Cheat Sheet</a>
+        <a href="build-guide/index.html">Build Guide</a>
+        <a href="testdrive/index.html">Test Drive</a>
+        <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
+        <a href="license/index.html">License</a>
+        <a href="donate/index.html">Donate</a>
+      </nav>
+      <h1 id="project_title">PER|FORMER</h1>
+      <h2 id="project_tagline">eurorack sequencer</h2>
+    </header>
+  </div>
+
+  <div id="main_content_wrap" class="outer">
+    <main id="main_content" class="inner">
+      <section id="about">
+        <p>
+          PER|FORMER is a eurorack sequencer module designed for both live performance and work in the
+          studio. This Vinx Scorza fork is based on the Mebitek fork, itself based on the original
+          Westlicht Performer firmware. It stays close to the original instrument while refining workflow
+          details and adding focused usability changes for personal use.
+        </p>
+        <p>
+          IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
+        </p>
+        <p>
+          About Vinx Scorza:
+          <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">vincenzoscorza.it</a>
+        </p>
+        <p>
+          Alternatively you can directly connect a Novation Launchpad to control many aspects of the
+          sequencer. A highly configurable clock system allows the module to act both as a master clock
+          or sync to many other modules or external gear. In the studio, the module can act as a precise
+          MIDI to CV converter. And best of all, if you should ever get bored with music, you can play
+          some asteroids on it too.
+        </p>
+        <p>
+          Personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
+        </p>
+      </section>
+
+      <section>
+        <h3>Features</h3>
+        <ul>
+          <li>8 track sequencer</li>
+          <li>16 sequences per track</li>
+          <li>64 steps per sequence</li>
+          <li>Multiple track and sequence modes</li>
+          <li>Note and modulation sequencing</li>
+          <li>Arpeggiator</li>
+          <li>Snapshot system</li>
+          <li>Sequence generators with non-destructive Random preview workflow</li>
+          <li>Routing system for CV inputs and external MIDI controllers</li>
+          <li>Novation Launchpad support</li>
+          <li>Generate MIDI output from multiple sequences</li>
+          <li>Flexible clock system</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>User Interface</h3>
+        <ul>
+          <li>Large and bright 256x64 pixel OLED display</li>
+          <li>Encoder with push button</li>
+          <li>32 buttons with bi-color LEDs</li>
+          <li>5 function buttons with labels on display</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Inputs and Outputs</h3>
+        <ul>
+          <li>8 CV outputs (-5V to 5V)</li>
+          <li>8 gate outputs (5V)</li>
+          <li>4 CV inputs (-5V to 5V)</li>
+          <li>Clock and reset/run input</li>
+          <li>Clock and reset/run output</li>
+          <li>MIDI input and output (MIDI TRS 3.5mm jacks)</li>
+          <li>USB Host for MIDI over USB</li>
+          <li>microSD Card Slot</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Specifications</h3>
+        <ul>
+          <li>Width: 34 HP</li>
+          <li>Depth: 25mm</li>
+          <li>Power: 100mA @ +12V, 15mA @ -12V (not including USB host power)</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Vinx Fork Notes</h3>
+        <ul>
+          <li>Current fork line: <strong>v0.3.2-vinx.1.4.1</strong></li>
+          <li><a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a> tracks Vinx-specific fixes and features</li>
+          <li><a href="https://github.com/VinxScorza/performer/blob/master/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the fork status and upstream references</li>
+          <li><a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a> remains the closest upstream fork reference</li>
+          <li><a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Westlicht</a> remains the original project reference</li>
+          <li>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>What’s New in Vinx Fork</h3>
+        <p>
+          A quick overview of the most relevant workflow changes currently introduced in the Vinx fork.
+        </p>
+        <ul>
+          <li>Non-destructive Random Generate workflow with safe preview, A/B comparison, and explicit Apply/Cancel</li>
+          <li>Full 32-bit Random seed space, shown as 8-digit hexadecimal values, with faster exploration through NEW SEED</li>
+          <li>Generate opens on the current 16-step bank, with screen state, page LEDs, and cyclic bank navigation kept in sync</li>
+          <li>Step visualization is more descriptive: gate offset shifts the inner block, length changes its width, and retrigger is shown as a striped pattern</li>
+          <li>Reset CV now defaults to Off, so Note tracks keep their last CV value when playback stops</li>
+        </ul>
+        <p>
+          See the full
+          <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
+          for the complete list of Vinx-specific changes.
+        </p>
+      </section>
+
+      <section>
+        <h3>License</h3>
+        <p>
+          For licensing information please refer to the
+          <a href="license/index.html">License</a> page.
+        </p>
+      </section>
+
+      <section id="donations">
+        <h3>Donations</h3>
+        <p>
+          If you would like to support this fork financially, please refer to the
+          <a href="donate/index.html">Donate</a>
+          page.
+        </p>
+        <p>
+          If you would like to support the incredible upstream work behind this fork, you can also
+          donate to <a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Mebitek</a> or to
+          <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Simon Kallweit / Westlicht</a>.
+        </p>
+        <p>
+          I would love to have a second PER|FORMER unit for testing new fixes and new features, but
+          I cannot really afford a second one just for development. If you have one sitting unused
+          and gathering dust, I would gladly give it a good home in my studio/lab.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <div id="footer_wrap" class="outer">
+    <footer class="inner">
+      <p class="copyright">
+        Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
