@@ -148,12 +148,9 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
-            switch (_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue()) {
-            default:
-            case 0: canvas.setColor(Color::Bright); break;
-            case 1: canvas.setColor(Color::MediumLow); break;
-            case 2: canvas.setColor(Color::Low); break;
-            }
+            canvas.setColor(SequencePainter::dimSequenceColor(
+                _context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue()
+            ));
             constexpr int gateInset = 3;
             constexpr int gateShiftRange = 3;
             int gateArea = stepWidth - 2 * gateInset;
