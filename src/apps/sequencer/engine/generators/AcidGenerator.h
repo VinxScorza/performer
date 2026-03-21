@@ -33,7 +33,7 @@ public:
 
     Mode mode() const override { return Mode::Acid; }
 
-    int paramCount() const override { return int(Param::Last); }
+    int paramCount() const override;
     const char *paramName(int index) const override;
     void editParam(int index, int value, bool shift) override;
     void printParam(int index, StringBuilder &str) const override;
@@ -59,6 +59,7 @@ public:
     int displayValue(int index) const;
 
 private:
+    Param visibleParam(int index) const;
     int countGatedSteps(const NoteSequence &sequence, const std::array<int, CONFIG_STEP_COUNT> &targetSteps, int targetCount) const;
     int averageOriginalNote(const std::array<int, CONFIG_STEP_COUNT> &targetSteps, int targetCount) const;
     int desiredGateCount(int targetCount) const;

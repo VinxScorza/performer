@@ -56,8 +56,8 @@ void EuclideanGenerator::randomizeParams() {
     Random rng(entropy);
 
     setSteps(1 + int(rng.nextRange(CONFIG_STEP_COUNT)));
-    setBeats(1 + int(rng.nextRange(steps())));
-    setOffset(int(rng.nextRange(steps())));
+    setBeats(1 + int(rng.nextRange(CONFIG_STEP_COUNT)));
+    setOffset(int(rng.nextRange(CONFIG_STEP_COUNT)));
 
     entropy = rng.next();
 }

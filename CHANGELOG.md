@@ -12,6 +12,7 @@
 - Add `Acid` as a new `Generate` option on Note tracks, with non-destructive preview and a `Layer / Phrase` mode selector
 - `Acid -> Layer` projects acid-like motion onto the active `Gate`, `Note`, or `Slide` layer, while `Acid -> Phrase` writes a coordinated `Gate + Note + Slide` phrase over the current selection or pattern length
 - Make generator `Range` displays consistently percentage-based, randomize generator parameters on entry while keeping `Variation` at `100%`, and tighten `Acid` `Density` / `Slide` behavior around deterministic target counts
+- Reorder the generator menu to `Random`, `Acid`, `Euclidean`, `Init`, keep `Random` `Bias` at `0` on entry, trim `Acid -> Layer` to layer-relevant parameters, and rename Euclidean's context action to `NEW RAND`
 
 # v0.3.2-vinx.1.4.2 (20 March 2026)
 - Expand `Dim Sequence` from a binary toggle to `off`, `dim`, and `dim+`, defaulting to `dim` to better tame display noise leaking into the audio band

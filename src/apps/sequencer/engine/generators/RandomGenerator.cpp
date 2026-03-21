@@ -62,7 +62,7 @@ void RandomGenerator::randomizeParams() {
 
     Random rng(_params.seed ^ 0x6C078965u);
     setSmooth(int(rng.nextRange(11)));
-    setBias(int(rng.nextRange(21)) - 10);
+    setBias(0);
     setScale(int(rng.nextRange(101)));
     setVariation(100);
 }

@@ -26,8 +26,60 @@ AcidGenerator::AcidGenerator(SequenceBuilder &builder, Params &params, std::bits
     update();
 }
 
+int AcidGenerator::paramCount() const {
+    if (_acidBuilder.applyMode() == AcidSequenceBuilder::ApplyMode::Phrase) {
+        return int(Param::Last);
+    }
+
+    switch (_acidBuilder.layer()) {
+    case NoteSequence::Layer::Gate:
+    case NoteSequence::Layer::Slide:
+    case NoteSequence::Layer::Note:
+        return 3;
+    default:
+        return int(Param::Last);
+    }
+}
+
+AcidGenerator::Param AcidGenerator::visibleParam(int index) const {
+    if (_acidBuilder.applyMode() == AcidSequenceBuilder::ApplyMode::Phrase) {
+        return Param(index);
+    }
+
+    switch (_acidBuilder.layer()) {
+    case NoteSequence::Layer::Gate:
+        switch (index) {
+        case 0: return Param::Seed;
+        case 1: return Param::Density;
+        case 2: return Param::Variation;
+        default: break;
+        }
+        break;
+    case NoteSequence::Layer::Slide:
+        switch (index) {
+        case 0: return Param::Seed;
+        case 1: return Param::Slide;
+        case 2: return Param::Variation;
+        default: break;
+        }
+        break;
+    case NoteSequence::Layer::Note:
+        switch (index) {
+        case 0: return Param::Seed;
+        case 1: return Param::Range;
+        case 2: return Param::Variation;
+        default: break;
+        }
+        break;
+    default:
+        return Param(index);
+    }
+
+    return Param::Last;
+}
+
 const char *AcidGenerator::paramName(int index) const {
-    switch (Param(index)) {
+    switch (visibleParam(index)) {
     case Param::Seed:      return "Seed";
     case Param::Density:   return "Dens";
     case Param::Slide:     return "Slide";
@@ -41,7 +93,7 @@ const char *AcidGenerator::paramName(int index) const {
 void AcidGenerator::editParam(int index, int value, bool shift) {
     (void)shift;
 
-    switch (Param(index)) {
+    switch (visibleParam(index)) {
     case Param::Seed:
         if (value != 0) {
             randomizeSeed();
@@ -65,7 +117,7 @@ void AcidGenerator::editParam(int index, int value, bool shift) {
 }
 
 void AcidGenerator::printParam(int index, StringBuilder &str) const {
-    switch (Param(index)) {
+    switch (visibleParam(index)) {
     case Param::Seed:
         str("%08X", _params.seed);
         break;

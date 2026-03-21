@@ -17,9 +17,9 @@ public:
         case 0:
             return Generator::Mode::Random;
         case 1:
-            return Generator::Mode::Euclidean;
+            return _allowAcid ? Generator::Mode::Acid : Generator::Mode::Euclidean;
         case 2:
-            return _allowAcid ? Generator::Mode::Acid : Generator::Mode::InitLayer;
+            return Generator::Mode::Euclidean;
         case 3:
             return Generator::Mode::InitLayer;
         default:
