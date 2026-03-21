@@ -80,6 +80,14 @@ void RandomGenerator::randomizeSeed() {
     entropy = rng.next();
 }
 
+void RandomGenerator::randomizeContextParams() {
+    randomizeSeed();
+
+    Random rng(_params.seed ^ 0x3C6EF372u);
+    setSmooth(int(rng.nextRange(11)));
+    setScale(int(rng.nextRange(101)));
+}
+
 void RandomGenerator::update() {
     Random rng(_params.seed);
 

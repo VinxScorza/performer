@@ -167,6 +167,30 @@ void AcidGenerator::randomizeSeed() {
     entropy = rng.next();
 }
 
+void AcidGenerator::randomizeContextParams() {
+    randomizeSeed();
+
+    Random rng(_params.seed ^ 0x68E31DA4u);
+
+    for (int i = 1; i < paramCount(); ++i) {
+        switch (visibleParam(i)) {
+        case Param::Density:
+            setDensity(int(rng.nextRange(101)));
+            break;
+        case Param::Slide:
+            setSlide(int(rng.nextRange(101)));
+            break;
+        case Param::Range:
+            setRange(int(rng.nextRange(101)));
+            break;
+        case Param::Variation:
+        case Param::Seed:
+        case Param::Last:
+            break;
+        }
+    }
+}
+
 int AcidGenerator::countGatedSteps(const NoteSequence &sequence, const std::array<int, CONFIG_STEP_COUNT> &targetSteps, int targetCount) const {
     int count = 0;
     for (int i = 0; i < targetCount; ++i) {

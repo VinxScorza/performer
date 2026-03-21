@@ -40,6 +40,7 @@ public:
     void update() override;
 
     void randomizeSeed();
+    void randomizeContextParams();
 
     // seed
 

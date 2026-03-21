@@ -390,7 +390,16 @@ int GeneratorPage::contextItemCount() const {
 }
 
 void GeneratorPage::contextShow(bool doubleClick) {
-    _contextMenuItems[0] = { seedDrivenGenerator(_generator->mode()) ? "NEW SEED" : "NEW RAND" };
+    switch (_generator->mode()) {
+    case Generator::Mode::Random:
+    case Generator::Mode::Acid:
+    case Generator::Mode::Euclidean:
+        _contextMenuItems[0] = { "NEW RAND" };
+        break;
+    default:
+        _contextMenuItems[0] = { "NEW SEED" };
+        break;
+    }
     _contextMenuItems[1] = { "INIT" };
     _contextMenuItems[2] = { "CANCEL" };
     _contextMenuItems[3] = { "APPLY" };
@@ -427,14 +436,14 @@ void GeneratorPage::contextAction(int index) {
         switch (_generator->mode()) {
         case Generator::Mode::Random: {
             auto *random = static_cast<RandomGenerator *>(_generator);
-            random->randomizeSeed();
+            random->randomizeContextParams();
             random->update();
             _generator->showPreview();
             break;
         }
         case Generator::Mode::Acid: {
             auto *acid = static_cast<AcidGenerator *>(_generator);
-            acid->randomizeSeed();
+            acid->randomizeContextParams();
             acid->update();
             _generator->showPreview();
             break;

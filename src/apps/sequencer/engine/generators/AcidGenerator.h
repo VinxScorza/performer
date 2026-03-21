@@ -43,6 +43,7 @@ public:
     void update() override;
 
     void randomizeSeed();
+    void randomizeContextParams();
 
     int density() const { return _params.density; }
     void setDensity(int density) { _params.density = clamp(density, 0, 100); }

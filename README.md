@@ -50,6 +50,7 @@ The current `v0.3.2-vinx.1.4.3` branch includes:
 - `Acid` as a Note-track generator, with `Layer / Phrase` modes and non-destructive preview for coordinated `Gate`, `Note`, and `Slide` phrasing
 - Generator menu order updated to `Random`, `Acid`, `Euclidean`, `Init Layer`, with `Acid -> Layer` exposing only the parameters that make sense for the active `Gate`, `Note`, or `Slide` layer
 - `Generate -> Random` now enters with `Bias` centered at `0`, while `Euclidean` uses `NEW RAND` and no fake `VAR` slot
+- Generator context action `NEW RAND` is now distinct from encoder seed changes: `Random` refreshes `Seed`, `Smooth`, and `Range`, while `Acid -> Layer` refreshes `Seed` plus the current layer's main parameter, both without touching `Variation`
 - Generator parameter displays and entry behavior aligned around percentage-based `Range`, deterministic `Density` / `Slide` targets, and random parameter initialization with `Variation` held at `100%`
 - `Dim Sequence` now offers `off`, `dim`, and `dim+`, defaulting to `dim` to better tame display noise leaking into the audio band.
 
