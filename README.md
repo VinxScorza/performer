@@ -47,7 +47,6 @@ If you're looking for a stable, fully documented firmware, you may prefer the up
 If you're interested in a more hands-on, performance-oriented evolution, you're in the right place.
 
 The current `v0.3.2-vinx.1.4.2` branch includes:
-- Saving a project no longer stops playback. Project data is snapshotted under a short engine lock before asynchronous SD write.
 - `Dim Sequence` now offers `off`, `dim`, and `dim+`, defaulting to `dim` to better tame display noise leaking into the audio band.
 
 Clone this repository:
