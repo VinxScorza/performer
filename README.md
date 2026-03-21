@@ -5,7 +5,7 @@
 ## [CHANGELOG](CHANGELOG.md)
 
 This is a <u>personal fork</u> of the [Mebitek fork](https://github.com/mebitek/performer), itself based on the original [Westlicht Performer firmware](https://github.com/westlicht/performer).
-Current fork version: `0.3.2-vinx.1.4.3`.
+Current fork version: `0.3.2-vinx.1.4.4`.
 
 IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
 
@@ -46,7 +46,8 @@ If you're looking for a stable, fully documented firmware, you may prefer the up
 
 If you're interested in a more hands-on, performance-oriented evolution, you're in the right place.
 
-The current `v0.3.2-vinx.1.4.3` branch includes:
+The current `v0.3.2-vinx.1.4.4` branch includes:
+- Generator preview redesign for Note-track work: `Random` now uses a central-baseline 64-step graph, while `Acid` gets dedicated Note/Gate/Slide/Phrase preview styles, visible 16-step bank focus, and a playback-following playhead
 - `Acid` as a Note-track generator, with `Layer / Phrase` modes and non-destructive preview for coordinated `Gate`, `Note`, and `Slide` phrasing
 - Generator menu order updated to `Random`, `Acid`, `Euclidean`, `Init Layer`, with `Acid -> Layer` exposing only the parameters that make sense for the active `Gate`, `Note`, or `Slide` layer
 - `Generate -> Random` now enters with `Bias` centered at `0`, while `Euclidean` uses `NEW RAND` and no fake `VAR` slot

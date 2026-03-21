@@ -58,6 +58,10 @@ public:
     void setVariation(int variation) { _params.variation = clamp(variation, 0, 100); }
 
     int displayValue(int index) const;
+    AcidSequenceBuilder::ApplyMode applyMode() const { return _acidBuilder.applyMode(); }
+    NoteSequence::Layer layer() const { return _acidBuilder.layer(); }
+    const NoteSequence &sequence(bool preview) const { return preview ? _acidBuilder.previewSequence() : _acidBuilder.originalSequence(); }
+    bool isTargetStep(int stepIndex) const { return _acidBuilder.isTargetStep(stepIndex); }
 
 private:
     Param visibleParam(int index) const;

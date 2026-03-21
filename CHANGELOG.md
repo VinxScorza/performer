@@ -8,6 +8,10 @@
 
 <sub>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.4.4 (22 March 2026)
+- Redesign generator previews on the LCD: `Random` now uses a centered 64-step baseline graph, while `Acid` gets dedicated Note staircase, Gate block, Slide profile, and multi-lane Phrase previews
+- Make generator previews keep the current 16-step bank visible while showing all 64 steps, and add a playback-following playhead to the generator display
+
 # v0.3.2-vinx.1.4.3 (21 March 2026)
 - Add `Acid` as a new `Generate` option on Note tracks, with non-destructive preview and a `Layer / Phrase` mode selector
 - `Acid -> Layer` projects acid-like motion onto the active `Gate`, `Note`, or `Slide` layer, while `Acid -> Phrase` writes a coordinated `Gate + Note + Slide` phrase over the current selection or pattern length
