@@ -27,6 +27,10 @@ static bool seedDrivenGenerator(Generator::Mode mode) {
     return mode == Generator::Mode::Random || mode == Generator::Mode::Acid;
 }
 
+static bool acidLayerGenerator(const Generator *generator) {
+    return generator->mode() == Generator::Mode::Acid && generator->paramCount() < 5;
+}
+
 void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> *stepSelection) {
     _generator = generator;
     _stepSelection = stepSelection;
@@ -83,6 +87,9 @@ void GeneratorPage::draw(Canvas &canvas) {
         functionNames[0] = "A/B";
         for (int i = 1; i < 5; ++i) {
             functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
+        }
+        if (acidLayerGenerator(_generator)) {
+            functionNames[4] = "NEW RAND";
         }
     } else {
         for (int i = 0; i < 5; ++i) {
@@ -229,6 +236,12 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
     if (seedDrivenGenerator(_generator->mode()) && key.isFunction() && key.function() == 0) {
         togglePreview();
+        event.consume();
+        return;
+    }
+
+    if (acidLayerGenerator(_generator) && key.isFunction() && key.function() == 4) {
+        contextAction(int(ContextAction::RandomizeSeed));
         event.consume();
         return;
     }

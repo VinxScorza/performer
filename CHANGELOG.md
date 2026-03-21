@@ -14,6 +14,7 @@
 - Make generator `Range` displays consistently percentage-based, randomize generator parameters on entry while keeping `Variation` at `100%`, and tighten `Acid` `Density` / `Slide` behavior around deterministic target counts
 - Reorder the generator menu to `Random`, `Acid`, `Euclidean`, `Init`, keep `Random` `Bias` at `0` on entry, trim `Acid -> Layer` to layer-relevant parameters, and rename Euclidean's context action to `NEW RAND`
 - Make generator context action `NEW RAND` behave differently from encoder seed changes: in `Random` it now refreshes `Seed`, `Smooth`, and `Range` while leaving `Bias` untouched, and in `Acid -> Layer` it refreshes `Seed` plus the active layer's main parameter without touching `Variation`
+- Mirror `Acid -> Layer` `NEW RAND` on `F5` for quicker access without opening the context menu
 
 # v0.3.2-vinx.1.4.2 (20 March 2026)
 - Expand `Dim Sequence` from a binary toggle to `off`, `dim`, and `dim+`, defaulting to `dim` to better tame display noise leaking into the audio band
