@@ -1,48 +1,34 @@
-#include "GeneratorSelectPage.h"
+#include "AcidModeSelectPage.h"
 
 #include "ui/painters/WindowPainter.h"
 
 enum class Function {
-    Cancel  = 3,
-    OK      = 4,
+    Cancel = 3,
+    OK = 4,
 };
 
 static const char *functionNames[] = { nullptr, nullptr, nullptr, "CANCEL", "OK" };
 
-
-GeneratorSelectPage::GeneratorSelectPage(PageManager &manager, PageContext &context) :
+AcidModeSelectPage::AcidModeSelectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel)
 {}
 
-void GeneratorSelectPage::show(ResultCallback callback) {
-    show(false, callback);
-}
-
-void GeneratorSelectPage::show(bool allowAcid, ResultCallback callback) {
+void AcidModeSelectPage::show(bool allowLayer, ResultCallback callback) {
     _callback = callback;
-    _listModel.setAllowAcid(allowAcid);
+    _listModel.setAllowLayer(allowLayer);
     setSelectedRow(0);
     ListPage::show();
 }
 
-void GeneratorSelectPage::enter() {
-}
-
-void GeneratorSelectPage::exit() {
-}
-
-void GeneratorSelectPage::draw(Canvas &canvas) {
+void AcidModeSelectPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "GENERATOR");
+    WindowPainter::drawHeader(canvas, _model, _engine, "ACID MODE");
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     ListPage::draw(canvas);
 }
 
-void GeneratorSelectPage::updateLeds(Leds &leds) {
-}
-
-void GeneratorSelectPage::keyPress(KeyPressEvent &event) {
+void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction()) {
@@ -54,6 +40,7 @@ void GeneratorSelectPage::keyPress(KeyPressEvent &event) {
             closeWithResult(true);
             break;
         }
+        return;
     }
 
     if (key.is(Key::Encoder)) {
@@ -64,7 +51,7 @@ void GeneratorSelectPage::keyPress(KeyPressEvent &event) {
     ListPage::keyPress(event);
 }
 
-void GeneratorSelectPage::closeWithResult(bool result) {
+void AcidModeSelectPage::closeWithResult(bool result) {
     Page::close();
     if (_callback) {
         _callback(result, _listModel.rowToMode(selectedRow()));

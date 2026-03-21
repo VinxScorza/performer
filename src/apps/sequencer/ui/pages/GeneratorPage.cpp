@@ -3,6 +3,7 @@
 #include "ui/painters/WindowPainter.h"
 #include "ui/LedPainter.h"
 
+#include "engine/generators/AcidGenerator.h"
 #include "engine/generators/Generator.h"
 #include "engine/generators/EuclideanGenerator.h"
 #include "engine/generators/RandomGenerator.h"
@@ -21,6 +22,10 @@ enum class ContextAction {
 GeneratorPage::GeneratorPage(PageManager &manager, PageContext &context) :
     BasePage(manager, context)
 {}
+
+static bool seedDrivenGenerator(Generator::Mode mode) {
+    return mode == Generator::Mode::Random || mode == Generator::Mode::Acid;
+}
 
 void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> *stepSelection) {
     _generator = generator;
@@ -57,11 +62,8 @@ void GeneratorPage::enter() {
         break;
     }
 
-    if (_generator->mode() == Generator::Mode::Random) {
-        auto *random = static_cast<RandomGenerator *>(_generator);
-        random->randomizeSeed();
-        random->update();
-    }
+    _generator->randomizeParams();
+    _generator->update();
     _generator->showPreview();
 }
 
@@ -77,7 +79,7 @@ void GeneratorPage::draw(Canvas &canvas) {
         functionNames[i] = nullptr;
     }
 
-    if (_generator->mode() == Generator::Mode::Random) {
+    if (seedDrivenGenerator(_generator->mode())) {
         functionNames[0] = "A/B";
         for (int i = 1; i < 5; ++i) {
             functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
@@ -98,7 +100,7 @@ void GeneratorPage::draw(Canvas &canvas) {
 
     auto drawValue = [&] (int index, const char *str) {
         Font prevFont = canvas.font();
-        Font font = (_generator->mode() == Generator::Mode::Random && index == 0) ? Font::Tiny : Font::Small;
+        Font font = (seedDrivenGenerator(_generator->mode()) && index == 0) ? Font::Tiny : Font::Small;
         canvas.setFont(font);
 
         int w = Width / 5;
@@ -110,8 +112,8 @@ void GeneratorPage::draw(Canvas &canvas) {
     };
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
-        FixedStringBuilder<8> str;
-        if (_generator->mode() == Generator::Mode::Random && i == 0 && !_generator->showingPreview()) {
+        FixedStringBuilder<16> str;
+        if (seedDrivenGenerator(_generator->mode()) && i == 0 && !_generator->showingPreview()) {
             str("ORIGINAL");
         } else {
             _generator->printParam(i, str);
@@ -128,6 +130,9 @@ void GeneratorPage::draw(Canvas &canvas) {
         break;
     case Generator::Mode::Random:
         drawRandomGenerator(canvas, *static_cast<const RandomGenerator *>(_generator));
+        break;
+    case Generator::Mode::Acid:
+        drawAcidGenerator(canvas, *static_cast<const AcidGenerator *>(_generator));
         break;
     case Generator::Mode::Last:
         break;
@@ -222,7 +227,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-    if (_generator->mode() == Generator::Mode::Random && key.isFunction() && key.function() == 0) {
+    if (seedDrivenGenerator(_generator->mode()) && key.isFunction() && key.function() == 0) {
         togglePreview();
         event.consume();
         return;
@@ -274,10 +279,18 @@ void GeneratorPage::encoder(EncoderEvent &event) {
         }
     }
 
-    if (_generator->mode() == Generator::Mode::Random && !functionKeyHeld) {
+    if (seedDrivenGenerator(_generator->mode()) && !functionKeyHeld) {
         if (event.value() != 0) {
-            auto *random = static_cast<RandomGenerator *>(_generator);
-            random->randomizeSeed();
+            switch (_generator->mode()) {
+            case Generator::Mode::Random:
+                static_cast<RandomGenerator *>(_generator)->randomizeSeed();
+                break;
+            case Generator::Mode::Acid:
+                static_cast<AcidGenerator *>(_generator)->randomizeSeed();
+                break;
+            default:
+                break;
+            }
             changed = true;
         }
     }
@@ -342,17 +355,48 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
     }
 }
 
+void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &generator) const {
+    int steps = CONFIG_STEP_COUNT;
+    int stepWidth = Width / steps;
+    int stepHeight = 16;
+    int x = (Width - steps * stepWidth) / 2;
+    int y = 16;
+
+    for (int i = 0; i < steps; ++i) {
+        int h = stepHeight - 2;
+        int h2 = (h * generator.displayValue(i)) / 255;
+        if (i / 16 == _section) {
+            canvas.setColor(Color::Medium);
+        } else {
+            canvas.setColor(Color::Low);
+        }
+        canvas.drawRect(x + 1, y + 1, stepWidth - 2, h);
+        canvas.setColor(Color::Bright);
+        canvas.hline(x + 1, y + 1 + h - h2, stepWidth - 2);
+        x += stepWidth;
+    }
+}
+
 void GeneratorPage::contextShow(bool doubleClick) {
     _contextMenuItems[0] = { "NEW SEED" };
     _contextMenuItems[1] = { "INIT" };
     _contextMenuItems[2] = { "CANCEL" };
     _contextMenuItems[3] = { "APPLY" };
 
-    if (_generator->mode() == Generator::Mode::Random) {
+    switch (_generator->mode()) {
+    case Generator::Mode::Random: {
         const auto *random = static_cast<const RandomGenerator *>(_generator);
         std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR %d%%", random->variation());
-    } else {
+        break;
+    }
+    case Generator::Mode::Acid: {
+        const auto *acid = static_cast<const AcidGenerator *>(_generator);
+        std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR %d%%", acid->variation());
+        break;
+    }
+    default:
         std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR");
+        break;
     }
     _contextMenuItems[4] = { _variationMenuLabel };
 
@@ -368,10 +412,23 @@ void GeneratorPage::contextShow(bool doubleClick) {
 void GeneratorPage::contextAction(int index) {
     switch (ContextAction(index)) {
     case ContextAction::RandomizeSeed:
-        if (_generator->mode() == Generator::Mode::Random) {
-            auto *random = static_cast<RandomGenerator *>(_generator);
-            random->randomizeSeed();
-            random->update();
+        if (seedDrivenGenerator(_generator->mode())) {
+            switch (_generator->mode()) {
+            case Generator::Mode::Random: {
+                auto *random = static_cast<RandomGenerator *>(_generator);
+                random->randomizeSeed();
+                random->update();
+                break;
+            }
+            case Generator::Mode::Acid: {
+                auto *acid = static_cast<AcidGenerator *>(_generator);
+                acid->randomizeSeed();
+                acid->update();
+                break;
+            }
+            default:
+                break;
+            }
             _generator->showPreview();
         }
         break;
@@ -420,6 +477,6 @@ void GeneratorPage::togglePreview() {
         showMessage("ORIGINAL");
     } else {
         _generator->showPreview();
-        showMessage("CURRENT SEED");
+        showMessage(seedDrivenGenerator(_generator->mode()) ? "CURRENT SEED" : "PREVIEW");
     }
 }

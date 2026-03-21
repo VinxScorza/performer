@@ -1,5 +1,9 @@
 #include "EuclideanGenerator.h"
 
+#include "core/utils/Random.h"
+
+#include <ctime>
+
 EuclideanGenerator::EuclideanGenerator(SequenceBuilder &builder, Params& params) :
     Generator(builder),
     _params(params)
@@ -39,6 +43,23 @@ void EuclideanGenerator::init()
 {
     _params = Params();
     update();
+}
+
+void EuclideanGenerator::randomizeParams() {
+    static uint32_t entropy = 0;
+
+    if (entropy == 0) {
+        entropy = uint32_t(time(NULL)) ^ uint32_t(clock()) ^ 0x91E10DA5u;
+    }
+
+    entropy = entropy * 1664525u + 1013904223u + uint32_t(clock());
+    Random rng(entropy);
+
+    setSteps(1 + int(rng.nextRange(CONFIG_STEP_COUNT)));
+    setBeats(1 + int(rng.nextRange(steps())));
+    setOffset(int(rng.nextRange(steps())));
+
+    entropy = rng.next();
 }
 
 void EuclideanGenerator::update()  {

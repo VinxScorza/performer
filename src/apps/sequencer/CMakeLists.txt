@@ -21,6 +21,7 @@ set(sources
     engine/SequenceState.cpp
     # engine/generators
     engine/generators/EuclideanGenerator.cpp
+    engine/generators/AcidGenerator.cpp
     engine/generators/Generator.cpp
     engine/generators/RandomGenerator.cpp
     engine/generators/Rhythm.cpp
@@ -78,6 +79,7 @@ set(sources
     ui/pages/AsteroidsPage.cpp
     ui/pages/BasePage.cpp
     ui/pages/BusyPage.cpp
+    ui/pages/AcidModeSelectPage.cpp
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
     ui/pages/ContextMenuPage.cpp

@@ -234,7 +234,7 @@ MidiCvTrackEngine::Voice *MidiCvTrackEngine::findVoice(int note) {
         return voice.isActive() && voice.note == note;
     });
 
-    return it == _voices.end() ? nullptr : it;
+    return it == _voices.end() ? nullptr : &(*it);
 }
 
 void MidiCvTrackEngine::sortVoices() {

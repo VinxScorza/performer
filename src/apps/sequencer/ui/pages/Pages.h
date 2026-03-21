@@ -3,6 +3,7 @@
 #include "Config.h"
 
 #include "BusyPage.h"
+#include "AcidModeSelectPage.h"
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
 #include "ContextMenuPage.h"
@@ -78,6 +79,7 @@ struct Pages {
     // generator pages
     GeneratorPage generator;
     GeneratorSelectPage generatorSelect;
+    AcidModeSelectPage acidModeSelect;
     // helper pages
     TextInputPage textInput;
     ConfirmationPage confirmation;
@@ -125,6 +127,7 @@ struct Pages {
         // generator pages
         generator(manager, context),
         generatorSelect(manager, context),
+        acidModeSelect(manager, context),
         // helper pages
         textInput(manager, context),
         confirmation(manager, context),
@@ -139,4 +142,3 @@ struct Pages {
 #endif
     {}
 };
-

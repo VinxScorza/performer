@@ -5,7 +5,7 @@
 ## [CHANGELOG](CHANGELOG.md)
 
 This is a <u>personal fork</u> of the [Mebitek fork](https://github.com/mebitek/performer), itself based on the original [Westlicht Performer firmware](https://github.com/westlicht/performer).
-Current fork version: `0.3.2-vinx.1.4.2`.
+Current fork version: `0.3.2-vinx.1.4.3`.
 
 IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
 
@@ -26,7 +26,7 @@ Primary documentation for this fork:
 - [Vinx Scorza fork site](https://vinxscorza.github.io/performer/)
 - [User Manual](https://vinxscorza.github.io/performer/manual/)
 - [Test Drive](https://vinxscorza.github.io/performer/testdrive/)
-- [Changelog](https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md)
+- [Changelog](CHANGELOG.md)
 
 Upstream references:
 - [Mebitek Performer fork](https://github.com/mebitek/performer)
@@ -46,7 +46,9 @@ If you're looking for a stable, fully documented firmware, you may prefer the up
 
 If you're interested in a more hands-on, performance-oriented evolution, you're in the right place.
 
-The current `v0.3.2-vinx.1.4.2` branch includes:
+The current `v0.3.2-vinx.1.4.3` branch includes:
+- `Acid` as a Note-track generator, with `Layer / Phrase` modes and non-destructive preview for coordinated `Gate`, `Note`, and `Slide` phrasing
+- Generator parameter displays and entry behavior aligned around percentage-based `Range`, deterministic `Density` / `Slide` targets, and random parameter initialization with `Variation` held at `100%`
 - `Dim Sequence` now offers `off`, `dim`, and `dim+`, defaulting to `dim` to better tame display noise leaking into the audio band.
 
 Clone this repository:

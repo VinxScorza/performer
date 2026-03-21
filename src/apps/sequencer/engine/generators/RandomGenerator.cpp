@@ -18,7 +18,7 @@ const char *RandomGenerator::paramName(int index) const {
     case Param::Seed:   return "Seed";
     case Param::Smooth: return "Smooth";
     case Param::Bias:   return "Bias";
-    case Param::Scale:  return "Scale";
+    case Param::Scale:  return "Range";
     case Param::Variation: return "Var";
     case Param::Last:   break;
     }
@@ -45,7 +45,7 @@ void RandomGenerator::printParam(int index, StringBuilder &str) const {
     case Param::Seed:   str("%08X", seed()); break;
     case Param::Smooth: str("%d", smooth()); break;
     case Param::Bias:   str("%d", bias()); break;
-    case Param::Scale:  str("%d", scale()); break;
+    case Param::Scale:  str("%d%%", scale()); break;
     case Param::Variation: str("%d%%", variation()); break;
     case Param::Last:   break;
     }
@@ -55,6 +55,16 @@ void RandomGenerator::init() {
     _params = Params();
     randomizeSeed();
     update();
+}
+
+void RandomGenerator::randomizeParams() {
+    randomizeSeed();
+
+    Random rng(_params.seed ^ 0x6C078965u);
+    setSmooth(int(rng.nextRange(11)));
+    setBias(int(rng.nextRange(21)) - 10);
+    setScale(int(rng.nextRange(101)));
+    setVariation(100);
 }
 
 void RandomGenerator::randomizeSeed() {

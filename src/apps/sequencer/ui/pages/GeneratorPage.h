@@ -6,6 +6,7 @@
 #include "engine/generators/SequenceBuilder.h"
 
 class Generator;
+class AcidGenerator;
 class EuclideanGenerator;
 class RandomGenerator;
 
@@ -44,6 +45,7 @@ public:
 private:
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;
     void drawRandomGenerator(Canvas &canvas, const RandomGenerator &generator) const;
+    void drawAcidGenerator(Canvas &canvas, const AcidGenerator &generator) const;
 
     Generator *_generator;
 

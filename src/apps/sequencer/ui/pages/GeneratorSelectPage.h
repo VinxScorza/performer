@@ -12,6 +12,7 @@ public:
 
     using ListPage::show;
     void show(ResultCallback callback);
+    void show(bool allowAcid, ResultCallback callback);
 
     virtual void enter() override;
     virtual void exit() override;
