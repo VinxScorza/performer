@@ -5,7 +5,7 @@
 ## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
 
 This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a>, itself based on the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>.
-Current fork version: `0.3.2-vinx.1.4.4`.
+Current fork version: `0.3.2-vinx.1.4.5`.
 
 IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
 
@@ -58,7 +58,10 @@ If you need historical upstream reference material, the Mebitek manual is still 
 <a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">https://mebitek.github.io/performer/manual/</a>
 
 Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
-The current `v0.3.2-vinx.1.4.4` line includes:
+The current `v0.3.2-vinx.1.4.5` line includes:
+- Further generator preview refinement: a thinner framed 16-step bank indicator, slimmer playback playhead, profile-only `Random` curve, and cleaner `Acid` `Slide` / `Phrase` lane alignment on the LCD
+- Layer-aware `Random` previews on Note tracks, reusing the `Acid` visual language for `Gate`, `Note`, and `Slide`, while giving `Length` and repeat-style layers more appropriate dedicated shapes
+- `F4` note-layer cycling reordered to `Note`, `Slide`, `Note Range`, `Note Prob`, `Bypass Scale`
 - Generator preview redesign for Note-track work: `Random` now uses a central-baseline 64-step graph, while `Acid` gets dedicated Note/Gate/Slide/Phrase preview styles, visible 16-step bank focus, and a playback-following playhead
 - `Acid` as a Note-track generator, with `Layer / Phrase` modes and non-destructive preview for coordinated `Gate`, `Note`, and `Slide` phrasing
 - Generator menu order updated to `Random`, `Acid`, `Euclidean`, `Init Layer`, with `Acid -> Layer` exposing only the parameters that make sense for the active `Gate`, `Note`, or `Slide` layer
