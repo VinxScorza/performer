@@ -5,7 +5,7 @@
 ## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
 
 This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a>, itself based on the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>.
-Current fork version: `0.3.2-vinx.1.4.1`.
+Current fork version: `0.3.2-vinx.1.4.4`.
 
 IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
 
@@ -25,11 +25,11 @@ Personal experimental fork focused on live workflow, custom behavior, and UI/int
 Primary documentation for this fork:
 - <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">Vinx Scorza fork website</a>
 - <a href="https://vinxscorza.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Vinx Scorza user manual</a>
+- <a href="https://vinxscorza.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Vinx Scorza test drive</a>
 - <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Vinx Scorza changelog</a>
 
-Upstream reference documentation:
-- <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>
 - <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek Performer fork</a>
+- <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>
 
 ## Philosophy
 
@@ -58,6 +58,15 @@ If you need historical upstream reference material, the Mebitek manual is still 
 <a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">https://mebitek.github.io/performer/manual/</a>
 
 Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
+The current `v0.3.2-vinx.1.4.4` line includes:
+- Generator preview redesign for Note-track work: `Random` now uses a central-baseline 64-step graph, while `Acid` gets dedicated Note/Gate/Slide/Phrase preview styles, visible 16-step bank focus, and a playback-following playhead
+- `Acid` as a Note-track generator, with `Layer / Phrase` modes and non-destructive preview for coordinated `Gate`, `Note`, and `Slide` phrasing
+- Generator menu order updated to `Random`, `Acid`, `Euclidean`, `Init Layer`, with `Acid -> Layer` exposing only the parameters that make sense for the active `Gate`, `Note`, or `Slide` layer
+- `Generate -> Random` now enters with `Bias` centered at `0`, while `Euclidean` uses `NEW RAND` and no fake `VAR` slot
+- Generator context action `NEW RAND` is now distinct from encoder seed changes: `Random` refreshes `Seed`, `Smooth`, and `Range`, while `Acid -> Layer` refreshes `Seed` plus the current layer's main parameter, both without touching `Variation`
+- `Acid -> Layer` also mirrors `NEW RAND` onto `F5` for faster live iteration
+- Generator parameter displays and entry behavior aligned around percentage-based `Range`, deterministic `Density` / `Slide` targets, and random parameter initialization with `Variation` held at `100%`
+- `Dim Sequence` now offers `off`, `dim`, and `dim+`, defaulting to `dim` to better tame display noise leaking into the audio band.
 
 Clone this repository:
 

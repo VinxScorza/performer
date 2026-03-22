@@ -49,6 +49,7 @@ private:
     void duplicateSequence();
     void tieNotes();
     void generateSequence();
+    void showAcidGenerator();
 
     void quickEdit(int index);
 
@@ -72,7 +73,7 @@ private:
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 
-    Container<NoteSequenceBuilder> _builderContainer;
+    Container<NoteSequenceBuilder, AcidSequenceBuilder> _builderContainer;
 
     NoteSequence _inMemorySequence;
 };

@@ -10,6 +10,8 @@
 
 class SequencePainter {
 public:
+    static Color dimSequenceColor(uint8_t dimSetting);
+
     static void drawLoopStart(Canvas &canvas, int x, int y, int w);
     static void drawLoopEnd(Canvas &canvas, int x, int y, int w);
 

@@ -8,6 +8,8 @@
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
+#include "engine/generators/AcidGenerator.h"
+
 #include "model/Scale.h"
 
 #include "os/os.h"
@@ -148,7 +150,9 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
-            canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
+            canvas.setColor(SequencePainter::dimSequenceColor(
+                _context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue()
+            ));
             constexpr int gateInset = 3;
             constexpr int gateShiftRange = 3;
             int gateArea = stepWidth - 2 * gateInset;
@@ -1118,8 +1122,13 @@ void NoteSequenceEditPage::tieNotes() {
 }
 
 void NoteSequenceEditPage::generateSequence() {
-    _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
+    _manager.pages().generatorSelect.show(true, [this] (bool success, Generator::Mode mode) {
         if (success) {
+            if (mode == Generator::Mode::Acid) {
+                showAcidGenerator();
+                return;
+            }
+
             auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
 
             if (_stepSelection.none()) {
@@ -1130,6 +1139,28 @@ void NoteSequenceEditPage::generateSequence() {
             if (generator) {
                 _manager.pages().generator.show(generator, &_stepSelection);
             }
+        }
+    });
+}
+
+void NoteSequenceEditPage::showAcidGenerator() {
+    const bool allowLayer = layer() == Layer::Gate || layer() == Layer::Note || layer() == Layer::Slide;
+
+    _manager.pages().acidModeSelect.show(allowLayer, [this] (bool success, AcidSequenceBuilder::ApplyMode applyMode) {
+        if (!success) {
+            return;
+        }
+
+        auto builder = _builderContainer.create<AcidSequenceBuilder>(
+            _project.selectedNoteSequence(),
+            layer(),
+            applyMode,
+            _stepSelection.selected()
+        );
+
+        auto generator = Generator::execute(Generator::Mode::Acid, *builder, _stepSelection.selected());
+        if (generator) {
+            _manager.pages().generator.show(generator, &_stepSelection);
         }
     });
 }

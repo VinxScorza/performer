@@ -6,6 +6,18 @@
 #include "model/ArpSequence.h"
 #include <bitset>
 
+Color SequencePainter::dimSequenceColor(uint8_t dimSetting) {
+    switch (dimSetting) {
+    default:
+    case 0:
+        return Color::Bright;
+    case 1:
+        return Color::MediumLow;
+    case 2:
+        return Color::Low;
+    }
+}
+
 void SequencePainter::drawLoopStart(Canvas &canvas, int x, int y, int w) {
     canvas.vline(x, y - 1, 3);
     canvas.point(x + 1, y);

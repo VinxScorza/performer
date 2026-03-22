@@ -36,9 +36,11 @@ public:
     void printParam(int index, StringBuilder &str) const override;
 
     void init() override;
+    void randomizeParams() override;
     void update() override;
 
     void randomizeSeed();
+    void randomizeContextParams();
 
     // seed
 

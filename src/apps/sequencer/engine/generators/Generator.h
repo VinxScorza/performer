@@ -16,6 +16,7 @@ public:
         InitLayer,
         Euclidean,
         Random,
+        Acid,
         Last
     };
 
@@ -24,6 +25,7 @@ public:
         case Mode::InitLayer:   return "Init Layer";
         case Mode::Euclidean:   return "Euclidean";
         case Mode::Random:      return "Random";
+        case Mode::Acid:        return "Acid";
         case Mode::Last:        break;
         }
         return nullptr;
@@ -44,6 +46,7 @@ public:
     virtual void printParam(int index, StringBuilder &str) const = 0;
 
     virtual void init() {}
+    virtual void randomizeParams() {}
 
     virtual void revert() {
         _builder.revert();

@@ -8,17 +8,27 @@
 
 class GeneratorSelectListModel : public ListModel {
 public:
-    static Generator::Mode rowToMode(int row) {
+    void setAllowAcid(bool allowAcid) {
+        _allowAcid = allowAcid;
+    }
+
+    Generator::Mode rowToMode(int row) const {
         switch (row) {
-        case 0: return Generator::Mode::Random;
-        case 1: return Generator::Mode::Euclidean;
-        case 2: return Generator::Mode::InitLayer;
-        default: return Generator::Mode::Random;
+        case 0:
+            return Generator::Mode::Random;
+        case 1:
+            return _allowAcid ? Generator::Mode::Acid : Generator::Mode::Euclidean;
+        case 2:
+            return Generator::Mode::Euclidean;
+        case 3:
+            return Generator::Mode::InitLayer;
+        default:
+            return Generator::Mode::Random;
         }
     }
 
     virtual int rows() const override {
-        return int(Generator::Mode::Last);
+        return _allowAcid ? 4 : 3;
     }
 
     virtual int columns() const override {
@@ -36,4 +46,6 @@ public:
 
     virtual void setSelectedScale(int defaultScale, bool force = false) override {};
 
+private:
+    bool _allowAcid = false;
 };

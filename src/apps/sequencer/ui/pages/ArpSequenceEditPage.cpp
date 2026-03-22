@@ -135,7 +135,9 @@ void ArpSequenceEditPage::draw(Canvas &canvas) {
         canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
-            canvas.setColor(_context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue() ? Color::Low : Color::Bright);
+            canvas.setColor(SequencePainter::dimSequenceColor(
+                _context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue()
+            ));
             constexpr int gateInset = 3;
             constexpr int gateShiftRange = 3;
             int gateArea = stepWidth - 2 * gateInset;

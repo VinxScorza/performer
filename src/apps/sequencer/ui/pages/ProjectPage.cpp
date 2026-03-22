@@ -201,8 +201,10 @@ void ProjectPage::saveProjectToSlot(int slot) {
 
     FileManager::task([this, slot] () {
         return FileManager::writeProject(_project, slot);
-    }, [this] (fs::Error result) {
+    }, [this, slot] (fs::Error result) {
         if (result == fs::OK) {
+            _project.setSlot(slot);
+            _project.setAutoLoaded(false);
             showMessage("PROJECT SAVED");
         } else {
             showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
