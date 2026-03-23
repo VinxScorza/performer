@@ -589,6 +589,21 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
         }
     };
 
+    auto drawBooleanMarkers = [&] () {
+        constexpr int markerY = PlotArea::Top + PlotArea::Height / 2 - 1;
+
+        drawBankSeparators();
+        for (int i = 0; i < steps; ++i) {
+            if (generator.displayValue(i) < 128) {
+                continue;
+            }
+            const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
+            const int centerX = stepCenterX(i, steps);
+            canvas.setColor(activeBank ? Color::Bright : Color::Medium);
+            canvas.fillRect(std::max(0, centerX - 1), markerY - 1, 3, 3);
+        }
+    };
+
     auto drawLengthBars = [&] () {
         constexpr int barTop = PlotArea::Top + 6;
         constexpr int barHeight = 8;
@@ -635,17 +650,18 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
             drewSpecialized = true;
             break;
         case NoteSequence::Layer::Note:
-        case NoteSequence::Layer::NoteVariationRange:
             drawNoteContour();
             drewSpecialized = true;
             break;
         case NoteSequence::Layer::Slide:
-        case NoteSequence::Layer::BypassScale:
             drawSlideMarkers();
             drewSpecialized = true;
             break;
+        case NoteSequence::Layer::BypassScale:
+            drawBooleanMarkers();
+            drewSpecialized = true;
+            break;
         case NoteSequence::Layer::Length:
-        case NoteSequence::Layer::LengthVariationRange:
             drawLengthBars();
             drewSpecialized = true;
             break;

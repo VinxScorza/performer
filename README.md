@@ -59,7 +59,7 @@ If you need historical upstream reference material, the Mebitek manual is still 
 
 Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
 The current `v0.3.2-vinx.1.4.5` line includes:
-- Further generator preview refinement: a thinner framed 16-step bank indicator, slimmer playback playhead, profile-only `Random` curve, and cleaner `Acid` `Slide` / `Phrase` lane alignment on the LCD
+- Further generator preview refinement: a thinner framed 16-step bank indicator, slimmer playback playhead, more expressive `Random` previews, and cleaner `Acid` `Slide` / `Phrase` lane alignment on the LCD
 - Layer-aware `Random` previews on Note tracks, reusing the `Acid` visual language for `Gate`, `Note`, and `Slide`, while giving `Length` and repeat-style layers more appropriate dedicated shapes
 - `F4` note-layer cycling reordered to `Note`, `Slide`, `Note Range`, `Note Prob`, `Bypass Scale`
 - Generator preview redesign for Note-track work: `Random` now uses a central-baseline 64-step graph, while `Acid` gets dedicated Note/Gate/Slide/Phrase preview styles, visible 16-step bank focus, and a playback-following playhead

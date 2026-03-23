@@ -9,7 +9,7 @@
 <sub>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes.</sub>
 
 # v0.3.2-vinx.1.4.5 (22 March 2026)
-- Refine generator preview rendering: make the 16-step bank indicator thinner and framed, slim down the playback playhead, switch `Random` to a profile-only curve, and align `Acid` `Slide` / `Phrase` note and slide lanes more cleanly on the LCD
+- Refine generator preview rendering: make the 16-step bank indicator thinner and framed, slim down the playback playhead, refine `Random` preview rendering, and align `Acid` `Slide` / `Phrase` note and slide lanes more cleanly on the LCD
 - Make `Random` preview layer-aware on Note tracks, reusing `Acid`-style Gate, Note, and Slide visuals where they make sense and introducing dedicated views for Length and repeat-style layers
 - Reorder the `Note` layer cycle on `F4` to `Note`, `Slide`, `Note Range`, `Note Prob`, `Bypass Scale`
 
