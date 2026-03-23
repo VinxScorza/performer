@@ -129,6 +129,9 @@
           Images have been removed on purpose; tables, settings and technical descriptions are being kept and cleaned up.
         </p>
         <p>
+          The main body of the manual is being updated against the Vinx fork through <code>v0.3.2-vinx.1.4.5</code>. Launchpad-specific documentation is intentionally being reviewed later as a separate pass.
+        </p>
+        <p>
           Historical upstream reference:
           <a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Mebitek User Manual</a>
         </p>
@@ -348,7 +351,7 @@
           Inside the <em>Retrigger</em> layer a Metropolix-style mode can be activated when the track is in <em>Free</em> play mode.
         </p>
         <p>
-          The generated CV signal is controlled by the <em>Note</em> layer, which basically defines the voltage to be output for each step. Each note is stored as an index to an entry in a <a href="#concepts-scale">Scale</a>, allowing the generated CV signals to be used both for controlling note pitch as well as other arbitrary modulation signals. Using the <em>Note Variation Range</em> and <em>Note Variation Probability</em> layers some random variation can be applied to the CV signal. The <em>Slide</em> layer controls if the generated CV signal is changed immediately at the start of a gate or smoothly slides to the new voltage. Activating a step in the <em>Bypass Scale</em> layer will allow bypassing the selected scale and entering one of the 12 chromatic notes available.
+          The generated CV signal is controlled by the <em>Note</em> layer, which basically defines the voltage to be output for each step. Each note is stored as an index to an entry in a <a href="#concepts-scale">Scale</a>, allowing the generated CV signals to be used both for controlling note pitch as well as other arbitrary modulation signals. In the current Vinx UI, the associated variation layers are shown as <em>Note Range</em> and <em>Note Prob</em>, which together control the amount of note variation and the probability of applying it. The <em>Slide</em> layer controls whether the generated CV signal changes immediately at the start of a gate or glides to the new voltage. Activating a step in the <em>Bypass Scale</em> layer allows bypassing the selected scale and entering one of the 12 chromatic notes directly.
         </p>
         <p>
           Finally, the <em>Condition</em> layer is used to conditionally trigger steps based on certain rules. This allows relatively short sequences to feel more complex, for example by only playing steps every few iterations. See <a href="#appendix-step-conditions">Step Conditions</a> for additional information.
@@ -689,6 +692,9 @@
         <p>
           On pages with a context menu, the labels dynamically change to the context-menu actions when holding <code>SHIFT</code> + <code>PAGE</code> or when double-clicking <code>PAGE</code> to enter the context menu for 2 seconds.
         </p>
+        <p>
+          Some workflow pages repurpose the footer more aggressively. For example, generator pages use the footer both for direct parameter access and for preview comparison functions such as <code>A/B</code>.
+        </p>
 
         <h3 id="ui-list-pages">List Pages</h3>
         <p>
@@ -737,7 +743,7 @@
           <tbody>
             <tr><td style="text-align: left">Name</td><td style="text-align: left">-</td><td style="text-align: left">Project name edited with the text editor.</td></tr>
             <tr><td style="text-align: left">Tempo</td><td style="text-align: left">1.0 - 1000.0 BPM</td><td style="text-align: left">Master clock tempo.</td></tr>
-            <tr><td style="text-align: left">Swing</td><td style="text-align: left">50% - 75%</td><td style="text-align: left">Global swing amount.</td></tr>
+            <tr><td style="text-align: left">Swing</td><td style="text-align: left">0% - 99%</td><td style="text-align: left">Global swing amount. In the Vinx fork the UI is rescaled to 0% - 99%, while the underlying timing behavior remains compatible with earlier projects.</td></tr>
             <tr><td style="text-align: left">Time Signature</td><td style="text-align: left">Beats/Note</td><td style="text-align: left">Defines musical bar length for sync and song behavior.</td></tr>
             <tr><td style="text-align: left">Sync Measure</td><td style="text-align: left">1 - 128 bars</td><td style="text-align: left">Measure multiple used for synced actions.</td></tr>
             <tr><td style="text-align: left">Scale</td><td style="text-align: left">Preset or user scale</td><td style="text-align: left">Default project scale for note-based tracks.</td></tr>
@@ -749,6 +755,7 @@
             <tr><td style="text-align: left">CV/Gate Input</td><td style="text-align: left">Off, CV1/CV2, CV3/CV4</td><td style="text-align: left">Enables CV/Gate monitoring and recording.</td></tr>
             <tr><td style="text-align: left">Steps to Stop</td><td style="text-align: left">Off, 1 - 64</td><td style="text-align: left">Auto-stop after a set step count.</td></tr>
             <tr><td style="text-align: left">Record Delay</td><td style="text-align: left">Off, 1 - 64</td><td style="text-align: left">Delayed recording start.</td></tr>
+            <tr><td style="text-align: left">Reset CV</td><td style="text-align: left">Off, On</td><td style="text-align: left">Determines whether Note-track CV outputs reset when playback stops. In the Vinx fork the default is <strong>Off</strong>, so the last CV value is held on stop.</td></tr>
           </tbody>
         </table>
         <p>
@@ -1027,6 +1034,9 @@
           Typical sequence parameters include first step, last step, run mode, divisor, reset measure and scale or range selection, depending on the track mode. On Note, Stochastic and Arpeggiator tracks, scale and root note are especially important because they define how note indexes become voltages.
         </p>
         <p>
+          On Note and Curve tracks, the sequence page also defines the effective working window of the pattern. This becomes especially relevant when editing across sections and when using generators that depend on the active first/last step range.
+        </p>
+        <p>
           The context menu allows you to initialize, copy, paste and duplicate sequences. On Note and Curve tracks, save/load shortcuts for sequence files are also available.
         </p>
         <h4>Context Menu</h4>
@@ -1084,6 +1094,9 @@
         </table>
         <p>
           Note: <em>First Step</em>, <em>Last Step</em>, <em>Run Mode</em>, <em>Divisor</em>, <em>Scale</em> and <em>Root Note</em> are routable parameters.
+        </p>
+        <p>
+          <em>First Step</em> and <em>Last Step</em> define the active pattern window used for playback and many editing operations. In the Vinx fork this range is also important for generator behavior: when <em>Acid</em> is used with no explicit step selection, it operates inside this current pattern window.
         </p>
         <h4>Curve Track</h4>
         <table>
@@ -1188,7 +1201,7 @@
             <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Gate, Gate Probability, Gate Offset</td></tr>
             <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Retrigger, Retrigger Probability, Repeat, Repeat Mode</td></tr>
             <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Length, Length Variation Range, Length Variation Probability</td></tr>
-            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Note, Note Variation Range, Note Variation Probability, Slide, Bypass Scale</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Note, Slide, Note Range, Note Prob, Bypass Scale</td></tr>
             <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Condition</td></tr>
           </tbody>
         </table>
@@ -1263,7 +1276,7 @@
         </table>
         <h4>Section Selection</h4>
         <p>
-          Sequences contain up to 64 steps, of which only 16 are shown on the page. Press <code>PREV</code> and <code>NEXT</code> to select one of the 4 available sections: 1-16, 17-32, 33-48 and 49-64. The currently selected section is indicated by the 4 LEDs in the bottom-left corner as well as with the step indices above each step on the page.
+          Sequences contain up to 64 steps, of which only 16 are shown on the page. Press <code>PREV</code> and <code>NEXT</code> to select one of the available 16-step sections: 1-16, 17-32, 33-48 and 49-64 as needed by the current pattern length. In the Vinx fork this navigation wraps cyclically across the available sections. The currently selected section is indicated by the 4 LEDs in the bottom-left corner as well as with the step indices above each step on the page.
         </p>
         <h4>Editing Steps</h4>
         <p>
@@ -1301,6 +1314,9 @@
         <p>
           Note: When selecting groups of steps they are added to the current selection. This allows quickly combining multiple groups of steps into a single selection.
         </p>
+        <p>
+          This selection is also the primary target area for generators. If a persistent selection exists, generator preview and apply actions work on that selection first. When the selection is empty, the generator falls back to its generator-specific default scope.
+        </p>
         <h4>Shifting Steps</h4>
         <p>
           Press <code>SHIFT</code> + <code>PREV</code> or <code>SHIFT</code> + <code>NEXT</code> to shift all steps in the sequence between the current first and last step to the left or right. Steps will wrap around on both sides. This has a similar effect as <a href="#appendix-rotation">Rotation</a>, but instead of changing the playback position, shifting actually moves the steps in the sequence itself.
@@ -1319,11 +1335,14 @@
             <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected steps to the clipboard.</td></tr>
             <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste steps in the clipboard to the selected steps.</td></tr>
             <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Duplicate</td><td style="text-align: left">Doubles the length of the sequence between First Step and Last Step and copies the first half to the second half.</td></tr>
-            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Gen</td><td style="text-align: left">Access generators feature.</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Gen</td><td style="text-align: left">Open the generator workflow for the active layer. If a persistent step selection exists, generators target that selection first.</td></tr>
           </tbody>
         </table>
         <p>
           Copy and paste only works with steps selected in persistent mode. When more steps are pasted than copied to the clipboard, the steps are repeated multiple times. This means that for example one can copy 2 steps and then paste them to 8 steps, creating a repetition of the two copied steps.
+        </p>
+        <p>
+          In generator pages, double-tapping <code>SHIFT</code> keeps the same selection logic: if nothing is selected it selects all available steps, and if a selection already exists it clears it. This is especially useful when switching between tightly targeted generation and whole-range preview.
         </p>
         <h4>Quick Access</h4>
         <p>
@@ -1363,10 +1382,16 @@
 
         <h3 id="pages-generators">Generators</h3>
         <p>
-          Generators are available to generate steps on the fly for a Note or Curve track sequence.
+          Generators are available on sequence pages to produce or reshape step data on the fly. The exact generator set depends on the current track mode and active layer.
         </p>
         <p>
           You can access generators in each sequence layer to generate their values through the context menu with <code>SHIFT</code> + <code>PAGE</code>.
+        </p>
+        <p>
+          In the Vinx fork, generator work is explicitly preview-oriented: entering a generator immediately creates a non-destructive preview, and the page opens on the current 16-step bank while still showing the full 64-step sequence overview where applicable.
+        </p>
+        <p>
+          The general workflow is: open the generator, adjust parameters against the live preview, use <code>A/B</code> to compare preview and original material, then use <code>Cancel</code> to discard or <code>Apply</code> to write the result into the sequence.
         </p>
         <table>
           <thead>
@@ -1376,11 +1401,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left">Init Layer</td><td style="text-align: left">Reset the layer.</td></tr>
+            <tr><td style="text-align: left">Random</td><td style="text-align: left">Random generator with non-destructive preview and seed-based regeneration.</td></tr>
+            <tr><td style="text-align: left">Acid</td><td style="text-align: left">Note-track generator for acid-like Gate / Note / Slide motion.</td></tr>
             <tr><td style="text-align: left">Euclidean</td><td style="text-align: left">Euclidean generator based on Bjorklund's algorithm.</td></tr>
-            <tr><td style="text-align: left">Random</td><td style="text-align: left">Random generator.</td></tr>
+            <tr><td style="text-align: left">Init</td><td style="text-align: left">Reset the current layer.</td></tr>
           </tbody>
         </table>
+        <p>
+          Note: <em>Acid</em> appears only on Note tracks. Other track modes keep the smaller generator set appropriate to their data model.
+        </p>
         <h4>Context Menu</h4>
         <p>
           Hold <code>SHIFT</code> + <code>PAGE</code> or double-click <code>PAGE</code> in each generator page to open the context menu and access the following functions:
@@ -1394,11 +1423,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize all steps of the current generator to the default state. In the random generator a random seed will be picked.</td></tr>
-            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Revert</td><td style="text-align: left">Revert changes to the last generator state.</td></tr>
-            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Commit</td><td style="text-align: left">Commit changes to the selected sequence.</td></tr>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">NEW RAND</td><td style="text-align: left">Pick a new random configuration for the current generator context. In <em>Random</em> this refreshes seed, smooth and range while keeping bias centered. In <em>Acid -&gt; Layer</em> it refreshes seed plus the layer-relevant main parameter without changing variation.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the generator to its default state.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Cancel</td><td style="text-align: left">Discard the preview and return to the original sequence data.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Apply</td><td style="text-align: left">Commit the preview to the selected sequence layer.</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Var</td><td style="text-align: left">Displays the current variation amount in seed-driven generators. In <em>Acid -&gt; Layer</em>, <code>F5</code> is also mirrored as a direct <code>NEW RAND</code> shortcut on the main generator page.</td></tr>
           </tbody>
         </table>
+        <p>
+          On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material.
+        </p>
         <h4>Euclidean</h4>
         <p>The following options are available:</p>
         <table>
@@ -1415,6 +1449,9 @@
             <tr><td style="text-align: left">Offset</td><td style="text-align: left">0 - 63</td><td style="text-align: left">Sets the offset of the sequence.</td></tr>
           </tbody>
         </table>
+        <p>
+          Euclidean uses <code>NEW RAND</code> wording in the context menu, but unlike the seed-driven generators it simply randomizes <em>Steps</em>, <em>Beats</em> and <em>Offset</em>.
+        </p>
         <h4>Random</h4>
         <p>The following options are available:</p>
         <table>
@@ -1426,14 +1463,57 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left">Seed</td><td style="text-align: left">0 - 1000</td><td style="text-align: left">Set the seed used to generate random values.</td></tr>
+            <tr><td style="text-align: left">Seed</td><td style="text-align: left">32-bit hexadecimal</td><td style="text-align: left">Seed used to generate random values. The displayed value is an 8-digit hexadecimal number. Turning the encoder on <em>Seed</em> only changes the seed itself.</td></tr>
             <tr><td style="text-align: left">Smooth</td><td style="text-align: left">0 - 10</td><td style="text-align: left">Sets how smoothly each step changes in front of the next one.</td></tr>
-            <tr><td style="text-align: left">Bias</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Sets the probability distribution of each random step value.</td></tr>
-            <tr><td style="text-align: left">Scale</td><td style="text-align: left">0 - 100</td><td style="text-align: left">Sets the scale of the probability distribution of each random step value.</td></tr>
+            <tr><td style="text-align: left">Bias</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Offsets the generated value distribution. In the Vinx fork it always enters centered at <code>0</code>.</td></tr>
+            <tr><td style="text-align: left">Range</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Scales the generated distribution. In the current UI this is shown as a percentage rather than the old <em>Scale</em> name.</td></tr>
+            <tr><td style="text-align: left">Variation</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Blends between the original data and the generated result. In the footer this parameter is abbreviated as <code>Var</code>. The current Vinx default on entry is <code>100%</code>.</td></tr>
           </tbody>
         </table>
         <p>
-          Note: the random generator generates random steps for selected steps only if any are selected; otherwise it applies to the full sequence.
+          Note: if steps are selected, <em>Random</em> applies to the selection only. On sequence pages where no steps are selected, entering <em>Random</em> first selects all available steps, so the generator effectively works on the full editable range rather than only the current pattern length.
+        </p>
+        <p>
+          On entry, <em>Random</em> immediately creates a preview. The footer shows <code>A/B</code> plus the editable parameters, and the LCD preview shows the full sequence with the current 16-step bank framed. On Note tracks, the preview is layer-aware and uses different visual styles for gate-like, note-like, slide-like and length-like layers so that the preview better matches the active destination layer.
+        </p>
+        <h4>Acid</h4>
+        <p>
+          <em>Acid</em> is available only on Note tracks. After selecting it, a mode selector appears with <code>Phrase</code> and, where relevant, <code>Layer</code>.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Mode</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Phrase</td><td style="text-align: left">Generates a coordinated acid phrase across <code>Gate</code>, <code>Note</code> and <code>Slide</code>.</td></tr>
+            <tr><td style="text-align: left">Layer</td><td style="text-align: left">Projects acid-like motion only onto the active layer, typically <code>Gate</code>, <code>Note</code> or <code>Slide</code>.</td></tr>
+          </tbody>
+        </table>
+        <p>The following options are available in <em>Acid -&gt; Phrase</em>:</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Option</th>
+              <th style="text-align: left">Range</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Seed</td><td style="text-align: left">32-bit hexadecimal</td><td style="text-align: left">Phrase seed shown as an 8-digit hexadecimal number.</td></tr>
+            <tr><td style="text-align: left">Dens</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Target gate density across the selected area or current pattern length.</td></tr>
+            <tr><td style="text-align: left">Slide</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Target amount of slide transitions, constrained by the transitions that actually exist.</td></tr>
+            <tr><td style="text-align: left">Range</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Controls overall melodic span and how large the step-to-step note jumps may become.</td></tr>
+            <tr><td style="text-align: left">Var</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Controls how strongly the generated result departs from the original material. The UI label is abbreviated as <code>Var</code>; default on entry is <code>100%</code>.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          In <em>Acid -&gt; Layer</em>, only the parameters that make sense for the active layer are shown. For example, <em>Gate</em> exposes seed, density and variation, <em>Note</em> exposes seed, range and variation, and <em>Slide</em> exposes seed, slide and variation. Some labels are intentionally abbreviated in the UI, such as <code>Dens</code> and <code>Var</code>.
+        </p>
+        <p>
+          Note: if steps are selected, <em>Acid</em> works on the selection only. If no steps are selected, it works on the current pattern length defined by the sequence <em>First Step</em> and <em>Last Step</em>. <em>Phrase</em> is intended to generate a coordinated result across <code>Gate</code>, <code>Note</code> and <code>Slide</code>, while <em>Layer</em> keeps the action constrained to the active layer.
         </p>
 
         <h3 id="pages-song">Song</h3>
@@ -1767,7 +1847,7 @@
             <tr><td style="text-align: left">Input Mode</td><td style="text-align: left">Reset, Run or Start/Stop control logic.</td></tr>
             <tr><td style="text-align: left">Output Divisor</td><td style="text-align: left">Outgoing clock pulse timing.</td></tr>
             <tr><td style="text-align: left">Output Swing</td><td style="text-align: left">Applies project swing to analog clock out.</td></tr>
-            <tr><td style="text-align: left">Output Pulse</td><td style="text-align: left">Pulse width in milliseconds.</td></tr>
+            <tr><td style="text-align: left">Output Pulse</td><td style="text-align: left">Pulse width in milliseconds. In the Vinx fork the default is <code>10ms</code>.</td></tr>
             <tr><td style="text-align: left">Output Mode</td><td style="text-align: left">Reset or Run signal on the clock control output.</td></tr>
             <tr><td style="text-align: left">MIDI RX/TX, USB RX/TX</td><td style="text-align: left">Clock receive or transmit over MIDI and USB.</td></tr>
           </tbody>
@@ -1833,7 +1913,7 @@
             <tr><td style="text-align: left">Brightness</td><td style="text-align: left">0 - 10</td><td style="text-align: left">Reduce overall display brightness. Lower brightness may reduce noise.</td></tr>
             <tr><td style="text-align: left">Screensaver</td><td style="text-align: left">Off, 3s, 5s, 10s, 30s, 1m, 10m, 30m</td><td style="text-align: left">Turn the display off after a period of inactivity.</td></tr>
             <tr><td style="text-align: left">Wake Mode</td><td style="text-align: left">Always, Required</td><td style="text-align: left">Determine when the display wakes from the screensaver.</td></tr>
-            <tr><td style="text-align: left">Dim Sequence</td><td style="text-align: left">Off, On</td><td style="text-align: left">Reduce sequence-page brightness to lower visual noise.</td></tr>
+            <tr><td style="text-align: left">Dim Sequence</td><td style="text-align: left">off, dim, dim+</td><td style="text-align: left">Reduce sequence-page brightness using three display-intensity levels. In the Vinx fork the default is <code>dim</code>, mainly to help tame display noise leaking into the audio band.</td></tr>
             <tr><td style="text-align: left">LP Style</td><td style="text-align: left">Classic, Blue</td><td style="text-align: left">Select Launchpad color scheme.</td></tr>
             <tr><td style="text-align: left">Pattern Change</td><td style="text-align: left">Immediate, Sync</td><td style="text-align: left">Swap the default pattern launch behavior.</td></tr>
             <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style.</td></tr>
