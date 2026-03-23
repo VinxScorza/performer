@@ -109,7 +109,7 @@
       <section>
         <h3>Vinx Fork Notes</h3>
         <ul>
-          <li>Current fork line: <strong>v0.3.2-vinx.1.4.4</strong></li>
+          <li>Current fork line: <strong>v0.3.2-vinx.1.4.5</strong></li>
           <li><a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a> tracks Vinx-specific fixes and features</li>
           <li><a href="https://github.com/VinxScorza/performer/blob/master/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the fork status and upstream references</li>
           <li>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes</li>
@@ -122,6 +122,9 @@
           A quick overview of the most relevant workflow changes currently introduced in the Vinx fork.
         </p>
         <ul>
+          <li>Generator previews have been tightened further: thinner framed 16-step bank indicator, slimmer playhead, more expressive `Random` previews, and cleaner `Acid` `Slide` / `Phrase` lane alignment</li>
+          <li>`Random` preview is now layer-aware on Note tracks, borrowing the `Acid` visual language for `Gate`, `Note`, and `Slide`, with dedicated shapes for `Length` and repeat-oriented layers</li>
+          <li>The `F4` Note submenu/cycle now follows `Note`, `Slide`, `Note Range`, `Note Prob`, `Bypass Scale`</li>
           <li>`Acid` is now available as a Note-track generator, with `Layer / Phrase` modes and coordinated non-destructive preview for `Gate`, `Note`, and `Slide`</li>
           <li>Generator previews have been redesigned: `Random` uses a central-baseline 64-step graph, while `Acid` gets dedicated Note, Gate, Slide, and Phrase renderings with a playback-following playhead</li>
           <li>Non-destructive Random Generate workflow with safe preview, A/B comparison, and explicit Apply/Cancel</li>

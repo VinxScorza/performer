@@ -21,13 +21,12 @@ enum class ContextAction {
 };
 
 namespace {
-struct PlotArea {
-    static constexpr int Top = 15;
-    static constexpr int Bottom = 35;
-    static constexpr int Height = Bottom - Top + 1;
-    static constexpr int BankTop = 38;
-    static constexpr int BankHeight = 2;
-};
+namespace PlotArea {
+constexpr int Top = 15;
+constexpr int Bottom = 35;
+constexpr int Height = Bottom - Top + 1;
+constexpr int BankTop = 38;
+}
 
 int stepX(int step, int steps) {
     return (CONFIG_LCD_WIDTH * step) / steps;
@@ -75,6 +74,11 @@ int noteY(int note, int minNote, int maxNote, int top, int height) {
     int innerHeight = std::max(1, height - 1);
     int value = top + innerHeight - ((note - minNote) * innerHeight) / span;
     return clamp(value, top, top + innerHeight);
+}
+
+void drawStairStep(Canvas &canvas, int x0, int x1, int y, Color color) {
+    canvas.setColor(color);
+    canvas.hline(x0 + 1, y, std::max(1, x1 - x0 - 1));
 }
 }
 
@@ -451,57 +455,236 @@ void GeneratorPage::drawRandomGenerator(Canvas &canvas, const RandomGenerator &g
     const int baselineY = PlotArea::Top + PlotArea::Height / 2 - 1;
     const int amplitude = std::max(4, PlotArea::Height / 2 - 4);
 
-    canvas.setColor(Color::Low);
-    canvas.hline(0, baselineY, Width);
-
-    if (steps > StepCount) {
+    auto drawBankSeparators = [&] () {
         for (int bank = 0; bank <= steps / StepCount; ++bank) {
             const int separatorX = stepX(bank * StepCount, steps);
-            canvas.setColor(bank == _section || bank == _section + 1 ? Color::Medium : Color::Low);
-            canvas.vline(separatorX, PlotArea::Top, PlotArea::Height);
+            canvas.setColor(bank == _section || bank == _section + 1 ? Color::Medium : Color::MediumLow);
+            canvas.vline(separatorX, PlotArea::Top, PlotArea::BankTop - PlotArea::Top + 1);
+        }
+    };
+
+    auto drawBankFrame = [&] () {
+        if (steps <= StepCount) {
+            return;
+        }
+        const int x0 = stepX(_section * StepCount, steps);
+        const int x1 = stepX((_section + 1) * StepCount, steps);
+        canvas.setColor(Color::Medium);
+        canvas.hline(x0 + 1, PlotArea::Top, std::max(1, x1 - x0 - 1));
+        canvas.hline(x0 + 1, PlotArea::BankTop, std::max(1, x1 - x0 - 1));
+    };
+
+    auto drawPlayhead = [&] () {
+        const int playheadStep = currentStep();
+        if (playheadStep >= 0 && playheadStep < steps) {
+            const int playX = stepCenterX(playheadStep, steps);
+            canvas.setColor(Color::MediumBright);
+            canvas.vline(playX, PlotArea::Top, PlotArea::BankTop - PlotArea::Top + 1);
+        }
+    };
+
+    auto drawProfile = [&] (bool centered, bool highlightMarkers) {
+        if (centered) {
+            canvas.setColor(Color::MediumLow);
+            canvas.hline(0, baselineY, Width);
+        }
+
+        drawBankSeparators();
+
+        int previousX = -1;
+        int previousY = baselineY;
+        for (int i = 0; i < steps; ++i) {
+            const int centerX = stepCenterX(i, steps);
+            const int rawValue = generator.displayValue(i);
+            const int y = centered ?
+                baselineY - ((rawValue - 127) * amplitude) / 127 :
+                PlotArea::Bottom - (rawValue * (PlotArea::Height - 2)) / 255;
+            const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
+
+            if (previousX >= 0) {
+                canvas.setColor((activeBank || (steps <= StepCount || stepInCurrentBank(i - 1))) ? Color::Medium : Color::MediumLow);
+                canvas.line(previousX, previousY, centerX, y);
+            } else {
+                canvas.setColor(activeBank ? Color::Bright : Color::Medium);
+                canvas.fillRect(centerX, y, 1, 1);
+            }
+
+            if (highlightMarkers && activeBank) {
+                canvas.setColor(Color::Bright);
+                canvas.fillRect(std::max(0, centerX - 1), std::max(PlotArea::Top, y - 1), 3, 3);
+            } else if (highlightMarkers) {
+                canvas.setColor(Color::Medium);
+                canvas.fillRect(centerX, y, 1, 1);
+            }
+
+            previousX = centerX;
+            previousY = y;
+        }
+    };
+
+    auto drawGateBlocks = [&] () {
+        constexpr int gateTop = PlotArea::Top + 3;
+        constexpr int gateHeight = 12;
+
+        drawBankSeparators();
+        for (int i = 0; i < steps; ++i) {
+            const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
+            const int x0 = stepX(i, steps);
+            const int width = std::max(1, stepWidth(i, steps) - 1);
+
+            canvas.setColor(activeBank ? Color::Medium : Color::MediumLow);
+            canvas.drawRect(x0 + 1, gateTop, width, gateHeight);
+            if (generator.displayValue(i) >= 128) {
+                canvas.setColor(activeBank ? Color::Bright : Color::Medium);
+                canvas.fillRect(x0 + 1, gateTop + 1, width, gateHeight - 1);
+            }
+        }
+    };
+
+    auto drawNoteContour = [&] () {
+        int minValue = 255;
+        int maxValue = 0;
+        for (int i = 0; i < steps; ++i) {
+            const int value = generator.displayValue(i);
+            minValue = std::min(minValue, value);
+            maxValue = std::max(maxValue, value);
+        }
+        if (minValue == maxValue) {
+            minValue = std::max(0, minValue - 1);
+            maxValue = std::min(255, maxValue + 1);
+        }
+
+        int previousStep = -1;
+        int previousY = 0;
+        drawBankSeparators();
+
+        for (int i = 0; i < steps; ++i) {
+            const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
+            const int x0 = stepX(i, steps);
+            const int x1 = stepX(i + 1, steps);
+            const int y = noteY(generator.displayValue(i), minValue, maxValue, PlotArea::Top + 2, PlotArea::Height - 5);
+            drawStairStep(canvas, x0, x1, y, activeBank ? Color::Bright : Color::Medium);
+
+            if (previousStep >= 0) {
+                canvas.setColor((activeBank || stepInCurrentBank(previousStep)) ? Color::Medium : Color::MediumLow);
+                canvas.vline(x0, std::min(previousY, y), std::abs(y - previousY) + 1);
+            }
+
+            previousStep = i;
+            previousY = y;
+        }
+    };
+
+    auto drawSlideMarkers = [&] () {
+        drawBankSeparators();
+        for (int i = 0; i < steps; ++i) {
+            if (generator.displayValue(i) < 128) {
+                continue;
+            }
+            const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
+            const int x0 = stepX(i, steps);
+            const int x1 = stepX(i + 1, steps);
+            canvas.setColor(activeBank ? Color::Bright : Color::Medium);
+            canvas.fillRect(x0 + 1, PlotArea::Bottom - 4, std::max(1, x1 - x0 - 2), 3);
+        }
+    };
+
+    auto drawBooleanMarkers = [&] () {
+        constexpr int markerY = PlotArea::Top + PlotArea::Height / 2 - 1;
+
+        drawBankSeparators();
+        for (int i = 0; i < steps; ++i) {
+            if (generator.displayValue(i) < 128) {
+                continue;
+            }
+            const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
+            const int centerX = stepCenterX(i, steps);
+            canvas.setColor(activeBank ? Color::Bright : Color::Medium);
+            canvas.fillRect(std::max(0, centerX - 1), markerY - 1, 3, 3);
+        }
+    };
+
+    auto drawLengthBars = [&] () {
+        constexpr int barTop = PlotArea::Top + 6;
+        constexpr int barHeight = 8;
+
+        drawBankSeparators();
+        for (int i = 0; i < steps; ++i) {
+            const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
+            const int x0 = stepX(i, steps);
+            const int cellWidth = std::max(2, stepWidth(i, steps) - 1);
+            const int barWidth = std::max(1, (cellWidth * generator.displayValue(i)) / 255);
+            canvas.setColor(activeBank ? Color::Medium : Color::MediumLow);
+            canvas.drawRect(x0 + 1, barTop, cellWidth, barHeight);
+            canvas.setColor(activeBank ? Color::Bright : Color::Medium);
+            canvas.fillRect(x0 + 1, barTop + 1, barWidth, barHeight - 1);
+        }
+    };
+
+    auto drawRepeatStripes = [&] () {
+        constexpr int stripeTop = PlotArea::Top + 4;
+        constexpr int stripeHeight = 12;
+
+        drawBankSeparators();
+        for (int i = 0; i < steps; ++i) {
+            const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
+            const int x0 = stepX(i, steps);
+            const int width = std::max(2, stepWidth(i, steps) - 2);
+            const int stripes = std::max(0, (generator.displayValue(i) * 4 + 127) / 255);
+
+            canvas.setColor(activeBank ? Color::Medium : Color::MediumLow);
+            canvas.drawRect(x0 + 1, stripeTop, width, stripeHeight);
+            canvas.setColor(activeBank ? Color::Bright : Color::Medium);
+            for (int stripe = 0; stripe < stripes; ++stripe) {
+                const int stripeX = x0 + 2 + (stripe * width) / std::max(1, stripes);
+                canvas.vline(stripeX, stripeTop + 1, stripeHeight - 1);
+            }
+        }
+    };
+
+    bool drewSpecialized = false;
+    if (_project.selectedTrack().trackMode() == Track::TrackMode::Note) {
+        switch (_project.selectedNoteSequenceLayer()) {
+        case NoteSequence::Layer::Gate:
+            drawGateBlocks();
+            drewSpecialized = true;
+            break;
+        case NoteSequence::Layer::Note:
+            drawNoteContour();
+            drewSpecialized = true;
+            break;
+        case NoteSequence::Layer::Slide:
+            drawSlideMarkers();
+            drewSpecialized = true;
+            break;
+        case NoteSequence::Layer::BypassScale:
+            drawBooleanMarkers();
+            drewSpecialized = true;
+            break;
+        case NoteSequence::Layer::Length:
+            drawLengthBars();
+            drewSpecialized = true;
+            break;
+        case NoteSequence::Layer::Retrigger:
+        case NoteSequence::Layer::StageRepeats:
+            drawRepeatStripes();
+            drewSpecialized = true;
+            break;
+        case NoteSequence::Layer::GateOffset:
+            drawProfile(true, true);
+            drewSpecialized = true;
+            break;
+        default:
+            break;
         }
     }
 
-    int previousX = -1;
-    int previousY = baselineY;
-    for (int i = 0; i < steps; ++i) {
-        const int x0 = stepX(i, steps);
-        const int x1 = stepX(i + 1, steps);
-        const int centerX = stepCenterX(i, steps);
-        const int centered = generator.displayValue(i) - 127;
-        const int y = baselineY - (centered * amplitude) / 127;
-        const bool activeBank = steps <= StepCount || stepInCurrentBank(i);
-
-        canvas.setColor(activeBank ? Color::Medium : Color::Low);
-        canvas.vline(centerX, std::min(baselineY, y), std::abs(y - baselineY) + 1);
-
-        canvas.setColor(activeBank ? Color::Bright : Color::Medium);
-        canvas.hline(x0 + 1, y, std::max(1, x1 - x0 - 2));
-
-        if (previousX >= 0) {
-            canvas.setColor((activeBank || (steps <= StepCount || stepInCurrentBank(i - 1))) ? Color::Medium : Color::Low);
-            canvas.line(previousX, previousY, centerX, y);
-        }
-
-        previousX = centerX;
-        previousY = y;
+    if (!drewSpecialized) {
+        drawProfile(false, true);
     }
 
-    if (steps > StepCount) {
-        for (int bank = 0; bank < steps / StepCount; ++bank) {
-            const int x0 = stepX(bank * StepCount, steps);
-            const int x1 = stepX((bank + 1) * StepCount, steps);
-            canvas.setColor(bank == _section ? Color::Bright : Color::Low);
-            canvas.fillRect(x0 + 1, PlotArea::BankTop, std::max(1, x1 - x0 - 2), PlotArea::BankHeight);
-        }
-    }
-
-    const int playheadStep = currentStep();
-    if (playheadStep >= 0 && playheadStep < steps) {
-        const int playX = stepCenterX(playheadStep, steps);
-        canvas.setColor(Color::Bright);
-        canvas.vline(playX, PlotArea::Top, PlotArea::Bottom - PlotArea::Top + 1);
-    }
+    drawBankFrame();
+    drawPlayhead();
 }
 
 void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &generator) const {
@@ -510,26 +693,26 @@ void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &gener
     const auto playheadStep = currentStep();
 
     auto drawBankIndicators = [&] () {
-        for (int bank = 0; bank < steps / StepCount; ++bank) {
-            const int x0 = stepX(bank * StepCount, steps);
-            const int x1 = stepX((bank + 1) * StepCount, steps);
-            canvas.setColor(bank == _section ? Color::Bright : Color::Low);
-            canvas.fillRect(x0 + 1, PlotArea::BankTop, std::max(1, x1 - x0 - 2), PlotArea::BankHeight);
-        }
+        const int x0 = stepX(_section * StepCount, steps);
+        const int x1 = stepX((_section + 1) * StepCount, steps);
+        canvas.setColor(Color::Medium);
+        canvas.hline(x0 + 1, PlotArea::Top, std::max(1, x1 - x0 - 1));
+        canvas.hline(x0 + 1, PlotArea::BankTop, std::max(1, x1 - x0 - 1));
     };
 
     auto drawBankSeparators = [&] () {
         for (int bank = 0; bank <= steps / StepCount; ++bank) {
             const int separatorX = stepX(bank * StepCount, steps);
-            canvas.setColor(bank == _section || bank == _section + 1 ? Color::Medium : Color::Low);
-            canvas.vline(separatorX, PlotArea::Top, PlotArea::Height);
+            canvas.setColor(bank == _section || bank == _section + 1 ? Color::Medium : Color::MediumLow);
+            canvas.vline(separatorX, PlotArea::Top, PlotArea::BankTop - PlotArea::Top + 1);
         }
     };
 
     auto drawPlayhead = [&] () {
         if (playheadStep >= 0 && playheadStep < steps) {
-            canvas.setColor(Color::Bright);
-            canvas.vline(stepCenterX(playheadStep, steps), PlotArea::Top, PlotArea::Bottom - PlotArea::Top + 1);
+            const int playX = stepCenterX(playheadStep, steps);
+            canvas.setColor(Color::MediumBright);
+            canvas.vline(playX, PlotArea::Top, PlotArea::BankTop - PlotArea::Top + 1);
         }
     };
 
@@ -537,9 +720,9 @@ void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &gener
         constexpr int gateTop = PlotArea::Top;
         constexpr int gateHeight = 6;
         constexpr int noteTop = gateTop + gateHeight + 2;
-        constexpr int noteHeight = 12;
-        constexpr int slideTop = noteTop + noteHeight + 2;
-        constexpr int slideHeight = 4;
+        constexpr int noteHeight = 10;
+        constexpr int slideTop = 35;
+        constexpr int slideHeight = 2;
         const auto bounds = noteBounds(sequence, steps, [&] (int index, const NoteSequence::Step &step) {
             (void)index;
             return step.gate();
@@ -549,19 +732,17 @@ void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &gener
 
         drawBankSeparators();
 
-        canvas.setColor(Color::Low);
+        canvas.setColor(Color::MediumLow);
         canvas.hline(0, gateTop + gateHeight + 1, Width);
         canvas.hline(0, slideTop - 2, Width);
 
         int previousGateStep = -1;
-        int previousGateX = -1;
         int previousGateY = 0;
         for (int i = 0; i < steps; ++i) {
             const auto &step = sequence.step(i);
             const bool activeBank = stepInCurrentBank(i);
             const int x0 = stepX(i, steps);
             const int x1 = stepX(i + 1, steps);
-            const int centerX = stepCenterX(i, steps);
             const int width = std::max(1, x1 - x0 - 1);
 
             if (step.gate()) {
@@ -569,24 +750,20 @@ void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &gener
                 canvas.fillRect(x0 + 1, gateTop + 1, width, gateHeight - 2);
 
                 const int y = noteY(step.note(), minNote, maxNote, noteTop, noteHeight);
-                canvas.setColor(activeBank ? Color::Bright : Color::Medium);
-                canvas.hline(x0 + 1, y, width);
+                drawStairStep(canvas, x0, x1, y, activeBank ? Color::Bright : Color::Medium);
 
                 if (previousGateStep >= 0) {
-                    const auto &previousStep = sequence.step(previousGateStep);
                     if (step.slide()) {
                         canvas.setColor(activeBank ? Color::Bright : Color::Medium);
-                        canvas.line(previousGateX, previousGateY, centerX, y);
-                        canvas.fillRect(x0 + 1, slideTop + 1, width, std::max(1, slideHeight - 1));
-                    } else {
-                        canvas.setColor(activeBank ? Color::Medium : Color::Low);
-                        canvas.line(previousGateX, previousGateY, centerX, y);
+                        const int underscoreWidth = std::max(2, width - 2);
+                        const int underscoreX = x0 + 1 + std::max(0, (width - underscoreWidth) / 2);
+                        canvas.fillRect(underscoreX, slideTop + 1, underscoreWidth, std::max(1, slideHeight - 1));
                     }
-                    (void)previousStep;
+                    canvas.setColor((activeBank || stepInCurrentBank(previousGateStep)) ? Color::Medium : Color::MediumLow);
+                    canvas.vline(x0, std::min(previousGateY, y), std::abs(y - previousGateY) + 1);
                 }
 
                 previousGateStep = i;
-                previousGateX = centerX;
                 previousGateY = y;
             }
         }
@@ -607,7 +784,7 @@ void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &gener
             const int x0 = stepX(i, steps);
             const int width = std::max(1, stepWidth(i, steps) - 1);
 
-            canvas.setColor(activeBank ? Color::Medium : Color::Low);
+            canvas.setColor(activeBank ? Color::Medium : Color::MediumLow);
             canvas.drawRect(x0 + 1, gateTop, width, gateHeight);
             if (step.gate()) {
                 canvas.setColor(activeBank ? Color::Bright : Color::Medium);
@@ -638,11 +815,10 @@ void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &gener
             const int x0 = stepX(i, steps);
             const int x1 = stepX(i + 1, steps);
             const int y = noteY(step.note(), minNote, maxNote, PlotArea::Top + 2, PlotArea::Height - 5);
-            canvas.setColor(activeBank ? Color::Bright : Color::Medium);
-            canvas.hline(x0 + 1, y, std::max(1, x1 - x0 - 1));
+            drawStairStep(canvas, x0, x1, y, activeBank ? Color::Bright : Color::Medium);
 
             if (previousStep >= 0) {
-                canvas.setColor((activeBank || stepInCurrentBank(previousStep)) ? Color::Medium : Color::Low);
+                canvas.setColor((activeBank || stepInCurrentBank(previousStep)) ? Color::Medium : Color::MediumLow);
                 canvas.vline(x0, std::min(previousY, y), std::abs(y - previousY) + 1);
             }
 
@@ -659,7 +835,6 @@ void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &gener
         const int minNote = bounds.first;
         const int maxNote = bounds.second;
         int previousGateStep = -1;
-        int previousGateX = -1;
         int previousGateY = 0;
 
         drawBankSeparators();
@@ -672,25 +847,20 @@ void GeneratorPage::drawAcidGenerator(Canvas &canvas, const AcidGenerator &gener
             const bool activeBank = stepInCurrentBank(i);
             const int x0 = stepX(i, steps);
             const int x1 = stepX(i + 1, steps);
-            const int centerX = stepCenterX(i, steps);
             const int y = noteY(step.note(), minNote, maxNote, PlotArea::Top + 2, PlotArea::Height - 7);
 
-            canvas.setColor(activeBank ? Color::Medium : Color::Low);
-            canvas.hline(x0 + 1, y, std::max(1, x1 - x0 - 1));
+            drawStairStep(canvas, x0, x1, y, activeBank ? Color::Medium : Color::MediumLow);
 
             if (previousGateStep >= 0) {
                 if (step.slide()) {
                     canvas.setColor(activeBank ? Color::Bright : Color::Medium);
-                    canvas.line(previousGateX, previousGateY, centerX, y);
                     canvas.fillRect(x0 + 1, PlotArea::Bottom - 4, std::max(1, x1 - x0 - 2), 3);
-                } else {
-                    canvas.setColor(activeBank ? Color::Medium : Color::Low);
-                    canvas.line(previousGateX, previousGateY, centerX, y);
                 }
+                canvas.setColor((activeBank || stepInCurrentBank(previousGateStep)) ? Color::Medium : Color::MediumLow);
+                canvas.vline(x0, std::min(previousGateY, y), std::abs(y - previousGateY) + 1);
             }
 
             previousGateStep = i;
-            previousGateX = centerX;
             previousGateY = y;
         }
         break;

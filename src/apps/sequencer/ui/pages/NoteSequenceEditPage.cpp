@@ -584,19 +584,19 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
             setLayer(event.value() > 0 ? Layer::Length : Layer::LengthVariationRange);
             break;
         case Layer::Note:
-            setLayer(event.value() > 0 ? Layer::NoteVariationRange : Layer::BypassScale);
-            break;
-        case Layer::NoteVariationRange:
-            setLayer(event.value() > 0 ? Layer::NoteVariationProbability : Layer::Note);
-            break;
-        case Layer::NoteVariationProbability:
-            setLayer(event.value() > 0 ? Layer::Slide : Layer::NoteVariationRange);
+            setLayer(event.value() > 0 ? Layer::Slide : Layer::BypassScale);
             break;
         case Layer::Slide:
-            setLayer(event.value() > 0 ? Layer::BypassScale : Layer::NoteVariationProbability);
+            setLayer(event.value() > 0 ? Layer::NoteVariationRange : Layer::Note);
+            break;
+        case Layer::NoteVariationRange:
+            setLayer(event.value() > 0 ? Layer::NoteVariationProbability : Layer::Slide);
+            break;
+        case Layer::NoteVariationProbability:
+            setLayer(event.value() > 0 ? Layer::BypassScale : Layer::NoteVariationRange);
             break;
         case Layer::BypassScale:
-            setLayer(event.value() > 0 ? Layer::Note : Layer::Slide);
+            setLayer(event.value() > 0 ? Layer::Note : Layer::NoteVariationProbability);
         default:
             break;
         }
@@ -791,15 +791,15 @@ void NoteSequenceEditPage::switchLayer(int functionKey, bool shift) {
     case Function::Note:
         switch (layer()) {
         case Layer::Note:
+            setLayer(Layer::Slide);
+            break;
+        case Layer::Slide:
             setLayer(Layer::NoteVariationRange);
             break;
         case Layer::NoteVariationRange:
             setLayer(Layer::NoteVariationProbability);
             break;
         case Layer::NoteVariationProbability:
-            setLayer(Layer::Slide);
-            break;
-        case Layer::Slide:
             setLayer(Layer::BypassScale);
             break;
         default:
