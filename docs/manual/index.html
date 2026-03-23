@@ -1929,20 +1929,20 @@
 
         <h3 id="appendix-recording">Recording</h3>
         <p>
-          Recording can be done live or in step-record mode using an external MIDI keyboard. Live recording writes notes into the active sequence while the sequencer is running; step record advances one step at a time and is better suited to precise entry.
+          Recording can be done live or in step-record mode using an external MIDI keyboard. Live recording writes notes into the active sequence while the sequencer is running. Step record advances one step at a time and is better suited to deliberate entry.
         </p>
         <p>
-          Recording mode is selected on the Project page, and recording is armed or disarmed with <code>PAGE</code> + <code>PLAY</code>.
+          Recording mode is selected on the Project page. Recording itself is armed or disarmed with <code>PAGE</code> + <code>PLAY</code>.
         </p>
         <h4>Live Recording</h4>
         <p>
           <em>Overdub</em> and <em>Overwrite</em> enable live recording. In Overdub mode, played notes are added to the existing sequence, potentially replacing existing steps. In Overwrite mode, steps are cleared as the play head advances and replaced by incoming notes. The sequence length is not changed automatically, so it must be set in advance.
         </p>
         <p>
-          Recording can also be controlled through a route, which is useful for foot-pedal punch-in and punch-out control.
+          Recording can also be controlled through a route, which is useful for foot-pedal punch-in / punch-out style workflows.
         </p>
         <p>
-          Note: incoming notes must be translated into the fixed grid of a sequence. Best results are usually obtained with monophonic, well-quantized playing.
+          Note: incoming notes must still be translated into the fixed step grid of a sequence. Best results are usually obtained with monophonic, well-quantized playing.
         </p>
         <h4>Step Recording</h4>
         <p>
@@ -1992,7 +1992,7 @@
 
         <h3 id="appendix-run-modes">Run Modes</h3>
         <p>
-          Run modes define the order in which a sequence is traversed. The main modes are Forward, Backward, Pendulum, Ping Pong, Random and Random Walk.
+          Run modes define the order in which a sequence is traversed. The main choices are Forward, Backward, Pendulum, Ping Pong, Random and Random Walk.
         </p>
         <table>
           <thead>
@@ -2152,6 +2152,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         </table>
 
         <h3 id="appendix-routing-targets">Routing Targets</h3>
+        <p>
+          This table lists the main routing destinations exposed by the current firmware. Most entries are self-explanatory in context, but the scope column helps clarify whether a target affects the whole project, a track, or a specific sequence.
+        </p>
         <table>
           <thead>
             <tr>
@@ -2236,6 +2239,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           The Novation Launchpad can be used as an advanced control surface for the sequencer, allowing for editing sequences and launching patterns via the 8x8 button matrix. When a Launchpad is connected to the USB port, the sequencer automatically detects the device and immediately starts using it as a control surface.
         </p>
         <p>
+          This section is now being reviewed directly against the current Vinx fork implementation. The core behaviors below have already been realigned, but Launchpad coverage may still receive another dedicated cleanup pass later.
+        </p>
+        <p>
           The following Launchpad controllers have been tested and are working:
         </p>
         <ul>
@@ -2243,6 +2249,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <li>Launchpad S</li>
           <li>Launchpad Mk2</li>
           <li>Launchpad Pro</li>
+          <li>Launchpad Pro MK3</li>
           <li>Launchpad X</li>
         </ul>
         <p>
@@ -2258,9 +2265,12 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         <p>
           For a faster local overview, see also the <a href="../cheatsheet/index.html">Cheat Sheet</a>.
         </p>
+        <p>
+          In this manual, Launchpad controls are named as in the local cheat sheet: <code>TOP1..8</code> for the top row, <code>TRK1..8</code> for the scene / track side buttons, and <code>GRID</code> for the 8x8 pad matrix. When a bare number is used in a Launchpad shortcut, it refers to a pad on the <code>GRID</code>.
+        </p>
         <h4>Global Functions</h4>
         <p>
-          The <code>8</code> button acts as a shift button and can be pressed in combination with other buttons to access secondary functions. The following functions are always available:
+          <code>TOP8</code> acts as a shift button and can be pressed in combination with other buttons to access secondary functions. The following functions are always available:
         </p>
         <table>
           <thead>
@@ -2270,14 +2280,14 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>8</code> + <code>7</code></td><td style="text-align: left">Start and stop the sequencer.</td></tr>
-            <tr><td style="text-align: left"><code>8</code> + <code>1</code></td><td style="text-align: left">Switch to sequence mode.</td></tr>
-            <tr><td style="text-align: left"><code>8</code> + <code>2</code></td><td style="text-align: left">Switch to pattern mode.</td></tr>
-            <tr><td style="text-align: left"><code>8</code> + <code>3</code></td><td style="text-align: left">Switch to performance mode.</td></tr>
+            <tr><td style="text-align: left"><code>TOP8</code> + <code>TOP7</code></td><td style="text-align: left">Start and stop the sequencer.</td></tr>
+            <tr><td style="text-align: left"><code>TOP8</code> + <code>TOP1</code></td><td style="text-align: left">Switch to sequence mode.</td></tr>
+            <tr><td style="text-align: left"><code>TOP8</code> + <code>TOP2</code></td><td style="text-align: left">Switch to pattern mode.</td></tr>
+            <tr><td style="text-align: left"><code>TOP8</code> + <code>TOP3</code></td><td style="text-align: left">Switch to performance mode.</td></tr>
           </tbody>
         </table>
         <p>
-          Because the 8x8 grid of the Launchpad can only represent part of the data to be edited, the grid only acts as a window into a larger virtual 64x64 grid. Hold <code>1</code> to enter navigation mode, where the position of the window can be selected:
+          Because the 8x8 grid of the Launchpad can only represent part of the data to be edited, the grid only acts as a window into a larger virtual 64x64 grid. Hold <code>TOP1</code> to enter navigation mode, where the position of the window can be selected:
         </p>
         <table>
           <thead>
@@ -2287,11 +2297,11 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>1</code> + <code>2</code></td><td style="text-align: left">Move window left.</td></tr>
-            <tr><td style="text-align: left"><code>1</code> + <code>3</code></td><td style="text-align: left">Move window right.</td></tr>
-            <tr><td style="text-align: left"><code>1</code> + <code>4</code></td><td style="text-align: left">Move window up.</td></tr>
-            <tr><td style="text-align: left"><code>1</code> + <code>5</code></td><td style="text-align: left">Move window down.</td></tr>
-            <tr><td style="text-align: left"><code>1</code> + <code>GRID</code></td><td style="text-align: left">Move window to a specific position.</td></tr>
+            <tr><td style="text-align: left"><code>TOP1</code> + <code>TOP2</code></td><td style="text-align: left">Move window left.</td></tr>
+            <tr><td style="text-align: left"><code>TOP1</code> + <code>TOP3</code></td><td style="text-align: left">Move window right.</td></tr>
+            <tr><td style="text-align: left"><code>TOP1</code> + <code>TOP4</code></td><td style="text-align: left">Move window up.</td></tr>
+            <tr><td style="text-align: left"><code>TOP1</code> + <code>TOP5</code></td><td style="text-align: left">Move window down.</td></tr>
+            <tr><td style="text-align: left"><code>TOP1</code> + <code>GRID</code></td><td style="text-align: left">Move window to a specific position.</td></tr>
           </tbody>
         </table>
         <p>
@@ -2306,12 +2316,15 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>7</code> + <code>GRID</code></td><td style="text-align: left">Toggle selected note to 5V.</td></tr>
-            <tr><td style="text-align: left"><code>7</code> + <code>A</code> - <code>H</code></td><td style="text-align: left">Fill track.</td></tr>
-            <tr><td style="text-align: left"><code>8</code> + <code>A</code> - <code>H</code></td><td style="text-align: left">Mute or unmute track.</td></tr>
-            <tr><td style="text-align: left"><code>6</code> + <code>A</code> - <code>H</code></td><td style="text-align: left">Solo or unsolo track.</td></tr>
+            <tr><td style="text-align: left"><code>TOP7</code> + <code>GRID</code></td><td style="text-align: left">Toggle selected note to 5V.</td></tr>
+            <tr><td style="text-align: left"><code>TOP7</code> + <code>TRK1</code> - <code>TRK8</code></td><td style="text-align: left">Momentary fill for the selected track while held. Releasing the buttons clears the fill.</td></tr>
+            <tr><td style="text-align: left"><code>TOP8</code> + <code>TRK1</code> - <code>TRK8</code></td><td style="text-align: left">Mute or unmute track immediately.</td></tr>
+            <tr><td style="text-align: left"><code>TOP6</code> + <code>TRK1</code> - <code>TRK8</code></td><td style="text-align: left">Solo or unsolo track.</td></tr>
           </tbody>
         </table>
+        <p>
+          Note: synced or latched mute launching is available from the panel <a href="#pages-performer">Performer</a> page, but not from the Launchpad surface in the current Vinx implementation.
+        </p>
         <h4>Sequence Mode</h4>
         <p>
           Sequence mode allows for comprehensive editing of the patterns on all tracks. The grid allows editing individual step values on the active track and layer. The following functions are available:
@@ -2324,72 +2337,69 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>A</code> - <code>H</code></td><td style="text-align: left">Select active track.</td></tr>
-            <tr><td style="text-align: left"><code>2</code> + <code>GRID</code></td><td style="text-align: left">Select active layer.</td></tr>
-            <tr><td style="text-align: left"><code>3</code> + <code>GRID</code></td><td style="text-align: left">Select first step.</td></tr>
-            <tr><td style="text-align: left"><code>4</code> + <code>GRID</code></td><td style="text-align: left">Select last step.</td></tr>
-            <tr><td style="text-align: left"><code>5</code> + <code>GRID</code></td><td style="text-align: left">Select run mode.</td></tr>
-            <tr><td style="text-align: left"><code>6</code> + <code>GRID</code></td><td style="text-align: left">Select follow mode for the selected track or, in Stochastic mode, set rest probabilities.</td></tr>
+            <tr><td style="text-align: left"><code>TRK1</code> - <code>TRK8</code></td><td style="text-align: left">Select active track.</td></tr>
+            <tr><td style="text-align: left"><code>TOP2</code> + <code>GRID</code></td><td style="text-align: left">Select active layer.</td></tr>
+            <tr><td style="text-align: left"><code>TOP3</code> + <code>GRID</code></td><td style="text-align: left">Select first step.</td></tr>
+            <tr><td style="text-align: left"><code>TOP4</code> + <code>GRID</code></td><td style="text-align: left">Select last step.</td></tr>
+            <tr><td style="text-align: left"><code>TOP5</code> + <code>GRID</code></td><td style="text-align: left">Select run mode.</td></tr>
+            <tr><td style="text-align: left"><code>TOP6</code> + <code>GRID</code></td><td style="text-align: left">Select follow mode for the selected track or, in Stochastic mode, set rest probabilities.</td></tr>
           </tbody>
         </table>
         <p>
           The visualization on the grid depends on the selected layer. Binary layers such as <em>Gate</em> and <em>Slide</em> can be visualized directly on the 8x8 grid without the need for navigation. Other layers use navigation to various degrees in order to allow programming the steps. When editing the <em>Note</em> layer, the base note, first note per octave, is visualized to help orientation. When editing a note sequence, double pressing a button can be used to toggle the step gate no matter what layer is edited other than <em>Gate</em> or <em>Slide</em>.
         </p>
+        <p>
+          In the current fork, <em>LP Note Style</em> can be set to <em>classic</em> or <em>circuit</em>. The circuit-style editor is the current default and is available on the Note track note layer, the dedicated stochastic note-probability note editor, and the arpeggiator note layer.
+        </p>
         <h4>Pattern Mode</h4>
         <p>
-          Pattern mode allows selecting the currently playing pattern on all tracks. Each column on the <code>GRID</code> represents one track, allowing individual patterns to be launched per track. The <code>A</code> to <code>H</code> buttons represent scenes, allowing the same pattern number to be launched on all tracks simultaneously. This is very similar to how Ableton Live allows launching clips and scenes on a Launchpad. Active patterns are shown as bright green, non-empty patterns are shown in dim colors, yellow for Note tracks and red for Curve tracks.
+          Pattern mode allows selecting the currently playing pattern on all tracks. Each column on the <code>GRID</code> represents one track, allowing individual patterns to be launched per track. <code>TRK1</code> to <code>TRK8</code> act as scene launch buttons, allowing the same pattern number to be launched on all tracks simultaneously. This is very similar to how Ableton Live allows launching clips and scenes on a Launchpad. Active patterns are shown as bright green, non-empty patterns are shown in dim colors, yellow for Note tracks and red for Curve tracks.
         </p>
         <p>
-          In addition, holding <code>2</code> while selecting patterns and scenes allows using latching mode. This means that the patterns are switched at the moment when <code>2</code> is released. Holding <code>3</code> while selecting patterns and scenes allows launching them synchronized to the global <em>Sync Measure</em>.
+          In addition, holding <code>TOP2</code> while selecting patterns and scenes allows using latching mode. This means that the patterns are switched at the moment when <code>TOP2</code> is released. Holding <code>TOP3</code> while selecting patterns and scenes toggles between immediate and synced launch behavior relative to the current <em>Pattern Change</em> setting: if the global default is immediate, <code>TOP3</code> makes the launch synced; if the global default is sync, <code>TOP3</code> makes the launch immediate.
         </p>
         <p>
           Requested patterns due to latching or syncing are shown in dim green.
         </p>
         <h4>Performance Mode</h4>
         <p>
-          Performance mode allows the user to perform quick live edits. There are two modes available, accessible by holding <code>2</code> + <code>GRID[1|2]</code>:
+          Performance mode allows the user to perform quick live edits. There are two modes available, accessible by holding <code>TOP2</code> and selecting one of the first two grid pads on the top row:
         </p>
         <ul>
-          <li><code>GRID 1</code> - Sequence Length: Holding a step and then pressing another one sets first step and last step of the sequence, resulting in looping the current slice of the sequence until the grid buttons are released.</li>
-          <li><code>GRID 2</code> - Overview Page: each row represents the track from 1 to 8 and allows gates to be entered quickly. <code>6</code> + <code>ROW3+COL1</code> enables follow mode globally, or you can select per-track follow mode for the overview page. All other functions are still available for the selected track.</li>
+          <li><code>TOP2 + 1</code> - Sequence Length: Holding a step and then pressing another one sets first step and last step of the sequence, resulting in looping the current slice of the sequence until the grid buttons are released.</li>
+          <li><code>TOP2 + 2</code> - Overview Page: each row represents one track and allows gates to be entered quickly. <code>TOP6</code> plus the pad at GRID row 3, column 1 enables follow mode globally, or you can select per-track follow mode for the overview page. All other functions are still available for the selected track.</li>
         </ul>
         <h4 id="appendix-circuit">Circuit Note Editor</h4>
         <p>The visualization on the grid follows this schema:</p>
         <ul>
-          <li>The first 2 rows represent the gates from <code>S1</code> to <code>S16</code>.</li>
-          <li>Row 4 represents the semitones of a chromatic scale. The selected note is highlighted and available notes in the scale are highlighted.</li>
-          <li>Row 5 represents the tones of a chromatic scale. The selected note is highlighted and available notes in the scale are highlighted.</li>
-          <li>Row 7 represents the octave switcher from -4 to +3 octaves. The selected octave is highlighted.</li>
-          <li>Row 8 is a quick page-change shortcut.</li>
-          <li>If you press a button in the gates representation you toggle the gate.</li>
-          <li>If you hold an available key in rows 4 or 5 and press a gate you enter a gate with the selected note value plus the selected octave. If the gate is already present you set the selected note plus the selected octave of the selected gate.</li>
+          <li>The first 2 rows represent gates for the current 16-step section.</li>
+          <li>Rows 4 and 5 represent the note keyboard. Available notes in the current scale are highlighted; chromatic notes outside the current scale remain available through bypass-scale entry.</li>
+          <li>Row 7 represents the octave switcher from -4 to +3 octaves.</li>
+          <li>Row 8 provides quick section shortcuts for the four 16-step banks.</li>
+          <li>Pressing a pad in the first 2 rows toggles the corresponding gate.</li>
+          <li>Holding a valid keyboard note and then pressing one of the first-2-row pads writes that note into the step and enables the gate if needed.</li>
         </ul>
         <h4 id="appendix-stochastic-circuit">Stochastic Circuit Note Editor</h4>
         <ul>
-          <li>The first 2 rows represent the probability of the selected note.</li>
-          <li>Row 3 is a quick visual representation of the current sequence step.</li>
-          <li>Row 4 represents the semitones of a chromatic scale, with selected and available notes highlighted.</li>
-          <li>Row 5 represents the tones of a chromatic scale, with selected and available notes highlighted.</li>
-          <li>Row 7 represents the octave switcher from -4 to +3 octaves, with the selected octave highlighted.</li>
-          <li>Row 8 is a quick shortcut for stochastic options: Engage loop, Clear Loop, Reseed.</li>
-          <li>On row 4 the 8th button raises track octave by +1.</li>
-          <li>On row 5 the 8th button decreases track octave by -1.</li>
+          <li>The first 2 rows represent the probability amount of the currently selected note slot.</li>
+          <li>Row 3 is a quick visual representation of the running stochastic index.</li>
+          <li>Rows 4 and 5 represent the note keyboard, with scale-aware highlighting and chromatic fallback for bypass-scale style selection.</li>
+          <li>In this editor, the last pad on row 4 raises the track octave and the last pad on row 5 lowers it.</li>
+          <li>Row 7 represents the local octave selector from -4 to +3 octaves for note entry.</li>
+          <li>Row 8 exposes the stochastic shortcuts currently implemented in the fork: use loop, clear loop, and reseed.</li>
         </ul>
         <h4 id="appendix-arpeggiator-circuit">Arpeggiator Circuit Note Editor</h4>
         <ul>
-          <li>The first 2 rows represent the probability of the selected gate.</li>
-          <li>Row 3 is a quick visual representation of the current sequence step.</li>
-          <li>Row 4 represents the semitones of a chromatic scale, with selected and available notes highlighted.</li>
-          <li>Row 5 represents the tones of a chromatic scale, with selected and available notes highlighted.</li>
-          <li>Row 7 represents the octave switcher from -4 to +3 octaves, with the selected octave highlighted.</li>
-          <li>Row 8 is a quick shortcut for arp options: Engage keyboard, Hold mode.</li>
-          <li>On row 4 the 8th button raises track octave by +1.</li>
-          <li>On row 5 the 8th button decreases track octave by -1.</li>
+          <li>The first 2 rows represent gate probability for the currently selected arpeggiator note slot.</li>
+          <li>Row 3 is a quick visual representation of the running arpeggiator index.</li>
+          <li>Rows 4 and 5 represent the note keyboard. In this editor the last pad on row 4 raises track octave and the last pad on row 5 lowers it.</li>
+          <li>Row 7 represents the local octave selector from -4 to +3 octaves for note entry.</li>
+          <li>Row 8 exposes the arpeggiator shortcuts currently implemented in the fork: keyboard input mode and hold mode.</li>
         </ul>
 
         <h3 id="appendix-usb-midi-devices">USB MIDI Devices</h3>
         <p>
-          The following is a list of USB MIDI devices known to be compatible with the <strong>PER|FORMER</strong> sequencer:
+          The following USB MIDI devices are known to be compatible with the <strong>PER|FORMER</strong> sequencer:
         </p>
         <table>
           <thead>
@@ -2406,12 +2416,12 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             <tr><td style="text-align: left">Korg</td><td style="text-align: left">microKey 2, R3</td></tr>
             <tr><td style="text-align: left">Moog</td><td style="text-align: left">Minitaur</td></tr>
             <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchkey Mini</td></tr>
-            <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchpad Mini MK1/MK2/MK3, Launchpad S, Launchpad Pro, Launchpad X</td></tr>
+            <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchpad Mini MK1/MK2/MK3, Launchpad S, Launchpad Mk2, Launchpad Pro, Launchpad Pro MK3, Launchpad X</td></tr>
             <tr><td style="text-align: left">Yamaha</td><td style="text-align: left">Modx7</td></tr>
           </tbody>
         </table>
         <p>
-          The following is a list of USB MIDI devices known <strong>not</strong> to be compatible:
+          The following USB MIDI devices are known <strong>not</strong> to be compatible:
         </p>
         <table>
           <thead>
@@ -2452,7 +2462,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
         <h3 id="appendix-firmware-update">Firmware Update</h3>
         <p>
-          Use the following steps to upgrade the sequencer:
+          Use the following steps to update the sequencer firmware:
         </p>
         <ul>
           <li>Download the latest <strong>UPDATE.DAT</strong> file from <a href="https://github.com/VinxScorza/performer/releases" target="_blank" rel="noopener noreferrer">Vinx Scorza Releases</a>.</li>
@@ -2460,17 +2470,17 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <li>Insert the SD card into the sequencer's SD card slot.</li>
         </ul>
         <p>
-          The update procedure is performed by the bootloader on the sequencer. There are two possible ways to enter the bootloader:
+          The update procedure is performed by the bootloader. There are two ways to enter it:
         </p>
         <ol>
           <li>Power up the sequencer while pressing down the <code>ENCODER</code>.</li>
           <li>Enter the <a href="#pages-system">System</a> page and go to the update tab, then press and hold the <code>ENCODER</code> which will initiate a reset and jump to the bootloader.</li>
         </ol>
         <p>
-          The bootloader will verify the integrity of the <strong>UPDATE.DAT</strong> file using an MD5 hash. Once verified, a confirmation is requested to actually initiate the update process. Simply rotate the <code>ENCODER</code> to change to <strong>YES</strong> and press the <code>ENCODER</code> to start the update.
+          The bootloader verifies the integrity of the <strong>UPDATE.DAT</strong> file using an MD5 hash. Once verification succeeds, a confirmation is requested before the update actually starts. Rotate the <code>ENCODER</code> to select <strong>YES</strong>, then press the <code>ENCODER</code> to begin.
         </p>
         <p>
-          After the firmware is written to the flash memory, it is verified again to ensure it was written properly. In case the verification fails, the firmware is erased from flash memory. At this point the sequencer will always enter the bootloader when powering up, allowing a different firmware to be loaded.
+          After the firmware is written to flash memory, it is verified again to ensure it was written correctly. If verification fails, the firmware is erased from flash memory. In that state the sequencer will always boot back into the bootloader, allowing a different firmware image to be loaded.
         </p>
         <p>
           For release history and fork-specific changes, see the <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>.
