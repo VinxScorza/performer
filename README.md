@@ -4,23 +4,23 @@
 
 ## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
 
-This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a>, itself based on the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>.
+This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a> of the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
 Current fork version: `0.3.2-vinx.1.4.6`.
 
-IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
+IMPORTANT NOTE: I am not a software developer. I am an artist shaping the instrument I want to perform with.
 
-The Vinx Scorza fork starts at `v0.3.2-vinx.1`.
-Everything before that version in this repository history and changelog is inherited from the Mebitek fork and preserved as upstream reference.
-This project focuses on live performance workflow, timing reliability, and UI/interaction improvements, with particular attention to modular techno and improvisation use cases.
-This fork is not a general-purpose extension, but a targeted refinement of specific behaviors that come to mind while I am actively using the sequencer.
-This fork is maintained for personal use. Backward compatibility with older projects, settings, or workflows is not guaranteed, and I do not assume responsibility for regressions or incompatibilities introduced by Vinx-specific changes.
-The firmware is actively used and tested in practice, since PER|FORMER is the main sequencer in my live sets.
-This fork would not exist without the fundamental help of AI agents during development and debugging.
-I’m very grateful to <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a> for the work done on his fork, and of course to <a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Simon Kallweit</a> for creating and developing the Westlicht Performer.
-If you would like to support their incredible work financially, you can donate here:
+The Vinx Scorza fork begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference.
+
+This project focuses on live performance workflow, timing reliability, and UI/interaction refinements, with particular attention to modular techno and improvisation use cases. It is not meant to be a general-purpose extension of PER|FORMER, but a personal and practical refinement of behaviors that become important while actively using the sequencer in real musical situations.
+
+This fork is maintained for personal use and actively tested in practice, since PER|FORMER is the main sequencer in my live sets. Backward compatibility with older projects, settings, or workflows is not guaranteed, and I do not assume responsibility for regressions or incompatibilities introduced by Vinx-specific changes.
+
+This fork would not exist without the help of AI agents during development and debugging. I am very grateful to <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a> for the work done on his fork, and of course to <a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Simon Kallweit</a> for creating and developing the original Westlicht PER|FORMER.
+
+If you would like to support their work financially, you can donate here:
 <a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Mebitek</a> · <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Simon Kallweit / Westlicht</a>
 
-Personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
+This is a personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
 
 Primary documentation for this fork:
 - <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">Vinx Scorza fork website</a>
@@ -33,17 +33,17 @@ Primary documentation for this fork:
 
 ## Philosophy
 
-This fork is driven by a simple principle:
+This fork follows a simple principle:
 
-> Make the Performer more predictable, more playable, more useful, more fun, in a live modular context.
+> Make PER|FORMER more predictable, more playable, more useful, and more fun in a live modular context.
 >
-> Not more features -- better behavior.
+> Not more features, but better behavior.
 
 ## Notes
 
-If you're looking for a stable, conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines.
+If you are looking for a more conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines.
 
-If you're interested in a more hands-on, performance-oriented evolution, you're in the right place.
+If you are interested in a more hands-on, performance-oriented evolution of PER|FORMER, you are in the right place.
 
 The Vinx Scorza website should be considered the main user-facing documentation entry point for this fork:
 <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">https://vinxscorza.github.io/performer/</a>
@@ -58,13 +58,14 @@ If you need historical upstream reference material, the Mebitek manual is still 
 <a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">https://mebitek.github.io/performer/manual/</a>
 
 Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
+
 The current `v0.3.2-vinx.1.4.6` line includes:
-- The generator workflow introduced through `1.4.3`-`1.4.5`: `Acid` on Note tracks, redesigned LCD previews, layer-aware `Random`, and cleaner Note-layer cycling
-- Immediate `Scale` prelisten preview on Note and Arp sequence pages, with commit on encoder press and `CANCEL` available during `Scale` / `Root Note` editing
-- LCD/UI hardening changes aimed at regular hardware use: `30 fps` default UI refresh, redraw skip when the framebuffer hash is unchanged, and `Task Profiler` disabled by default for extra headroom
+- The generator workflow developed through `1.4.3`-`1.4.5`: `Acid` on Note tracks, redesigned LCD previews, layer-aware `Random`, and cleaner Note-layer cycling
+- Immediate `Scale` prelisten on Note and Arp sequence pages, with commit on encoder press and `CANCEL` available during `Scale` / `Root Note` editing
+- LCD/UI hardening aimed at regular hardware use: `30 fps` default UI refresh, redraw skip when the framebuffer hash is unchanged, and `Task Profiler` disabled by default for more headroom
 - Default `Slide Time` moved to `20%` across track types that expose it
 - Generator menu cleanup so non-Note tracks no longer show a duplicate `Euclidean`
-- Simulator/test-drive refresh with a revised built-in demo state, updated drum samples, and a darker Track 8 mono synth voice
+- A refreshed simulator / Test Drive setup with a revised built-in demo state, updated drum samples, and a darker Track 8 mono synth voice
 
 Clone this repository:
 
