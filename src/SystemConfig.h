@@ -20,7 +20,7 @@
 // Debugging
 #define CONFIG_ENABLE_DEBUG             1
 #define CONFIG_ENABLE_PROFILER          0
-#define CONFIG_ENABLE_TASK_PROFILER     1
+#define CONFIG_ENABLE_TASK_PROFILER     0
 
 // Sanitization
 #define CONFIG_ENABLE_SANITIZE          1

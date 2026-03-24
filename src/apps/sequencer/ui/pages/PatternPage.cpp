@@ -330,19 +330,6 @@ void PatternPage::keyPress(KeyPressEvent &event) {
     }
 }
 
-    int *PatternPage::getPressedKeySteps(Key key) {
-        int *keys = new int [16];
-        for (int i=9, j=0; i < 25; ++i) {
-            auto s = key.state(i);
-            if (s == 1) {
-                keys[j] = i;
-                j++;
-            }
-        }
-        
-        return keys;
-    }
-
 void PatternPage::encoder(EncoderEvent &event) {
     _project.editSelectedPatternIndex(event.value(), event.pressed());
 }

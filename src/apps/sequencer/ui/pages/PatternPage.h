@@ -23,8 +23,6 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
 
-     int *getPressedKeySteps(Key key);
-
 private:
     void contextShow(bool doubleClick = false);
     void contextAction(int index);

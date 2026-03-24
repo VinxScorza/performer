@@ -4,7 +4,7 @@
 
 // Version tag
 #define CONFIG_VERSION_MAGIC            0xfadebabe
-#define CONFIG_VERSION_NAME             "0.3.2-vinx.1.4.5"
+#define CONFIG_VERSION_NAME             "0.3.2-vinx.1.4.6"
 #define CONFIG_VERSION_MAJOR            0
 #define CONFIG_VERSION_MINOR            3
 #define CONFIG_VERSION_REVISION         2
@@ -35,8 +35,8 @@
 // Sequence parts per quarter note resolution
 #define CONFIG_SEQUENCE_PPQN            48
 
-// Default UI frames per second
-#define CONFIG_DEFAULT_UI_FPS           50
+// Default UI frames per second (~33 ms per frame)
+#define CONFIG_DEFAULT_UI_FPS           30
 
 // CV/Gate channels
 #define CONFIG_CHANNEL_COUNT            8
@@ -59,5 +59,5 @@
 #define CONFIG_USER_SCALE_SIZE          32
 
 
-#define CONFIG_ENABLE_ASTEROIDS
+// #define CONFIG_ENABLE_ASTEROIDS
 // #define CONFIG_ENABLE_INTRO

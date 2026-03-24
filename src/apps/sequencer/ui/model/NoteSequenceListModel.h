@@ -104,6 +104,34 @@ public:
         _editScale = !_editScale;
     }
 
+    int selectedScaleValue() const {
+        if (_sequence == nullptr) {
+            return 0;
+        }
+
+        int trackIndex = _sequence->trackIndex();
+        bool isRouted = Routing::isRouted(Routing::Target::Scale, trackIndex);
+        return isRouted ? _sequence->scale() : _scales[_selectedScale[trackIndex]];
+    }
+
+    void applySelectedScale(int defaultScale) {
+        if (_sequence == nullptr) {
+            return;
+        }
+
+        _sequence->editScale(selectedScaleValue(), false, defaultScale);
+    }
+
+    void syncSelectedScale() {
+        if (_sequence == nullptr) {
+            return;
+        }
+
+        int trackIndex = _sequence->trackIndex();
+        _selectedScale[trackIndex] = _sequence->scale() + 1;
+        _editScale = false;
+    }
+
 private:
     static const char *itemName(Item item) {
         switch (item) {

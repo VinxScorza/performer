@@ -30,6 +30,15 @@ Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &en
 {
 }
 
+static uint32_t hashFrameBuffer(const uint8_t *data, size_t size) {
+    uint32_t hash = 2166136261u;
+    for (size_t i = 0; i < size; ++i) {
+        hash ^= data[i];
+        hash *= 16777619u;
+    }
+    return hash;
+}
+
 void Ui::init() {
     _pageKeyState.reset();
     _globalKeyState.reset();
@@ -98,7 +107,12 @@ void Ui::update() {
         } else {
             _screensaver.on();
         }
-        _lcd.draw(_frameBuffer.data());
+        uint32_t frameBufferHash = hashFrameBuffer(_frameBuffer.data(), sizeof(_frameBufferData));
+        if (_frameBufferDirty || frameBufferHash != _lastFrameBufferHash) {
+            _lcd.draw(_frameBuffer.data());
+            _frameBufferDirty = false;
+            _lastFrameBufferHash = frameBufferHash;
+        }
         _lastFrameBufferUpdateTicks += intervalTicks;
     }
 
@@ -130,6 +144,8 @@ void Ui::showAssert(const char *filename, int line, const char *msg) {
     _canvas.drawText(4, 58, "PRESS ENCODER TO RESET");
 
     _lcd.draw(_frameBuffer.data());
+    _frameBufferDirty = false;
+    _lastFrameBufferHash = hashFrameBuffer(_frameBuffer.data(), sizeof(_frameBufferData));
 }
 
 void Ui::handleKeys() {

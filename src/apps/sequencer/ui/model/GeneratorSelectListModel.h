@@ -19,7 +19,7 @@ public:
         case 1:
             return _allowAcid ? Generator::Mode::Acid : Generator::Mode::Euclidean;
         case 2:
-            return Generator::Mode::Euclidean;
+            return _allowAcid ? Generator::Mode::Euclidean : Generator::Mode::InitLayer;
         case 3:
             return Generator::Mode::InitLayer;
         default:

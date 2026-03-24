@@ -38,6 +38,14 @@ static const ContextMenuModel::Item saveContextMenuItems[] = {
     { "SAVE AS"},
 };
 
+static const char *cancelFunctionNames[] = {
+    "",
+    "",
+    "",
+    "",
+    "CANCEL",
+};
+
 
 NoteSequencePage::NoteSequencePage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel)
@@ -48,6 +56,10 @@ void NoteSequencePage::enter() {
 }
 
 void NoteSequencePage::exit() {
+    if (_hasCancelableEdit) {
+        cancelCancelableEdit();
+    }
+    clearScalePreview();
     _listModel.setSequence(nullptr);
 }
 
@@ -55,7 +67,11 @@ void NoteSequencePage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE");
     WindowPainter::drawActiveFunction(canvas, Track::trackModeName(_project.selectedTrack().trackMode()));
-    WindowPainter::drawFooter(canvas);
+    if (edit() && isCancelableEditRow(selectedRow())) {
+        WindowPainter::drawFooter(canvas, cancelFunctionNames, pageKeyState(), 4);
+    } else {
+        WindowPainter::drawFooter(canvas);
+    }
 
     ListPage::draw(canvas);
 }
@@ -90,6 +106,12 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.isFunction() && key.is(Key::F4) && edit() && isCancelableEditRow(selectedRow())) {
+        cancelCancelableEdit();
+        event.consume();
+        return;
+    }
+
     if (key.is(Key::Encoder) && selectedRow() == 0) {
         _manager.pages().textInput.show("NAME:", _project.selectedNoteSequence().name(), NoteSequence::NameLength, [this] (bool result, const char *text) {
             if (result) {
@@ -110,12 +132,71 @@ void NoteSequencePage::keyPress(KeyPressEvent &event) {
     if (!event.consumed()) {
         ListPage::keyPress(event);
     }
-    if (key.isEncoder()) {
-        auto row = ListPage::selectedRow();
-        if (row == 6) {
-            _listModel.setSelectedScale(_project.scale());
+
+    if (key.isEncoder() && isCancelableEditRow(selectedRow())) {
+        if (edit()) {
+            beginCancelableEdit();
+        } else {
+            commitCancelableEdit();
         }
     }
+
+    if ((key.isLeft() || key.isRight()) && selectedRow() == NoteSequenceListModel::Item::Scale && edit()) {
+        refreshScalePreview();
+    }
+
+    if (key.isEncoder()) {
+        auto row = ListPage::selectedRow();
+        if (row == NoteSequenceListModel::Item::Scale) {
+            _listModel.setSelectedScale(_project.scale());
+            if (!edit()) {
+                clearScalePreview();
+            }
+        }
+    }
+}
+
+void NoteSequencePage::encoder(EncoderEvent &event) {
+    ListPage::encoder(event);
+
+    if (selectedRow() == NoteSequenceListModel::Item::Scale && edit()) {
+        refreshScalePreview();
+    }
+}
+
+void NoteSequencePage::refreshScalePreview() {
+    clearScalePreview();
+    auto &sequence = _project.selectedNoteSequence();
+    sequence = _editSnapshot;
+    _listModel.applySelectedScale(_project.scale());
+}
+
+void NoteSequencePage::clearScalePreview() {
+    _engine.trackEngine(_project.selectedTrackIndex()).as<NoteTrackEngine>().clearPreviewSequence();
+}
+
+bool NoteSequencePage::isCancelableEditRow(int row) const {
+    return row == NoteSequenceListModel::Item::Scale || row == NoteSequenceListModel::Item::RootNote;
+}
+
+void NoteSequencePage::beginCancelableEdit() {
+    _editSnapshot = _project.selectedNoteSequence();
+    _hasCancelableEdit = true;
+}
+
+void NoteSequencePage::commitCancelableEdit() {
+    _hasCancelableEdit = false;
+    clearScalePreview();
+}
+
+void NoteSequencePage::cancelCancelableEdit() {
+    auto &sequence = _project.selectedNoteSequence();
+    sequence = _editSnapshot;
+    _listModel.setSequence(&sequence);
+    _listModel.syncSelectedScale();
+    clearScalePreview();
+    _hasCancelableEdit = false;
+    setEdit(false);
 }
 
 void NoteSequencePage::contextShow(bool doubleClick) {
