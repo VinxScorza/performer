@@ -40,6 +40,8 @@ public:
 
     const NoteSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const NoteSequence &sequence) const { return &sequence == _sequence; }
+    void setPreviewSequence(const NoteSequence *sequence) { _previewSequence = sequence; }
+    void clearPreviewSequence() { _previewSequence = nullptr; }
 
     int currentStep() const { return _currentStep; }
     int currentRecordStep() const { return _stepRecorder.stepIndex(); }
@@ -66,12 +68,17 @@ private:
         return (_noteTrack.fillMuted() || !TrackEngine::mute()) ? TrackEngine::fill() : false;
     }
 
+    const NoteSequence &activeSequence() const {
+        return _previewSequence ? *_previewSequence : *_sequence;
+    }
+
     NoteTrack &_noteTrack;
 
     TrackLinkData _linkData;
 
     NoteSequence *_sequence;
     const NoteSequence *_fillSequence;
+    const NoteSequence *_previewSequence = nullptr;
 
     uint32_t _freeRelativeTick;
     SequenceState _sequenceState;

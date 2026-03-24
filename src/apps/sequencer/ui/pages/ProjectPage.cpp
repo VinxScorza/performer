@@ -67,9 +67,11 @@ void ProjectPage::keyPress(KeyPressEvent &event) {
 
     if (key.pageModifier()) {
         // easter egg
+#ifdef CONFIG_ENABLE_ASTEROIDS
         if (key.is(Key::Step15)) {
             _manager.pages().asteroids.show();
         }
+#endif
         return;
     }
 

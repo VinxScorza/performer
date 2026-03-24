@@ -38,6 +38,14 @@ static const ContextMenuModel::Item saveContextMenuItems[] = {
     { "SAVE AS"},
 };
 
+static const char *cancelFunctionNames[] = {
+    "",
+    "",
+    "",
+    "",
+    "CANCEL",
+};
+
 
 ArpSequencePage::ArpSequencePage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel)
@@ -48,6 +56,10 @@ void ArpSequencePage::enter() {
 }
 
 void ArpSequencePage::exit() {
+    if (_hasCancelableEdit) {
+        cancelCancelableEdit();
+    }
+    clearScalePreview();
     _listModel.setSequence(nullptr);
 }
 
@@ -55,7 +67,11 @@ void ArpSequencePage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "SEQUENCE");
     WindowPainter::drawActiveFunction(canvas, Track::trackModeName(_project.selectedTrack().trackMode()));
-    WindowPainter::drawFooter(canvas);
+    if (edit() && isCancelableEditRow(selectedRow())) {
+        WindowPainter::drawFooter(canvas, cancelFunctionNames, pageKeyState(), 4);
+    } else {
+        WindowPainter::drawFooter(canvas);
+    }
 
     ListPage::draw(canvas);
 }
@@ -91,6 +107,12 @@ void ArpSequencePage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.isFunction() && key.is(Key::F4) && edit() && isCancelableEditRow(selectedRow())) {
+        cancelCancelableEdit();
+        event.consume();
+        return;
+    }
+
     if (key.is(Key::Encoder) && selectedRow() == 0) {
         _manager.pages().textInput.show("NAME:", _project.selectedArpSequence().name(), ArpSequence::NameLength, [this] (bool result, const char *text) {
             if (result) {
@@ -104,12 +126,71 @@ void ArpSequencePage::keyPress(KeyPressEvent &event) {
     if (!event.consumed()) {
         ListPage::keyPress(event);
     }
-    if (key.isEncoder()) {
-        auto row = ListPage::selectedRow();
-        if (row == 3) {
-            _listModel.setSelectedScale(_project.scale());
+
+    if (key.isEncoder() && isCancelableEditRow(selectedRow())) {
+        if (edit()) {
+            beginCancelableEdit();
+        } else {
+            commitCancelableEdit();
         }
     }
+
+    if ((key.isLeft() || key.isRight()) && selectedRow() == ArpSequenceListModel::Item::Scale && edit()) {
+        refreshScalePreview();
+    }
+
+    if (key.isEncoder()) {
+        auto row = ListPage::selectedRow();
+        if (row == ArpSequenceListModel::Item::Scale) {
+            _listModel.setSelectedScale(_project.scale());
+            if (!edit()) {
+                clearScalePreview();
+            }
+        }
+    }
+}
+
+void ArpSequencePage::encoder(EncoderEvent &event) {
+    ListPage::encoder(event);
+
+    if (selectedRow() == ArpSequenceListModel::Item::Scale && edit()) {
+        refreshScalePreview();
+    }
+}
+
+void ArpSequencePage::refreshScalePreview() {
+    clearScalePreview();
+    auto &sequence = _project.selectedArpSequence();
+    sequence = _editSnapshot;
+    _listModel.applySelectedScale(_project.scale());
+}
+
+void ArpSequencePage::clearScalePreview() {
+    _engine.trackEngine(_project.selectedTrackIndex()).as<ArpTrackEngine>().clearPreviewSequence();
+}
+
+bool ArpSequencePage::isCancelableEditRow(int row) const {
+    return row == ArpSequenceListModel::Item::Scale || row == ArpSequenceListModel::Item::RootNote;
+}
+
+void ArpSequencePage::beginCancelableEdit() {
+    _editSnapshot = _project.selectedArpSequence();
+    _hasCancelableEdit = true;
+}
+
+void ArpSequencePage::commitCancelableEdit() {
+    _hasCancelableEdit = false;
+    clearScalePreview();
+}
+
+void ArpSequencePage::cancelCancelableEdit() {
+    auto &sequence = _project.selectedArpSequence();
+    sequence = _editSnapshot;
+    _listModel.setSequence(&sequence);
+    _listModel.syncSelectedScale();
+    clearScalePreview();
+    _hasCancelableEdit = false;
+    setEdit(false);
 }
 
 void ArpSequencePage::contextShow(bool doubleClick) {

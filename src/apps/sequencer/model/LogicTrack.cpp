@@ -40,7 +40,7 @@ void LogicTrack::clear() {
     setFillMode(FillMode::Gates);
     setFillMuted(true);
     setCvUpdateMode(CvUpdateMode::Gate);
-    setSlideTime(50);
+    setSlideTime(20);
     setOctave(0);
     setTranspose(0);
     setRotate(0);

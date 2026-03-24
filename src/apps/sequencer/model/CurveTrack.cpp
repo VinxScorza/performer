@@ -34,7 +34,7 @@ void CurveTrack::clear() {
     setPlayMode(Types::PlayMode::Aligned);
     setFillMode(FillMode::None);
     setMuteMode(MuteMode::LastValue);
-    setSlideTime(0);
+    setSlideTime(20);
     setOffset(0);
     setRotate(0);
     setShapeProbabilityBias(0);

@@ -76,6 +76,8 @@ public:
 
     const ArpSequence &sequence() const { return *_sequence; }
     bool isActiveSequence(const ArpSequence &sequence) const { return &sequence == _sequence; }
+    void setPreviewSequence(const ArpSequence *sequence) { _previewSequence = sequence; }
+    void clearPreviewSequence() { _previewSequence = nullptr; }
 
     int currentStep() const { return _currentStep; }
     int currentRecordStep() const { return _stepRecorder.stepIndex(); }
@@ -124,10 +126,14 @@ private:
     void advanceStep();
     void advanceOctave();
     int getNextWeightedPitch(std::vector<ArpStep> distr, int notesPerOctave = 12);
-    int evalRestProbability(ArpSequence &sequence);
+    int evalRestProbability(const ArpSequence &sequence);
 
     bool fill() const {
         return (_arpTrack.fillMuted() || !TrackEngine::mute()) ? TrackEngine::fill() : false;
+    }
+
+    const ArpSequence &activeSequence() const {
+        return _previewSequence ? *_previewSequence : *_sequence;
     }
 
     ArpTrack &_arpTrack;
@@ -136,6 +142,7 @@ private:
 
     ArpSequence *_sequence;
     const ArpSequence *_fillSequence;
+    const ArpSequence *_previewSequence = nullptr;
 
     uint32_t _freeRelativeTick;
     SequenceState _sequenceState;

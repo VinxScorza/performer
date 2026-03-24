@@ -15,8 +15,16 @@ public:
     virtual void updateLeds(Leds &leds) override;
 
     virtual void keyPress(KeyPressEvent &event) override;
+    virtual void encoder(EncoderEvent &event) override;
 
 private:
+    bool isCancelableEditRow(int row) const;
+    void beginCancelableEdit();
+    void commitCancelableEdit();
+    void cancelCancelableEdit();
+    void refreshScalePreview();
+    void clearScalePreview();
+
     void contextShow(bool doubleClick = false);
     void saveContextShow(bool doubleClick = false);
     void saveContextAction(bool doubleClick = false);
@@ -37,4 +45,6 @@ private:
     void loadSequenceFromSlot(int slot);
 
     NoteSequenceListModel _listModel;
+    NoteSequence _editSnapshot;
+    bool _hasCancelableEdit = false;
 };

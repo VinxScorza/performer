@@ -136,17 +136,19 @@ public:
 
     int scale() const { return _scale; }
     void setScale(int s) {
-        auto &pScale = Scale::get(scale());
+        int previousScaleIndex = clamp(scale(), 0, Scale::Count - 1);
+        int newScaleIndex = clamp(s, 0, Scale::Count - 1);
 
-        _scale = clamp(s, 0, Scale::Count - 1);
+        auto &pScale = Scale::get(previousScaleIndex);
+        auto &aScale = Scale::get(newScaleIndex);
 
-        auto &aScale = Scale::get(s);
+        _scale = newScaleIndex;
 
         if (pScale == aScale) {
             return;
         }
 
-        if (s != -1 && aScale.isChromatic() && pScale.isChromatic()) {
+        if (aScale.isChromatic() && pScale.isChromatic()) {
 
             for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {    
                     auto &t = track(trackIndex);
@@ -686,17 +688,17 @@ private:
     float _orinalTempo;
     Routable<uint8_t> _swing;
     TimeSignature _timeSignature;
-    uint8_t _syncMeasure;
-    uint8_t _scale;
-    uint8_t _rootNote;
-    Types::RecordMode _recordMode;
-    Types::MonitorMode _monitorMode;
-    Types::MidiInputMode _midiInputMode;
+    uint8_t _syncMeasure = 1;
+    uint8_t _scale = 0;
+    uint8_t _rootNote = 0;
+    Types::RecordMode _recordMode = Types::RecordMode::Overdub;
+    Types::MonitorMode _monitorMode = Types::MonitorMode::Always;
+    Types::MidiInputMode _midiInputMode = Types::MidiInputMode::All;
     MidiSourceConfig _midiInputSource;
-    Types::MidiIntegrationMode _midiIntegrationMode;
-    uint8_t _midiProgramOffset;
-    Types::CvGateInput _cvGateInput;
-    Types::CurveCvInput _curveCvInput;
+    Types::MidiIntegrationMode _midiIntegrationMode = Types::MidiIntegrationMode::None;
+    uint8_t _midiProgramOffset = 0;
+    Types::CvGateInput _cvGateInput = Types::CvGateInput::Off;
+    Types::CurveCvInput _curveCvInput = Types::CurveCvInput::Off;
 
     ClockSetup _clockSetup;
     TrackArray _tracks;
@@ -707,11 +709,11 @@ private:
     Routing _routing;
     MidiOutput _midiOutput;
 
-    uint8_t _stepsToStop;
-    uint8_t _recordDelay;
+    uint8_t _stepsToStop = 0;
+    uint8_t _recordDelay = 0;
 
-    bool _resetCvOnStop;
-    bool _useMultiCv;
+    bool _resetCvOnStop = false;
+    bool _useMultiCv = true;
 
     int _selectedTrackIndex = 0;
     int _selectedPatternIndex = 0;

@@ -8,6 +8,13 @@
 
 <sub>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.4.6 (24 March 2026)
+- Lower the default UI refresh to `30 fps` and skip LCD redraws when the framebuffer hash has not changed, reducing unnecessary display traffic without adding a second framebuffer
+- Add immediate `Scale` prelisten preview on Note and Arp sequence pages, while keeping commit on encoder press; add `CANCEL` to `Scale` and `Root Note` editing so preview changes can be discarded safely
+- Change the default `Slide Time` to `20%` across track types that expose it, tighten the generator menu mapping so non-Note tracks no longer show a duplicate `Euclidean`, and clean dead `PatternPage` code that kept an unused dynamic allocation around
+- Turn `Task Profiler` off by default and disable the `Asteroids` easter egg feature in the active build to recover RAM headroom for regular firmware use
+- Refresh the simulator/browser demo state and bundled sound engine setup for the current local line, including a revised Track 8 synth voice and updated drum sample set
+
 # v0.3.2-vinx.1.4.5 (22 March 2026)
 - Refine generator preview rendering: make the 16-step bank indicator thinner and framed, slim down the playback playhead, refine `Random` preview rendering, and align `Acid` `Slide` / `Phrase` note and slide lanes more cleanly on the LCD
 - Make `Random` preview layer-aware on Note tracks, reusing `Acid`-style Gate, Note, and Slide visuals where they make sense and introducing dedicated views for Length and repeat-style layers

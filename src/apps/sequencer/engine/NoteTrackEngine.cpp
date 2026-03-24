@@ -128,7 +128,7 @@ void NoteTrackEngine::restart() {
 
 TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
-    const auto &sequence = *_sequence;
+    const auto &sequence = activeSequence();
     const auto *linkData = _linkedTrackEngine ? _linkedTrackEngine->linkData() : nullptr;
 
     if (linkData) {
@@ -157,7 +157,7 @@ TrackEngine::TickResult NoteTrackEngine::tick(uint32_t tick) {
             reset();
             _currentStageRepeat = 1;
         }
-        auto &sequence = *_sequence;
+        const auto &sequence = activeSequence();
 
         // advance sequence
         switch (_noteTrack.playMode()) {
@@ -267,7 +267,7 @@ void NoteTrackEngine::update(float dt) {
     bool running = _engine.state().running();
     bool recording = _engine.state().recording();
 
-    const auto &sequence = *_sequence;
+    const auto &sequence = activeSequence();
     const auto &scale = sequence.selectedScale(_model.project().scale());
     int rootNote = sequence.selectedRootNote(_model.project().rootNote());
     int octave = _noteTrack.octave();
@@ -341,6 +341,7 @@ void NoteTrackEngine::update(float dt) {
 void NoteTrackEngine::changePattern() {
     _sequence = &_noteTrack.sequence(pattern());
     _fillSequence = &_noteTrack.sequence(std::min(pattern() + 1, CONFIG_PATTERN_COUNT - 1));
+    _previewSequence = nullptr;
 }
 
 void NoteTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
@@ -378,8 +379,8 @@ void NoteTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextS
     bool useFillSequence = fillStep && _noteTrack.fillMode() == NoteTrack::FillMode::NextPattern;
     bool useFillCondition = fillStep && _noteTrack.fillMode() == NoteTrack::FillMode::Condition;
 
-    const auto &sequence = *_sequence;
-    const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
+    const auto &sequence = activeSequence();
+    const auto &evalSequence = useFillSequence ? *_fillSequence : activeSequence();
 
     // TODO do we need to encounter rotate?
     _currentStep = SequenceUtils::rotateStep(_sequenceState.step(), sequence.firstStep(), sequence.lastStep(), rotate);
@@ -551,8 +552,9 @@ void NoteTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
 }
 
 int NoteTrackEngine::noteFromMidiNote(uint8_t midiNote) const {
-    const auto &scale = _sequence->selectedScale(_model.project().scale());
-    int rootNote = _sequence->selectedRootNote(_model.project().rootNote());
+    const auto &sequence = activeSequence();
+    const auto &scale = sequence.selectedScale(_model.project().scale());
+    int rootNote = sequence.selectedRootNote(_model.project().rootNote());
 
     if (scale.isChromatic()) {
         return scale.noteFromVolts((midiNote - 60 - rootNote) * (1.f / 12.f));

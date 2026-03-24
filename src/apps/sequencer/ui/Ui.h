@@ -59,6 +59,8 @@ private:
     FrameBuffer8bit _frameBuffer;
     Canvas _canvas;
     uint32_t _lastFrameBufferUpdateTicks;
+    bool _frameBufferDirty = true;
+    uint32_t _lastFrameBufferHash = 0;
 
     KeyState _pageKeyState;
     KeyState _globalKeyState;

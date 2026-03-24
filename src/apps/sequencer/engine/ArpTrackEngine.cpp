@@ -44,7 +44,7 @@ static bool evalMIDIStepGate(const ArpSequence::Step &step, int probabilityBias)
 }
 
 // evaluate if step gate is active
- int ArpTrackEngine::evalRestProbability(ArpSequence &sequence) {
+ int ArpTrackEngine::evalRestProbability(const ArpSequence &sequence) {
     int sum = 0;
     std::vector<ArpStep> probability;
     for (int i = 0; i < 4; i++) {
@@ -248,7 +248,7 @@ void ArpTrackEngine::restart() {
 
 TrackEngine::TickResult ArpTrackEngine::tick(uint32_t tick) {
     ASSERT(_sequence != nullptr, "invalid sequence");
-    const auto &sequence = *_sequence;
+    const auto &sequence = activeSequence();
     const auto *linkData = _linkedTrackEngine ? _linkedTrackEngine->linkData() : nullptr;
 
     if (linkData) {
@@ -354,7 +354,7 @@ void ArpTrackEngine::update(float dt) {
     _noteCount = _notes.size();
     bool running = _engine.state().running();
 
-    const auto &sequence = *_sequence;
+    const auto &sequence = activeSequence();
     const auto &scale = sequence.selectedScale(_model.project().scale());
     int rootNote = sequence.selectedRootNote(_model.project().rootNote());
     int octave = _arpTrack.octave();
@@ -423,13 +423,14 @@ void ArpTrackEngine::changePattern() {
  
     _sequence = &_arpTrack.sequence(pattern());
     _fillSequence = &_arpTrack.sequence(std::min(pattern() + 1, CONFIG_PATTERN_COUNT - 1));
+    _previewSequence = nullptr;
 }
 
 void ArpTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
     _noteCount = _notes.size();
     _recordHistory.write(tick, message);
 
-    auto &sequence = *_sequence;
+    const auto &sequence = activeSequence();
     const auto &scale = sequence.selectedScale(_model.project().scale());
     int octave = _arpTrack.octave();
     int transpose = _arpTrack.transpose();
@@ -497,8 +498,8 @@ void ArpTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextSt
     bool useFillSequence = fillStep && _arpTrack.fillMode() == ArpTrack::FillMode::NextPattern;
     bool useFillCondition = fillStep && _arpTrack.fillMode() == ArpTrack::FillMode::Condition;
 
-    auto &sequence = *_sequence;
-    const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
+    const auto &sequence = activeSequence();
+    const auto &evalSequence = useFillSequence ? *_fillSequence : activeSequence();
 
     if (!_arpeggiator.hold() && !isKeyPressed()) {
         for (int i = 0; i < _noteCount; ++i) {
@@ -667,8 +668,9 @@ void ArpTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
 }
 
 int ArpTrackEngine::noteFromMidiNote(uint8_t midiNote) const {
-    const auto &scale = _sequence->selectedScale(_model.project().scale());
-    int rootNote = _sequence->selectedRootNote(_model.project().rootNote());
+    const auto &sequence = activeSequence();
+    const auto &scale = sequence.selectedScale(_model.project().scale());
+    int rootNote = sequence.selectedRootNote(_model.project().rootNote());
 
     if (scale.isChromatic()) {
         return scale.noteFromVolts((midiNote - 60 - rootNote) * (1.f / 12.f));
@@ -742,7 +744,7 @@ int ArpTrackEngine::noteIndexFromOrder(int order) {
 void ArpTrackEngine::advanceStep() {
     _noteIndex = 0;
     _noteCount = _notes.size();
-    auto &sequence = *_sequence;
+    const auto &sequence = activeSequence();
     uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
     uint32_t resetDivisor = sequence.resetMeasure() * _engine.measureDivisor();
     uint32_t relativeTick = resetDivisor == 0 ? _engine.tick() : _engine.tick() % resetDivisor;

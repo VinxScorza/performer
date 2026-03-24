@@ -72,8 +72,8 @@ public:
         _invSampleRate(1.f / sampleRate)
     {
         setMode(LowPass);
-        setFrequency(0.05f * sampleRate);
-        setResonance(0.8f);
+        setFrequency(0.025f * sampleRate);
+        setResonance(0.92f);
     }
 
     Mode mode() const { return _mode; }
@@ -146,10 +146,10 @@ public:
     ADSR(float sampleRate) :
         _invSampleRate(1.f / sampleRate)
     {
-        setAttack(0.01f);
-        setDecay(0.f);
-        setSustain(1.f);
-        setRelease(0.1f);
+        setAttack(0.002f);
+        setDecay(0.12f);
+        setSustain(0.35f);
+        setRelease(0.08f);
     }
 
     float attack() const { return _attack; }
@@ -243,9 +243,10 @@ public:
     Voice(float sampleRate) :
         _osc(sampleRate),
         _filter(sampleRate),
-        _envVolume(sampleRate)
+        _envVolume(sampleRate),
+        _lfoIncrement(0.18f / sampleRate)
     {
-        _osc.setWaveform(Oscillator::Square);
+        _osc.setWaveform(Oscillator::Sawtooth);
     }
 
     void setGate(bool gate) {
@@ -257,6 +258,9 @@ public:
     }
 
     inline float process() {
+        const float lfo = 0.5f + 0.5f * std::sin(TWO_PI * _lfoPhase);
+        _lfoPhase = std::fmod(_lfoPhase + _lfoIncrement, 1.f);
+        _filter.setFrequency(900.f + lfo * 350.f);
         return _filter.process(_osc.process()) * _envVolume.process() * _gain;
     }
 
@@ -266,7 +270,9 @@ private:
     Oscillator _osc;
     Filter _filter;
     ADSR _envVolume;
-    float _gain = 0.3f;
+    float _gain = 0.5f;
+    float _lfoPhase = 0.f;
+    float _lfoIncrement;
 };
 
 
