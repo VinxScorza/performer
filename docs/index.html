@@ -59,6 +59,54 @@
       </section>
 
       <section>
+        <h3>What’s New in Vinx Fork</h3>
+        <p>
+          A quick overview of the most relevant fixes and workflow changes introduced in the Vinx fork beyond <a href="https://github.com/mebitek/performer/releases/tag/v0.3.2" target="_blank" rel="noopener noreferrer">Mebitek `v0.3.2`</a>.
+        </p>
+        <h4>Fixes</h4>
+        <ul>
+          <li>Fix crashes and reboots when shifting 64-step Note sequences</li>
+          <li>Fix step-shift range handling across Note, Logic, Curve, Stochastic, and Arp sequences</li>
+          <li>Restore the browser-based Test Drive as a working public build of the current fork line</li>
+          <li>Include further small UI, workflow, and dead-code fixes beyond the headline changes</li>
+        </ul>
+        <h4>Improvements</h4>
+        <ul>
+          <li>Add the new `Acid` Note-track generator with `Layer / Phrase` modes, where `Phrase` writes coordinated `Gate + Note + Slide` material</li>
+          <li>Add non-destructive `Random` preview with `A/B` comparison and `Variation`</li>
+          <li>Extend `Random` to 32-bit seeds shown as 8-digit hexadecimal values, randomize the seed on entry and on change, and remove the old linear seed stepping workflow</li>
+          <li>Make `Random` previews layer-aware on Note tracks</li>
+          <li>Add immediate `Scale` prelisten on Note and Arp sequence pages</li>
+          <li>Add `Cancel` while editing `Scale` and `Root Note`</li>
+          <li>Redesign generator previews for `Random` and `Acid` on the LCD</li>
+          <li>Make sequence-page `prev / next` navigation cyclic</li>
+          <li>Rescale the Swing display from `50%–75%` to `0%–99%` while preserving engine timing compatibility with existing projects</li>
+          <li>Introduce three `Dim Sequence` levels instead of a single on/off behavior</li>
+          <li>Increase the default output clock pulse from `1 ms` to `10 ms`</li>
+          <li>Lower the default UI refresh to `30 fps`</li>
+          <li>Skip LCD redraws when the framebuffer hash has not changed</li>
+          <li>Update and realign the manual to the current Vinx fork line</li>
+          <li>Publish the Launchpad cheat sheet on the site</li>
+          <li>Refresh the built-in simulator demo project with an updated drumkit and revised browser sound setup</li>
+        </ul>
+        <p>
+          See the full
+          <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
+          for the complete list of Vinx-specific changes.
+        </p>
+      </section>
+
+      <section>
+        <h3>Vinx Fork Notes</h3>
+        <ul>
+          <li>Current fork line: <strong>v0.3.2-vinx.1.4.6</strong></li>
+          <li><a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a> tracks Vinx-specific fixes and features</li>
+          <li><a href="https://github.com/VinxScorza/performer/blob/master/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the fork status and upstream references</li>
+          <li>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes</li>
+        </ul>
+      </section>
+
+      <section>
         <h3>Features</h3>
         <ul>
           <li>8 track sequencer</li>
@@ -107,43 +155,6 @@
           <li>Depth: 25mm</li>
           <li>Power: 100mA @ +12V, 15mA @ -12V (not including USB host power)</li>
         </ul>
-      </section>
-
-      <section>
-        <h3>Vinx Fork Notes</h3>
-        <ul>
-          <li>Current fork line: <strong>v0.3.2-vinx.1.4.6</strong></li>
-          <li><a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a> tracks Vinx-specific fixes and features</li>
-          <li><a href="https://github.com/VinxScorza/performer/blob/master/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the fork status and upstream references</li>
-          <li>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>What’s New in Vinx Fork</h3>
-        <p>
-          A quick overview of the most relevant workflow changes currently introduced in the Vinx fork.
-        </p>
-        <ul>
-          <li>The current local line adds sequence-scale prelisten on Note and Arp pages, with safe `CANCEL` during `Scale` and `Root Note` editing</li>
-          <li>The UI now targets `30 fps` and skips LCD redraws when the framebuffer is unchanged, reducing unnecessary display traffic on hardware</li>
-          <li>`Task Profiler` is now off by default and the old `Asteroids` easter egg is disabled in the active build to recover memory headroom</li>
-          <li>Generator previews have been tightened further: thinner framed 16-step bank indicator, slimmer playhead, more expressive `Random` previews, and cleaner `Acid` `Slide` / `Phrase` lane alignment</li>
-          <li>`Random` preview is now layer-aware on Note tracks, borrowing the `Acid` visual language for `Gate`, `Note`, and `Slide`, with dedicated shapes for `Length` and repeat-oriented layers</li>
-          <li>The `F4` Note submenu/cycle now follows `Note`, `Slide`, `Note Range`, `Note Prob`, `Bypass Scale`</li>
-          <li>`Acid` is now available as a Note-track generator, with `Layer / Phrase` modes and coordinated non-destructive preview for `Gate`, `Note`, and `Slide`</li>
-          <li>Generator previews have been redesigned: `Random` uses a central-baseline 64-step graph, while `Acid` gets dedicated Note, Gate, Slide, and Phrase renderings with a playback-following playhead</li>
-          <li>Non-destructive Random Generate workflow with safe preview, A/B comparison, and explicit Apply/Cancel</li>
-          <li>Full 32-bit Random seed space, shown as 8-digit hexadecimal values, with faster exploration through NEW SEED</li>
-          <li>Generate opens on the current 16-step bank, with screen state, page LEDs, and cyclic bank navigation kept in sync</li>
-          <li>Step visualization is more descriptive: gate offset shifts the inner block, length changes its width, and retrigger is shown as a striped pattern</li>
-          <li>Reset CV now defaults to Off, so Note tracks keep their last CV value when playback stops</li>
-        </ul>
-        <p>
-          See the full
-          <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
-          for the complete list of Vinx-specific changes.
-        </p>
       </section>
 
       <section>
