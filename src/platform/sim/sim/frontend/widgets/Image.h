@@ -20,7 +20,7 @@ public:
         auto nvg = renderer.nvg();
 
         if (_image == -1) {
-            _image = nvgCreateImage(nvg, _filename.c_str(), NVG_IMAGE_GENERATE_MIPMAPS);
+            _image = nvgCreateImage(nvg, _filename.c_str(), 0);
             _pattern = nvgImagePattern(nvg, _pos.x(), _pos.y(), _size.x(), _size.y(), 0.f, _image, 1.f);;
         }
 
