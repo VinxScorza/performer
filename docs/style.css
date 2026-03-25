@@ -490,6 +490,20 @@ strong {
   background: rgba(214, 164, 77, 0.08);
 }
 
+.donate-callout {
+  margin-top: 8px;
+  padding: 18px 20px;
+  border-left-color: #e4d38a;
+  background: rgba(228, 211, 138, 0.12);
+}
+
+.donate-callout p {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.45;
+  color: #fff7d6;
+}
+
 .notice p:last-child,
 .simulator-shell p:last-child {
   margin-bottom: 0;
