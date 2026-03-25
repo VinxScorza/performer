@@ -351,6 +351,63 @@ strong {
   color: #ffffff;
 }
 
+.manual-body table {
+  width: 100%;
+  margin: 18px 0 22px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.manual-body thead th {
+  padding: 10px 12px;
+  background: rgba(203, 178, 111, 0.14);
+  border-bottom: 1px solid rgba(203, 178, 111, 0.26);
+  color: #fff5d7;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: bottom;
+}
+
+.manual-body tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.manual-body tbody tr:hover {
+  background: rgba(203, 178, 111, 0.08);
+}
+
+.manual-body td {
+  padding: 9px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: #efefef;
+  vertical-align: top;
+}
+
+.manual-body th + th,
+.manual-body td + td {
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.manual-body table code {
+  font-size: 0.92em;
+  color: #fff2b0;
+}
+
+.manual-body table td:first-child,
+.manual-body table th:first-child {
+  font-weight: 600;
+  color: #f4edcf;
+}
+
 #footer_wrap {
   border-top: 1px solid #101010;
   background: #171717;
@@ -476,6 +533,18 @@ strong {
   .manual-body h4 {
     font-size: 16px;
     margin-left: 16px;
+  }
+
+  .manual-body table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  .manual-body thead th,
+  .manual-body td {
+    padding: 8px 10px;
   }
 
   .embed-frame {
