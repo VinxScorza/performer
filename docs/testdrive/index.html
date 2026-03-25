@@ -78,6 +78,9 @@
           The current firmware line also includes the new Note-track generator <code>Chaos</code>. Even when the browser bundle is current, the native simulator and hardware firmware should still be treated as the final reference for timing, responsiveness, and exact behavior.
         </p>
         <p>
+          The current hotfix line also clarifies step initialization behavior: <code>SHIFT + PAGE -&gt; INIT LAYER</code> now resets only the active layer, while <code>GEN -&gt; Init Seq</code> resets sequence steps with the same selection-aware scope used by the other generators.
+        </p>
+        <p>
           Historical simulator reference:
           <a href="https://mebitek.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Mebitek Test Drive</a>
           and
