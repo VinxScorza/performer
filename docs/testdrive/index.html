@@ -74,6 +74,9 @@
             Audio is now attempted automatically on startup, while still falling back gracefully to the first user interaction if the browser blocks autoplay.
           </p>
           <p>
+            This browser Test Drive should be treated as a convenient reference build, not as a perfect representation of the hardware module or the desktop simulator. Timing, audio behavior, browser input handling, and some UI details may still differ from the real firmware experience on hardware or in the native simulator.
+          </p>
+          <p>
             If the embed does not start correctly in your browser, open the standalone build:
             <a href="./sim/sequencer.html">local simulator shell</a>.
           </p>
@@ -142,6 +145,9 @@
         <p>
           Browser behavior can still vary between engines. If keyboard control feels unresponsive after clicking
           elsewhere, use the simulator toolbar to focus the canvas again.
+        </p>
+        <p>
+          Even when the browser build is working correctly, always consider the hardware module and the native simulator as the final reference for timing, responsiveness, and exact behavior.
         </p>
       </section>
     </main>
