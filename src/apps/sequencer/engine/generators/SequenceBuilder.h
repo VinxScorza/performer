@@ -32,7 +32,7 @@ public:
     virtual void clearSteps() = 0;
     virtual void copyStep(int fromIndex, int toIndex) = 0;
 
-    virtual void clearLayer() = 0;
+    virtual void clearLayer(const std::bitset<CONFIG_STEP_COUNT> &selected) = 0;
 };
 
 template<typename T>
@@ -109,9 +109,13 @@ public:
         _preview.step(_preview.firstStep() + toIndex) = _original.step(_original.firstStep() + fromIndex);
     }
 
-    void clearLayer() override {
-        for (auto &step : _preview.steps()) {
-            step.setLayerValue(_layer, _default);
+    void clearLayer(const std::bitset<CONFIG_STEP_COUNT> &selected) override {
+        for (int i = 0; i < int(_preview.steps().size()); ++i) {
+            const bool targetStep = selected.any() ? selected[i] : (i >= _preview.firstStep() && i <= _preview.lastStep());
+            if (!targetStep) {
+                continue;
+            }
+            _preview.step(i).setLayerValue(_layer, _default);
         }
     }
 
@@ -223,10 +227,10 @@ public:
         _preview.step(_preview.firstStep() + toIndex) = _original.step(_original.firstStep() + fromIndex);
     }
 
-    void clearLayer() override {
+    void clearLayer(const std::bitset<CONFIG_STEP_COUNT> &selected) override {
         if (_applyMode == ApplyMode::Phrase) {
             for (int i = 0; i < int(_preview.steps().size()); ++i) {
-                if (isTargetStep(i)) {
+                if (selected.any() ? selected[i] : isTargetStep(i)) {
                     auto &step = _preview.step(i);
                     step.setGate(false);
                     step.setSlide(false);
@@ -237,7 +241,7 @@ public:
 
         const int defaultValue = NoteSequence::layerDefaultValue(_layer);
         for (int i = 0; i < int(_preview.steps().size()); ++i) {
-            if (isTargetStep(i)) {
+            if (selected.any() ? selected[i] : isTargetStep(i)) {
                 _preview.step(i).setLayerValue(_layer, defaultValue);
             }
         }
@@ -380,7 +384,8 @@ public:
         _preview.step(_preview.firstStep() + toIndex) = _original.step(_original.firstStep() + fromIndex);
     }
 
-    void clearLayer() override {
+    void clearLayer(const std::bitset<CONFIG_STEP_COUNT> &selected) override {
+        (void)selected;
         _preview = _original;
     }
 
