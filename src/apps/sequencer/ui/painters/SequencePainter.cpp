@@ -4,7 +4,31 @@
 #include "model/StochasticSequence.h"
 #include "model/LogicSequence.h"
 #include "model/ArpSequence.h"
+#include <algorithm>
 #include <bitset>
+
+namespace {
+
+void drawMiniGlyph(Canvas &canvas, int x, int y, const uint8_t *rows, int height, int width = 3) {
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
+            if ((rows[row] >> (width - 1 - col)) & 0x1) {
+                canvas.point(x + col, y + row);
+            }
+        }
+    }
+}
+
+void drawMiniConditionMark(Canvas &canvas, int x, int y) {
+    static const uint8_t cRows[] = {
+        0b110,
+        0b100,
+        0b110,
+    };
+    drawMiniGlyph(canvas, x, y, cRows, 3);
+}
+
+}
 
 Color SequencePainter::dimSequenceColor(uint8_t dimSetting) {
     switch (dimSetting) {
@@ -27,6 +51,55 @@ void SequencePainter::drawLoopEnd(Canvas &canvas, int x, int y, int w) {
     x += w - 1;
     canvas.vline(x, y - 1, 3);
     canvas.point(x - 1, y);
+}
+
+void SequencePainter::drawStepIndex(Canvas &canvas, int x, int y, int stepWidth, int stepNumber, bool selected, bool hasCondition) {
+    canvas.setColor(selected ? Color::Bright : Color::Medium);
+    FixedStringBuilder<8> str("%d", stepNumber);
+    int textX = x + (stepWidth - canvas.textWidth(str) + 1) / 2;
+    canvas.drawText(textX, y - 2, str);
+
+    if (hasCondition) {
+        canvas.setColor(selected ? Color::Bright : Color::MediumLow);
+        int numberHeight = canvas.textHeight(str);
+        int numberWidth = canvas.textWidth(str);
+        int condX = textX + numberWidth + 1;
+        int condY = (y - 2) + std::max(0, (numberHeight - 3) / 2) - 3;
+        drawMiniConditionMark(canvas, condX, condY);
+    }
+}
+
+void SequencePainter::drawGateBody(Canvas &canvas, int x, int y, int stepWidth, int gateOffset, int maxGateOffset, int length, int maxLength, int retrigger, int maxRetrigger, bool slide) {
+    constexpr int gateInset = 3;
+    constexpr int gateShiftRange = 3;
+    int gateArea = stepWidth - 2 * gateInset;
+    int gateOffsetShift = (gateOffset * gateShiftRange) / (maxGateOffset + 1);
+    int gateWidth = 3 + ((gateArea - 3) * (length + 1)) / maxLength;
+    int gateX = x + gateInset + gateOffsetShift + (gateArea - gateWidth) / 2;
+    int gateY = y + gateInset;
+
+    canvas.fillRect(gateX, gateY, gateWidth, gateArea);
+
+    if (retrigger > 0) {
+        int stepBoxY = y + 2;
+        int stepBoxSize = stepWidth - 4;
+        int dashHeight = 2;
+        int dashY = stepBoxY + std::max(0, (stepBoxSize - dashHeight) / 2);
+        canvas.setColor(Color::Bright);
+        SequencePainter::drawRetrigger(canvas, x, dashY, stepWidth, dashHeight, retrigger + 1, maxRetrigger);
+    }
+
+    if (slide) {
+        canvas.setColor(Color::MediumBright);
+        int tieStartX = x + stepWidth - 3;
+        int tieStartY = y + stepWidth - 3;
+        int tieMidX = x + stepWidth;
+        int tieMidY = tieStartY + 2;
+        int tieEndX = x + stepWidth + 3;
+        int tieEndY = tieStartY;
+        canvas.line(tieStartX, tieStartY, tieMidX, tieMidY);
+        canvas.line(tieMidX, tieMidY, tieEndX, tieEndY);
+    }
 }
 
 void SequencePainter::drawOffset(Canvas &canvas, int x, int y, int w, int h, int offset, int minOffset, int maxOffset) {
@@ -176,7 +249,6 @@ void SequencePainter::drawStageRepeatMode(Canvas &canvas, int x, int y, int w, i
 void SequencePainter::drawGateLogicMode(Canvas &canvas, int x, int y, int w, int h, LogicSequence::GateLogicMode mode) {
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(Bright);
-    std::bitset<4> enabled;
     x += (w - 8) / 2;
 
     switch (mode) {
@@ -210,7 +282,6 @@ void SequencePainter::drawGateLogicMode(Canvas &canvas, int x, int y, int w, int
 void SequencePainter::drawNoteLogicMode(Canvas &canvas, int x, int y, int w, int h, LogicSequence::NoteLogicMode mode) {
     canvas.setBlendMode(BlendMode::Set);
     canvas.setColor(Bright);
-    std::bitset<4> enabled;
     x += (w - 8) / 2;
 
     switch (mode) {

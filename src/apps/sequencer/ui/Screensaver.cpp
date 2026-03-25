@@ -7,6 +7,7 @@ void Screensaver::on() {
 
 void Screensaver::off() {
     _screenSaved = false;
+    _buttonPressed = false;
     setScreenOnTicks(0);
 }
 
@@ -24,21 +25,24 @@ void Screensaver::consumeKey(KeyPressEvent &event) {
 }
 
 void Screensaver::consumeKey(Event &event, Key key) {
-    if (_screenSaved && key.code() == Key::Code::Encoder) {
+    if (_wakeKey != Key::None && key.code() == _wakeKey) {
         event.consume();
+        if (event.type() == Event::Type::KeyUp) {
+            _wakeKey = Key::None;
+        }
+        return;
     }
 
-    if (_wakeMode == 1 && _screenSaved) { // required
-        switch(key.code()) {
-            case Key::Code::Play:
-            case Key::Code::Shift:
-            case Key::Code::Left:
-            case Key::Code::Right:
-            case Key::Code::Track0 ... Key::Code::Track7:
-            case Key::Code::Step0 ... Key::Code::Step7:
-            case Key::Code::Step8 ... Key::Code::Step15:
-                return;
+    if (_screenSaved) {
+        if (_wakeMode == 1) { // required
+            event.consume();
+            if (event.type() == Event::Type::KeyDown || event.type() == Event::Type::KeyPress) {
+                _wakeKey = key.code();
+            }
         }
+
+        off();
+        return;
     }
 
     // Don't turn on screensaver if button is held
@@ -55,15 +59,12 @@ void Screensaver::consumeKey(Event &event, Key key) {
 
 void Screensaver::consumeEncoder(EncoderEvent &event) {
     if (_screenSaved) {
-        // Don't really want this since it disables
-        // setting on all steps with the encoder when the screen is saved
-        // Downside is that we could modify menu items for example
-        // when the screen is off/first comes on
-//        event.consume();
-
         if (_wakeMode == 1) { // required
-            return;
+            event.consume();
         }
+
+        off();
+        return;
     }
 
     off();

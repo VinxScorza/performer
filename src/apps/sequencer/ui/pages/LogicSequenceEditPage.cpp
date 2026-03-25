@@ -168,11 +168,7 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
         int y = 20;
 
         // step index
-        {
-            canvas.setColor(_stepSelection[stepIndex] ? Color::Bright : Color::Medium);
-            FixedStringBuilder<8> str("%d", stepIndex + 1);
-            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y - 2, str);
-        }
+        SequencePainter::drawStepIndex(canvas, x, y, stepWidth, stepIndex + 1, _stepSelection[stepIndex], sequence.step(stepIndex).condition() != Types::Condition::Off);
 
         // step gate
         canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
@@ -181,12 +177,6 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
             canvas.setColor(SequencePainter::dimSequenceColor(
                 _context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue()
             ));
-            constexpr int gateInset = 3;
-            constexpr int gateShiftRange = 3;
-            int gateArea = stepWidth - 2 * gateInset;
-            int gateOffsetShift = (sequence.step(stepIndex).gateOffset() * gateShiftRange) / (LogicSequence::GateOffset::Max + 1);
-            int gateWidth = 3 + ((gateArea - 3) * (sequence.step(stepIndex).length() + 1)) / LogicSequence::Length::Range;
-            int gateX = x + gateInset + gateOffsetShift + (gateArea - gateWidth) / 2;
             if (stepIndex == currentStep) {
                 if (trackEngine.gateOutput(currentStep)) {
                     canvas.fillRect(x + 6, y + 6, stepWidth - 12, stepWidth - 12);
@@ -196,30 +186,10 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
                     canvas.vline(x + 5, y + 7, 2);
                     canvas.vline(x + 10, y + 7, 2);
                 } else {
-                    if (sequence.step(stepIndex).retrigger() > 0) {
-                        int stripeStart = gateX;
-                        if (gateWidth >= 8) {
-                            stripeStart += 1;
-                        }
-                        for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
-                            canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
-                        }
-                    } else {
-                        canvas.fillRect(gateX, y + gateInset, gateWidth, gateArea);
-                    }
+                    SequencePainter::drawGateBody(canvas, x, y, stepWidth, sequence.step(stepIndex).gateOffset(), LogicSequence::GateOffset::Max, sequence.step(stepIndex).length(), LogicSequence::Length::Range, sequence.step(stepIndex).retrigger(), LogicSequence::Retrigger::Range, sequence.step(stepIndex).slide());
                 }
             } else {
-                if (sequence.step(stepIndex).retrigger() > 0) {
-                    int stripeStart = gateX;
-                    if (gateWidth >= 8) {
-                        stripeStart += 1;
-                    }
-                    for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
-                        canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
-                    }
-                } else {
-                    canvas.fillRect(gateX, y + gateInset, gateWidth, gateArea);
-                }
+                SequencePainter::drawGateBody(canvas, x, y, stepWidth, sequence.step(stepIndex).gateOffset(), LogicSequence::GateOffset::Max, sequence.step(stepIndex).length(), LogicSequence::Length::Range, sequence.step(stepIndex).retrigger(), LogicSequence::Retrigger::Range, sequence.step(stepIndex).slide());
             }
         } else {
             if (track.detailedView()) {

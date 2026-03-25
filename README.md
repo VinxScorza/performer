@@ -5,7 +5,7 @@
 ## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
 
 This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a> of the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
-Current fork version: `0.3.2-vinx.1.4.6`.
+Current fork version: `0.3.2-vinx.1.4.7`.
 
 IMPORTANT NOTE: I am not a software developer. I am an artist shaping the instrument I want to perform with.
 
@@ -61,13 +61,16 @@ If you need historical upstream reference material, the Mebitek manual is still 
 
 Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
 
-The current `v0.3.2-vinx.1.4.6` line includes:
+The current `v0.3.2-vinx.1.4.7` line includes:
+- An experimental `Chaos` generator on Note tracks: a multi-layer macro-random tool with non-destructive preview, global `Amount`, `A/B`, `Cancel`, `Apply`, `All On` / `All Off`, and selection-aware scope that targets the persistent step selection first or falls back to the current first/last-step range
+- Refined step visualization on Note-like views, including condition marks on the step index, retrigger marks shown directly in the step box outside the dedicated Retrig layer, and a small slide tie between adjacent steps
+- Screensaver defaults shifted to `15m` with `Wake Mode` set to `required`, so the first gesture after screensaver wake restores the display without also triggering an edit action
 - The generator workflow developed through `1.4.3`-`1.4.5`: `Acid` on Note tracks, redesigned LCD previews, layer-aware `Random`, and cleaner Note-layer cycling
 - Immediate `Scale` prelisten on Note and Arp sequence pages, with commit on encoder press and `CANCEL` available during `Scale` / `Root Note` editing
 - LCD/UI hardening aimed at regular hardware use: `30 fps` default UI refresh, redraw skip when the framebuffer hash is unchanged, and `Task Profiler` disabled by default for more headroom
 - Default `Slide Time` moved to `20%` across track types that expose it
 - Generator menu cleanup so non-Note tracks no longer show a duplicate `Euclidean`
-- A refreshed simulator / Test Drive setup with a revised built-in demo state, updated drum samples, and a darker Track 8 mono synth voice
+- A refreshed simulator / Test Drive setup with a revised built-in demo state, updated drum samples, and a cleaner browser sound map
 
 Clone this repository:
 

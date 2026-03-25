@@ -140,11 +140,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         int y = 20;
 
         // step index
-        {
-            canvas.setColor(_stepSelection[stepIndex] ? Color::Bright : Color::Medium);
-            FixedStringBuilder<8> str("%d", stepIndex + 1);
-            canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y - 2, str);
-        }
+        SequencePainter::drawStepIndex(canvas, x, y, stepWidth, stepIndex + 1, _stepSelection[stepIndex], step.condition() != Types::Condition::Off);
 
         // step gate
         canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
@@ -153,23 +149,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
             canvas.setColor(SequencePainter::dimSequenceColor(
                 _context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue()
             ));
-            constexpr int gateInset = 3;
-            constexpr int gateShiftRange = 3;
-            int gateArea = stepWidth - 2 * gateInset;
-            int gateOffsetShift = (step.gateOffset() * gateShiftRange) / (NoteSequence::GateOffset::Max + 1);
-            int gateWidth = 3 + ((gateArea - 3) * (step.length() + 1)) / NoteSequence::Length::Range;
-            int gateX = x + gateInset + gateOffsetShift + (gateArea - gateWidth) / 2;
-            if (step.retrigger() > 0) {
-                int stripeStart = gateX;
-                if (gateWidth >= 8) {
-                    stripeStart += 1;
-                }
-                for (int stripeX = stripeStart; stripeX < gateX + gateWidth; stripeX += 2) {
-                    canvas.fillRect(stripeX, y + gateInset, 1, gateArea);
-                }
-            } else {
-                canvas.fillRect(gateX, y + gateInset, gateWidth, gateArea);
-            }
+            SequencePainter::drawGateBody(canvas, x, y, stepWidth, step.gateOffset(), NoteSequence::GateOffset::Max, step.length(), NoteSequence::Length::Range, step.retrigger(), NoteSequence::Retrigger::Range, step.slide());
         }
 
         // record step
@@ -1126,6 +1106,15 @@ void NoteSequenceEditPage::generateSequence() {
         if (success) {
             if (mode == Generator::Mode::Acid) {
                 showAcidGenerator();
+                return;
+            }
+
+            if (mode == Generator::Mode::Chaos) {
+                auto builder = _builderContainer.create<ChaosSequenceBuilder>(_project.selectedNoteSequence(), _stepSelection.selected());
+                auto generator = Generator::execute(mode, *builder, _stepSelection.selected());
+                if (generator) {
+                    _manager.pages().generator.show(generator, &_stepSelection);
+                }
                 return;
             }
 

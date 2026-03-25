@@ -73,7 +73,7 @@ private:
 
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 
-    Container<NoteSequenceBuilder, AcidSequenceBuilder> _builderContainer;
+    Container<NoteSequenceBuilder, AcidSequenceBuilder, ChaosSequenceBuilder> _builderContainer;
 
     NoteSequence _inMemorySequence;
 };

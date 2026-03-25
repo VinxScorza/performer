@@ -74,15 +74,15 @@ void Project::clear() {
     setTempo(144.4f);
     setSwing(53);
 
-    setTrackMode(6, Track::TrackMode::Curve);
+    setTrackMode(7, Track::TrackMode::Curve);
 
     {
         auto &route1 = routing().route(0);
         route1.setTarget(Routing::Target::RunMode);
-        route1.setTracks(191);
+        route1.setTracks(127);
         route1.setMin(float(int(Types::RunMode::Forward)));
         route1.setMax(float(int(Types::RunMode::RandomWalk)));
-        route1.setSource(Routing::Source::CvOut7);
+        route1.setSource(Routing::Source::CvOut8);
         route1.cvSource().setRange(Types::VoltageRange::Bipolar5V);
     }
 
@@ -109,27 +109,27 @@ void Project::clear() {
     noteSequence(1, 0).step(29).setRetrigger(2);
     noteSequence(1, 0).step(29).setRetriggerProbability(6);
 
-    noteSequence(2, 0).setFirstStep(0);
-    noteSequence(2, 0).setLastStep(63);
-    noteSequence(2, 0).setGates({
+    noteSequence(3, 0).setFirstStep(0);
+    noteSequence(3, 0).setLastStep(63);
+    noteSequence(3, 0).setGates({
         0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
     });
 
-    noteSequence(3, 0).setFirstStep(0);
-    noteSequence(3, 0).setLastStep(63);
-    noteSequence(3, 0).setDivisor(24);
-    noteSequence(3, 0).setGates({
+    noteSequence(2, 0).setFirstStep(0);
+    noteSequence(2, 0).setLastStep(63);
+    noteSequence(2, 0).setDivisor(24);
+    noteSequence(2, 0).setGates({
         1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,
         1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,
         1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,
         1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,1
     });
-    noteSequence(3, 0).step(63).setGateProbability(6);
+    noteSequence(2, 0).step(63).setGateProbability(6);
     for (int step : { 0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62 }) {
-        noteSequence(3, 0).step(step).setCondition(static_cast<Types::Condition>(int(Types::Condition::Loop) + 30));
+        noteSequence(2, 0).step(step).setCondition(static_cast<Types::Condition>(int(Types::Condition::Loop) + 30));
     }
 
     noteSequence(4, 0).setFirstStep(0);
@@ -149,45 +149,45 @@ void Project::clear() {
     noteSequence(5, 0).step(29).setGateProbability(9);
     noteSequence(5, 0).step(31).setGateProbability(9);
 
-    curveSequence(6, 0).setDivisor(24);
-    curveSequence(6, 0).setFirstStep(0);
-    curveSequence(6, 0).setLastStep(63);
-    curveSequence(6, 0).step(62).setShape(Curve::rampUpHalf);
-    curveSequence(6, 0).step(63).setShape(Curve::rampUpHalf);
-    curveSequence(6, 0).step(62).setShapeVariation(Curve::High);
-    curveSequence(6, 0).step(63).setShapeVariation(Curve::High);
+    track(6).noteTrack().setFillMode(NoteTrack::FillMode::Gates);
+    track(6).noteTrack().setFillMuted(true);
+    track(6).noteTrack().setCvUpdateMode(NoteTrack::CvUpdateMode::Gate);
+    track(6).noteTrack().setSlideTime(20);
+    track(6).noteTrack().setOctave(-1);
 
-    track(7).noteTrack().setFillMode(NoteTrack::FillMode::Gates);
-    track(7).noteTrack().setFillMuted(true);
-    track(7).noteTrack().setCvUpdateMode(NoteTrack::CvUpdateMode::Gate);
-    track(7).noteTrack().setSlideTime(20);
-    track(7).noteTrack().setOctave(-1);
-
-    noteSequence(7, 0).setScale(4);
-    noteSequence(7, 0).setRootNote(4);
-    noteSequence(7, 0).setDivisor(12);
-    noteSequence(7, 0).setResetMeasure(0);
-    noteSequence(7, 0).setFirstStep(0);
-    noteSequence(7, 0).setLastStep(59);
-    noteSequence(7, 0).setGates({
+    noteSequence(6, 0).setScale(4);
+    noteSequence(6, 0).setRootNote(4);
+    noteSequence(6, 0).setDivisor(12);
+    noteSequence(6, 0).setResetMeasure(0);
+    noteSequence(6, 0).setFirstStep(0);
+    noteSequence(6, 0).setLastStep(59);
+    noteSequence(6, 0).setGates({
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
     });
-    noteSequence(7, 0).setNotes({
+    noteSequence(6, 0).setNotes({
         -8,1,8,4,6,1,4,1,-23,1,8,1,8,11,8,-8,
         4,8,-8,1,8,4,6,1,4,1,-23,1,8,1,8,4,
         8,-8,1,8,4,6,1,4,1,-23,1,8,1,8,11,8,
         -8,1,8,4,6,1,4,1,-23,1,8,1,1,1,1,1
     });
     for (int step = 0; step < CONFIG_STEP_COUNT; ++step) {
-        noteSequence(7, 0).step(step).setNoteVariationRange(1);
-        noteSequence(7, 0).step(step).setNoteVariationProbability(9);
+        noteSequence(6, 0).step(step).setNoteVariationRange(1);
+        noteSequence(6, 0).step(step).setNoteVariationProbability(9);
     }
     for (int step : { 3,18,19,34,35,50,51 }) {
-        noteSequence(7, 0).step(step).setSlide(true);
+        noteSequence(6, 0).step(step).setSlide(true);
     }
+
+    curveSequence(7, 0).setDivisor(24);
+    curveSequence(7, 0).setFirstStep(0);
+    curveSequence(7, 0).setLastStep(63);
+    curveSequence(7, 0).step(62).setShape(Curve::rampUpHalf);
+    curveSequence(7, 0).step(63).setShape(Curve::rampUpHalf);
+    curveSequence(7, 0).step(62).setShapeVariation(Curve::High);
+    curveSequence(7, 0).step(63).setShapeVariation(Curve::High);
 #endif
 
     _observable.notify(ProjectCleared);

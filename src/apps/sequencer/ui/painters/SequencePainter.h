@@ -14,6 +14,8 @@ public:
 
     static void drawLoopStart(Canvas &canvas, int x, int y, int w);
     static void drawLoopEnd(Canvas &canvas, int x, int y, int w);
+    static void drawStepIndex(Canvas &canvas, int x, int y, int stepWidth, int stepNumber, bool selected, bool hasCondition);
+    static void drawGateBody(Canvas &canvas, int x, int y, int stepWidth, int gateOffset, int maxGateOffset, int length, int maxLength, int retrigger, int maxRetrigger, bool slide);
 
     static void drawOffset(Canvas &canvas, int x, int y, int w, int h, int offset, int minOffset, int maxOffset);
     static void drawRetrigger(Canvas &canvas, int x, int y, int w, int h, int retrigger, int maxRetrigger);

@@ -19,8 +19,10 @@ public:
         case 1:
             return _allowAcid ? Generator::Mode::Acid : Generator::Mode::Euclidean;
         case 2:
-            return _allowAcid ? Generator::Mode::Euclidean : Generator::Mode::InitLayer;
+            return _allowAcid ? Generator::Mode::Chaos : Generator::Mode::InitLayer;
         case 3:
+            return _allowAcid ? Generator::Mode::Euclidean : Generator::Mode::Random;
+        case 4:
             return Generator::Mode::InitLayer;
         default:
             return Generator::Mode::Random;
@@ -28,7 +30,7 @@ public:
     }
 
     virtual int rows() const override {
-        return _allowAcid ? 4 : 3;
+        return _allowAcid ? 5 : 3;
     }
 
     virtual int columns() const override {

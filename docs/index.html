@@ -41,7 +41,7 @@
           <a href="https://github.com/VinxScorza/performer" target="_blank" rel="noopener noreferrer">github.com/VinxScorza/performer</a>
         </p>
         <p>
-          Documentation note: the local <a href="manual/index.html">User Manual</a> is now aligned through <code>v0.3.2-vinx.1.4.6</code>, including the appendix and Launchpad sections.
+          Documentation note: the <a href="manual/index.html">User Manual</a> is now aligned through <code>v0.3.2-vinx.1.4.7</code>, including the appendix and Launchpad sections.
         </p>
         <p>
           Lineage:
@@ -73,6 +73,9 @@
         <h4>Improvements</h4>
         <ul>
           <li>Add the new <code>Acid</code> Note-track generator with <code>Layer / Phrase</code> modes, where <code>Phrase</code> writes coordinated <code>Gate + Note + Slide</code> material</li>
+          <li>Add the new experimental <code>Chaos</code> Note-track generator: a multi-layer macro-random tool with non-destructive preview, global <code>Amount</code>, direct <code>All On</code> / <code>All Off</code> actions, and a dedicated layer matrix</li>
+          <li>Refine step visualization again with compact condition marks, retrigger marks moved into the step box outside the dedicated Retrig layer, and a small slide tie between adjacent steps</li>
+          <li>Change the default screensaver timeout to <code>15m</code> and make the first gesture after wake restore only the display when <code>Wake Mode</code> is set to <code>required</code></li>
           <li>Add non-destructive <code>Random</code> preview with <code>A/B</code> comparison and <code>Variation</code></li>
           <li>Extend <code>Random</code> to 32-bit seeds shown as 8-digit hexadecimal values, randomize the seed on entry and on change, and remove the old linear seed stepping workflow</li>
           <li>Make <code>Random</code> previews layer-aware on Note tracks</li>
@@ -87,7 +90,7 @@
           <li>Skip LCD redraws when the framebuffer hash has not changed</li>
           <li>Update and realign the manual to the current Vinx fork line</li>
           <li>Publish the Launchpad cheat sheet on the site</li>
-          <li>Refresh the built-in simulator demo project with an updated drumkit and revised browser sound setup</li>
+          <li>Refresh the built-in simulator demo project, drumkit, and browser sound setup for the current line</li>
         </ul>
         <p>
           See the full
@@ -99,11 +102,12 @@
       <section>
         <h3>Vinx Fork Notes</h3>
         <ul>
-          <li>Current fork line: <strong>v0.3.2-vinx.1.4.6</strong></li>
+          <li>Current fork line: <strong>v0.3.2-vinx.1.4.7</strong></li>
           <li><a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a> tracks Vinx-specific fixes and features</li>
           <li><a href="https://github.com/VinxScorza/performer/blob/master/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the fork status and upstream references</li>
           <li>This firmware line was built on top of the Mebitek fork because it already provided features I needed; some inherited functionality remains here as part of that lineage even when it is not central to my own daily workflow</li>
           <li>The fork stays intentionally personal and exploratory, shaped by ongoing use of PER|FORMER as a live instrument</li>
+          <li><code>Chaos</code> is a deliberately rough multi-layer Note-track generator intended more as controlled vandalism than as a musically “smart” phrase tool</li>
           <li>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes</li>
         </ul>
       </section>

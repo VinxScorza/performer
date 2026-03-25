@@ -3,10 +3,10 @@
 #include "BasePage.h"
 #include "ui/StepSelection.h"
 #include "ui/pages/ContextMenu.h"
-#include "engine/generators/SequenceBuilder.h"
 
 class Generator;
 class AcidGenerator;
+class ChaosGenerator;
 class EuclideanGenerator;
 class RandomGenerator;
 
@@ -46,6 +46,7 @@ private:
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;
     void drawRandomGenerator(Canvas &canvas, const RandomGenerator &generator) const;
     void drawAcidGenerator(Canvas &canvas, const AcidGenerator &generator) const;
+    void drawChaosGenerator(Canvas &canvas, const ChaosGenerator &generator) const;
     int contextItemCount() const;
     int previewStepCount() const;
     int currentStep() const;
@@ -56,9 +57,8 @@ private:
     std::pair<uint8_t, uint8_t> _valueRange;
     StepSelection<CONFIG_STEP_COUNT> *_stepSelection;
     int _section = 0;
+    int _chaosCursor = 0;
     bool _applied = false;
     char _variationMenuLabel[16] = "VAR";
     ContextMenuModel::Item _contextMenuItems[5];
-
-    Container<NoteSequenceBuilder> _builderContainer;
 };
