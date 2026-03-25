@@ -692,8 +692,11 @@ bool CurveSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void CurveSequenceEditPage::initSequence() {
-    _project.selectedCurveSequence().clearSteps();
-    showMessage("STEPS INITIALIZED");
+    auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
+    builder->clearLayer(_stepSelection.selected());
+    builder->showPreview();
+    builder->apply();
+    showMessage("LAYER INITIALIZED");
 }
 
 void CurveSequenceEditPage::copySequence() {
@@ -716,6 +719,15 @@ void CurveSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
         if (success) {
             auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
+
+            if (mode == Generator::Mode::InitLayer) {
+                Generator::execute(mode, *builder, _stepSelection.selected());
+                builder->showPreview();
+                builder->apply();
+                showMessage("SEQUENCE INITIALIZED");
+                return;
+            }
+
             if (_stepSelection.none()) {
                 _stepSelection.selectAll();
             }

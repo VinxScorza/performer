@@ -13,14 +13,14 @@ static RandomGenerator::Params randomParams;
 static AcidGenerator::Params acidParams;
 static ChaosGenerator::Params chaosParams;
 
-static void initLayer(SequenceBuilder &builder, const std::bitset<CONFIG_STEP_COUNT> &selected) {
-    builder.clearLayer(selected);
+static void initSequence(SequenceBuilder &builder, const std::bitset<CONFIG_STEP_COUNT> &selected) {
+    builder.clearSteps(selected);
 }
 
 Generator *Generator::execute(Generator::Mode mode, SequenceBuilder &builder, std::bitset<CONFIG_STEP_COUNT> &selected) {
     switch (mode) {
     case Mode::InitLayer:
-        initLayer(builder, selected);
+        initSequence(builder, selected);
         return nullptr;
     case Mode::Euclidean:
         return generatorContainer.create<EuclideanGenerator>(builder, euclideanParams);

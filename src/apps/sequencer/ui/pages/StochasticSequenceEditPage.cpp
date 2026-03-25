@@ -982,8 +982,11 @@ bool StochasticSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void StochasticSequenceEditPage::initSequence() {
-    _project.selectedStochasticSequence().clearSteps();
-    showMessage("STEPS INITIALIZED");
+    auto builder = _builderContainer.create<StochasticSequenceBuilder>(_project.selectedStochasticSequence(), layer());
+    builder->clearLayer(_stepSelection.selected());
+    builder->showPreview();
+    builder->apply();
+    showMessage("LAYER INITIALIZED");
 }
 
 void StochasticSequenceEditPage::copySequence() {
@@ -1034,6 +1037,14 @@ void StochasticSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
         if (success) {
             auto builder = _builderContainer.create<StochasticSequenceBuilder>(_project.selectedStochasticSequence(), layer());
+
+            if (mode == Generator::Mode::InitLayer) {
+                Generator::execute(mode, *builder, _stepSelection.selected());
+                builder->showPreview();
+                builder->apply();
+                showMessage("SEQUENCE INITIALIZED");
+                return;
+            }
 
             if (_stepSelection.none()) {
                 _stepSelection.selectAll();

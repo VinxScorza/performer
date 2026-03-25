@@ -23,7 +23,7 @@ public:
 
     static const char *modeName(Mode mode) {
         switch (mode) {
-        case Mode::InitLayer:   return "Init Layer";
+        case Mode::InitLayer:   return "Init Sequence";
         case Mode::Euclidean:   return "Euclidean";
         case Mode::Random:      return "Random";
         case Mode::Acid:        return "Acid";

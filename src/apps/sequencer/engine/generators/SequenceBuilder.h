@@ -29,7 +29,7 @@ public:
     virtual float value(int index) const = 0;
     virtual void setValue(int index, float value) = 0;
 
-    virtual void clearSteps() = 0;
+    virtual void clearSteps(const std::bitset<CONFIG_STEP_COUNT> &selected) = 0;
     virtual void copyStep(int fromIndex, int toIndex) = 0;
 
     virtual void clearLayer(const std::bitset<CONFIG_STEP_COUNT> &selected) = 0;
@@ -101,8 +101,19 @@ public:
         _preview.step(_preview.firstStep() + index).setLayerValue(_layer, layerValue);
     }
 
-    void clearSteps() override {
-        _preview.clearSteps();
+    void clearSteps(const std::bitset<CONFIG_STEP_COUNT> &selected) override {
+        if (!selected.any()) {
+            for (int i = _preview.firstStep(); i <= _preview.lastStep(); ++i) {
+                _preview.step(i).clear();
+            }
+            return;
+        }
+
+        for (int i = 0; i < int(_preview.steps().size()); ++i) {
+            if (selected[i]) {
+                _preview.step(i).clear();
+            }
+        }
     }
 
     void copyStep(int fromIndex, int toIndex) override {
@@ -219,8 +230,35 @@ public:
         step.setLayerValue(_layer, layerValue);
     }
 
-    void clearSteps() override {
-        _preview.clearSteps();
+    void clearSteps(const std::bitset<CONFIG_STEP_COUNT> &selected) override {
+        if (!selected.any()) {
+            if (_applyMode == ApplyMode::Phrase) {
+                for (int i = _preview.firstStep(); i <= _preview.lastStep(); ++i) {
+                    auto &step = _preview.step(i);
+                    step.clear();
+                    step.setGate(false);
+                    step.setSlide(false);
+                }
+            } else {
+                for (int i = _preview.firstStep(); i <= _preview.lastStep(); ++i) {
+                    _preview.step(i).clear();
+                }
+            }
+            return;
+        }
+
+        for (int i = 0; i < int(_preview.steps().size()); ++i) {
+            if (!selected[i]) {
+                continue;
+            }
+
+            auto &step = _preview.step(i);
+            step.clear();
+            if (_applyMode == ApplyMode::Phrase) {
+                step.setGate(false);
+                step.setSlide(false);
+            }
+        }
     }
 
     void copyStep(int fromIndex, int toIndex) override {
@@ -376,8 +414,19 @@ public:
         _preview.step(_preview.firstStep() + index).setGate(value >= 0.5f);
     }
 
-    void clearSteps() override {
-        _preview.clearSteps();
+    void clearSteps(const std::bitset<CONFIG_STEP_COUNT> &selected) override {
+        if (!selected.any()) {
+            for (int i = _preview.firstStep(); i <= _preview.lastStep(); ++i) {
+                _preview.step(i).clear();
+            }
+            return;
+        }
+
+        for (int i = 0; i < int(_preview.steps().size()); ++i) {
+            if (selected[i]) {
+                _preview.step(i).clear();
+            }
+        }
     }
 
     void copyStep(int fromIndex, int toIndex) override {

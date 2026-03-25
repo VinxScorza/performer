@@ -1038,8 +1038,11 @@ bool ArpSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void ArpSequenceEditPage::initSequence() {
-    _project.selectedArpSequence().clearSteps();
-    showMessage("STEPS INITIALIZED");
+    auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
+    builder->clearLayer(_stepSelection.selected());
+    builder->showPreview();
+    builder->apply();
+    showMessage("LAYER INITIALIZED");
 }
 
 void ArpSequenceEditPage::copySequence() {
@@ -1061,6 +1064,14 @@ void ArpSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
         if (success) {
             auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
+
+            if (mode == Generator::Mode::InitLayer) {
+                Generator::execute(mode, *builder, _stepSelection.selected());
+                builder->showPreview();
+                builder->apply();
+                showMessage("SEQUENCE INITIALIZED");
+                return;
+            }
 
             if (_stepSelection.none()) {
                 _stepSelection.selectAll();

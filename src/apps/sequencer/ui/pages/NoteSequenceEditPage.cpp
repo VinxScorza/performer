@@ -1053,8 +1053,11 @@ bool NoteSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void NoteSequenceEditPage::initSequence() {
-    _project.selectedNoteSequence().clearStepsSelected(_stepSelection.selected());
-    showMessage("STEPS INITIALIZED");
+    auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
+    builder->clearLayer(_stepSelection.selected());
+    builder->showPreview();
+    builder->apply();
+    showMessage("LAYER INITIALIZED");
 }
 
 void NoteSequenceEditPage::copySequence() {
@@ -1104,6 +1107,15 @@ void NoteSequenceEditPage::tieNotes() {
 void NoteSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show(true, [this] (bool success, Generator::Mode mode) {
         if (success) {
+            if (mode == Generator::Mode::InitLayer) {
+                auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
+                Generator::execute(mode, *builder, _stepSelection.selected());
+                builder->showPreview();
+                builder->apply();
+                showMessage("SEQUENCE INITIALIZED");
+                return;
+            }
+
             if (mode == Generator::Mode::Acid) {
                 showAcidGenerator();
                 return;
