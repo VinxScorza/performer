@@ -52,47 +52,6 @@
       </section>
 
       <section>
-        <h3>Description</h3>
-        <p>
-          This simulator is used for development and testing of the PER|FORMER sequencer. It allows shorter
-          iteration times during development and makes it possible to work on the firmware without having direct
-          access to the hardware module.
-        </p>
-        <p>
-          Note that this simulator is not intended to replace the hardware unit, and timing accuracy is not
-          comparable to the real module, especially when running in the browser.
-        </p>
-        <p>
-          This page belongs to the Vinx Scorza fork site and keeps the simulator reference close at hand while the firmware evolves.
-        </p>
-        <p>
-          The current browser build reflects the current Vinx browser line, including the newer generator workflow, the refined <code>Random</code> / <code>Acid</code> LCD previews, and the current simulator demo/audio setup.
-        </p>
-        <p>
-          The current firmware line also includes the new Note-track generator <code>Chaos</code>. Even when the browser bundle is current, the native simulator and hardware firmware should still be treated as the final reference for timing, responsiveness, and exact behavior.
-        </p>
-        <p>
-          The current hotfix line also clarifies step initialization behavior: <code>SHIFT + PAGE -&gt; INIT LAYER</code> now resets only the active layer, while <code>GEN -&gt; Init Seq</code> resets sequence steps with the same selection-aware scope used by the other generators.
-        </p>
-        <p>
-          Historical simulator reference:
-          <a href="https://mebitek.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Mebitek Test Drive</a>
-          and
-          <a href="https://westlicht.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Westlicht Test Drive</a>
-        </p>
-        <div class="notice warning">
-          <p>
-            The browser Test Drive is maintained as a practical reference build for the Vinx Scorza fork.
-          </p>
-          <p>
-            This Vinx browser build favors stability first: memory growth enabled, extra runtime checks during
-            bring-up, and browser audio reintroduced cautiously with automatic startup attempts plus a first-gesture
-            fallback when autoplay is blocked.
-          </p>
-        </div>
-      </section>
-
-      <section>
         <h3>Sound Engine</h3>
         <p>
           In the browser simulator, a small sound engine is attached to the sequencer outputs so the generated
