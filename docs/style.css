@@ -147,6 +147,28 @@ a:hover {
   color: var(--muted);
 }
 
+.manual-sidebar-top {
+  display: block;
+  margin: 0 0 12px;
+  padding: 6px 10px;
+  border: 1px solid rgba(203, 178, 111, 0.24);
+  border-radius: 8px;
+  background: rgba(203, 178, 111, 0.08);
+  color: #f4edcf;
+  font-size: 10px;
+  font-style: italic;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.manual-sidebar-top:hover,
+.manual-sidebar-top:focus {
+  background: rgba(203, 178, 111, 0.16);
+  color: #ffffff;
+  text-decoration: none;
+}
+
 .manual-search {
   margin: 0 0 16px;
 }
