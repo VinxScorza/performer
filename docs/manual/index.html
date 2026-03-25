@@ -1349,7 +1349,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize all steps of the current sequence to the default state.</td></tr>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init Layer</td><td style="text-align: left">Initialize only the active layer. If a step selection exists it is applied there first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
             <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected steps to the clipboard.</td></tr>
             <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste steps in the clipboard to the selected steps.</td></tr>
             <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Duplicate</td><td style="text-align: left">Doubles the length of the sequence between First Step and Last Step and copies the first half to the second half.</td></tr>
@@ -1426,14 +1426,14 @@
             <tr><td style="text-align: left">Acid</td><td style="text-align: left">Note-track generator for acid-like Gate / Note / Slide motion.</td></tr>
             <tr><td style="text-align: left">Chaos</td><td style="text-align: left">Experimental Note-track multi-layer macro-random generator with a global amount control and direct layer toggles.</td></tr>
             <tr><td style="text-align: left">Euclidean</td><td style="text-align: left">Euclidean generator based on Bjorklund's algorithm.</td></tr>
-            <tr><td style="text-align: left">Init</td><td style="text-align: left">Reset the current layer.</td></tr>
+            <tr><td style="text-align: left">Init Seq</td><td style="text-align: left">Reset sequence steps within the current generator scope. If a persistent selection exists it is used first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
           </tbody>
         </table>
         <p>
           Note: <em>Acid</em> and <em>Chaos</em> appear only on Note tracks. Other track modes keep the smaller generator set appropriate to their data model.
         </p>
         <p>
-          On the current line, the Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init</code>.
+          On the current line, the Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Seq</code>.
         </p>
         <h4>Context Menu</h4>
         <p>

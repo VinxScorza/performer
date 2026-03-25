@@ -64,6 +64,7 @@ Westlicht and Mebitek remain essential upstream references for hardware lineage,
 The current `v0.3.2-vinx.1.4.7` line includes:
 - An experimental `Chaos` generator on Note tracks: a multi-layer macro-random tool with non-destructive preview, global `Amount`, `A/B`, `Cancel`, `Apply`, `All On` / `All Off`, and selection-aware scope that targets the persistent step selection first or falls back to the current first/last-step range
 - Refined step visualization on Note-like views, including condition marks on the step index, retrigger marks shown directly in the step box outside the dedicated Retrig layer, and a small slide tie between adjacent steps
+- Clearer step initialization split: `SHIFT + PAGE -> INIT LAYER` now resets only the active layer, while `GEN -> Init Seq` resets sequence steps with the same selection-aware scope used by the other generators
 - Screensaver defaults shifted to `15m` with `Wake Mode` set to `required`, so the first gesture after screensaver wake restores the display without also triggering an edit action
 - The generator workflow developed through `1.4.3`-`1.4.5`: `Acid` on Note tracks, redesigned LCD previews, layer-aware `Random`, and cleaner Note-layer cycling
 - Immediate `Scale` prelisten on Note and Arp sequence pages, with commit on encoder press and `CANCEL` available during `Scale` / `Root Note` editing
