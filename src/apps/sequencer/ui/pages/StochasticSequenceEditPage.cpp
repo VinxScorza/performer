@@ -25,7 +25,7 @@ enum class ContextAction {
 };
 
 static const ContextMenuModel::Item contextMenuItems[] = {
-    { "INIT" },
+    { "INIT LAYER" },
     { "COPY" },
     { "PASTE" },
     { "DUPL" },
