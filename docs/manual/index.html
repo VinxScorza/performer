@@ -2603,18 +2603,24 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           }
 
           function clearSearchHighlights() {
-            Array.prototype.slice.call(document.querySelectorAll('.manual-search-hit')).forEach(function(mark) {
-              var parent = mark.parentNode;
-              if (!parent) {
-                return;
-              }
-              parent.replaceChild(document.createTextNode(mark.textContent), mark);
-              parent.normalize();
+            Array.prototype.slice.call(document.querySelectorAll('.manual-search-hit')).forEach(function(element) {
+              element.classList.remove('manual-search-hit');
             });
           }
 
           function escapeRegExp(value) {
             return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          }
+
+          function closestSearchHighlightBlock(node, root) {
+            var element = node && node.nodeType === Node.ELEMENT_NODE ? node : node && node.parentElement;
+            while (element && element !== root) {
+              if (element.matches && element.matches('p, li, td, th, pre, h3, h4, h5, h6')) {
+                return element;
+              }
+              element = element.parentElement;
+            }
+            return root && root.matches && root.matches('p, li, td, th, pre, h3, h4, h5, h6') ? root : null;
           }
 
           function highlightSearchTerms(target, query) {
@@ -2636,7 +2642,8 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
             var pattern = new RegExp('(' + terms.map(escapeRegExp).join('|') + ')', 'gi');
             var roots = scopedSearchNodes(target);
-            var textNodes = [];
+            var blocks = [];
+            var seenBlocks = new Set();
 
             roots.forEach(function(root) {
               var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
@@ -2654,39 +2661,19 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               });
 
               while (walker.nextNode()) {
-                textNodes.push(walker.currentNode);
+                var block = closestSearchHighlightBlock(walker.currentNode, root);
+                if (block && !seenBlocks.has(block)) {
+                  seenBlocks.add(block);
+                  blocks.push(block);
+                }
               }
             });
 
-            textNodes.forEach(function(node) {
-              var value = node.nodeValue;
-              pattern.lastIndex = 0;
-              if (!pattern.test(value)) {
-                return;
-              }
-
-              pattern.lastIndex = 0;
-              var fragment = document.createDocumentFragment();
-              var lastIndex = 0;
-              var match;
-
-              while ((match = pattern.exec(value)) !== null) {
-                if (match.index > lastIndex) {
-                  fragment.appendChild(document.createTextNode(value.slice(lastIndex, match.index)));
-                }
-
-                var span = document.createElement('span');
-                span.className = 'manual-search-hit';
-                span.textContent = match[0];
-                fragment.appendChild(span);
-                lastIndex = match.index + match[0].length;
-              }
-
-              if (lastIndex < value.length) {
-                fragment.appendChild(document.createTextNode(value.slice(lastIndex)));
-              }
-
-              node.parentNode.replaceChild(fragment, node);
+            blocks.forEach(function(block) {
+              block.classList.add('manual-search-hit');
+              block.addEventListener('animationend', function handleManualSearchHitEnd() {
+                block.classList.remove('manual-search-hit');
+              }, { once: true });
             });
           }
 

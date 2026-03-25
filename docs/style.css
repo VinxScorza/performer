@@ -36,6 +36,28 @@ a:hover {
   text-decoration: underline;
 }
 
+code,
+kbd,
+pre {
+  font-family: "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", monospace;
+}
+
+code,
+kbd {
+  font-size: 0.94em;
+  padding: 0.08em 0.35em;
+  border-radius: 4px;
+  background: rgba(203, 178, 111, 0.12);
+  color: #fff2b0;
+}
+
+pre code {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+}
+
 .outer {
   width: 100%;
 }
@@ -240,10 +262,9 @@ a:hover {
 }
 
 .manual-search-hit {
-  padding: 0 2px;
-  border-radius: 3px;
-  background: rgba(203, 178, 111, 0.38);
-  color: #fff9e7;
+  border-radius: 6px;
+  background: rgba(233, 201, 97, 0.26);
+  box-shadow: inset 0 0 0 1px rgba(233, 201, 97, 0.62), 0 0 0 1px rgba(233, 201, 97, 0.08);
   animation: manual-search-hit-blink 0.5s ease-in-out 6;
 }
 
@@ -291,12 +312,12 @@ a:hover {
 @keyframes manual-search-hit-blink {
   0%,
   100% {
-    background: rgba(203, 178, 111, 0.38);
-    color: #fff9e7;
+    background: rgba(233, 201, 97, 0.26);
+    box-shadow: inset 0 0 0 1px rgba(233, 201, 97, 0.62), 0 0 0 1px rgba(233, 201, 97, 0.08);
   }
   50% {
-    background: rgba(203, 178, 111, 0.72);
-    color: #ffffff;
+    background: rgba(233, 201, 97, 0.46);
+    box-shadow: inset 0 0 0 1px rgba(245, 223, 138, 0.95), 0 0 0 2px rgba(233, 201, 97, 0.18);
   }
 }
 
