@@ -1,1 +1,190 @@
-<!doctypehtml><html lang=en-us><head><meta charset=utf-8><meta content="text/html; charset=utf-8"http-equiv=Content-Type><meta content="width=device-width,initial-scale=1"name=viewport><title>PER|FORMER Test Drive</title><style>:root{color-scheme:dark}body{margin:0;background:#050709;color:#d9f5ff;font-family:"Lucida Console",Monaco,monospace}.shell{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:12px;padding:16px 12px 24px;box-sizing:border-box}.status-wrap{min-height:28px;display:flex;align-items:center;justify-content:center}#status{font-size:12px;letter-spacing:.04em;color:#8ec8d6}#progress{width:min(420px,80vw);height:6px}.canvas-frame{border:1px solid rgba(142,200,214,.22);background:#000;box-shadow:0 0 0 1px rgba(19,48,58,.9);overflow:hidden;max-width:100%}canvas.emscripten{display:block;border:0;background:#000;max-width:100%}.spinner{height:26px;width:26px;border-left:4px solid rgba(217,245,255,.18);border-right:4px solid rgba(217,245,255,.18);border-bottom:4px solid rgba(217,245,255,.18);border-top:4px solid #7ee7ff;border-radius:100%;animation:rotation .8s linear infinite}#progress.hidden,#spinner.hidden{display:none}@keyframes rotation{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style></head><body><div class=shell><div class=spinner id=spinner></div><div class=status-wrap><div id=status>Downloading...</div></div><progress hidden id=progress max=100 value=0></progress><div class=canvas-frame><canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas></div></div><script>var statusElement=document.getElementById("status"),progressElement=document.getElementById("progress"),spinnerElement=document.getElementById("spinner"),canvasElement=document.getElementById("canvas"),audioRetryHandlersInstalled=!1;function tryEnableAudio(){try{if(void 0!==Module&&"function"==typeof Module._sim_enable_audio)return!!Module._sim_enable_audio()}catch(e){console.warn("Automatic audio enable failed",e)}return!1}function installAudioRetryHandlers(){if(!audioRetryHandlersInstalled){audioRetryHandlersInstalled=!0;var e=()=>{tryEnableAudio()&&(window.removeEventListener("pointerdown",e,!0),window.removeEventListener("keydown",e,!0),window.removeEventListener("touchstart",e,!0))};window.addEventListener("pointerdown",e,!0),window.addEventListener("keydown",e,!0),window.addEventListener("touchstart",e,!0)}}function setStatus(e){if(setStatus.last||(setStatus.last={time:Date.now(),text:""}),e!==setStatus.last.text){var t=e.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/),n=Date.now();t&&n-setStatus.last.time<30||(setStatus.last.time=n,setStatus.last.text=e,t?(e=t[1],progressElement.value=100*parseInt(t[2]),progressElement.max=100*parseInt(t[4]),progressElement.hidden=!1):(progressElement.value=null,progressElement.max=null,progressElement.hidden=!0,e||spinnerElement.classList.add("hidden")),statusElement.textContent=e)}}canvasElement.addEventListener("webglcontextlost",(e=>{alert("WebGL context lost. You will need to reload the page."),e.preventDefault()}),!1);var Module={print(...e){console.log(...e)},canvas:canvasElement,setStatus:setStatus,totalDependencies:0,monitorRunDependencies(e){this.totalDependencies=Math.max(this.totalDependencies,e),setStatus(e?"Preparing... ("+(this.totalDependencies-e)+"/"+this.totalDependencies+")":"All downloads complete.")},onRuntimeInitialized(){tryEnableAudio()||installAudioRetryHandlers()}};setStatus("Downloading..."),window.onerror=()=>{setStatus("Exception thrown, see JavaScript console"),spinnerElement.classList.add("hidden"),setStatus=e=>{e&&console.error("[post-exception status] "+e)}}</script><script async src=sequencer.js></script></body></html>
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PER|FORMER Test Drive</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      body {
+        margin: 0;
+        background: #050709;
+        color: #d9f5ff;
+        font-family: "Lucida Console", Monaco, monospace;
+      }
+
+      .shell {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        padding: 16px 12px 24px;
+        box-sizing: border-box;
+      }
+
+      .status-wrap {
+        min-height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #status {
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        color: #8ec8d6;
+      }
+
+      #progress {
+        width: min(420px, 80vw);
+        height: 6px;
+      }
+
+      .canvas-frame {
+        border: 1px solid rgba(142, 200, 214, 0.22);
+        background: #000;
+        box-shadow: 0 0 0 1px rgba(19, 48, 58, 0.9);
+        overflow: hidden;
+        max-width: 100%;
+      }
+
+      canvas.emscripten {
+        display: block;
+        border: 0;
+        background: #000;
+        max-width: 100%;
+      }
+
+      .spinner {
+        height: 26px;
+        width: 26px;
+        border-left: 4px solid rgba(217, 245, 255, 0.18);
+        border-right: 4px solid rgba(217, 245, 255, 0.18);
+        border-bottom: 4px solid rgba(217, 245, 255, 0.18);
+        border-top: 4px solid #7ee7ff;
+        border-radius: 100%;
+        animation: rotation 0.8s linear infinite;
+      }
+
+      #spinner.hidden,
+      #progress.hidden {
+        display: none;
+      }
+
+      @keyframes rotation {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div id="spinner" class="spinner"></div>
+      <div class="status-wrap">
+        <div id="status">Downloading...</div>
+      </div>
+      <progress value="0" max="100" id="progress" hidden></progress>
+      <div class="canvas-frame">
+        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+      var spinnerElement = document.getElementById('spinner');
+      var canvasElement = document.getElementById('canvas');
+      var audioRetryHandlersInstalled = false;
+
+      canvasElement.addEventListener('webglcontextlost', (e) => {
+        alert('WebGL context lost. You will need to reload the page.');
+        e.preventDefault();
+      }, false);
+
+      function tryEnableAudio() {
+        try {
+          if (typeof Module !== 'undefined' && typeof Module._sim_enable_audio === 'function') {
+            return !!Module._sim_enable_audio();
+          }
+        } catch (e) {
+          console.warn('Automatic audio enable failed', e);
+        }
+        return false;
+      }
+
+      function installAudioRetryHandlers() {
+        if (audioRetryHandlersInstalled) return;
+        audioRetryHandlersInstalled = true;
+
+        var retry = () => {
+          if (tryEnableAudio()) {
+            window.removeEventListener('pointerdown', retry, true);
+            window.removeEventListener('keydown', retry, true);
+            window.removeEventListener('touchstart', retry, true);
+          }
+        };
+
+        window.addEventListener('pointerdown', retry, true);
+        window.addEventListener('keydown', retry, true);
+        window.addEventListener('touchstart', retry, true);
+      }
+
+      function setStatus(text) {
+        if (!setStatus.last) setStatus.last = { time: Date.now(), text: '' };
+        if (text === setStatus.last.text) return;
+        var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+        var now = Date.now();
+        if (m && now - setStatus.last.time < 30) return;
+        setStatus.last.time = now;
+        setStatus.last.text = text;
+        if (m) {
+          text = m[1];
+          progressElement.value = parseInt(m[2]) * 100;
+          progressElement.max = parseInt(m[4]) * 100;
+          progressElement.hidden = false;
+        } else {
+          progressElement.value = null;
+          progressElement.max = null;
+          progressElement.hidden = true;
+          if (!text) {
+            spinnerElement.classList.add('hidden');
+          }
+        }
+        statusElement.textContent = text;
+      }
+
+      var Module = {
+        print(...args) {
+          console.log(...args);
+        },
+        canvas: canvasElement,
+        setStatus: setStatus,
+        totalDependencies: 0,
+        monitorRunDependencies(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        },
+        onRuntimeInitialized() {
+          if (!tryEnableAudio()) {
+            installAudioRetryHandlers();
+          }
+        }
+      };
+      setStatus('Downloading...');
+      window.onerror = () => {
+        setStatus('Exception thrown, see JavaScript console');
+        spinnerElement.classList.add('hidden');
+        setStatus = (text) => {
+          if (text) console.error('[post-exception status] ' + text);
+        };
+      };
+    </script>
+    <script async src="sequencer.js"></script>
+  </body>
+</html>
