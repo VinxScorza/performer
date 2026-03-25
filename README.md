@@ -13,6 +13,8 @@ The Vinx Scorza fork begins at `v0.3.2-vinx.1`. Everything before that point in 
 
 This project focuses on live performance workflow, timing reliability, and UI/interaction refinements, with particular attention to modular techno and improvisation use cases. It is not meant to be a general-purpose extension of PER|FORMER, but a personal and practical refinement of behaviors that become important while actively using the sequencer in real musical situations.
 
+I built this firmware line on top of the Mebitek fork because it already contained features I needed and did not want to rebuild from scratch. As a result, this repository also carries inherited functionality that is not always central to my own workflow, even when I still fix or refine it as needed. The fork remains intentionally personal and exploratory: the instrument itself keeps pushing me to experiment with it.
+
 This fork is maintained for personal use and actively tested in practice, since PER|FORMER is the main sequencer in my live sets. Backward compatibility with older projects, settings, or workflows is not guaranteed, and I do not assume responsibility for regressions or incompatibilities introduced by Vinx-specific changes.
 
 This fork would not exist without the help of AI agents during development and debugging. I am very grateful to <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a> for the work done on his fork, and of course to <a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Simon Kallweit</a> for creating and developing the original Westlicht PER|FORMER.
