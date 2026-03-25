@@ -33,8 +33,23 @@
         <aside class="manual-sidebar" aria-label="Manual contents">
           <div class="manual-sidebar-panel">
             <p class="manual-sidebar-title">On This Page</p>
+            <div class="manual-search">
+              <label class="manual-search-label" for="manual-search-input">Search</label>
+              <input
+                id="manual-search-input"
+                class="manual-search-input"
+                type="search"
+                placeholder="Search the manual"
+                autocomplete="off"
+                spellcheck="false">
+              <ul id="manual-search-results" class="manual-search-results" hidden></ul>
+              <p id="manual-search-empty" class="manual-search-empty" hidden>No matching sections</p>
+            </div>
             <nav class="manual-sidebar-nav">
               <ul>
+                <li><a href="#manual-wip">Work in Progress</a></li>
+                <li><a href="#manual-overview">User Manual</a></li>
+                <li><a href="#manual-toc">Table of Contents</a></li>
                 <li><a href="#introduction">Introduction</a>
                   <ul>
                     <li><a href="#introduction-overview">Overview</a></li>
@@ -118,7 +133,7 @@
         </aside>
         <div class="manual-body">
       <section>
-        <h3>Work in Progress</h3>
+        <h3 id="manual-wip">Work in Progress</h3>
         <p>
           This manual is being actively adapted for the Vinx Scorza fork, and the current local line is aligned through <code>v0.3.2-vinx.1.4.6</code>.
         </p>
@@ -135,7 +150,7 @@
       </section>
 
       <section>
-        <h3>User Manual</h3>
+        <h3 id="manual-overview">User Manual</h3>
         <p>
           The goal of this page is to consolidate and adapt the manual structure and content for the
           Vinx Scorza fork, while preserving the technical detail needed to use the module confidently.
@@ -143,7 +158,7 @@
       </section>
 
       <section>
-        <h3>Table of Contents</h3>
+        <h3 id="manual-toc">Table of Contents</h3>
         <ul>
           <li><a href="#introduction">Introduction</a>
             <ul>
@@ -2499,18 +2514,235 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           window.addEventListener('resize', updateSidebarOffset);
 
           var sidebarLinks = Array.prototype.slice.call(document.querySelectorAll('.manual-sidebar a[href^="#"]'));
-          if (!sidebarLinks.length || !('IntersectionObserver' in window)) {
+          var searchInput = document.getElementById('manual-search-input');
+          var searchResults = document.getElementById('manual-search-results');
+          var searchEmpty = document.getElementById('manual-search-empty');
+          var activeSearchId = null;
+          var currentSearchMatches = [];
+          if (!sidebarLinks.length) {
             return;
           }
 
           var linkMap = new Map();
+          var searchIndex = [];
+
+          function headingLevel(node) {
+            if (!node || !node.tagName) {
+              return null;
+            }
+            var match = node.tagName.match(/^H([2-6])$/i);
+            return match ? parseInt(match[1], 10) : null;
+          }
+
+          function scopedSearchNodes(target) {
+            if (!target) {
+              return [];
+            }
+
+            var level = headingLevel(target);
+            if (!level) {
+              return [target];
+            }
+
+            var nodes = [target];
+            var node = target.nextElementSibling;
+
+            while (node) {
+              var nodeLevel = headingLevel(node);
+              if (nodeLevel && (nodeLevel <= level || (level === 2 && nodeLevel > level))) {
+                break;
+              }
+              nodes.push(node);
+              node = node.nextElementSibling;
+            }
+
+            return nodes;
+          }
+
+          function scopedSearchText(target) {
+            return scopedSearchNodes(target)
+              .map(function(node) {
+                return node.textContent.replace(/\s+/g, ' ').trim();
+              })
+              .join(' ')
+              .trim();
+          }
+
           sidebarLinks.forEach(function(link) {
             var id = link.getAttribute('href').slice(1);
             var target = document.getElementById(id);
             if (target) {
               linkMap.set(target, link);
+              var title = link.textContent.replace(/\s+/g, ' ').trim();
+              var context = scopedSearchText(target);
+              searchIndex.push({
+                id: id,
+                title: title,
+                text: (title + ' ' + context).toLowerCase()
+              });
             }
           });
+
+          function clearSearchResults() {
+            activeSearchId = null;
+            currentSearchMatches = [];
+            if (searchResults) {
+              searchResults.innerHTML = '';
+              searchResults.hidden = true;
+            }
+            if (searchEmpty) {
+              searchEmpty.hidden = true;
+            }
+            clearSearchHighlights();
+          }
+
+          function clearSearchHighlights() {
+            Array.prototype.slice.call(document.querySelectorAll('.manual-search-hit')).forEach(function(mark) {
+              var parent = mark.parentNode;
+              if (!parent) {
+                return;
+              }
+              parent.replaceChild(document.createTextNode(mark.textContent), mark);
+              parent.normalize();
+            });
+          }
+
+          function escapeRegExp(value) {
+            return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          }
+
+          function highlightSearchTerms(target, query) {
+            if (!target || !query) {
+              return;
+            }
+
+            clearSearchHighlights();
+
+            var terms = query
+              .trim()
+              .split(/\s+/)
+              .filter(Boolean)
+              .sort(function(a, b) { return b.length - a.length; });
+
+            if (!terms.length) {
+              return;
+            }
+
+            var pattern = new RegExp('(' + terms.map(escapeRegExp).join('|') + ')', 'gi');
+            var roots = scopedSearchNodes(target);
+            var textNodes = [];
+
+            roots.forEach(function(root) {
+              var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+                acceptNode: function(node) {
+                  if (!node.nodeValue || !node.nodeValue.trim()) {
+                    return NodeFilter.FILTER_REJECT;
+                  }
+                  var parent = node.parentNode;
+                  if (!parent || /^(SCRIPT|STYLE|MARK)$/i.test(parent.nodeName)) {
+                    return NodeFilter.FILTER_REJECT;
+                  }
+                  pattern.lastIndex = 0;
+                  return pattern.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+                }
+              });
+
+              while (walker.nextNode()) {
+                textNodes.push(walker.currentNode);
+              }
+            });
+
+            textNodes.forEach(function(node) {
+              var value = node.nodeValue;
+              pattern.lastIndex = 0;
+              if (!pattern.test(value)) {
+                return;
+              }
+
+              pattern.lastIndex = 0;
+              var fragment = document.createDocumentFragment();
+              var lastIndex = 0;
+              var match;
+
+              while ((match = pattern.exec(value)) !== null) {
+                if (match.index > lastIndex) {
+                  fragment.appendChild(document.createTextNode(value.slice(lastIndex, match.index)));
+                }
+
+                var span = document.createElement('span');
+                span.className = 'manual-search-hit';
+                span.textContent = match[0];
+                fragment.appendChild(span);
+                lastIndex = match.index + match[0].length;
+              }
+
+              if (lastIndex < value.length) {
+                fragment.appendChild(document.createTextNode(value.slice(lastIndex)));
+              }
+
+              node.parentNode.replaceChild(fragment, node);
+            });
+          }
+
+          function renderSearchResults(matches) {
+            if (!searchResults) {
+              return;
+            }
+
+            currentSearchMatches = matches.slice();
+            searchResults.innerHTML = '';
+            matches.slice(0, 12).forEach(function(match) {
+              var item = document.createElement('li');
+              var link = document.createElement('a');
+              link.href = '#' + match.id;
+              link.textContent = match.title;
+              if (match.id === activeSearchId) {
+                link.classList.add('is-active');
+              }
+              link.addEventListener('click', function() {
+                activeSearchId = match.id;
+                renderSearchResults(currentSearchMatches);
+                if (searchInput && searchInput.value.trim()) {
+                  var target = document.getElementById(match.id);
+                  var scope = target || null;
+                  highlightSearchTerms(scope, searchInput.value);
+                }
+              });
+              item.appendChild(link);
+              searchResults.appendChild(item);
+            });
+
+            searchResults.hidden = matches.length === 0;
+            if (searchEmpty) {
+              searchEmpty.hidden = matches.length !== 0;
+            }
+          }
+
+          if (searchInput) {
+            searchInput.addEventListener('input', function() {
+              var query = searchInput.value.trim().toLowerCase();
+              if (!query) {
+                clearSearchResults();
+                return;
+              }
+
+              var terms = query.split(/\s+/).filter(Boolean);
+              var matches = searchIndex.filter(function(entry) {
+                return terms.every(function(term) {
+                  return entry.text.indexOf(term) !== -1;
+                });
+              });
+
+              if (!matches.some(function(entry) { return entry.id === activeSearchId; })) {
+                activeSearchId = matches.length ? matches[0].id : null;
+              }
+              renderSearchResults(matches);
+            });
+          }
+
+          if (!('IntersectionObserver' in window)) {
+            return;
+          }
 
           var activeLink = null;
           function setActive(link) {
