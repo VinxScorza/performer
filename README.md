@@ -2,7 +2,7 @@
 
 # Vinx Scorza Fork
 
-## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
+## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a>
 
 This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a> of the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
 Current fork version: `0.3.2-vinx.1.4.7`.
