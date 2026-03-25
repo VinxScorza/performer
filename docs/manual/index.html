@@ -1195,6 +1195,12 @@
           This page allows editing the currently selected sequence on the currently selected track. Depending on the track mode of the selected track, this page shows a different graphical representation of the sequence. If track mode is set to MIDI/CV, the page is not available and selecting it will jump to the <a href="#pages-track">Track</a> page.
         </p>
         <p>
+          On Note-like step views, the inner box of each step is used as a compact visual summary: <em>Gate Offset</em> shifts the box left or right inside the step, <em>Length</em> changes its width, and <em>Retrigger</em> draws it as stripes. A full-width box still corresponds to <code>100%</code> length, as in earlier firmware versions. The striped view is meant as quick feedback rather than a literal retrigger counter, so the number of visible stripes does not necessarily match the number of ratchets.
+        </p>
+        <p>
+          This visual shorthand can still be refined, but it already makes the active step state much easier to read at a glance while editing.
+        </p>
+        <p>
           In a Logic track, if detailed view is enabled, a visual representation of the input tracks is visible for each step: a dot means input track 1 has gate on, an empty square means input track 2 has gate on, a combination of dot and empty square means both input tracks have gate on and finally the full square means logic gate is on. A visual feedback is shown when the logic gate output is on. Use <code>SHIFT</code> to show the status of the inputs instead of the sequence gates.
         </p>
         <h4>Layer Selection</h4>
@@ -1500,7 +1506,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left">Phrase</td><td style="text-align: left">Generates a coordinated acid phrase across <code>Gate</code>, <code>Note</code> and <code>Slide</code>.</td></tr>
+            <tr><td style="text-align: left">Phrase</td><td style="text-align: left">Generates a coordinated acid phrase by writing <code>Gate</code>, <code>Note</code> and <code>Slide</code> material together.</td></tr>
             <tr><td style="text-align: left">Layer</td><td style="text-align: left">Projects acid-like motion only onto the active layer, typically <code>Gate</code>, <code>Note</code> or <code>Slide</code>.</td></tr>
           </tbody>
         </table>
