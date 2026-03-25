@@ -22,6 +22,7 @@ set(sources
     # engine/generators
     engine/generators/EuclideanGenerator.cpp
     engine/generators/AcidGenerator.cpp
+    engine/generators/ChaosGenerator.cpp
     engine/generators/Generator.cpp
     engine/generators/RandomGenerator.cpp
     engine/generators/Rhythm.cpp

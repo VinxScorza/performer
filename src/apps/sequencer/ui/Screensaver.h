@@ -28,9 +28,10 @@ private:
     void consumeKey(Event &event, Key key);
 
     Canvas &_canvas;
-    bool _screenSaved;
-    bool _buttonPressed;
-    uint32_t _screenOnTicks;
+    bool _screenSaved = false;
+    bool _buttonPressed = false;
+    uint32_t _screenOnTicks = 0;
     uint32_t &_screenOffAfter;
     int &_wakeMode;
+    int _wakeKey = Key::None;
 };

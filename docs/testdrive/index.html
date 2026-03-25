@@ -44,7 +44,10 @@
           This page belongs to the Vinx Scorza fork site and keeps the simulator reference close at hand while the firmware evolves.
         </p>
         <p>
-          The current browser build reflects the active Vinx local line, including the newer generator workflow, the refined <code>Random</code> / <code>Acid</code> LCD previews, and the current simulator demo/audio setup.
+          The current browser build reflects the current Vinx browser line, including the newer generator workflow, the refined <code>Random</code> / <code>Acid</code> LCD previews, and the current simulator demo/audio setup.
+        </p>
+        <p>
+          The current firmware line also includes the new Note-track generator <code>Chaos</code>. Even when the browser bundle is current, the native simulator and hardware firmware should still be treated as the final reference for timing, responsiveness, and exact behavior.
         </p>
         <p>
           Historical simulator reference:
@@ -54,18 +57,18 @@
         </p>
         <div class="notice warning">
           <p>
-            We are actively trying to bring the browser Test Drive back to life for the Vinx Scorza fork.
+            The browser Test Drive is maintained as a practical reference build for the Vinx Scorza fork.
           </p>
           <p>
-            Upstream browser builds currently fail at runtime for different reasons, so this page is being prepared
-            for a local Vinx build that favors stability first: memory growth enabled, extra runtime checks during
-            bring-up, and browser audio reintroduced cautiously behind explicit user controls.
+            This Vinx browser build favors stability first: memory growth enabled, extra runtime checks during
+            bring-up, and browser audio reintroduced cautiously with automatic startup attempts plus a first-gesture
+            fallback when autoplay is blocked.
           </p>
         </div>
         <div class="simulator-shell">
           <h4>Phase 2 Status</h4>
           <p>
-            The local Vinx browser build is now embedded below with a cleaner simulator shell focused on the module itself.
+            The Vinx browser build is now embedded below with a cleaner simulator shell focused on the module itself.
           </p>
           <p>
             The generator pages in this build use the newer 64-step preview layouts, framed bank highlighting, slimmer playhead, and refined <code>Random</code> / <code>Acid</code> rendering introduced in the recent Vinx line, including the newer layer-aware <code>Random</code> preview behavior on Note tracks.
@@ -78,7 +81,7 @@
           </p>
           <p>
             If the embed does not start correctly in your browser, open the standalone build:
-            <a href="./sim/sequencer.html">local simulator shell</a>.
+            <a href="./sim/sequencer.html">simulator shell</a>.
           </p>
           <iframe
             class="simulator-frame"
@@ -96,13 +99,13 @@
           gates and CV can be heard immediately.
         </p>
         <p>
-          The current local build uses the refreshed Vinx demo state and the current Vinx Test Drive sound map:
+          The current build uses the refreshed Vinx demo state and the current Vinx Test Drive sound map:
         </p>
         <ul>
           <li><code>TRK1</code>: Kick</li>
           <li><code>TRK2</code>: Snare</li>
           <li><code>TRK3</code>: Clap</li>
-          <li><code>TRK4</code>: Loop</li>
+          <li><code>TRK4</code>: Rim / percussive layer</li>
           <li><code>TRK5</code>: Closed hi-hat</li>
           <li><code>TRK6</code>: Open hi-hat</li>
           <li><code>TRK7</code>: Acid synth</li>

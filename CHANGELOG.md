@@ -8,12 +8,22 @@
 
 <sub>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.4.7 (25 March 2026)
+- Add `Chaos` as a new experimental generator on Note tracks, extending the generator order to `Random`, `Acid`, `Chaos`, `Euclidean`, `Init`
+- Make `Chaos` a non-destructive multi-layer macro-random tool driven by a global `Amount`, `A/B`, `Cancel`, `Apply`, and a new random 32-bit seed state on demand
+- Give `Chaos` a dedicated 4x4 layer matrix covering `Gate`, `G Offset`, `G Prob`, `Retrig`, `Length`, `L Range`, `L Prob`, `R Prob`, `Note`, `N Slide`, `N Range`, `N Prob`, `N Bypass`, and `Cond`, plus direct `All On` / `All Off` actions
+- Make `Chaos` selection-aware like the other generators: if a persistent step selection exists it is used as the target area first, otherwise the generator falls back to the current sequence `First Step` / `Last Step` window
+- Add `Chaos`-specific compare messaging so `A/B` flips between `ORIGINAL` and `VANDALIZED` while keeping the standard generator preview/apply safety model intact
+- Refine Note-like step visualization again: move retrigger marks into the step box when other layers are shown, add a compact condition mark next to the step number, and render slide as a small tie between adjacent step boxes
+- Change the default screensaver timeout to `15m`, add `Wake Mode = required` as the new default, and make the first gesture after screensaver wake restore the display without also performing the underlying key or encoder action
+- Refresh the built-in simulator / Test Drive demo state and browser audio mapping for the current line
+
 # v0.3.2-vinx.1.4.6 (24 March 2026)
 - Lower the default UI refresh to `30 fps` and skip LCD redraws when the framebuffer hash has not changed, reducing unnecessary display traffic without adding a second framebuffer
 - Add immediate `Scale` prelisten preview on Note and Arp sequence pages, while keeping commit on encoder press; add `CANCEL` to `Scale` and `Root Note` editing so preview changes can be discarded safely
 - Change the default `Slide Time` to `20%` across track types that expose it, tighten the generator menu mapping so non-Note tracks no longer show a duplicate `Euclidean`, and clean dead `PatternPage` code that kept an unused dynamic allocation around
 - Turn `Task Profiler` off by default and disable the `Asteroids` easter egg feature in the active build to recover RAM headroom for regular firmware use
-- Refresh the simulator/browser demo state and bundled sound engine setup for the current local line, including a revised Track 8 synth voice and updated drum sample set
+- Refresh the simulator/browser demo state and bundled sound engine setup for the current line, including a revised Track 8 synth voice and updated drum sample set
 
 # v0.3.2-vinx.1.4.5 (22 March 2026)
 - Refine generator preview rendering: make the 16-step bank indicator thinner and framed, slim down the playback playhead, refine `Random` preview rendering, and align `Acid` `Slide` / `Phrase` note and slide lanes more cleanly on the LCD

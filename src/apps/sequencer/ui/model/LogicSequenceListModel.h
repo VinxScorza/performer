@@ -274,5 +274,4 @@ private:
         std::array<int, 8> _selectedScale;
         bool _editScale = false;
 
-        std::array<int, 8> _logicTracks;
 };

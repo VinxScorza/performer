@@ -135,7 +135,7 @@
       <section>
         <h3 id="manual-wip">Work in Progress</h3>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork, and the current local line is aligned through <code>v0.3.2-vinx.1.4.6</code>.
+          This manual is being actively adapted for the Vinx Scorza fork, and the current line is aligned through <code>v0.3.2-vinx.1.4.7</code>.
         </p>
         <p>
           It still draws on earlier upstream documentation where useful, but the main workflow pages and the current appendix/Launchpad material have already been rewritten and realigned for this fork.
@@ -1195,10 +1195,10 @@
           This page allows editing the currently selected sequence on the currently selected track. Depending on the track mode of the selected track, this page shows a different graphical representation of the sequence. If track mode is set to MIDI/CV, the page is not available and selecting it will jump to the <a href="#pages-track">Track</a> page.
         </p>
         <p>
-          On Note-like step views, the inner box of each step is used as a compact visual summary: <em>Gate Offset</em> shifts the box left or right inside the step, <em>Length</em> changes its width, and <em>Retrigger</em> draws it as stripes. A full-width box still corresponds to <code>100%</code> length, as in earlier firmware versions. The striped view is meant as quick feedback rather than a literal retrigger counter, so the number of visible stripes does not necessarily match the number of ratchets.
+          On Note-like step views, the inner box of each step is used as a compact visual summary: <em>Gate Offset</em> shifts the box left or right inside the step and <em>Length</em> changes its width. A full-width box still corresponds to <code>100%</code> length, as in earlier firmware versions.
         </p>
         <p>
-          This visual shorthand can still be refined, but it already makes the active step state much easier to read at a glance while editing.
+          In the current Vinx line, additional compact cues are layered onto this view: a small condition mark appears next to the step number when a step condition is active, retrigger marks are shown directly inside the step box when other layers are being viewed, and slide is hinted with a small tie between adjacent step boxes. The result is still shorthand rather than a literal event diagram, but it gives a denser at-a-glance overview than the earlier striped retrigger-only representation.
         </p>
         <p>
           In a Logic track, if detailed view is enabled, a visual representation of the input tracks is visible for each step: a dot means input track 1 has gate on, an empty square means input track 2 has gate on, a combination of dot and empty square means both input tracks have gate on and finally the full square means logic gate is on. A visual feedback is shown when the logic gate output is on. Use <code>SHIFT</code> to show the status of the inputs instead of the sequence gates.
@@ -1411,6 +1411,9 @@
         <p>
           The general workflow is: open the generator, adjust parameters against the live preview, use <code>A/B</code> to compare preview and original material, then use <code>Cancel</code> to discard or <code>Apply</code> to write the result into the sequence.
         </p>
+        <p>
+          The current line also adds an experimental Note-track generator called <em>Chaos</em>. It keeps the same non-destructive safety model as the other generators, but deliberately uses a rougher multi-layer random workflow.
+        </p>
         <table>
           <thead>
             <tr>
@@ -1421,12 +1424,16 @@
           <tbody>
             <tr><td style="text-align: left">Random</td><td style="text-align: left">Random generator with non-destructive preview and seed-based regeneration.</td></tr>
             <tr><td style="text-align: left">Acid</td><td style="text-align: left">Note-track generator for acid-like Gate / Note / Slide motion.</td></tr>
+            <tr><td style="text-align: left">Chaos</td><td style="text-align: left">Experimental Note-track multi-layer macro-random generator with a global amount control and direct layer toggles.</td></tr>
             <tr><td style="text-align: left">Euclidean</td><td style="text-align: left">Euclidean generator based on Bjorklund's algorithm.</td></tr>
             <tr><td style="text-align: left">Init</td><td style="text-align: left">Reset the current layer.</td></tr>
           </tbody>
         </table>
         <p>
-          Note: <em>Acid</em> appears only on Note tracks. Other track modes keep the smaller generator set appropriate to their data model.
+          Note: <em>Acid</em> and <em>Chaos</em> appear only on Note tracks. Other track modes keep the smaller generator set appropriate to their data model.
+        </p>
+        <p>
+          On the current line, the Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init</code>.
         </p>
         <h4>Context Menu</h4>
         <p>
@@ -1450,6 +1457,39 @@
         </table>
         <p>
           On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material.
+        </p>
+        <p>
+          Note: <em>Chaos</em> currently does not use this separate generator context menu. Its main actions stay directly on the page itself.
+        </p>
+        <h4>Chaos</h4>
+        <p>
+          <em>Chaos</em> is currently an experimental generator available only on Note tracks. Unlike <em>Random</em>, which works on the active layer, <em>Chaos</em> can randomize multiple Note-track layers together from a single page.
+        </p>
+        <p>
+          The page uses a 4x4 matrix of direct layer toggles. The available targets are <code>Gate</code>, <code>G Offset</code>, <code>G Prob</code>, <code>Retrig</code>, <code>Length</code>, <code>L Range</code>, <code>L Prob</code>, <code>R Prob</code>, <code>Note</code>, <code>N Slide</code>, <code>N Range</code>, <code>N Prob</code>, <code>N Bypass</code>, and <code>Cond</code>, plus dedicated <code>All On</code> and <code>All Off</code> cells.
+        </p>
+        <p>
+          Like the other Vinx generators, <em>Chaos</em> is non-destructive. If a persistent step selection exists it is used as the target area first; otherwise the generator falls back to the current sequence <em>First Step</em> / <em>Last Step</em> range.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Control</th>
+              <th style="text-align: left">Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>ENCODER</code> rotate</td><td style="text-align: left">Move through the 4x4 target matrix with wraparound.</td></tr>
+            <tr><td style="text-align: left"><code>ENCODER</code> press</td><td style="text-align: left">Toggle the selected target, or trigger <code>All On</code> / <code>All Off</code> on the action cells.</td></tr>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left"><code>A/B</code> compare between <code>ORIGINAL</code> and the current <code>VANDALIZED</code> preview.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code> + encoder</td><td style="text-align: left">Adjust the global <code>Amount</code>, which controls how strongly the result departs from the original material.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left"><code>CHAOS</code>: generate a fresh random 32-bit seed and rebuild the preview.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left"><code>Cancel</code> the preview and restore the original sequence.</td></tr>
+            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left"><code>Apply</code> the current preview to the sequence.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          In practice, <em>Chaos</em> is not trying to be harmonically clever. It is a deliberately rough exploratory tool: a selection-aware, multi-layer macro-random pass with a single global intensity and explicit target toggles.
         </p>
         <h4>Euclidean</h4>
         <p>The following options are available:</p>
@@ -1929,8 +1969,8 @@
           </thead>
           <tbody>
             <tr><td style="text-align: left">Brightness</td><td style="text-align: left">0 - 10</td><td style="text-align: left">Reduce overall display brightness. Lower brightness may reduce noise.</td></tr>
-            <tr><td style="text-align: left">Screensaver</td><td style="text-align: left">Off, 3s, 5s, 10s, 30s, 1m, 10m, 30m</td><td style="text-align: left">Turn the display off after a period of inactivity.</td></tr>
-            <tr><td style="text-align: left">Wake Mode</td><td style="text-align: left">Always, Required</td><td style="text-align: left">Determine when the display wakes from the screensaver.</td></tr>
+            <tr><td style="text-align: left">Screensaver</td><td style="text-align: left">Off, 3s, 5s, 10s, 30s, 1m, 5m, 10m, 15m, 30m</td><td style="text-align: left">Blank the display after a period of inactivity. In the current Vinx line the default is <code>15m</code>.</td></tr>
+            <tr><td style="text-align: left">Wake Mode</td><td style="text-align: left">Always, Required</td><td style="text-align: left">Determine when the display wakes from the screensaver. In the current Vinx line the default is <code>required</code>, so the first gesture after wake restores the display without also triggering the underlying action.</td></tr>
             <tr><td style="text-align: left">Dim Sequence</td><td style="text-align: left">off, dim, dim+</td><td style="text-align: left">Reduce sequence-page brightness using three display-intensity levels. In the Vinx fork the default is <code>dim</code>, mainly to help tame display noise leaking into the audio band.</td></tr>
             <tr><td style="text-align: left">LP Style</td><td style="text-align: left">Classic, Blue</td><td style="text-align: left">Select Launchpad color scheme.</td></tr>
             <tr><td style="text-align: left">Pattern Change</td><td style="text-align: left">Immediate, Sync</td><td style="text-align: left">Swap the default pattern launch behavior.</td></tr>

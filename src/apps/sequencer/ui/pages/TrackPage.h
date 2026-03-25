@@ -42,8 +42,6 @@ private:
     LogicTrackListModel _logicTrackListModel;
     ArpTrackListModel _arpTrackListModel;
 
-    Track *_track;
-    
     NoteTrack *_noteTrack;
     CurveTrack *_curveTrack;
     MidiCvTrack *_midiCvTrack;

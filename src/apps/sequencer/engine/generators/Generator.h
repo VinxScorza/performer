@@ -17,6 +17,7 @@ public:
         Euclidean,
         Random,
         Acid,
+        Chaos,
         Last
     };
 
@@ -26,6 +27,7 @@ public:
         case Mode::Euclidean:   return "Euclidean";
         case Mode::Random:      return "Random";
         case Mode::Acid:        return "Acid";
+        case Mode::Chaos:       return "Chaos";
         case Mode::Last:        break;
         }
         return nullptr;

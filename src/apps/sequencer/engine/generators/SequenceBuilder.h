@@ -311,3 +311,100 @@ private:
     std::bitset<CONFIG_STEP_COUNT> &_selected;
     bool _showingPreview = false;
 };
+
+class ChaosSequenceBuilder : public SequenceBuilder {
+public:
+    ChaosSequenceBuilder(NoteSequence &sequence, std::bitset<CONFIG_STEP_COUNT> &selected) :
+        _edit(sequence),
+        _original(sequence),
+        _preview(sequence),
+        _selected(selected)
+    {}
+
+    void revert() override {
+        _edit = _original;
+        _preview = _original;
+        _showingPreview = false;
+    }
+
+    void apply() override {
+        _edit = _preview;
+        _original = _preview;
+        _showingPreview = true;
+    }
+
+    void showOriginal() override {
+        _edit = _original;
+        _showingPreview = false;
+    }
+
+    void showPreview() override {
+        _edit = _preview;
+        _showingPreview = true;
+    }
+
+    bool showingPreview() const override {
+        return _showingPreview;
+    }
+
+    int originalLength() const override {
+        return _original.lastStep() - _original.firstStep() + 1;
+    }
+
+    float originalValue(int index) const override {
+        return _original.step(_original.firstStep() + index).gate() ? 1.f : 0.f;
+    }
+
+    int length() const override {
+        return _preview.lastStep() - _preview.firstStep() + 1;
+    }
+
+    void setLength(int length) override {
+        _preview.setFirstStep(0);
+        _preview.setLastStep(length - 1);
+    }
+
+    float value(int index) const override {
+        return _preview.step(_preview.firstStep() + index).gate() ? 1.f : 0.f;
+    }
+
+    void setValue(int index, float value) override {
+        _preview.step(_preview.firstStep() + index).setGate(value >= 0.5f);
+    }
+
+    void clearSteps() override {
+        _preview.clearSteps();
+    }
+
+    void copyStep(int fromIndex, int toIndex) override {
+        _preview.step(_preview.firstStep() + toIndex) = _original.step(_original.firstStep() + fromIndex);
+    }
+
+    void clearLayer() override {
+        _preview = _original;
+    }
+
+    void resetPreview() {
+        _preview = _original;
+    }
+
+    bool hasSelection() const { return _selected.any(); }
+
+    bool isTargetStep(int stepIndex) const {
+        if (_selected.any()) {
+            return _selected[stepIndex];
+        }
+        return stepIndex >= _original.firstStep() && stepIndex <= _original.lastStep();
+    }
+
+    const NoteSequence &originalSequence() const { return _original; }
+    const NoteSequence &previewSequence() const { return _preview; }
+    NoteSequence &previewSequence() { return _preview; }
+
+private:
+    NoteSequence &_edit;
+    NoteSequence _original;
+    NoteSequence _preview;
+    std::bitset<CONFIG_STEP_COUNT> &_selected;
+    bool _showingPreview = false;
+};
