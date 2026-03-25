@@ -16,7 +16,7 @@
 - Add `Chaos`-specific compare messaging so `A/B` flips between `ORIGINAL` and `VANDALIZED` while keeping the standard generator preview/apply safety model intact
 - Refine Note-like step visualization again: move retrigger marks into the step box when other layers are shown, add a compact condition mark next to the step number, and render slide as a small tie between adjacent step boxes
 - Change the default screensaver timeout to `15m`, add `Wake Mode = required` as the new default, and make the first gesture after screensaver wake restore the display without also performing the underlying key or encoder action
-- Clarify the two step-initialization workflows: `SHIFT + PAGE -> INIT LAYER` now resets only the active layer, while `GEN -> Init Seq` now resets sequence steps selection-aware like the other generators
+- Fix the `Init Layer` regression and clarify the two step-initialization workflows: `SHIFT + PAGE -> INIT LAYER` now resets only the active layer again, while `GEN -> Init Seq` now resets sequence steps selection-aware like the other generators
 - Refresh the built-in simulator / Test Drive demo state and browser audio mapping for the current line
 
 # v0.3.2-vinx.1.4.6 (24 March 2026)
