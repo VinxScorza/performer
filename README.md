@@ -33,14 +33,6 @@ Primary documentation for this fork:
 - <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek Performer fork</a>
 - <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>
 
-## Philosophy
-
-This fork follows a simple principle:
-
-> Make PER|FORMER more predictable, more playable, more useful, and more fun in a live modular context.
->
-> Not more features, but better behavior.
-
 ## Notes
 
 If you are looking for a more conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines.
