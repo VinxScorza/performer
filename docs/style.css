@@ -173,9 +173,13 @@ pre code {
   display: block;
   margin: 0 0 12px;
   padding: 6px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
   border: 1px solid rgba(203, 178, 111, 0.24);
   border-radius: 8px;
   background: rgba(203, 178, 111, 0.08);
+  backdrop-filter: blur(4px);
   color: #f4edcf;
   font-size: 10px;
   font-style: italic;
