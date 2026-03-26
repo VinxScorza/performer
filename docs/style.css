@@ -184,7 +184,7 @@ pre code {
   font-size: 10px;
   font-style: italic;
   letter-spacing: 0.16em;
-  text-align: left;
+  text-align: right;
   text-transform: uppercase;
 }
 
@@ -201,22 +201,25 @@ pre code {
   top: 40px;
   z-index: 1;
   padding-top: 4px;
-  background: rgba(20, 20, 20, 0.92);
+  background: transparent;
 }
 
 .manual-search-label {
-  display: block;
-  margin: 0 0 8px;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .manual-search-input {
   width: 100%;
   box-sizing: border-box;
-  padding: 7px 9px;
+  padding: 7px 1px 7px 19px;
   border: 1px solid #4a4a4a;
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.28);
@@ -224,6 +227,7 @@ pre code {
   font: inherit;
   font-size: 12px;
   font-style: italic;
+  text-align: right;
 }
 
 .manual-search-input:focus {
@@ -289,12 +293,12 @@ pre code {
 
 .manual-sidebar-nav ul {
   margin: 0;
-  padding-left: 0;
-  padding-right: 16px;
+  padding-left: 16px;
+  padding-right: 0;
 }
 
 .manual-sidebar-nav > ul {
-  padding-right: 0;
+  padding-left: 0;
   list-style: none;
 }
 
@@ -309,7 +313,11 @@ pre code {
   color: #ddd7bf;
   font-size: 15px;
   line-height: 1.35;
-  text-align: right;
+  text-align: left;
+}
+
+.manual-sidebar-nav > ul > li > a {
+  font-weight: 700;
 }
 
 .manual-sidebar-nav ul ul a {
