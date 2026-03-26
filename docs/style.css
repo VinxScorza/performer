@@ -184,7 +184,7 @@ pre code {
   font-size: 10px;
   font-style: italic;
   letter-spacing: 0.16em;
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
 }
 
@@ -289,11 +289,12 @@ pre code {
 
 .manual-sidebar-nav ul {
   margin: 0;
-  padding-left: 16px;
+  padding-left: 0;
+  padding-right: 16px;
 }
 
 .manual-sidebar-nav > ul {
-  padding-left: 0;
+  padding-right: 0;
   list-style: none;
 }
 
@@ -303,11 +304,12 @@ pre code {
 }
 
 .manual-sidebar-nav a {
-  display: inline-block;
+  display: block;
   padding: 2px 0;
   color: #ddd7bf;
   font-size: 15px;
   line-height: 1.35;
+  text-align: right;
 }
 
 .manual-sidebar-nav ul ul a {
