@@ -197,6 +197,11 @@ pre code {
 
 .manual-search {
   margin: 0 0 16px;
+  position: sticky;
+  top: 40px;
+  z-index: 1;
+  padding-top: 4px;
+  background: rgba(20, 20, 20, 0.92);
 }
 
 .manual-search-label {
