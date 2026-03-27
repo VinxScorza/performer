@@ -41,16 +41,16 @@
           <a href="https://github.com/VinxScorza/performer" target="_blank" rel="noopener noreferrer">github.com/VinxScorza/performer</a>
         </p>
         <p>
-          Documentation note: the <a href="manual/index.html">User Manual</a> is now aligned through <code>v0.3.2-vinx.1.4.7</code>, including the appendix and Launchpad sections.
+          Documentation note: the <a href="manual/index.html">User Manual</a> is now aligned through <code>v0.3.2-vinx.1.4.8</code>, including the appendix and Launchpad sections.
         </p>
         <p>
-          Lineage:
-          <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a>
-          fork of
+          Lineage: derived from the
+          <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek fork</a>
+          of
           <a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Westlicht Performer</a>.
         </p>
         <p>
-          IMPORTANT NOTE: I am not a developer. I am an artist trying to shape and carve his own instrument.
+          IMPORTANT NOTE: I am not a software developer. I am just an artist shaping the instrument I want to perform with.
         </p>
         <p>
           About Vinx Scorza:
@@ -61,107 +61,55 @@
       <section>
         <h3>What’s New in Vinx Fork</h3>
         <p>
-          A quick overview of the most relevant fixes and workflow changes introduced in the Vinx fork beyond <a href="https://github.com/mebitek/performer/releases/tag/v0.3.2" target="_blank" rel="noopener noreferrer">Mebitek <code>v0.3.2</code></a>.
+          Current fork line: <code>v0.3.2-vinx.1.4.8</code><br>
+          Lineage: derived from the Mebitek fork of the Westlicht Performer sequencer.<br>
+          This fork remains intentionally personal and exploratory, shaped by ongoing use of PER|FORMER as a live instrument.
         </p>
-        <h4>Fixes</h4>
+        <h4>Fixes &amp; Stability</h4>
         <ul>
-          <li>Fix crashes and reboots when shifting 64-step Note sequences</li>
-          <li>Fix step-shift range handling across Note, Logic, Curve, Stochastic, and Arp sequences</li>
-          <li>Restore the browser-based Test Drive as a working public build of the current fork line</li>
-          <li>Include further small UI, workflow, and dead-code fixes beyond the headline changes</li>
+          <li>Fix crashes/reboots on 64-step Note sequence shifting and correct step-shift range handling across all sequence types (Note, Logic, Curve, Stochastic, Arp)</li>
+          <li>Restore proper Init behavior (Init Layer vs Init Seq) and resolve generator/system/UI edge cases, including dead code paths</li>
         </ul>
-        <h4>Improvements</h4>
+        <h4>Chaos</h4>
+        <ul>
+          <li>Introduce experimental <code>CHAOS MODE</code> with <code>Vandalize Sequence</code> and pattern-wide <code>Wreck Pattern</code> across all Note tracks</li>
+          <li>Refine workflow: enter on <code>ORIGINAL</code>, explicit <code>CHAOS</code> trigger, <code>A/B</code> preview, and <code>VANDALIZED</code> / <code>WRECKED</code> popups</li>
+          <li>Improve behavior: per-track <code>First Step</code>/<code>Last Step</code> ranges, consistent preview triggering, and warning popup before <code>Wreck Pattern</code> (<code>F1</code> <code>PROJ PAGE</code>, <code>F3</code> <code>WRECK</code>, <code>F5</code> cancel)</li>
+          <li>Add <code>System -&gt; Chaos Defaults</code> with persistent 4x4 layer masks for sequence/pattern targets, auto-saved to flash</li>
+          <li>Optimize memory: target-step backups only plus in-place preview regeneration to reduce runtime pressure</li>
+        </ul>
+        <p>
+          WARNING: <code>Chaos -&gt; Wreck Pattern</code> is a wildly experimental, pattern-wide process and should be used only after saving your project.
+        </p>
+        <h4>Generators</h4>
         <ul>
           <li>Add the new <code>Acid</code> Note-track generator with <code>Layer / Phrase</code> modes, where <code>Phrase</code> writes coordinated <code>Gate + Note + Slide</code> material</li>
-          <li>Add the new experimental <code>Chaos</code> Note-track generator: a multi-layer macro-random tool with non-destructive preview, global <code>Amount</code>, direct <code>All On</code> / <code>All Off</code> actions, and a dedicated layer matrix</li>
-          <li>Refine step visualization again with compact condition marks, retrigger marks moved into the step box outside the dedicated Retrig layer, and a small slide tie between adjacent steps</li>
-          <li>Fix the <code>Init Layer</code> regression and clarify step initialization: <code>SHIFT + PAGE -> INIT LAYER</code> now resets only the active layer again, while <code>GEN -> Init Seq</code> resets sequence steps with the same selection-aware scope used by the other generators</li>
-          <li>Change the default screensaver timeout to <code>15m</code> and make the first gesture after wake restore only the display when <code>Wake Mode</code> is set to <code>required</code></li>
-          <li>Add non-destructive <code>Random</code> preview with <code>A/B</code> comparison and <code>Variation</code></li>
-          <li>Extend <code>Random</code> to 32-bit seeds shown as 8-digit hexadecimal values, randomize the seed on entry and on change, and remove the old linear seed stepping workflow</li>
-          <li>Make <code>Random</code> previews layer-aware on Note tracks</li>
-          <li>Add immediate <code>Scale</code> prelisten on Note and Arp sequence pages</li>
-          <li>Add <code>Cancel</code> while editing <code>Scale</code> and <code>Root Note</code></li>
-          <li>Redesign generator previews for <code>Random</code> and <code>Acid</code> on the LCD</li>
-          <li>Make sequence-page <code>prev / next</code> navigation cyclic</li>
-          <li>Rescale the Swing display from <code>50%–75%</code> to <code>0%–99%</code> while preserving engine timing compatibility with existing projects</li>
-          <li>Introduce three <code>Dim Sequence</code> levels instead of a single on/off behavior</li>
-          <li>Increase the default output clock pulse from <code>1 ms</code> to <code>10 ms</code></li>
-          <li>Lower the default UI refresh to <code>30 fps</code></li>
-          <li>Skip LCD redraws when the framebuffer hash has not changed</li>
-          <li>Update and realign the manual to the current Vinx fork line</li>
-          <li>Publish the Launchpad cheat sheet on the site</li>
-          <li>Refresh the built-in simulator demo project, drumkit, and browser sound setup for the current line</li>
+          <li>Add experimental <code>Chaos</code> as a multi-layer macro-random generator with <code>Amount</code>, preview, and matrix-based target control</li>
+          <li>Rework <code>Euclidean</code> (<code>A/B</code>, <code>NEW EUCL</code>, direct <code>Steps</code>/<code>Beats</code>/<code>Offset</code>, <code>Beats &lt;= Steps</code>) and <code>Random</code> (<code>A/B</code> preview, <code>Variation</code>, 32-bit hex seeds, auto reseed, layer-aware rendering)</li>
+          <li>Make <code>RESETGEN</code> restore true defaults, compact generator selection to a single page, and redesign LCD previews for <code>Random</code> and <code>Acid</code></li>
+        </ul>
+        <h4>Workflow, UI &amp; Interaction</h4>
+        <ul>
+          <li>Refine step visualization (compact conditions, retrig in-step, slide ties)</li>
+          <li>Keep transport always responsive during generator usage</li>
+          <li>Add <code>Scale</code> prelisten on Note/Arp with <code>Cancel</code> support and cyclic sequence navigation</li>
+          <li>Improve contextual labeling (<code>ACID PHRASE</code>, <code>CHAOS ON SEQ</code>/<code>PAT</code>, etc.)</li>
+        </ul>
+        <h4>System &amp; Performance</h4>
+        <ul>
+          <li>Reduce memory footprint and allocations, especially around <code>Chaos</code>; lower UI refresh to <code>30 fps</code>; skip redundant LCD redraws via framebuffer hashing</li>
+          <li>Increase default clock pulse (<code>1 ms</code> to <code>10 ms</code>), add three <code>Dim Sequence</code> levels, and set screensaver to <code>15m</code> with improved wake behavior</li>
+          <li>Make the <code>System</code> page land on <code>Settings</code> by default and align startup/version reporting with <code>v0.3.2-vinx.1.4.8</code></li>
+        </ul>
+        <h4>Content &amp; Ecosystem</h4>
+        <ul>
+          <li>Restore browser Test Drive, update the manual to the Vinx fork line, publish the Launchpad cheat sheet, and refresh simulator/demo assets</li>
         </ul>
         <p>
           See the full
           <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>
           for the complete list of Vinx-specific changes.
         </p>
-      </section>
-
-      <section>
-        <h3>Vinx Fork Notes</h3>
-        <ul>
-          <li>Current fork line: <strong>v0.3.2-vinx.1.4.7</strong></li>
-          <li><a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a> tracks Vinx-specific fixes and features</li>
-          <li><a href="https://github.com/VinxScorza/performer/blob/master/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the fork status and upstream references</li>
-          <li>This firmware line was built on top of the Mebitek fork because it already provided features I needed; some inherited functionality remains here as part of that lineage even when it is not central to my own daily workflow</li>
-          <li>The fork stays intentionally personal and exploratory, shaped by ongoing use of PER|FORMER as a live instrument</li>
-          <li><code>Chaos</code> is a deliberately rough multi-layer Note-track generator intended more as controlled vandalism than as a musically “smart” phrase tool</li>
-          <li>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Features</h3>
-        <ul>
-          <li>8 track sequencer</li>
-          <li>16 sequences per track</li>
-          <li>64 steps per sequence</li>
-          <li>Multiple track and sequence modes</li>
-          <li>Note and modulation sequencing</li>
-          <li>Arpeggiator</li>
-          <li>Snapshot system</li>
-          <li>Sequence generators with non-destructive Random preview workflow</li>
-          <li>Routing system for CV inputs and external MIDI controllers</li>
-          <li>Novation Launchpad support</li>
-          <li>Generate MIDI output from multiple sequences</li>
-          <li>Flexible clock system</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>User Interface</h3>
-        <ul>
-          <li>Large and bright 256x64 pixel OLED display</li>
-          <li>Encoder with push button</li>
-          <li>32 buttons with bi-color LEDs</li>
-          <li>5 function buttons with labels on display</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Inputs and Outputs</h3>
-        <ul>
-          <li>8 CV outputs (-5V to 5V)</li>
-          <li>8 gate outputs (5V)</li>
-          <li>4 CV inputs (-5V to 5V)</li>
-          <li>Clock and reset/run input</li>
-          <li>Clock and reset/run output</li>
-          <li>MIDI input and output (MIDI TRS 3.5mm jacks)</li>
-          <li>USB Host for MIDI over USB</li>
-          <li>microSD Card Slot</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Specifications</h3>
-        <ul>
-          <li>Width: 34 HP</li>
-          <li>Depth: 25mm</li>
-          <li>Power: 100mA @ +12V, 15mA @ -12V (not including USB host power)</li>
-        </ul>
       </section>
 
       <section>

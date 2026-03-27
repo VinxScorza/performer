@@ -135,7 +135,7 @@
       <section>
         <h3 id="manual-wip">Work in Progress</h3>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork, and the current line is aligned through <code>v0.3.2-vinx.1.4.7</code>.
+          This manual is being actively adapted for the Vinx Scorza fork, and the current line is aligned through <code>v0.3.2-vinx.1.4.8</code>.
         </p>
         <p>
           It still draws on earlier upstream documentation where useful, but the main workflow pages and the current appendix/Launchpad material have already been rewritten and realigned for this fork.
@@ -1406,7 +1406,7 @@
           You can access generators in each sequence layer to generate their values through the context menu with <code>SHIFT</code> + <code>PAGE</code>.
         </p>
         <p>
-          In the Vinx fork, generator work is explicitly preview-oriented: entering a generator immediately creates a non-destructive preview, and the page opens on the current 16-step bank while still showing the full 64-step sequence overview where applicable.
+          In the Vinx fork, generator work is explicitly preview-oriented. Most generators still create a non-destructive preview immediately on entry, and the page opens on the current 16-step bank while still showing the full 64-step sequence overview where applicable. <em>Chaos</em> is now the exception: it enters on <code>ORIGINAL</code> and waits for an explicit <code>CHAOS</code> press before revealing the first generated result or enabling <code>A/B</code> preview compare.
         </p>
         <p>
           The general workflow is: open the generator, adjust parameters against the live preview, use <code>A/B</code> to compare preview and original material, then use <code>Cancel</code> to discard or <code>Apply</code> to write the result into the sequence.
@@ -1424,7 +1424,7 @@
           <tbody>
             <tr><td style="text-align: left">Random</td><td style="text-align: left">Random generator with non-destructive preview and seed-based regeneration.</td></tr>
             <tr><td style="text-align: left">Acid</td><td style="text-align: left">Note-track generator for acid-like Gate / Note / Slide motion.</td></tr>
-            <tr><td style="text-align: left">Chaos</td><td style="text-align: left">Experimental Note-track multi-layer macro-random generator with a global amount control and direct layer toggles.</td></tr>
+            <tr><td style="text-align: left">Chaos</td><td style="text-align: left">Experimental Note-track multi-layer generator that now opens a <code>CHAOS MODE</code> submenu for <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.</td></tr>
             <tr><td style="text-align: left">Euclidean</td><td style="text-align: left">Euclidean generator based on Bjorklund's algorithm.</td></tr>
             <tr><td style="text-align: left">Init Seq</td><td style="text-align: left">Reset sequence steps within the current generator scope. If a persistent selection exists it is used first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
           </tbody>
@@ -1452,27 +1452,42 @@
           </thead>
           <tbody>
             <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">NEW RAND</td><td style="text-align: left">Pick a new random configuration for the current generator context. In <em>Random</em> this refreshes seed, smooth and range while keeping bias centered. In <em>Acid -&gt; Layer</em> it refreshes seed plus the layer-relevant main parameter without changing variation.</td></tr>
-            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the generator to its default state.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">RESETGEN</td><td style="text-align: left">Restore the generator shaping parameters to their defined defaults and rebuild the preview, without forcing a new reroll state.</td></tr>
             <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Cancel</td><td style="text-align: left">Discard the preview and return to the original sequence data.</td></tr>
             <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Apply</td><td style="text-align: left">Commit the preview to the selected sequence layer.</td></tr>
             <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Var</td><td style="text-align: left">Displays the current variation amount in seed-driven generators. In <em>Acid -&gt; Layer</em>, <code>F5</code> is also mirrored as a direct <code>NEW RAND</code> shortcut on the main generator page.</td></tr>
           </tbody>
         </table>
         <p>
-          On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material.
+          On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material. Parameter edits keep updating the hidden preview in the background, while explicit reroll actions such as <code>NEW RAND</code> reveal the new preview immediately.
+        </p>
+        <p>
+          On the current line, <code>RESETGEN</code> is now intentionally separated from reroll actions: <em>Random</em> resets to <code>Smooth 0</code>, <code>Bias 0</code>, <code>Range 5</code>, <code>Var 100</code>; <em>Acid</em> resets to <code>Density 50</code>, <code>Slide 10</code>, <code>Range 35</code>, <code>Var 100</code>; and <em>Euclidean</em> resets to <code>Steps 16</code>, <code>Beats 1</code>, <code>Offset 0</code>. Rerolling remains an explicit action via <code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>.
+        </p>
+        <p>
+          Generator pages and their related modal menus keep the transport controls active, so <code>PLAY/STOP</code> and <code>TEMPO</code> continue to respond without leaving <code>GEN</code>.
         </p>
         <p>
           Note: <em>Chaos</em> currently does not use this separate generator context menu. Its main actions stay directly on the page itself.
+        </p>
+        <p>
+          On the current line, <em>Euclidean</em> now uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code> triggers <code>NEW EUCL</code>, and <code>F3</code>, <code>F4</code> and <code>F5</code> control <code>Steps</code>, <code>Beats</code> and <code>Offset</code>. Its context menu keeps only <code>RESETGEN</code>, <code>Cancel</code> and <code>Apply</code>.
         </p>
         <h4>Chaos</h4>
         <p>
           <em>Chaos</em> is currently an experimental generator available only on Note tracks. Unlike <em>Random</em>, which works on the active layer, <em>Chaos</em> can randomize multiple Note-track layers together from a single page.
         </p>
         <p>
-          The page uses a 4x4 matrix of direct layer toggles. The available targets are <code>Gate</code>, <code>G Offset</code>, <code>G Prob</code>, <code>Retrig</code>, <code>Length</code>, <code>L Range</code>, <code>L Prob</code>, <code>R Prob</code>, <code>Note</code>, <code>N Slide</code>, <code>N Range</code>, <code>N Prob</code>, <code>N Bypass</code>, and <code>Cond</code>, plus dedicated <code>All On</code> and <code>All Off</code> cells.
+          Entering <em>Chaos</em> now opens a <code>CHAOS MODE</code> submenu with two choices: <code>Vandalize Sequence</code> keeps the classic single-sequence <em>Chaos</em> workflow, while <code>Wreck Pattern</code> applies the same destructive idea across all Note tracks in the current pattern.
         </p>
         <p>
-          Like the other Vinx generators, <em>Chaos</em> is non-destructive. If a persistent step selection exists it is used as the target area first; otherwise the generator falls back to the current sequence <em>First Step</em> / <em>Last Step</em> range.
+          Both <em>Chaos</em> modes now enter on <code>ORIGINAL</code>. Their scope, target mask, and amount defaults are loaded immediately, but no generated result is shown until you explicitly press <code>CHAOS</code>. Before that first reroll, <code>A/B</code> stays on the original view instead of pulling a hidden preview forward.
+        </p>
+        <p>
+          The generator page uses a 4x4 matrix of direct layer toggles. The available targets are <code>Gate</code>, <code>G Offset</code>, <code>G Prob</code>, <code>Retrig</code>, <code>Length</code>, <code>L Range</code>, <code>L Prob</code>, <code>R Prob</code>, <code>Note</code>, <code>N Slide</code>, <code>N Range</code>, <code>N Prob</code>, <code>N Bypass</code>, and <code>Cond</code>, plus dedicated <code>All On</code> and <code>All Off</code> cells.
+        </p>
+        <p>
+          <code>Vandalize Sequence</code> is selection-aware like the other generators: if a persistent step selection exists it is used as the target area first; otherwise the generator falls back to the current sequence <em>First Step</em> / <em>Last Step</em> range. <code>Wreck Pattern</code> keeps the same non-destructive preview model, but expands the target to all Note tracks in the current pattern. With an explicit step selection, that selection is shared across the affected Note tracks; without one, each Note track uses its own <em>First Step</em> / <em>Last Step</em> window.
         </p>
         <table>
           <thead>
@@ -1484,15 +1499,33 @@
           <tbody>
             <tr><td style="text-align: left"><code>ENCODER</code> rotate</td><td style="text-align: left">Move through the 4x4 target matrix with wraparound.</td></tr>
             <tr><td style="text-align: left"><code>ENCODER</code> press</td><td style="text-align: left">Toggle the selected target, or trigger <code>All On</code> / <code>All Off</code> on the action cells.</td></tr>
-            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left"><code>A/B</code> compare between <code>ORIGINAL</code> and the current <code>VANDALIZED</code> preview.</td></tr>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left"><code>A/B</code> compare between <code>ORIGINAL</code> and the current <em>Chaos</em> preview. On <code>Vandalize Sequence</code> the preview message is <code>VANDALIZED</code>; on <code>Wreck Pattern</code> it is <code>WRECKED</code>.</td></tr>
             <tr><td style="text-align: left"><code>F2</code> + encoder</td><td style="text-align: left">Adjust the global <code>Amount</code>, which controls how strongly the result departs from the original material.</td></tr>
-            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left"><code>CHAOS</code>: generate a fresh random 32-bit seed and rebuild the preview.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left"><code>CHAOS</code>: reroll the current <em>Chaos</em> state and rebuild the preview. If the page is currently on <code>ORIGINAL</code>, pressing it also brings the preview forward immediately and shows the dedicated <code>VANDALIZED</code> or <code>WRECKED</code> popup for the active mode.</td></tr>
             <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left"><code>Cancel</code> the preview and restore the original sequence.</td></tr>
             <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left"><code>Apply</code> the current preview to the sequence.</td></tr>
           </tbody>
         </table>
         <p>
           In practice, <em>Chaos</em> is not trying to be harmonically clever. It is a deliberately rough exploratory tool: a selection-aware, multi-layer macro-random pass with a single global intensity and explicit target toggles.
+        </p>
+        <p>
+          <code>System -&gt; Chaos Defaults</code> now stores separate persistent target masks for <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code>, each edited through the same 4x4 grid. These defaults are loaded automatically when you enter <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.
+        </p>
+        <p>
+          On the current line, repeated re-entry into <code>Chaos</code>, including <code>Vandalize Sequence</code> and <code>Wreck Pattern</code>, now tears down the previous generator and builder explicitly before constructing the next one, avoiding stale-state instability on hardware.
+        </p>
+        <p>
+          On the current line, <code>Vandalize Sequence</code> also keeps its backup state local to the active Note sequence instead of carrying every Note track in the current pattern, reducing unnecessary memory pressure in the single-sequence path.
+        </p>
+        <p>
+          On the current line, <code>Wreck Pattern</code> also keeps only the original target-step backups and regenerates its preview in place, reducing runtime memory pressure while preserving the same <code>A/B</code>, <code>Cancel</code> and <code>Apply</code> workflow.
+        </p>
+        <p>
+          Entering <code>Wreck Pattern</code> now opens a dedicated warning popup before the generator page. <code>F1</code> jumps to the <code>PROJ PAGE</code>, <code>F3</code> confirms <code>WRECK</code>, and <code>F5</code> cancels.
+        </p>
+        <p>
+          WARNING: <code>Chaos -&gt; Wreck Pattern</code> is a wildly experimental feature: a pattern-wide chaos process that should be used only after saving your project.
         </p>
         <h4>Euclidean</h4>
         <p>The following options are available:</p>
@@ -1921,6 +1954,12 @@
         <p>
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
+        <p>
+          On the current line, entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>.
+        </p>
+        <p>
+          The startup page on the current line also reports the <code>v0.3.2-vinx.1.4.8</code> version string correctly.
+        </p>
         <table>
           <thead>
             <tr>
@@ -1932,7 +1971,7 @@
             <tr><td style="text-align: left">Calibration</td><td style="text-align: left">Millivolt calibration of the 8 CV outputs.</td></tr>
             <tr><td style="text-align: left">Utilities</td><td style="text-align: left">SD card utility functions.</td></tr>
             <tr><td style="text-align: left">Update</td><td style="text-align: left">Shows firmware version and enters bootloader.</td></tr>
-            <tr><td style="text-align: left">User Settings</td><td style="text-align: left">Brightness, screensaver, wake mode, dim sequence, Launchpad style and pattern change behavior.</td></tr>
+            <tr><td style="text-align: left">User Settings</td><td style="text-align: left">Brightness, screensaver, wake mode, dim sequence, Launchpad style, pattern change behavior and the <code>Chaos Defaults</code> entry.</td></tr>
           </tbody>
         </table>
         <p>
@@ -1978,8 +2017,12 @@
             <tr><td style="text-align: left">LP Style</td><td style="text-align: left">Classic, Blue</td><td style="text-align: left">Select Launchpad color scheme.</td></tr>
             <tr><td style="text-align: left">Pattern Change</td><td style="text-align: left">Immediate, Sync</td><td style="text-align: left">Swap the default pattern launch behavior.</td></tr>
             <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style.</td></tr>
+            <tr><td style="text-align: left">Chaos Defaults</td><td style="text-align: left">open</td><td style="text-align: left">Open the dedicated <em>Chaos</em> defaults page, where <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code> are edited with the same 4x4 target grid used by the generator.</td></tr>
           </tbody>
         </table>
+        <p>
+          These two <em>Chaos</em> defaults are persistent machine-level user settings, not project data. They define which layer toggles are active by default when entering <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>. Closing the page saves them directly to flash, so they survive reboot without a separate manual settings save.
+        </p>
       </section>
 
       <section>

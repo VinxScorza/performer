@@ -136,6 +136,11 @@ pre code {
   padding: 34px 0 42px;
 }
 
+#main_content ul + p,
+#main_content ol + p {
+  margin-top: 1.2em;
+}
+
 .manual-layout {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
@@ -510,7 +515,7 @@ strong {
 }
 
 .donate-callout {
-  margin-top: 8px;
+  margin: 8px 0 20px;
   padding: 18px 20px;
   border-left-color: #e4d38a;
   background: rgba(228, 211, 138, 0.12);

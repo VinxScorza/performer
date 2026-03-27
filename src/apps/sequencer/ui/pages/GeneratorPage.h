@@ -41,6 +41,7 @@ public:
     void revert();
     void commit();
     void togglePreview();
+    void showPreviewStateMessage();
 
 private:
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;
@@ -58,6 +59,7 @@ private:
     StepSelection<CONFIG_STEP_COUNT> *_stepSelection;
     int _section = 0;
     int _chaosCursor = 0;
+    bool _chaosPreviewArmed = false;
     bool _applied = false;
     char _variationMenuLabel[16] = "VAR";
     ContextMenuModel::Item _contextMenuItems[5];

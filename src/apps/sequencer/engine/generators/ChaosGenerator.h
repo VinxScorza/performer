@@ -12,6 +12,11 @@
 
 class ChaosGenerator : public Generator {
 public:
+    enum class Scope {
+        Sequence,
+        Pattern
+    };
+
     enum class Target {
         Gate,
         GateOffset,
@@ -34,6 +39,7 @@ public:
         uint32_t seed = 0;
         uint8_t amount = 100;
         uint16_t targetMask = (1u << int(Target::Last)) - 1u;
+        Scope scope = Scope::Sequence;
     };
 
     ChaosGenerator(SequenceBuilder &builder, Params &params, std::bitset<CONFIG_STEP_COUNT> &selected);
@@ -47,6 +53,8 @@ public:
 
     void init() override;
     void randomizeParams() override;
+    void showOriginal() override;
+    void showPreview() override;
     void update() override;
 
     void randomizeSeed();
@@ -55,6 +63,10 @@ public:
     void setAmount(int amount) { _params.amount = clamp(amount, 0, 100); }
 
     uint32_t seed() const { return _params.seed; }
+
+    Scope scope() const { return _params.scope; }
+    void setScope(Scope scope) { _params.scope = scope; }
+    bool patternScope() const { return _params.scope == Scope::Pattern; }
 
     bool targetEnabled(Target target) const {
         return (_params.targetMask >> int(target)) & 0x1;
@@ -76,6 +88,10 @@ public:
         _params.targetMask = enabled ? ((1u << int(Target::Last)) - 1u) : 0u;
     }
 
+    void setTargetMask(uint16_t targetMask) {
+        _params.targetMask = targetMask & ((1u << int(Target::Last)) - 1u);
+    }
+
     bool allTargetsEnabled() const {
         return _params.targetMask == ((1u << int(Target::Last)) - 1u);
     }
@@ -83,6 +99,8 @@ public:
     static const char *targetCellLabel(Target target);
 
 private:
+    void applyPreviewToTargetTracks() const;
+    void updateTrack(int trackSlot, class Random &rng) const;
     int blendRandomValue(NoteSequence::Layer layer, int originalValue, class Random &rng) const;
     bool blendRandomBool(bool originalValue, class Random &rng) const;
 

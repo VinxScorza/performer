@@ -1,5 +1,6 @@
 #include "GeneratorSelectPage.h"
 
+#include "Pages.h"
 #include "ui/painters/WindowPainter.h"
 
 enum class Function {
@@ -36,7 +37,22 @@ void GeneratorSelectPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "GENERATOR");
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
-    ListPage::draw(canvas);
+    canvas.setFont(Font::Tiny);
+    canvas.setBlendMode(BlendMode::Set);
+
+    constexpr int listTop = 13;
+    constexpr int lineHeight = 8;
+
+    for (int row = 0; row < _listModel.rows(); ++row) {
+        FixedStringBuilder<24> str;
+        _listModel.cell(row, 0, str);
+
+        const int y = listTop + row * lineHeight;
+        const bool selected = row == selectedRow();
+
+        canvas.setColor(selected ? Color::Bright : Color::Medium);
+        canvas.drawText(8, y + 6, str);
+    }
 }
 
 void GeneratorSelectPage::updateLeds(Leds &leds) {
@@ -44,6 +60,24 @@ void GeneratorSelectPage::updateLeds(Leds &leds) {
 
 void GeneratorSelectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
+
+    if (key.isPlay()) {
+        if (key.pageModifier()) {
+            _engine.toggleRecording();
+        } else {
+            _engine.togglePlay(key.shiftModifier());
+        }
+        event.consume();
+        return;
+    }
+
+    if (key.isTempo()) {
+        if (!key.pageModifier()) {
+            _manager.pages().tempo.show();
+        }
+        event.consume();
+        return;
+    }
 
     if (key.isFunction()) {
         switch (Function(key.function())) {

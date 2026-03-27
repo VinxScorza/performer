@@ -1,6 +1,5 @@
-#include "AcidModeSelectPage.h"
+#include "ChaosDefaultsSelectPage.h"
 
-#include "Pages.h"
 #include "ui/painters/WindowPainter.h"
 
 enum class Function {
@@ -10,45 +9,26 @@ enum class Function {
 
 static const char *functionNames[] = { nullptr, nullptr, nullptr, "CANCEL", "OK" };
 
-AcidModeSelectPage::AcidModeSelectPage(PageManager &manager, PageContext &context) :
+ChaosDefaultsSelectPage::ChaosDefaultsSelectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel)
 {}
 
-void AcidModeSelectPage::show(bool allowLayer, ResultCallback callback) {
+void ChaosDefaultsSelectPage::show(ResultCallback callback) {
     _callback = callback;
-    _listModel.setAllowLayer(allowLayer);
     setSelectedRow(0);
     ListPage::show();
 }
 
-void AcidModeSelectPage::draw(Canvas &canvas) {
+void ChaosDefaultsSelectPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "ACID MODE");
+    WindowPainter::drawHeader(canvas, _model, _engine, "CHAOS DEFAULTS");
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     ListPage::draw(canvas);
 }
 
-void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
+void ChaosDefaultsSelectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
-
-    if (key.isPlay()) {
-        if (key.pageModifier()) {
-            _engine.toggleRecording();
-        } else {
-            _engine.togglePlay(key.shiftModifier());
-        }
-        event.consume();
-        return;
-    }
-
-    if (key.isTempo()) {
-        if (!key.pageModifier()) {
-            _manager.pages().tempo.show();
-        }
-        event.consume();
-        return;
-    }
 
     if (key.isFunction()) {
         switch (Function(key.function())) {
@@ -70,7 +50,7 @@ void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
     ListPage::keyPress(event);
 }
 
-void AcidModeSelectPage::closeWithResult(bool result) {
+void ChaosDefaultsSelectPage::closeWithResult(bool result) {
     Page::close();
     if (_callback) {
         _callback(result, _listModel.rowToMode(selectedRow()));

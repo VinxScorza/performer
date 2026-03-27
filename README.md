@@ -5,24 +5,17 @@
 ## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a>
 
 This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a> of the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
-Current fork version: `0.3.2-vinx.1.4.7`.
 
-IMPORTANT NOTE: I am not a software developer. I am an artist shaping the instrument I want to perform with.
+Current fork version: `0.3.2-vinx.1.4.8`.
+
+IMPORTANT NOTE: I am not a software developer. I am just an artist shaping the instrument I want to perform with.
 
 The Vinx Scorza fork begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference.
 
-This project focuses on live performance workflow, timing reliability, and UI/interaction refinements, with particular attention to modular techno and improvisation use cases. It is not meant to be a general-purpose extension of PER|FORMER, but a personal and practical refinement of behaviors that become important while actively using the sequencer in real musical situations.
-
-I built this firmware line on top of the Mebitek fork because it already contained features I needed and did not want to rebuild from scratch. As a result, this repository also carries inherited functionality that is not always central to my own workflow, even when I still fix or refine it as needed. The fork remains intentionally personal and exploratory: the instrument itself keeps pushing me to experiment with it.
-
-This fork is maintained for personal use and actively tested in practice, since PER|FORMER is the main sequencer in my live sets. Backward compatibility with older projects, settings, or workflows is not guaranteed, and I do not assume responsibility for regressions or incompatibilities introduced by Vinx-specific changes.
-
-This fork would not exist without the help of AI agents during development and debugging. I am very grateful to <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a> for the work done on his fork, and of course to <a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Simon Kallweit</a> for creating and developing the original Westlicht PER|FORMER.
+I am very grateful to <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a> for the work done on his fork, and of course to <a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Simon Kallweit</a> for creating and developing the original Westlicht PER|FORMER.
 
 If you would like to support their work financially, you can donate here:
 <a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Mebitek</a> · <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Simon Kallweit / Westlicht</a>
-
-This is a personal experimental fork focused on live workflow, custom behavior, and UI/interaction changes.
 
 Primary documentation for this fork:
 - <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">Vinx Scorza fork website</a>
@@ -53,19 +46,37 @@ If you need historical upstream reference material, the Mebitek manual is still 
 
 Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
 
-The current `v0.3.2-vinx.1.4.7` line includes:
-- An experimental `Chaos` generator on Note tracks: a multi-layer macro-random tool with non-destructive preview, global `Amount`, `A/B`, `Cancel`, `Apply`, `All On` / `All Off`, and selection-aware scope that targets the persistent step selection first or falls back to the current first/last-step range
-- Refined step visualization on Note-like views, including condition marks on the step index, retrigger marks shown directly in the step box outside the dedicated Retrig layer, and a small slide tie between adjacent steps
-- Fixed `Init Layer` after a regression and clarified the step initialization split: `SHIFT + PAGE -> INIT LAYER` now resets only the active layer again, while `GEN -> Init Seq` resets sequence steps with the same selection-aware scope used by the other generators
-- Screensaver defaults shifted to `15m` with `Wake Mode` set to `required`, so the first gesture after screensaver wake restores the display without also triggering an edit action
-- The generator workflow developed through `1.4.3`-`1.4.5`: `Acid` on Note tracks, redesigned LCD previews, layer-aware `Random`, and cleaner Note-layer cycling
-- Immediate `Scale` prelisten on Note and Arp sequence pages, with commit on encoder press and `CANCEL` available during `Scale` / `Root Note` editing
-- LCD/UI hardening aimed at regular hardware use: `30 fps` default UI refresh, redraw skip when the framebuffer hash is unchanged, and `Task Profiler` disabled by default for more headroom
-- Default `Slide Time` moved to `20%` across track types that expose it
-- Generator menu cleanup so non-Note tracks no longer show a duplicate `Euclidean`
-- A refreshed simulator / Test Drive setup with a revised built-in demo state, updated drum samples, and a cleaner browser sound map
+The current `v0.3.2-vinx.1.4.8` line then reworks `Chaos` around a `CHAOS MODE` entry with `Vandalize Sequence` and `Wreck Pattern`.
 
-Clone this repository:
+`Wreck Pattern` applies the same destructive multi-layer idea across all Note tracks in the current pattern while keeping preview, `A/B`, `Cancel`, and `Apply` grouped at pattern level. With an explicit step selection it uses that shared selection; otherwise each Note track keeps its own `First Step` / `Last Step` range.
+
+Both `Chaos` modes now enter on `ORIGINAL`, loading their defaults without immediately generating or revealing a preview. The first visible result appears only after an explicit `CHAOS` press; until then, `A/B` does not pull a hidden preview forward.
+
+When `Chaos` is on `ORIGINAL`, pressing `CHAOS` now brings the preview forward with the same dedicated popup used by `A/B`: `VANDALIZED` on `Vandalize Sequence` and `WRECKED` on `Wreck Pattern`.
+
+`System -> Chaos Defaults` now stores separate default target masks for `Seq Layers to Vandalize` and `Pat Layers to Wreck`, using the same 4x4 grid as the generator itself.
+
+These `Chaos Defaults` are persistent machine-level user settings, not project data. Changing project does not change them, and loading a project does not overwrite them. Closing the `Chaos Defaults` page now saves them directly to flash, so they survive reboot without an extra manual settings save step.
+
+Generator pages and their related modal menus now keep transport controls alive, so `PLAY/STOP` and `TEMPO` continue to respond without leaving `GEN`.
+
+The `System` page now lands on `Settings` by default instead of `Calibration`.
+
+`RESETGEN` now behaves as a true generator-default restore: it resets shaping parameters to their neutral defaults without forcing a new reroll state.
+
+The startup screen now reports the current `v0.3.2-vinx.1.4.8` line correctly.
+
+Entering `Chaos -> Wreck Pattern` now opens a dedicated warning popup before the generator page. `F1` jumps to the `PROJ PAGE`, `F3` confirms `WRECK`, and `F5` cancels.
+
+Repeated re-entry into `Chaos`, including `Vandalize Sequence` and `Wreck Pattern`, is now guarded by explicit generator and builder teardown so the same generator path can be reopened safely without leaving stale state behind.
+
+`Vandalize Sequence` now keeps its backup state local to the active Note sequence instead of carrying every Note track in the current pattern, which avoids unnecessary memory pressure when only the current sequence is being vandalized.
+
+WARNING: `Chaos -> Wreck Pattern` is a wildly experimental feature: a pattern-wide chaos process that should be used only after saving your project.
+
+On the current `1.4.8` line, the `Wreck Pattern` backend has also been reworked to keep only the original target-step backups and regenerate the preview in place, specifically to improve reliability on hardware without changing the user-facing workflow.
+
+To clone this repository:
 
 ```bash
 git clone https://github.com/VinxScorza/performer.git
@@ -97,7 +108,7 @@ If you want to do development on the firmware, the following is a quick guide on
 First you have to clone this repository (make sure to add the `--recursive` option to also clone all the submodules):
 
 ```
-git clone --recursive https://github.com/VinxScorza/performer.git
+git clone --recursive https://github.com/Westlicht/performer.git
 ```
 
 After cloning, enter the performer directory:

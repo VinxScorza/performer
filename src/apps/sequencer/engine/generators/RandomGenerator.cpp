@@ -52,8 +52,10 @@ void RandomGenerator::printParam(int index, StringBuilder &str) const {
 }
 
 void RandomGenerator::init() {
-    _params = Params();
-    randomizeSeed();
+    setSmooth(DefaultSmooth);
+    setBias(DefaultBias);
+    setScale(DefaultScale);
+    setVariation(DefaultVariation);
     update();
 }
 

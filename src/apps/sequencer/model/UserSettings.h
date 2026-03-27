@@ -15,6 +15,10 @@
 #define SettingPatternChange "patternchg"
 #define SettingLaunchpadNoteStyle "lpnote"
 #define SettingSyncSong "syncsong"
+#define SettingChaosSeqLayers "chaosseq"
+#define SettingChaosPatLayers "chaospat"
+
+static constexpr uint16_t DefaultChaosTargetMask = 0x3fff;
 
 class BaseSetting {
 public:
@@ -191,6 +195,28 @@ class SyncSong : public Setting<int> {
     ) {}
 };
 
+class ChaosSeqLayersSetting : public Setting<uint16_t> {
+public:
+    ChaosSeqLayersSetting() : Setting(
+        SettingChaosSeqLayers,
+        "Chaos Seq Layers",
+        {"edit"},
+        {uint16_t(DefaultChaosTargetMask)},
+        uint16_t(DefaultChaosTargetMask)
+    ) {}
+};
+
+class ChaosPatLayersSetting : public Setting<uint16_t> {
+public:
+    ChaosPatLayersSetting() : Setting(
+        SettingChaosPatLayers,
+        "Chaos Pat Layers",
+        {"edit"},
+        {uint16_t(DefaultChaosTargetMask)},
+        uint16_t(DefaultChaosTargetMask)
+    ) {}
+};
+
 class UserSettings {
 public:
     UserSettings() {
@@ -202,6 +228,9 @@ public:
         addSetting(new PatternChange());
         
         addSetting(new SyncSong());
+
+        addSetting(new ChaosSeqLayersSetting());
+        addSetting(new ChaosPatLayersSetting());
 
         addSetting(new LaunchpadStyleSetting());
         addSetting(new LaunchpadNoteStyle());

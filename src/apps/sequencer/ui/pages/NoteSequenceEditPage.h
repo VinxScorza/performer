@@ -6,6 +6,7 @@
 #include "ui/model/NoteSequenceListModel.h"
 
 #include "engine/generators/SequenceBuilder.h"
+#include "engine/generators/ChaosGenerator.h"
 #include "ui/KeyPressEventTracker.h"
 
 #include "core/utils/Container.h"
@@ -28,6 +29,12 @@ public:
 
 private:
     typedef NoteSequence::Layer Layer;
+    enum class ActiveBuilder {
+        None,
+        Note,
+        Acid,
+        Chaos,
+    };
 
     static const int StepCount = 16;
 
@@ -50,6 +57,11 @@ private:
     void tieNotes();
     void generateSequence();
     void showAcidGenerator();
+    void showChaosGenerator();
+    void showChaosGenerator(ChaosGenerator::Scope scope);
+    void showProjectSavePage();
+    void saveProjectToSlot(int slot);
+    void destroyActiveBuilder();
 
     void quickEdit(int index);
 
@@ -74,6 +86,7 @@ private:
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 
     Container<NoteSequenceBuilder, AcidSequenceBuilder, ChaosSequenceBuilder> _builderContainer;
+    ActiveBuilder _activeBuilder = ActiveBuilder::None;
 
     NoteSequence _inMemorySequence;
 };

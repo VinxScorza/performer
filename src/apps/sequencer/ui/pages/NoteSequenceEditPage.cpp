@@ -4,11 +4,14 @@
 #include "Pages.h"
 
 #include "model/NoteSequence.h"
+#include "model/FileManager.h"
 #include "ui/LedPainter.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
 #include "engine/generators/AcidGenerator.h"
+#include "engine/generators/ChaosGenerator.h"
+#include "engine/generators/Generator.h"
 
 #include "model/Scale.h"
 
@@ -85,6 +88,7 @@ void NoteSequenceEditPage::enter() {
     }
 
 void NoteSequenceEditPage::exit() {
+    destroyActiveBuilder();
     _engine.selectedTrackEngine().as<NoteTrackEngine>().setMonitorStep(-1);
 }
 
@@ -1122,15 +1126,13 @@ void NoteSequenceEditPage::generateSequence() {
             }
 
             if (mode == Generator::Mode::Chaos) {
-                auto builder = _builderContainer.create<ChaosSequenceBuilder>(_project.selectedNoteSequence(), _stepSelection.selected());
-                auto generator = Generator::execute(mode, *builder, _stepSelection.selected());
-                if (generator) {
-                    _manager.pages().generator.show(generator, &_stepSelection);
-                }
+                showChaosGenerator();
                 return;
             }
 
+            destroyActiveBuilder();
             auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
+            _activeBuilder = ActiveBuilder::Note;
 
             if (_stepSelection.none()) {
                 _stepSelection.selectAll();
@@ -1152,17 +1154,122 @@ void NoteSequenceEditPage::showAcidGenerator() {
             return;
         }
 
+        destroyActiveBuilder();
         auto builder = _builderContainer.create<AcidSequenceBuilder>(
             _project.selectedNoteSequence(),
             layer(),
             applyMode,
             _stepSelection.selected()
         );
+        _activeBuilder = ActiveBuilder::Acid;
 
         auto generator = Generator::execute(Generator::Mode::Acid, *builder, _stepSelection.selected());
         if (generator) {
             _manager.pages().generator.show(generator, &_stepSelection);
         }
+    });
+}
+
+void NoteSequenceEditPage::showChaosGenerator() {
+    _manager.pages().chaosScopeSelect.show([this] (bool success, ChaosGenerator::Scope scope) {
+        if (!success) {
+            return;
+        }
+
+        if (scope == ChaosGenerator::Scope::Pattern) {
+            _manager.pages().wreckPatternWarning.show([this] (WreckPatternWarningPage::Action action) {
+                switch (action) {
+                case WreckPatternWarningPage::Action::Save:
+                    showProjectSavePage();
+                    break;
+                case WreckPatternWarningPage::Action::Wreck:
+                    showChaosGenerator(ChaosGenerator::Scope::Pattern);
+                    break;
+                case WreckPatternWarningPage::Action::Cancel:
+                    break;
+                }
+            });
+            return;
+        }
+
+        showChaosGenerator(ChaosGenerator::Scope::Sequence);
+    });
+}
+
+void NoteSequenceEditPage::showChaosGenerator(ChaosGenerator::Scope scope) {
+    destroyActiveBuilder();
+    auto builder = _builderContainer.create<ChaosSequenceBuilder>(
+        _project,
+        _stepSelection.selected(),
+        scope == ChaosGenerator::Scope::Pattern ? ChaosSequenceBuilder::Scope::Pattern : ChaosSequenceBuilder::Scope::Sequence
+    );
+    _activeBuilder = ActiveBuilder::Chaos;
+    auto generator = Generator::execute(Generator::Mode::Chaos, *builder, _stepSelection.selected());
+    if (generator) {
+        auto *chaos = static_cast<ChaosGenerator *>(generator);
+        chaos->setScope(scope == ChaosGenerator::Scope::Pattern ? ChaosGenerator::Scope::Pattern : ChaosGenerator::Scope::Sequence);
+        chaos->setTargetMask(scope == ChaosGenerator::Scope::Pattern
+            ? _model.settings().userSettings().get<ChaosPatLayersSetting>(SettingChaosPatLayers)->getValue()
+            : _model.settings().userSettings().get<ChaosSeqLayersSetting>(SettingChaosSeqLayers)->getValue());
+        generator->update();
+        _manager.pages().generator.show(generator, &_stepSelection);
+    }
+}
+
+void NoteSequenceEditPage::destroyActiveBuilder() {
+    Generator::destroyActive();
+
+    switch (_activeBuilder) {
+    case ActiveBuilder::Note:
+        _builderContainer.destroy(&(_builderContainer.as<NoteSequenceBuilder>()));
+        break;
+    case ActiveBuilder::Acid:
+        _builderContainer.destroy(&(_builderContainer.as<AcidSequenceBuilder>()));
+        break;
+    case ActiveBuilder::Chaos:
+        _builderContainer.destroy(&(_builderContainer.as<ChaosSequenceBuilder>()));
+        break;
+    case ActiveBuilder::None:
+        break;
+    }
+
+    _activeBuilder = ActiveBuilder::None;
+}
+
+void NoteSequenceEditPage::showProjectSavePage() {
+    _manager.pages().fileSelect.show("SAVE PROJECT", FileType::Project, _project.slotAssigned() ? _project.slot() : 0, true, [this] (bool result, int slot) {
+        if (!result) {
+            return;
+        }
+
+        if (FileManager::slotUsed(FileType::Project, slot)) {
+            _manager.pages().confirmation.show("ARE YOU SURE?", [this, slot] (bool confirmed) {
+                if (confirmed) {
+                    saveProjectToSlot(slot);
+                }
+            });
+        } else {
+            saveProjectToSlot(slot);
+        }
+    });
+}
+
+void NoteSequenceEditPage::saveProjectToSlot(int slot) {
+    _engine.suspend();
+    _manager.pages().busy.show("SAVING PROJECT ...");
+
+    FileManager::task([this, slot] () {
+        return FileManager::writeProject(_project, slot);
+    }, [this, slot] (fs::Error result) {
+        if (result == fs::OK) {
+            _project.setSlot(slot);
+            _project.setAutoLoaded(false);
+            showMessage("PROJECT SAVED");
+        } else {
+            showMessage(FixedStringBuilder<32>("FAILED (%s)", fs::errorToString(result)));
+        }
+        _manager.pages().busy.close();
+        _engine.resume();
     });
 }
 

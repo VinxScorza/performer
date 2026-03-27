@@ -27,7 +27,7 @@ public:
     BasePage(PageManager &manager, PageContext &context);
 
 protected:
-    void showMessage(const char *text, uint32_t duration = 1000);
+    void showMessage(const char *text, uint32_t duration = 333);
     void showContextMenu(const ContextMenu &contextMenu);
     void functionShortcuts(KeyPressEvent event);
 

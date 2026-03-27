@@ -4,6 +4,9 @@
 
 #include "BusyPage.h"
 #include "AcidModeSelectPage.h"
+#include "ChaosScopeSelectPage.h"
+#include "ChaosDefaultsPage.h"
+#include "ChaosDefaultsSelectPage.h"
 #include "ClockSetupPage.h"
 #include "ConfirmationPage.h"
 #include "ContextMenuPage.h"
@@ -37,6 +40,7 @@
 #include "TopPage.h"
 #include "TrackPage.h"
 #include "UserScalePage.h"
+#include "WreckPatternWarningPage.h"
 
 #ifdef CONFIG_ENABLE_INTRO
 #include "IntroPage.h"
@@ -80,6 +84,10 @@ struct Pages {
     GeneratorPage generator;
     GeneratorSelectPage generatorSelect;
     AcidModeSelectPage acidModeSelect;
+    ChaosScopeSelectPage chaosScopeSelect;
+    ChaosDefaultsSelectPage chaosDefaultsSelect;
+    ChaosDefaultsPage chaosDefaults;
+    WreckPatternWarningPage wreckPatternWarning;
     // helper pages
     TextInputPage textInput;
     ConfirmationPage confirmation;
@@ -128,6 +136,10 @@ struct Pages {
         generator(manager, context),
         generatorSelect(manager, context),
         acidModeSelect(manager, context),
+        chaosScopeSelect(manager, context),
+        chaosDefaultsSelect(manager, context),
+        chaosDefaults(manager, context),
+        wreckPatternWarning(manager, context),
         // helper pages
         textInput(manager, context),
         confirmation(manager, context),

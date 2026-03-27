@@ -1,5 +1,6 @@
 #include "GeneratorPage.h"
 
+#include "Pages.h"
 #include "ui/painters/WindowPainter.h"
 #include "ui/LedPainter.h"
 
@@ -39,6 +40,54 @@ int stepWidth(int step, int steps) {
 
 int stepCenterX(int step, int steps) {
     return stepX(step, steps) + stepWidth(step, steps) / 2;
+}
+
+int chaosScanIndexFromCell(int cell) {
+    constexpr int columns = 4;
+    constexpr int rows = 4;
+    return (cell % columns) * rows + (cell / columns);
+}
+
+int chaosCellFromScanIndex(int index) {
+    constexpr int columns = 4;
+    constexpr int rows = 4;
+    return (index % rows) * columns + (index / rows);
+}
+
+constexpr int ChaosAllOnCell = 11;
+constexpr int ChaosAllOffCell = 15;
+
+bool chaosCellTarget(int cell, ChaosGenerator::Target &target) {
+    switch (cell) {
+    case 0:  target = ChaosGenerator::Target::Gate; return true;
+    case 1:  target = ChaosGenerator::Target::Length; return true;
+    case 2:  target = ChaosGenerator::Target::Note; return true;
+    case 3:  target = ChaosGenerator::Target::BypassScale; return true;
+    case 4:  target = ChaosGenerator::Target::GateOffset; return true;
+    case 5:  target = ChaosGenerator::Target::LengthVariationRange; return true;
+    case 6:  target = ChaosGenerator::Target::Slide; return true;
+    case 7:  target = ChaosGenerator::Target::Condition; return true;
+    case 8:  target = ChaosGenerator::Target::GateProbability; return true;
+    case 9:  target = ChaosGenerator::Target::LengthVariationProbability; return true;
+    case 10: target = ChaosGenerator::Target::NoteVariationRange; return true;
+    case 12: target = ChaosGenerator::Target::Retrigger; return true;
+    case 13: target = ChaosGenerator::Target::RetriggerProbability; return true;
+    case 14: target = ChaosGenerator::Target::NoteVariationProbability; return true;
+    default: break;
+    }
+    return false;
+}
+
+const char *chaosCellLabel(int cell) {
+    if (cell == ChaosAllOnCell) {
+        return "All On";
+    }
+    if (cell == ChaosAllOffCell) {
+        return "All Off";
+    }
+
+    ChaosGenerator::Target target;
+    return chaosCellTarget(cell, target) ? ChaosGenerator::targetCellLabel(target) : "";
 }
 
 template<typename Predicate>
@@ -91,8 +140,16 @@ static bool seedDrivenGenerator(Generator::Mode mode) {
     return mode == Generator::Mode::Random || mode == Generator::Mode::Acid;
 }
 
+static bool abPreviewGenerator(Generator::Mode mode) {
+    return seedDrivenGenerator(mode) || mode == Generator::Mode::Euclidean;
+}
+
 static bool chaosGeneratorMode(Generator::Mode mode) {
     return mode == Generator::Mode::Chaos;
+}
+
+static bool euclideanGeneratorMode(Generator::Mode mode) {
+    return mode == Generator::Mode::Euclidean;
 }
 
 static bool acidLayerGenerator(const Generator *generator) {
@@ -111,6 +168,7 @@ void GeneratorPage::enter() {
     _valueRange.first = 0;
     _valueRange.second = 7;
     _chaosCursor = 0;
+    _chaosPreviewArmed = false;
 
     switch (_project.selectedTrack().trackMode()) {
     case Track::TrackMode::Note:
@@ -133,6 +191,11 @@ void GeneratorPage::enter() {
     default:
         _section = 0;
         break;
+    }
+
+    if (chaosGeneratorMode(_generator->mode())) {
+        _generator->showOriginal();
+        return;
     }
 
     _generator->randomizeParams();
@@ -193,6 +256,23 @@ bool GeneratorPage::stepInCurrentBank(int step) const {
 }
 
 void GeneratorPage::draw(Canvas &canvas) {
+    FixedStringBuilder<24> activeFunction;
+    switch (_generator->mode()) {
+    case Generator::Mode::Acid: {
+        const auto &acid = *static_cast<const AcidGenerator *>(_generator);
+        activeFunction(acid.applyMode() == AcidSequenceBuilder::ApplyMode::Phrase ? "ACID PHRASE" : "ACID LAYER");
+        break;
+    }
+    case Generator::Mode::Chaos: {
+        const auto &chaos = *static_cast<const ChaosGenerator *>(_generator);
+        activeFunction(chaos.patternScope() ? "CHAOS ON PAT" : "CHAOS ON SEQ");
+        break;
+    }
+    default:
+        activeFunction(_generator->name());
+        break;
+    }
+
     const char *functionNames[5];
     for (int i = 0; i < 5; ++i) {
         functionNames[i] = nullptr;
@@ -212,6 +292,12 @@ void GeneratorPage::draw(Canvas &canvas) {
         if (acidLayerGenerator(_generator)) {
             functionNames[4] = "NEW RAND";
         }
+    } else if (euclideanGeneratorMode(_generator->mode())) {
+        functionNames[0] = "A/B";
+        functionNames[1] = "NEW EUCL";
+        functionNames[2] = _generator->paramName(0);
+        functionNames[3] = _generator->paramName(1);
+        functionNames[4] = _generator->paramName(2);
     } else {
         for (int i = 0; i < 5; ++i) {
             functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
@@ -220,7 +306,7 @@ void GeneratorPage::draw(Canvas &canvas) {
 
     WindowPainter::clear(canvas);
     WindowPainter::drawHeader(canvas, _model, _engine, "GENERATOR");
-    WindowPainter::drawActiveFunction(canvas, _generator->name());
+    WindowPainter::drawActiveFunction(canvas, activeFunction);
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
     if (chaosGeneratorMode(_generator->mode())) {
         const int x0 = (Width * 2) / 5;
@@ -248,7 +334,7 @@ void GeneratorPage::draw(Canvas &canvas) {
         Font prevFont = canvas.font();
         Color color = Color::Bright;
         Font font = Font::Small;
-        if ((seedDrivenGenerator(_generator->mode()) || chaosGeneratorMode(_generator->mode())) && index == 0) {
+        if ((seedDrivenGenerator(_generator->mode()) || chaosGeneratorMode(_generator->mode()) || euclideanGeneratorMode(_generator->mode())) && index == 0) {
             font = Font::Tiny;
             if (chaosGeneratorMode(_generator->mode())) {
                 color = Color::Medium;
@@ -271,13 +357,15 @@ void GeneratorPage::draw(Canvas &canvas) {
 
     if (chaosGeneratorMode(_generator->mode())) {
         const auto &generator = *static_cast<const ChaosGenerator *>(_generator);
+        Font prevFont = canvas.font();
         FixedStringBuilder<16> seedStr;
-        if (!_generator->showingPreview()) {
+        if (generator.patternScope()) {
+            seedStr("");
+        } else if (!_generator->showingPreview()) {
             seedStr("ORIGINAL");
         } else {
             seedStr("%08X", generator.seed());
         }
-        Font prevFont = canvas.font();
         canvas.setFont(Font::Tiny);
         const int amtX0 = Width / 5;
         const int amtX1 = (Width * 2) / 5;
@@ -287,14 +375,19 @@ void GeneratorPage::draw(Canvas &canvas) {
 
         FixedStringBuilder<16> amountStr("%d%%", generator.amount());
 
-        canvas.setColor(Color::Medium);
-        canvas.drawText(chaosX0 + ((chaosX1 - chaosX0 + 1) - canvas.textWidth(seedStr)) / 2, y, seedStr);
+        if (!generator.patternScope()) {
+            canvas.setColor(Color::Medium);
+            canvas.drawText(chaosX0 + ((chaosX1 - chaosX0 + 1) - canvas.textWidth(seedStr)) / 2, y, seedStr);
+        }
 
         canvas.setColor(pageKeyState()[Key::F1] ? Color::Bright : Color::Medium);
         canvas.drawText(amtX0 + ((amtX1 - amtX0 + 1) - canvas.textWidth(amountStr)) / 2, y, amountStr);
         canvas.setColor(Color::Bright);
         canvas.setFont(prevFont);
     } else {
+        if (euclideanGeneratorMode(_generator->mode())) {
+            drawValue(0, _generator->showingPreview() ? "CURRENT" : "ORIGINAL");
+        }
         for (int i = 0; i < _generator->paramCount(); ++i) {
             FixedStringBuilder<16> str;
             if (seedDrivenGenerator(_generator->mode()) && i == 0 && !_generator->showingPreview()) {
@@ -302,7 +395,7 @@ void GeneratorPage::draw(Canvas &canvas) {
             } else {
                 _generator->printParam(i, str);
             }
-            drawValue(i, str);
+            drawValue(euclideanGeneratorMode(_generator->mode()) ? i + 2 : i, str);
         }
     }
 
@@ -419,12 +512,31 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
-    if (key.isGlobal()) {
+    if (key.isPlay()) {
+        if (key.pageModifier()) {
+            _engine.toggleRecording();
+        } else {
+            _engine.togglePlay(key.shiftModifier());
+        }
+        event.consume();
+        return;
+    }
+
+    if (key.isTempo()) {
+        if (!key.pageModifier()) {
+            _manager.pages().tempo.show();
+            event.consume();
+        }
         return;
     }
 
     if (chaosGeneratorMode(_generator->mode())) {
         auto *chaos = static_cast<ChaosGenerator *>(_generator);
+        auto refreshChaosView = [&] () {
+            if (_chaosPreviewArmed && _generator->showingPreview()) {
+                _generator->showPreview();
+            }
+        };
 
         if (key.isFunction()) {
             switch (key.function()) {
@@ -433,11 +545,18 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
                 event.consume();
                 return;
             case 2:
+                {
+                bool wasShowingPreview = _generator->showingPreview();
+                _chaosPreviewArmed = true;
                 chaos->randomizeSeed();
                 chaos->update();
                 chaos->showPreview();
+                if (!wasShowingPreview) {
+                    showPreviewStateMessage();
+                }
                 event.consume();
                 return;
+                }
             case 3:
                 revert();
                 event.consume();
@@ -452,22 +571,26 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         }
 
         if (key.isEncoder()) {
-            if (_chaosCursor == 14) {
+            if (_chaosCursor == ChaosAllOnCell) {
                 chaos->setAllTargets(true);
                 chaos->update();
-                chaos->showPreview();
-            } else if (_chaosCursor == 15) {
+                refreshChaosView();
+            } else if (_chaosCursor == ChaosAllOffCell) {
                 chaos->setAllTargets(false);
                 chaos->update();
-                chaos->showPreview();
+                refreshChaosView();
             } else {
-                chaos->toggleTarget(ChaosGenerator::Target(_chaosCursor));
-                chaos->update();
-                chaos->showPreview();
+                ChaosGenerator::Target target;
+                if (chaosCellTarget(_chaosCursor, target)) {
+                    chaos->toggleTarget(target);
+                    chaos->update();
+                    refreshChaosView();
+                }
             }
             event.consume();
             return;
         }
+
     }
 
     if (seedDrivenGenerator(_generator->mode()) && key.isFunction() && key.function() == 0) {
@@ -480,6 +603,23 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         contextAction(int(ContextAction::RandomizeSeed));
         event.consume();
         return;
+    }
+
+    if (euclideanGeneratorMode(_generator->mode()) && key.isFunction()) {
+        switch (key.function()) {
+        case 0:
+            togglePreview();
+            event.consume();
+            return;
+        case 1:
+            _generator->randomizeParams();
+            _generator->update();
+            _generator->showPreview();
+            event.consume();
+            return;
+        default:
+            break;
+        }
     }
 
     if (key.isStep() && key.shiftModifier()) {
@@ -524,16 +664,20 @@ void GeneratorPage::encoder(EncoderEvent &event) {
         if (pageKeyState()[Key::F1]) {
             chaos->setAmount(chaos->amount() + event.value());
             chaos->update();
-            chaos->showPreview();
+            if (_generator->showingPreview()) {
+                chaos->showPreview();
+            }
             return;
         }
 
         if (event.value() != 0) {
             constexpr int chaosCellCount = 16;
-            _chaosCursor = (_chaosCursor + event.value()) % chaosCellCount;
-            if (_chaosCursor < 0) {
-                _chaosCursor += chaosCellCount;
+            int scanIndex = chaosScanIndexFromCell(_chaosCursor);
+            scanIndex = (scanIndex + event.value()) % chaosCellCount;
+            if (scanIndex < 0) {
+                scanIndex += chaosCellCount;
             }
+            _chaosCursor = chaosCellFromScanIndex(scanIndex);
         }
         return;
     }
@@ -542,7 +686,8 @@ void GeneratorPage::encoder(EncoderEvent &event) {
     bool functionKeyHeld = false;
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
-        if (pageKeyState()[Key::F0 + i]) {
+        int functionIndex = euclideanGeneratorMode(_generator->mode()) ? i + 2 : i;
+        if (pageKeyState()[Key::F0 + functionIndex]) {
             functionKeyHeld = true;
             break;
         }
@@ -565,7 +710,8 @@ void GeneratorPage::encoder(EncoderEvent &event) {
     }
 
     for (int i = 0; i < _generator->paramCount(); ++i) {
-        if (pageKeyState()[Key::F0 + i]) {
+        int functionIndex = euclideanGeneratorMode(_generator->mode()) ? i + 2 : i;
+        if (pageKeyState()[Key::F0 + functionIndex]) {
             _generator->editParam(i, event.value(), event.pressed());
             changed = true;
         }
@@ -573,7 +719,9 @@ void GeneratorPage::encoder(EncoderEvent &event) {
 
     if (changed) {
         _generator->update();
-        _generator->showPreview();
+        if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
+            _generator->showPreview();
+        }
     }
 }
 
@@ -1059,12 +1207,22 @@ void GeneratorPage::drawChaosGenerator(Canvas &canvas, const ChaosGenerator &gen
         canvas.setFont(prevFont);
     };
 
-    for (int i = 0; i < int(ChaosGenerator::Target::Last); ++i) {
-        drawCell(i, ChaosGenerator::targetCellLabel(ChaosGenerator::Target(i)), generator.targetEnabled(ChaosGenerator::Target(i)), i == _chaosCursor, false);
-    }
+    for (int cell = 0; cell < columns * rows; ++cell) {
+        if (cell == ChaosAllOnCell) {
+            drawCell(cell, chaosCellLabel(cell), generator.allTargetsEnabled(), cell == _chaosCursor, true);
+            continue;
+        }
+        if (cell == ChaosAllOffCell) {
+            drawCell(cell, chaosCellLabel(cell), !generator.allTargetsEnabled(), cell == _chaosCursor, true);
+            continue;
+        }
 
-    drawCell(14, "All On", generator.allTargetsEnabled(), 14 == _chaosCursor, true);
-    drawCell(15, "All Off", !generator.allTargetsEnabled(), 15 == _chaosCursor, true);
+        ChaosGenerator::Target target;
+        if (!chaosCellTarget(cell, target)) {
+            continue;
+        }
+        drawCell(cell, chaosCellLabel(cell), generator.targetEnabled(target), cell == _chaosCursor, false);
+    }
 
 }
 
@@ -1074,43 +1232,50 @@ int GeneratorPage::contextItemCount() const {
     case Generator::Mode::Acid:
         return int(ContextAction::Last);
     case Generator::Mode::Euclidean:
-        return 4;
+        return int(ContextAction::Last);
     default:
         return 4;
     }
 }
 
 void GeneratorPage::contextShow(bool doubleClick) {
-    switch (_generator->mode()) {
-    case Generator::Mode::Random:
-    case Generator::Mode::Acid:
-    case Generator::Mode::Euclidean:
-        _contextMenuItems[0] = { "NEW RAND" };
-        break;
-    default:
-        _contextMenuItems[0] = { "NEW SEED" };
-        break;
-    }
-    _contextMenuItems[1] = { "INIT" };
-    _contextMenuItems[2] = { "CANCEL" };
-    _contextMenuItems[3] = { "APPLY" };
+    if (euclideanGeneratorMode(_generator->mode())) {
+        _contextMenuItems[0] = { "" };
+        _contextMenuItems[1] = { "RESETGEN" };
+        _contextMenuItems[2] = { "CANCEL" };
+        _contextMenuItems[3] = { "APPLY" };
+        _contextMenuItems[4] = { "" };
+    } else {
+        switch (_generator->mode()) {
+        case Generator::Mode::Random:
+        case Generator::Mode::Acid:
+            _contextMenuItems[0] = { "NEW RAND" };
+            break;
+        default:
+            _contextMenuItems[0] = { "NEW SEED" };
+            break;
+        }
+        _contextMenuItems[1] = { "RESETGEN" };
+        _contextMenuItems[2] = { "CANCEL" };
+        _contextMenuItems[3] = { "APPLY" };
 
-    switch (_generator->mode()) {
-    case Generator::Mode::Random: {
-        const auto *random = static_cast<const RandomGenerator *>(_generator);
-        std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR %d%%", random->variation());
-        break;
+        switch (_generator->mode()) {
+        case Generator::Mode::Random: {
+            const auto *random = static_cast<const RandomGenerator *>(_generator);
+            std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR %d%%", random->variation());
+            break;
+        }
+        case Generator::Mode::Acid: {
+            const auto *acid = static_cast<const AcidGenerator *>(_generator);
+            std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR %d%%", acid->variation());
+            break;
+        }
+        default:
+            std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR");
+            break;
+        }
+        _contextMenuItems[4] = { _variationMenuLabel };
     }
-    case Generator::Mode::Acid: {
-        const auto *acid = static_cast<const AcidGenerator *>(_generator);
-        std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR %d%%", acid->variation());
-        break;
-    }
-    default:
-        std::snprintf(_variationMenuLabel, sizeof(_variationMenuLabel), "VAR");
-        break;
-    }
-    _contextMenuItems[4] = { _variationMenuLabel };
 
     showContextMenu(ContextMenu(
         _contextMenuItems,
@@ -1167,13 +1332,20 @@ bool GeneratorPage::contextActionEnabled(int index) const {
     if (index >= contextItemCount()) {
         return false;
     }
+    if (euclideanGeneratorMode(_generator->mode())) {
+        return ContextAction(index) == ContextAction::Init ||
+               ContextAction(index) == ContextAction::Revert ||
+               ContextAction(index) == ContextAction::Commit;
+    }
     return ContextAction(index) != ContextAction::VariationInfo;
 }
 
 void GeneratorPage::init() {
     _stepSelection->clear();
     _generator->init();
-    _generator->showPreview();
+    if (_generator->showingPreview()) {
+        _generator->showPreview();
+    }
 }
 
 void GeneratorPage::revert() {
@@ -1191,15 +1363,26 @@ void GeneratorPage::commit() {
 }
 
 void GeneratorPage::togglePreview() {
+    if (chaosGeneratorMode(_generator->mode()) && !_chaosPreviewArmed && !_generator->showingPreview()) {
+        return;
+    }
+
     if (_generator->showingPreview()) {
         _generator->showOriginal();
         showMessage("ORIGINAL");
     } else {
         _generator->showPreview();
-        if (chaosGeneratorMode(_generator->mode())) {
-            showMessage("VANDALIZED");
-        } else {
-            showMessage(seedDrivenGenerator(_generator->mode()) ? "CURRENT SEED" : "PREVIEW");
-        }
+        showPreviewStateMessage();
+    }
+}
+
+void GeneratorPage::showPreviewStateMessage() {
+    if (chaosGeneratorMode(_generator->mode())) {
+        const auto *chaos = static_cast<const ChaosGenerator *>(_generator);
+        showMessage(chaos->patternScope() ? "WRECKED" : "VANDALIZED");
+    } else if (euclideanGeneratorMode(_generator->mode())) {
+        showMessage("CURRENT EUCLIDEAN");
+    } else {
+        showMessage(seedDrivenGenerator(_generator->mode()) ? "CURRENT SEED" : "PREVIEW");
     }
 }

@@ -29,6 +29,11 @@ public:
         uint8_t variation = 100;
     };
 
+    static constexpr uint8_t DefaultDensity = 50;
+    static constexpr uint8_t DefaultSlide = 10;
+    static constexpr uint8_t DefaultRange = 35;
+    static constexpr uint8_t DefaultVariation = 100;
+
     AcidGenerator(SequenceBuilder &builder, Params &params, std::bitset<CONFIG_STEP_COUNT> &selected);
 
     Mode mode() const override { return Mode::Acid; }

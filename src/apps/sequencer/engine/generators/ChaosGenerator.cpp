@@ -60,6 +60,16 @@ void ChaosGenerator::randomizeParams() {
     randomizeSeed();
 }
 
+void ChaosGenerator::showOriginal() {
+    _chaosBuilder.showOriginal();
+}
+
+void ChaosGenerator::showPreview() {
+    _chaosBuilder.showOriginal();
+    applyPreviewToTargetTracks();
+    _chaosBuilder.showPreview();
+}
+
 void ChaosGenerator::randomizeSeed() {
     static uint32_t entropy = 0;
 
@@ -123,19 +133,10 @@ int ChaosGenerator::blendRandomValue(NoteSequence::Layer layer, int originalValu
     return clamp(value, range.min, range.max);
 }
 
-void ChaosGenerator::update() {
-    _chaosBuilder.resetPreview();
-    auto &preview = _chaosBuilder.previewSequence();
-    const auto &original = _chaosBuilder.originalSequence();
-    Random rng(_params.seed);
-
-    for (int stepIndex = 0; stepIndex < int(preview.steps().size()); ++stepIndex) {
-        if (!_chaosBuilder.isTargetStep(stepIndex)) {
-            continue;
-        }
-
-        auto &step = preview.step(stepIndex);
-        const auto &originalStep = original.step(stepIndex);
+void ChaosGenerator::updateTrack(int trackSlot, Random &rng) const {
+    for (int targetIndex = 0; targetIndex < _chaosBuilder.targetStepCount(trackSlot); ++targetIndex) {
+        auto &step = _chaosBuilder.liveStep(trackSlot, targetIndex);
+        const auto &originalStep = _chaosBuilder.originalStep(trackSlot, targetIndex);
 
         if (targetEnabled(Target::Gate)) {
             step.setGate(blendRandomBool(originalStep.gate(), rng));
@@ -179,5 +180,34 @@ void ChaosGenerator::update() {
         if (targetEnabled(Target::Condition)) {
             step.setCondition(Types::Condition(blendRandomValue(NoteSequence::Layer::Condition, int(originalStep.condition()), rng)));
         }
+    }
+}
+
+void ChaosGenerator::applyPreviewToTargetTracks() const {
+    if (patternScope()) {
+        Random seedRng(_params.seed);
+        for (int trackSlot = 0; trackSlot < _chaosBuilder.noteTrackCount(); ++trackSlot) {
+            if (!_chaosBuilder.targetTrack(trackSlot)) {
+                continue;
+            }
+            Random rng(seedRng.next());
+            updateTrack(trackSlot, rng);
+        }
+        return;
+    }
+
+    Random rng(_params.seed);
+    for (int trackSlot = 0; trackSlot < _chaosBuilder.noteTrackCount(); ++trackSlot) {
+        if (_chaosBuilder.targetTrack(trackSlot)) {
+            updateTrack(trackSlot, rng);
+            break;
+        }
+    }
+}
+
+void ChaosGenerator::update() {
+    _chaosBuilder.setScope(patternScope() ? ChaosSequenceBuilder::Scope::Pattern : ChaosSequenceBuilder::Scope::Sequence);
+    if (_chaosBuilder.showingPreview()) {
+        showPreview();
     }
 }

@@ -8,6 +8,21 @@
 
 <sub>Backward compatibility with older projects, settings, or workflows is not guaranteed for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.4.8
+- Extend `Chaos` with an experimental `CHAOS MODE` split between `Vandalize Sequence` and `Wreck Pattern`, with `Wreck Pattern` applying a multi-layer, pattern-wide workflow across all Note tracks in the current pattern
+- Refine `Chaos` workflow: both modes enter on `ORIGINAL`, require explicit `CHAOS` press, enable `A/B` preview compare, and show dedicated `VANDALIZED` / `WRECKED` popups
+- Improve `Chaos -> Wreck Pattern` behavior: use per-track `First Step` / `Last Step` when no explicit selection exists, instead of forcing a shared range
+- Add `System -> Chaos Defaults` with separate `Seq Layers to Vandalize` and `Pat Layers to Wreck`, editable via the same 4x4 grid and saved automatically to flash on page exit
+- Enhance generator UI: stronger contextual labels (`ACID PHRASE`, `ACID LAYER`, `CHAOS ON SEQ`, `CHAOS ON PAT`) and compact generator selection page fitting all generators on one screen
+- Rework `Euclidean` generator controls around `A/B`, `NEW EUCL`, and direct `Steps` / `Beats` / `Offset` editing, enforcing `Beats <= Steps` (also during randomization) while preserving context menu actions
+- Make `RESETGEN` restore true default parameters instead of rerolling, with `Random`, `Acid`, and `Euclidean` returning to neutral defaults
+- Optimize `Chaos -> Wreck Pattern` memory: store only target-step backups and regenerate previews in place to reduce both fixed and runtime memory footprint
+- Improve responsiveness and navigation: keep transport (`PLAY/STOP`, `TEMPO`) active during generator usage and default `System` page to `Settings`
+- Fix generator lifecycle and state handling: resolve re-entry issues and stale state reuse, and limit `Vandalize Sequence` storage to the active Note sequence only
+- Align startup version string with `v0.3.2-vinx.1.4.8`
+- Add safety improvements: warning popup before entering `Chaos -> Wreck Pattern` with `F1` for `PROJ PAGE`, `F3` for `WRECK`, and `F5` for cancel
+- WARNING: `Chaos -> Wreck Pattern` is a wildly experimental feature: a pattern-wide chaos process that should be used only after saving your project.
+
 # v0.3.2-vinx.1.4.7 (25 March 2026)
 - Add `Chaos` as a new experimental generator on Note tracks, extending the generator order to `Random`, `Acid`, `Chaos`, `Euclidean`, `Init`
 - Make `Chaos` a non-destructive multi-layer macro-random tool driven by a global `Amount`, `A/B`, `Cancel`, `Apply`, and a new random 32-bit seed state on demand
@@ -96,14 +111,14 @@
 - issue #116 - fix F1-F5 shortcut
 - issue #117 - fix curve cv problem
 - issue #118 - fix file stack overflow
-- fix fill display 
+- fix fill display
 - fix stochastic reseed behaviour
 - fix arp track copy pattern
 
 
 # v0.3.0 (02 May 2024)
 - Arpeggiator Track
-- increase stochastic rest proability to 15 steps 
+- increase stochastic rest proability to 15 steps
 - logic track fast input visulaization (press shift)
 - fix clipboard copy track
 - fix logic gate probability
@@ -111,10 +126,10 @@
 - keep sequence names when copy and paste
 - issue #100 - reorganize quick functions shortcuts
 - issue #101 - reset cv in stop parameter
-- integrate Malekko integration 
+- integrate Malekko integration
 
 > **testers** :
->  
+>
 > mebitek, Jil, Guillaume Libersat, XQSTKRPS, P.M. Lenneskog
 
 
@@ -131,11 +146,11 @@
 - add filter note parameter
 
 > **testers** :
->  
+>
 > mebitek, Jil, Guillaume Libersat, Andreas Hieninger, P.M. Lenneskog
 
 # v0.2.1 (4 March 2024)
-- issue #80 - Repeat Function Issue - Metropolix Mode 
+- issue #80 - Repeat Function Issue - Metropolix Mode
 - issue #82 - Fatal error when pressing STEP button and turning encoder
 - issue #83 - Restart when loop is on 64 steps
 - issue #88 - Copy Loop from STOCHASTIC channel to a NOTE channel
@@ -143,7 +158,7 @@
 - fix user settings
 
 > **testers** :
->  
+>
 > mebitek, Jil, Andreas Hieninger
 
 # v0.2.0 (29 Febrary 2024)
@@ -155,7 +170,7 @@
     - rest probability 2,4,8 steps
     - global gate length modifier
     - clipboard actions
-    - generators  
+    - generators
 - Load/Save Sequence to use a sequence library (fast switch on loading)
 - Launchpad Performance Mode `8`+`3` (`2`+`GRID2` -> quick set lenght sequence; `2`+`GRID1` -> overview page )
 - Submenu shortcuts (double click F[1-5] to enter project, layout, routing, midi out, user scale)
@@ -168,7 +183,7 @@
 - improved overview page. quick edit tracks
 
 > **testers** :
->  
+>
 > mebitek, Guillaume Libersat, Nick Ansell, XponentOne, dblu2000, hales2488, XQSTKRPS, KittenVillage, Andreas Hieninger
 
 # v0.1.48 (30 January 2024)

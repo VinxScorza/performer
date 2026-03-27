@@ -13,10 +13,7 @@ public:
     {}
 
     int rows() const override {
-        if (!_isLaunchpad) {
-            return _userSettings.all().size()-2;
-        }
-        return _userSettings.all().size();
+        return visibleSettingCount() + 1;
     }
 
     int columns() const override {
@@ -24,31 +21,86 @@ public:
     }
 
     void cell(int row, int column, StringBuilder &str) const override {
-        if (!_isLaunchpad && row > 5) {
+        if (isChaosDefaultsRow(row)) {
+            if (column == 0) {
+                str("Chaos Defaults");
+            } else if (column == 1) {
+                str("open");
+            }
             return;
         }
+
+        int settingRow = settingRowFromVisibleRow(row);
+        if (settingRow < 0) {
+            return;
+        }
+
         if (column == 0) {
-            str("%s", _userSettings.get(row)->getMenuItem().c_str());
+            str("%s", _userSettings.get(settingRow)->getMenuItem().c_str());
         } else if (column == 1) {
-            str("%s", _userSettings.get(row)->getMenuItemKey().c_str());
+            str("%s", _userSettings.get(settingRow)->getMenuItemKey().c_str());
         }
     }
 
     void edit(int row, int column, int value, bool shift) override {
-        if (column == 1) {
-            _userSettings.shift(row, value);
+        if (isChaosDefaultsRow(row)) {
+            return;
+        }
+
+        int settingRow = settingRowFromVisibleRow(row);
+        if (settingRow >= 0 && column == 1) {
+            _userSettings.shift(settingRow, value);
         }
     }
 
     virtual void setSelectedScale(int defaultScale, bool force = false) override {};
+
+    bool isChaosDefaultsRow(int row) const {
+        return row == visibleSettingCount();
+    }
 
     void setIsLaunchopad(bool value) {
         _isLaunchpad = value;
     }
 
 private:
+    bool hideSetting(BaseSetting *setting) const {
+        const auto key = setting->getKey();
+        if (key == SettingChaosSeqLayers || key == SettingChaosPatLayers) {
+            return true;
+        }
+        if (!_isLaunchpad && (key == SettingLaunchpadStyle || key == SettingLaunchpadNoteStyle)) {
+            return true;
+        }
+        return false;
+    }
+
+    int visibleSettingCount() const {
+        int count = 0;
+        for (auto *setting : _userSettings.all()) {
+            if (!hideSetting(setting)) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    int settingRowFromVisibleRow(int row) const {
+        int visibleRow = 0;
+        const auto settings = _userSettings.all();
+        for (int i = 0; i < int(settings.size()); ++i) {
+            if (hideSetting(settings[i])) {
+                continue;
+            }
+            if (visibleRow == row) {
+                return i;
+            }
+            ++visibleRow;
+        }
+        return -1;
+    }
+
     UserSettings &_userSettings;
 
     bool _isLaunchpad = false;
 };
-

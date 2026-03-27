@@ -1,4 +1,4 @@
-#include "AcidModeSelectPage.h"
+#include "ChaosScopeSelectPage.h"
 
 #include "Pages.h"
 #include "ui/painters/WindowPainter.h"
@@ -10,26 +10,25 @@ enum class Function {
 
 static const char *functionNames[] = { nullptr, nullptr, nullptr, "CANCEL", "OK" };
 
-AcidModeSelectPage::AcidModeSelectPage(PageManager &manager, PageContext &context) :
+ChaosScopeSelectPage::ChaosScopeSelectPage(PageManager &manager, PageContext &context) :
     ListPage(manager, context, _listModel)
 {}
 
-void AcidModeSelectPage::show(bool allowLayer, ResultCallback callback) {
+void ChaosScopeSelectPage::show(ResultCallback callback) {
     _callback = callback;
-    _listModel.setAllowLayer(allowLayer);
     setSelectedRow(0);
     ListPage::show();
 }
 
-void AcidModeSelectPage::draw(Canvas &canvas) {
+void ChaosScopeSelectPage::draw(Canvas &canvas) {
     WindowPainter::clear(canvas);
-    WindowPainter::drawHeader(canvas, _model, _engine, "ACID MODE");
+    WindowPainter::drawHeader(canvas, _model, _engine, "CHAOS MODE");
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
 
     ListPage::draw(canvas);
 }
 
-void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
+void ChaosScopeSelectPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isPlay()) {
@@ -70,9 +69,9 @@ void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
     ListPage::keyPress(event);
 }
 
-void AcidModeSelectPage::closeWithResult(bool result) {
+void ChaosScopeSelectPage::closeWithResult(bool result) {
     Page::close();
     if (_callback) {
-        _callback(result, _listModel.rowToMode(selectedRow()));
+        _callback(result, _listModel.rowToScope(selectedRow()));
     }
 }

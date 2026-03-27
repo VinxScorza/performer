@@ -37,6 +37,8 @@ public:
         _builder(builder)
     {}
 
+    virtual ~Generator() = default;
+
     virtual Mode mode() const = 0;
     const char *name() const { return modeName(mode()); }
 
@@ -58,11 +60,11 @@ public:
         _builder.apply();
     }
 
-    void showOriginal() {
+    virtual void showOriginal() {
         _builder.showOriginal();
     }
 
-    void showPreview() {
+    virtual void showPreview() {
         _builder.showPreview();
     }
 
@@ -73,6 +75,7 @@ public:
     virtual void update() = 0;
 
     static Generator *execute(Generator::Mode mode, SequenceBuilder &builder, std::bitset<CONFIG_STEP_COUNT> &selected);
+    static void destroyActive();
 
 protected:
     SequenceBuilder &_builder;

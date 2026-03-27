@@ -139,8 +139,10 @@ void AcidGenerator::printParam(int index, StringBuilder &str) const {
 }
 
 void AcidGenerator::init() {
-    _params = Params();
-    randomizeSeed();
+    setDensity(DefaultDensity);
+    setSlide(DefaultSlide);
+    setRange(DefaultRange);
+    setVariation(DefaultVariation);
     update();
 }
 

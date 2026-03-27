@@ -39,6 +39,12 @@ void UserSettings::write(VersionedSerializedWriter &writer) const {
 
 void UserSettings::read(VersionedSerializedReader &reader) {
     for (auto &setting : _settings) {
-        setting->read(reader);
+        if (setting->getKey() == SettingChaosSeqLayers) {
+            reader.read(dynamic_cast<ChaosSeqLayersSetting *>(setting)->getValue(), 3);
+        } else if (setting->getKey() == SettingChaosPatLayers) {
+            reader.read(dynamic_cast<ChaosPatLayersSetting *>(setting)->getValue(), 3);
+        } else {
+            setting->read(reader);
+        }
     }
 }

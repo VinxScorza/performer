@@ -26,6 +26,11 @@ public:
         uint8_t variation = 100;
     };
 
+    static constexpr uint8_t DefaultSmooth = 0;
+    static constexpr int8_t DefaultBias = 0;
+    static constexpr uint8_t DefaultScale = 5;
+    static constexpr uint8_t DefaultVariation = 100;
+
     RandomGenerator(SequenceBuilder &builder, Params &params, std::bitset<CONFIG_STEP_COUNT> &selected);
 
     Mode mode() const override { return Mode::Random; }

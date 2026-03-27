@@ -22,6 +22,10 @@ public:
         uint8_t offset = 0;
     };
 
+    static constexpr uint8_t DefaultSteps = 16;
+    static constexpr uint8_t DefaultBeats = 1;
+    static constexpr uint8_t DefaultOffset = 0;
+
     EuclideanGenerator(SequenceBuilder &builder, Params &params);
 
     Mode mode() const override { return Mode::Euclidean; }
@@ -38,12 +42,15 @@ public:
     // steps
 
     int steps() const { return _params.steps; }
-    void setSteps(int steps) { _params.steps = clamp(steps, 1, CONFIG_STEP_COUNT); }
+    void setSteps(int steps) {
+        _params.steps = clamp(steps, 1, CONFIG_STEP_COUNT);
+        _params.beats = std::min(_params.beats, _params.steps);
+    }
 
     // beats
 
     int beats() const { return _params.beats; }
-    void setBeats(int beats) { _params.beats = clamp(beats, 1, CONFIG_STEP_COUNT); }
+    void setBeats(int beats) { _params.beats = clamp(beats, 1, int(_params.steps)); }
 
     // offset
 

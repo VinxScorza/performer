@@ -41,7 +41,9 @@ void EuclideanGenerator::printParam(int index, StringBuilder &str) const {
 
 void EuclideanGenerator::init()
 {
-    _params = Params();
+    setSteps(DefaultSteps);
+    setBeats(DefaultBeats);
+    setOffset(DefaultOffset);
     update();
 }
 
@@ -56,7 +58,7 @@ void EuclideanGenerator::randomizeParams() {
     Random rng(entropy);
 
     setSteps(1 + int(rng.nextRange(CONFIG_STEP_COUNT)));
-    setBeats(1 + int(rng.nextRange(CONFIG_STEP_COUNT)));
+    setBeats(1 + int(rng.nextRange(steps())));
     setOffset(int(rng.nextRange(CONFIG_STEP_COUNT)));
 
     entropy = rng.next();

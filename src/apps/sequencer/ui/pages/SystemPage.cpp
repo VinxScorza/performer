@@ -50,6 +50,7 @@ SystemPage::SystemPage(PageManager &manager, PageContext &context) :
 
 void SystemPage::enter() {
     setOutputIndex(_project.selectedTrackIndex());
+    setMode(Mode::Settings);
 
     _engine.suspend();
     _engine.setGateOutput(0xff);
@@ -219,7 +220,12 @@ void SystemPage::keyPress(KeyPressEvent &event) {
     case Mode::Update:
         break;
     case Mode::Settings:
-        ListPage::keyPress(event);
+        if (!edit() && key.isEncoder() && _settingsListModel.isChaosDefaultsRow(selectedRow())) {
+            showChaosDefaults();
+            event.consume();
+        } else {
+            ListPage::keyPress(event);
+        }
         break;
     }
 }
@@ -436,6 +442,14 @@ void SystemPage::formatSdCard() {
                 // TODO lock ui mutex
                 _manager.pages().busy.close();
             });
+        }
+    });
+}
+
+void SystemPage::showChaosDefaults() {
+    _manager.pages().chaosDefaultsSelect.show([this] (bool success, ChaosDefaultsListModel::Mode mode) {
+        if (success) {
+            _manager.pages().chaosDefaults.show(mode);
         }
     });
 }

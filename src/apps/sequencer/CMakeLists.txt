@@ -81,6 +81,9 @@ set(sources
     ui/pages/BasePage.cpp
     ui/pages/BusyPage.cpp
     ui/pages/AcidModeSelectPage.cpp
+    ui/pages/ChaosDefaultsPage.cpp
+    ui/pages/ChaosDefaultsSelectPage.cpp
+    ui/pages/ChaosScopeSelectPage.cpp
     ui/pages/ClockSetupPage.cpp
     ui/pages/ConfirmationPage.cpp
     ui/pages/ContextMenuPage.cpp
@@ -116,6 +119,7 @@ set(sources
     ui/pages/TopPage.cpp
     ui/pages/TrackPage.cpp
     ui/pages/UserScalePage.cpp
+    ui/pages/WreckPatternWarningPage.cpp
     # ui/painters
     ui/painters/SequencePainter.cpp
     ui/painters/SongPainter.cpp

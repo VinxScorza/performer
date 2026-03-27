@@ -46,6 +46,7 @@ private:
     void backupSettings();
     void restoreSettings();
     void formatSdCard();
+    void showChaosDefaults();
 
     void saveSettingsToFlash();
     void backupSettingsToFile();
