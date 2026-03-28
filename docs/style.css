@@ -227,8 +227,9 @@ pre code {
   padding: 7px 1px 7px 19px;
   border: 1px solid #4a4a4a;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.28);
-  color: #f2f2f2;
+  background: linear-gradient(rgba(203, 178, 111, 0.12), rgba(203, 178, 111, 0.06));
+  backdrop-filter: blur(4px);
+  color: #8ec8d6;
   font: inherit;
   font-size: 12px;
   font-style: italic;
@@ -259,17 +260,20 @@ pre code {
   display: block;
   padding: 5px 7px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(203, 178, 111, 0.16);
+  background: rgba(203, 178, 111, 0.08);
+  backdrop-filter: blur(4px);
   color: #ddd7bf;
   text-decoration: none;
   font-size: 11px;
   line-height: 1.25;
   font-style: italic;
+  text-align: right;
 }
 
 .manual-search-results a:hover,
 .manual-search-results a:focus {
-  background: rgba(203, 178, 111, 0.12);
+  background: rgba(203, 178, 111, 0.16);
   color: #ffffff;
 }
 

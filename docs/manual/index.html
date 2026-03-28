@@ -2711,7 +2711,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
           function highlightSearchTerms(target, query) {
             if (!target || !query) {
-              return;
+              return null;
             }
 
             clearSearchHighlights();
@@ -2723,7 +2723,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               .sort(function(a, b) { return b.length - a.length; });
 
             if (!terms.length) {
-              return;
+              return null;
             }
 
             var pattern = new RegExp('(' + terms.map(escapeRegExp).join('|') + ')', 'gi');
@@ -2761,6 +2761,8 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
                 block.classList.remove('manual-search-hit');
               }, { once: true });
             });
+
+            return blocks.length ? blocks[0] : null;
           }
 
           function renderSearchResults(matches) {
@@ -2778,13 +2780,21 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               if (match.id === activeSearchId) {
                 link.classList.add('is-active');
               }
-              link.addEventListener('click', function() {
+              link.addEventListener('click', function(event) {
+                event.preventDefault();
                 activeSearchId = match.id;
                 renderSearchResults(currentSearchMatches);
+                var target = document.getElementById(match.id);
+                var highlightTarget = null;
                 if (searchInput && searchInput.value.trim()) {
-                  var target = document.getElementById(match.id);
                   var scope = target || null;
-                  highlightSearchTerms(scope, searchInput.value);
+                  highlightTarget = highlightSearchTerms(scope, searchInput.value);
+                }
+                if (highlightTarget || target) {
+                  (highlightTarget || target).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                if (target && window.location.hash !== '#' + match.id) {
+                  history.replaceState(null, '', '#' + match.id);
                 }
               });
               item.appendChild(link);
