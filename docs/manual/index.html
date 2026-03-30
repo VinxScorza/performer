@@ -13,12 +13,13 @@
       <nav class="site-nav" aria-label="Main">
         <a href="../index.html">PER|FORMER</a>
         <a href="../manual/index.html" aria-current="page">User Manual</a>
-        <a href="../testdrive/index.html">Test Drive</a>
+        <a href="../testdrive/index.html">Simulator</a>
         <a href="../cheatsheet/index.html">LP Cheatsheet</a>
         <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
         <a href="../build-guide/index.html">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
         <a href="../license/index.html">License</a>
+        <a href="../forks/index.html">Forks</a>
         <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
       </nav>
       <h1 id="project_title">PER|FORMER</h1>
@@ -159,84 +160,17 @@
 
       <section>
         <h3 id="manual-toc">Table of Contents</h3>
+        <p>
+          Use this compact outline for the main structure. For detailed navigation, use the sidebar and search.
+        </p>
         <ul>
-          <li><a href="#introduction">Introduction</a>
-            <ul>
-              <li><a href="#introduction-overview">Overview</a></li>
-            </ul>
-          </li>
-          <li><a href="#concepts">Concepts</a>
-            <ul>
-              <li><a href="#concepts-project">Project</a></li>
-              <li><a href="#concepts-track">Track</a></li>
-              <li><a href="#concepts-note-track">Note Track</a></li>
-              <li><a href="#concepts-curve-track">Curve Track</a></li>
-              <li><a href="#concepts-midi-cv-track">MIDI/CV Track</a></li>
-              <li><a href="#concepts-stochastic-track">Stochastic Track</a></li>
-              <li><a href="#concepts-logic-track">Logic Track</a></li>
-              <li><a href="#concepts-arp-track">Arpeggiator Track</a></li>
-              <li><a href="#concepts-pattern">Pattern</a></li>
-              <li><a href="#concepts-snapshot">Snapshot</a></li>
-              <li><a href="#concepts-fills">Fills</a></li>
-              <li><a href="#concepts-song">Song</a></li>
-              <li><a href="#concepts-scale">Scale</a></li>
-              <li><a href="#concepts-clock">Clock</a></li>
-              <li><a href="#concepts-routing">Routing</a></li>
-              <li><a href="#concepts-controller">Controller</a></li>
-              <li><a href="#concepts-file-management">File Management</a></li>
-            </ul>
-          </li>
-          <li><a href="#ui">User Interface</a>
-            <ul>
-              <li><a href="#ui-overview">Overview</a></li>
-              <li><a href="#ui-navigation">Navigation</a></li>
-              <li><a href="#ui-page-layout">Page Layout</a></li>
-              <li><a href="#ui-list-pages">List Pages</a></li>
-              <li><a href="#ui-copy-paste">Copy/Paste</a></li>
-            </ul>
-          </li>
-          <li><a href="#pages">Pages</a>
-            <ul>
-              <li><a href="#pages-project">Project</a></li>
-              <li><a href="#pages-layout">Layout</a></li>
-              <li><a href="#pages-track">Track</a></li>
-              <li><a href="#pages-sequence">Sequence</a></li>
-              <li><a href="#pages-steps">Steps</a></li>
-              <li><a href="#pages-generators">Generators</a></li>
-              <li><a href="#pages-song">Song</a></li>
-              <li><a href="#pages-tempo">Tempo</a></li>
-              <li><a href="#pages-pattern">Pattern</a></li>
-              <li><a href="#pages-performer">Performer</a></li>
-              <li><a href="#pages-routing">Routing</a></li>
-              <li><a href="#pages-midi-output">MIDI Output</a></li>
-              <li><a href="#pages-user-scale">User Scale</a></li>
-              <li><a href="#pages-overview">Overview</a></li>
-              <li><a href="#pages-monitor">Monitor</a></li>
-              <li><a href="#pages-clock">Clock</a></li>
-              <li><a href="#pages-system">System</a></li>
-            </ul>
-          </li>
-          <li><a href="#appendix">Appendix</a>
-            <ul>
-              <li><a href="#appendix-recording">Recording</a></li>
-              <li><a href="#appendix-divisors">Divisors</a></li>
-              <li><a href="#appendix-run-modes">Run Modes</a></li>
-              <li><a href="#appendix-play-modes">Play Modes</a></li>
-              <li><a href="#appendix-rotation">Rotation</a></li>
-              <li><a href="#appendix-step-conditions">Step Conditions</a></li>
-              <li><a href="#appendix-metropolix">Metropolix Mode</a></li>
-              <li><a href="#appendix-scales">Scales</a></li>
-              <li><a href="#appendix-shapes">Shapes</a></li>
-              <li><a href="#appendix-arpeggiator-modes">Arpeggiator Modes</a></li>
-              <li><a href="#appendix-routing-targets">Routing Targets</a></li>
-              <li><a href="#appendix-logic-operators">Logic Operators</a></li>
-              <li><a href="#appendix-midi-program-change">MIDI Program Change</a></li>
-              <li><a href="#appendix-launchpad">Launchpad</a></li>
-              <li><a href="#appendix-usb-midi-devices">USB MIDI Devices</a></li>
-              <li><a href="#appendix-calibration-procedure">Calibration Procedure</a></li>
-              <li><a href="#appendix-firmware-update">Firmware Update</a></li>
-            </ul>
-          </li>
+          <li><a href="#introduction">Introduction</a></li>
+          <li><a href="#concepts">Concepts</a></li>
+          <li><a href="#ui">User Interface</a></li>
+          <li><a href="#pages">Pages</a></li>
+          <li><a href="#appendix">Appendix</a></li>
+          <li><a href="#appendix-launchpad">Launchpad</a></li>
+          <li><a href="#appendix-firmware-update">Firmware Update</a></li>
         </ul>
       </section>
 
@@ -1426,14 +1360,14 @@
             <tr><td style="text-align: left">Acid</td><td style="text-align: left">Note-track generator for acid-like Gate / Note / Slide motion.</td></tr>
             <tr><td style="text-align: left">Chaos</td><td style="text-align: left">Experimental Note-track multi-layer generator that now opens a <code>CHAOS MODE</code> submenu for <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.</td></tr>
             <tr><td style="text-align: left">Euclidean</td><td style="text-align: left">Euclidean generator based on Bjorklund's algorithm.</td></tr>
-            <tr><td style="text-align: left">Init Steps</td><td style="text-align: left">Reset sequence steps within the current generator scope. If a persistent selection exists it is used first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
+            <tr><td style="text-align: left">Init Seq</td><td style="text-align: left">Reset sequence steps within the current generator scope. If a persistent selection exists it is used first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
           </tbody>
         </table>
         <p>
           Note: <em>Acid</em> and <em>Chaos</em> appear only on Note tracks. Other track modes keep the smaller generator set appropriate to their data model.
         </p>
         <p>
-          On the current line, the Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Steps</code>.
+          On the current line, the Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Seq</code>.
         </p>
         <p>
           On the current hotfix line, this also restores the expected <code>Init Layer</code> behavior on the step page.

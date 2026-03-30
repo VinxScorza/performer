@@ -553,6 +553,69 @@ strong {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.fork-card {
+  padding: 18px 18px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+}
+
+.fork-card-spotlight {
+  width: min(100%, 540px);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.forks-closing {
+  margin-top: 34px;
+}
+
+.forks-closing-copy {
+  margin: 0 0 18px;
+  text-align: center;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  color: #d9c98a;
+}
+
+.fork-card-title {
+  margin: 0 0 10px;
+  font-size: 22px;
+  color: #ffffff;
+  border: 0;
+  padding: 0;
+}
+
+.fork-card-meta {
+  margin: 0 0 10px;
+  color: #d9c98a;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fork-card-links {
+  margin: 14px 0 0;
+}
+
+.fork-card-separator {
+  color: #8d8569;
+}
+
+.fork-card-detail {
+  margin: 0 0 4px;
+  color: #c9c1a4;
+  font-size: 12px;
+}
+
 .notice {
   margin: 18px 0 0;
   padding: 14px 16px;
@@ -683,6 +746,10 @@ strong {
 
   .embed-frame {
     padding: 10px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
   }
 
   .svg-embed {
