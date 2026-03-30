@@ -12,14 +12,14 @@
     <header class="inner">
       <nav class="site-nav" aria-label="Main">
         <a href="../index.html">PER|FORMER</a>
-        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
         <a href="../manual/index.html">User Manual</a>
-        <a href="../cheatsheet/index.html">Cheat Sheet</a>
-        <a href="../build-guide/index.html" aria-current="page">Build Guide</a>
         <a href="../testdrive/index.html">Test Drive</a>
+        <a href="../cheatsheet/index.html">LP Cheatsheet</a>
         <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
-        <a href="../license/index.html">License</a>
+        <a href="../build-guide/index.html" aria-current="page">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
+        <a href="../license/index.html">License</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
       </nav>
       <h1 id="project_title">PER|FORMER</h1>
       <h2 id="project_tagline">build guide</h2>
@@ -30,18 +30,17 @@
   <div id="main_content_wrap" class="outer">
     <main id="main_content" class="inner">
       <section>
-        <h3>Introduction</h3>
+        <h2>Introduction</h2>
         <p>
           DISCLAIMER: Building the PER|FORMER sequencer is not recommended for beginners.
         </p>
         <p>
-          This page is based on the original Westlicht build guide and kept here as a local reference for the
-          Vinx Scorza fork.
+          This page is based on the original Westlicht build guide.
         </p>
       </section>
 
       <section>
-        <h3>Sourcing Parts</h3>
+        <h2>Sourcing Parts</h2>
         <p>
           To build the sequencer you first need to source all the required parts. The original build guide
           references the complete BOM, Octopart BOM, and assembly resources for the hardware project.
@@ -54,7 +53,7 @@
       </section>
 
       <section>
-        <h3>Setup on macOS and Linux</h3>
+        <h2>Setup on macOS and Linux</h2>
         <p>
           Clone this repository:
         </p>
@@ -70,7 +69,7 @@ make setup_sim</code></pre>
       </section>
 
       <section>
-        <h3>Setup on Windows</h3>
+        <h2>Setup on Windows</h2>
         <p>
           There is currently no native Windows build flow. The standard workaround is the Vagrant virtual machine,
           as in the original Westlicht documentation.
@@ -82,7 +81,7 @@ vagrant ssh</code></pre>
       </section>
 
       <section>
-        <h3>Build directories</h3>
+        <h2>Build directories</h2>
         <p>
           After setup, build directories are available under <code>build/[stm32|sim]/[release|debug]</code>.
           Use <code>release</code> for hardware builds and <code>debug</code> for the simulator.
@@ -90,7 +89,7 @@ vagrant ssh</code></pre>
       </section>
 
       <section>
-        <h3>Build for hardware</h3>
+        <h2>Build for hardware</h2>
         <pre><code>cd build/stm32/release
 make -j
 </code></pre>
@@ -104,19 +103,12 @@ make -j
       </section>
 
       <section>
-        <h3>Build for simulator</h3>
+        <h2>Build for simulator</h2>
         <pre><code>cd build/sim/debug
 make -j
 ./src/apps/sequencer/sequencer</code></pre>
       </section>
 
-      <section>
-        <h3>Upstream reference</h3>
-        <p>
-          This page is intentionally close to the original Westlicht build documentation and will be diversified
-          only where the Vinx fork requires different build or release behavior.
-        </p>
-      </section>
     </main>
   </div>
 
@@ -124,6 +116,9 @@ make -j
     <footer class="inner">
       <p class="copyright">
         Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+      <p class="footer-contact">
+        Contact and bug reports: <a href="mailto:vincenzo.scorza@gmail.com">vincenzo.scorza@gmail.com</a>
       </p>
     </footer>
   </div>

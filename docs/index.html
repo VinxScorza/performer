@@ -12,14 +12,14 @@
     <header class="inner">
       <nav class="site-nav" aria-label="Main">
         <a href="index.html" aria-current="page">PER|FORMER</a>
-        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
         <a href="manual/index.html">User Manual</a>
-        <a href="cheatsheet/index.html">Cheat Sheet</a>
-        <a href="build-guide/index.html">Build Guide</a>
         <a href="testdrive/index.html">Test Drive</a>
+        <a href="cheatsheet/index.html">LP Cheatsheet</a>
         <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
-        <a href="license/index.html">License</a>
+        <a href="build-guide/index.html">Build Guide</a>
         <a href="donate/index.html">Donate</a>
+        <a href="license/index.html">License</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
       </nav>
       <h1 id="project_title">PER|FORMER</h1>
       <h2 id="project_tagline">eurorack sequencer</h2>
@@ -32,9 +32,8 @@
       <section id="about">
         <p>
           PER|FORMER is a eurorack sequencer module designed for both live performance and work in the
-          studio. This Vinx Scorza fork stays close to the original instrument while refining workflow
-          details and adding focused usability changes for personal use. Personal experimental fork
-          focused on live workflow, custom behavior, and UI/interaction changes.
+          studio. This Vinx Scorza fork is a personal experimental line shaped by real performance use,
+          custom behavior, and focused UI/interaction changes.
         </p>
         <p>
           GitHub fork:
@@ -52,25 +51,20 @@
         <p>
           IMPORTANT NOTE: I am not a software developer. I am just an artist shaping the instrument I want to perform with.
         </p>
-        <p>
-          About Vinx Scorza:
-          <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">vincenzoscorza.it</a>
-        </p>
       </section>
 
       <section>
-        <h3>What’s New in Vinx Fork</h3>
+        <h2>What’s New in Vinx Fork</h2>
         <p>
           Current fork line: <code>v0.3.2-vinx.1.4.8</code><br>
-          Lineage: derived from the Mebitek fork of the Westlicht Performer sequencer.<br>
           This fork remains intentionally personal and exploratory, shaped by ongoing use of PER|FORMER as a live instrument.
         </p>
-        <h4>Fixes &amp; Stability</h4>
+        <h3>Fixes &amp; Stability</h3>
         <ul>
           <li>Fix crashes/reboots on 64-step Note sequence shifting and correct step-shift range handling across all sequence types (Note, Logic, Curve, Stochastic, Arp)</li>
-          <li>Restore proper Init behavior (Init Layer vs Init Seq) and resolve generator/system/UI edge cases, including dead code paths</li>
+          <li>Restore proper Init behavior (Init Layer vs Init Steps) and resolve generator/system/UI edge cases, including dead code paths</li>
         </ul>
-        <h4>Chaos</h4>
+        <h3>Chaos</h3>
         <ul>
           <li>Introduce experimental <code>CHAOS MODE</code> with <code>Vandalize Sequence</code> and pattern-wide <code>Wreck Pattern</code> across all Note tracks</li>
           <li>Refine workflow: enter on <code>ORIGINAL</code>, explicit <code>CHAOS</code> trigger, <code>A/B</code> preview, and <code>VANDALIZED</code> / <code>WRECKED</code> popups</li>
@@ -81,27 +75,27 @@
         <p>
           WARNING: <code>Chaos -&gt; Wreck Pattern</code> is a wildly experimental, pattern-wide process and should be used only after saving your project.
         </p>
-        <h4>Generators</h4>
+        <h3>Generators</h3>
         <ul>
           <li>Add the new <code>Acid</code> Note-track generator with <code>Layer / Phrase</code> modes, where <code>Phrase</code> writes coordinated <code>Gate + Note + Slide</code> material</li>
           <li>Add experimental <code>Chaos</code> as a multi-layer macro-random generator with <code>Amount</code>, preview, and matrix-based target control</li>
           <li>Rework <code>Euclidean</code> (<code>A/B</code>, <code>NEW EUCL</code>, direct <code>Steps</code>/<code>Beats</code>/<code>Offset</code>, <code>Beats &lt;= Steps</code>) and <code>Random</code> (<code>A/B</code> preview, <code>Variation</code>, 32-bit hex seeds, auto reseed, layer-aware rendering)</li>
           <li>Make <code>RESETGEN</code> restore true defaults, compact generator selection to a single page, and redesign LCD previews for <code>Random</code> and <code>Acid</code></li>
         </ul>
-        <h4>Workflow, UI &amp; Interaction</h4>
+        <h3>Workflow, UI &amp; Interaction</h3>
         <ul>
           <li>Refine step visualization (compact conditions, retrig in-step, slide ties)</li>
           <li>Keep transport always responsive during generator usage</li>
           <li>Add <code>Scale</code> prelisten on Note/Arp with <code>Cancel</code> support and cyclic sequence navigation</li>
           <li>Improve contextual labeling (<code>ACID PHRASE</code>, <code>CHAOS ON SEQ</code>/<code>PAT</code>, etc.)</li>
         </ul>
-        <h4>System &amp; Performance</h4>
+        <h3>System &amp; Performance</h3>
         <ul>
           <li>Reduce memory footprint and allocations, especially around <code>Chaos</code>; lower UI refresh to <code>30 fps</code>; skip redundant LCD redraws via framebuffer hashing</li>
           <li>Increase default clock pulse (<code>1 ms</code> to <code>10 ms</code>), add three <code>Dim Sequence</code> levels, and set screensaver to <code>15m</code> with improved wake behavior</li>
           <li>Make the <code>System</code> page land on <code>Settings</code> by default and align startup/version reporting with <code>v0.3.2-vinx.1.4.8</code></li>
         </ul>
-        <h4>Content &amp; Ecosystem</h4>
+        <h3>Content &amp; Ecosystem</h3>
         <ul>
           <li>Restore browser Test Drive, update the manual to the Vinx fork line, publish the Launchpad cheat sheet, and refresh simulator/demo assets</li>
         </ul>
@@ -113,7 +107,7 @@
       </section>
 
       <section>
-        <h3>License</h3>
+        <h2>License</h2>
         <p>
           For licensing information please refer to the
           <a href="license/index.html">License</a> page.
@@ -121,7 +115,7 @@
       </section>
 
       <section id="donations">
-        <h3>Donations</h3>
+        <h2>Donations</h2>
         <p>
           If you would like to support this fork financially, please refer to the
           <a href="donate/index.html">Donate</a>
@@ -133,9 +127,9 @@
           <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Simon Kallweit / Westlicht</a>.
         </p>
         <p>
-          I would love to have a second PER|FORMER unit for testing new fixes and new features, but
+          <strong>I would love to have a second PER|FORMER unit for testing new fixes and new features, but
           I cannot really afford a second one just for development. If you have one sitting unused
-          and gathering dust, I would gladly give it a good home in my studio/lab.
+          and gathering dust, I would gladly give it a good home in my studio/lab.</strong>
         </p>
       </section>
     </main>
@@ -145,6 +139,9 @@
     <footer class="inner">
       <p class="copyright">
         Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+      <p class="footer-contact">
+        Contact and bug reports: <a href="mailto:vincenzo.scorza@gmail.com">vincenzo.scorza@gmail.com</a>
       </p>
     </footer>
   </div>

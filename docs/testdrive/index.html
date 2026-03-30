@@ -12,14 +12,14 @@
     <header class="inner">
       <nav class="site-nav" aria-label="Main">
         <a href="../index.html">PER|FORMER</a>
-        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
         <a href="../manual/index.html">User Manual</a>
-        <a href="../cheatsheet/index.html">Cheat Sheet</a>
-        <a href="../build-guide/index.html">Build Guide</a>
         <a href="../testdrive/index.html" aria-current="page">Test Drive</a>
+        <a href="../cheatsheet/index.html">LP Cheatsheet</a>
         <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
-        <a href="../license/index.html">License</a>
+        <a href="../build-guide/index.html">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
+        <a href="../license/index.html">License</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
       </nav>
       <h1 id="project_title">PER|FORMER</h1>
       <h2 id="project_tagline">test drive</h2>
@@ -34,27 +34,24 @@
           <p>
             Current firmware version: <code>v0.3.2-vinx.1.4.8</code>
           </p>
-          <p>
-            The Vinx browser build is now embedded below with a cleaner simulator shell focused on the module itself.
-          </p>
-          <p>
-            This browser Test Drive should be treated as a convenient reference build, not as a perfect representation of the hardware module or the desktop simulator. Timing, audio behavior, browser input handling, and some UI details may still differ from the real firmware experience on hardware or in the native simulator.
-          </p>
-          <p>
-            If the embed does not start correctly in your browser, open the standalone build:
-            <a href="./sim/sequencer.html">simulator shell</a>.
-          </p>
           <iframe
             class="simulator-frame"
             src="./sim/sequencer.html"
             title="PER|FORMER browser simulator"
             loading="lazy">
           </iframe>
+          <p style="margin-top: 22px;">
+            This browser Test Drive should be treated as a convenient reference build, not as a perfect representation of the hardware module or the desktop simulator. Timing, audio behavior, browser input handling, and some UI details may still differ from the real firmware experience on hardware or in the native simulator.
+          </p>
+          <p>
+            If the embed does not start correctly in your browser, open the standalone build:
+            <a href="./sim/sequencer.html">simulator shell</a>.
+          </p>
         </div>
       </section>
 
       <section>
-        <h3>Sound Engine</h3>
+        <h2>Sound Engine</h2>
         <p>
           In the browser simulator, a small sound engine is attached to the sequencer outputs so the generated
           gates and CV can be heard immediately.
@@ -75,7 +72,7 @@
       </section>
 
       <section>
-        <h3>Controls</h3>
+        <h2>Controls</h2>
         <ul>
           <li><code>Mouse wheel</code>: Encoder rotate</li>
           <li><code>Space</code>: Encoder press</li>
@@ -101,15 +98,6 @@
         </ul>
       </section>
 
-      <section>
-        <h3>Notes</h3>
-        <p>
-          The current browser path is being hardened around cleaner embedding, automatic audio bring-up where the browser allows it, a refreshed demo state, and more reliable re-entry into a known simulator setup.
-        </p>
-        <p>
-          Even when the browser build is working correctly, always consider the hardware module and the native simulator as the final reference for timing, responsiveness, and exact behavior.
-        </p>
-      </section>
     </main>
   </div>
 
@@ -117,6 +105,9 @@
     <footer class="inner">
       <p class="copyright">
         Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+      <p class="footer-contact">
+        Contact and bug reports: <a href="mailto:vincenzo.scorza@gmail.com">vincenzo.scorza@gmail.com</a>
       </p>
     </footer>
   </div>

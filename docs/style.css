@@ -136,6 +136,37 @@ pre code {
   padding: 34px 0 42px;
 }
 
+#main_content h2 {
+  margin: 0 0 14px;
+  font-size: 28px;
+  color: #ffffff;
+  border-bottom: 1px solid #4a4a4a;
+  padding-bottom: 8px;
+}
+
+#main_content h3 {
+  margin: 0 0 12px;
+  margin-left: 12px;
+  font-size: 24px;
+  color: #ffffff;
+  border-bottom: 1px solid #3f3f3f;
+  padding-bottom: 8px;
+}
+
+#main_content h4 {
+  margin: 0 0 10px;
+  margin-left: 24px;
+  font-size: 18px;
+  color: #f6f1df;
+}
+
+#main_content h5 {
+  margin: 0 0 8px;
+  margin-left: 36px;
+  font-size: 16px;
+  color: #e5dcc0;
+}
+
 #main_content ul + p,
 #main_content ol + p {
   margin-top: 1.2em;
@@ -157,13 +188,16 @@ pre code {
   top: var(--manual-sidebar-offset);
   left: max(16px, calc((100vw - min(1260px, calc(100vw - 32px))) / 2));
   width: 280px;
-  max-height: calc(100vh - var(--manual-sidebar-offset) - 20px);
-  overflow: auto;
+  height: calc(100vh - var(--manual-sidebar-offset) - 20px);
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px 16px 18px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid #3a3a3a;
   border-radius: 10px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .manual-sidebar-title {
@@ -370,34 +404,33 @@ section {
 }
 
 .manual-body h2 {
-  margin: 0 0 14px;
-  font-size: 28px;
-  color: #ffffff;
-  border-bottom: 1px solid #4a4a4a;
-  padding-bottom: 8px;
 }
 
 .manual-body h3 {
-  margin: 0 0 12px;
-  margin-left: 12px;
-  font-size: 24px;
-  color: #ffffff;
-  border-bottom: 1px solid #3f3f3f;
-  padding-bottom: 8px;
+}
+
+.manual-body h3::before {
+  content: ">";
+  margin-right: 8px;
+  color: rgba(228, 211, 138, 0.68);
 }
 
 .manual-body h4 {
-  margin: 0 0 10px;
-  margin-left: 24px;
-  font-size: 18px;
-  color: #f6f1df;
+}
+
+.manual-body h4::before {
+  content: ">>";
+  margin-right: 8px;
+  color: rgba(228, 211, 138, 0.58);
 }
 
 .manual-body h5 {
-  margin: 0 0 8px;
-  margin-left: 36px;
-  font-size: 16px;
-  color: #e5dcc0;
+}
+
+.manual-body h5::before {
+  content: ">>>";
+  margin-right: 8px;
+  color: rgba(228, 211, 138, 0.48);
 }
 
 p,
@@ -480,6 +513,8 @@ strong {
 }
 
 #footer_wrap {
+  position: relative;
+  z-index: 20;
   border-top: 1px solid #101010;
   background: #171717;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -493,6 +528,20 @@ strong {
   margin: 0;
   color: var(--muted);
   font-size: 14px;
+}
+
+.footer-contact {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.footer-contact a {
+  color: #ddd7bf;
+}
+
+.footer-contact a:hover {
+  color: #ffffff;
 }
 
 .embed-frame {

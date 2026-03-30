@@ -12,14 +12,14 @@
     <header class="inner">
       <nav class="site-nav" aria-label="Main">
         <a href="../index.html">PER|FORMER</a>
-        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
         <a href="../manual/index.html" aria-current="page">User Manual</a>
-        <a href="../cheatsheet/index.html">Cheat Sheet</a>
-        <a href="../build-guide/index.html">Build Guide</a>
         <a href="../testdrive/index.html">Test Drive</a>
+        <a href="../cheatsheet/index.html">LP Cheatsheet</a>
         <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
-        <a href="../license/index.html">License</a>
+        <a href="../build-guide/index.html">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
+        <a href="../license/index.html">License</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
       </nav>
       <h1 id="project_title">PER|FORMER</h1>
       <h2 id="project_tagline">user manual</h2>
@@ -386,7 +386,7 @@
           The generated CV signal is controlled by the <em>Shape</em> layer, which defines a curve shape to be output over the duration of one step. The <em>Minimum</em> and <em>Maximum</em> layers define the lower and upper voltage that is output for each step. To introduce some random variation, the <em>Shape Variation</em> and <em>Shape Variation Probability</em> layers can be used to define altered shapes that are used instead of the primary shape with some probability.
         </p>
         <p>
-          The generated gate signal is controlled by the <em>Gate</em> layer. It allows defining a pattern of up to 4 gate triggers per step. To introduce some random variation, the <em>Gate Probability</em> layer is used to control how often a gate is actually played.
+          The generated gate signal is controlled by the <em>Gate</em> layer group. It allows defining a pattern of up to 4 gate triggers per step. The associated <em>Gate Probability</em> layer controls how often a trigger is actually played, <em>Gate Offset</em> shifts the trigger timing earlier or later inside the step, and <em>Length</em> controls the duration of each gate pulse inside the step.
         </p>
         <p>
           The playback of the sequence is controlled by the same set of parameters as in the note track.
@@ -1049,7 +1049,7 @@
           On Note and Curve tracks, the sequence page also defines the effective working window of the pattern. This becomes especially relevant when editing across sections and when using generators that depend on the active first/last step range.
         </p>
         <p>
-          The context menu allows you to initialize, copy, paste and duplicate sequences. On Note and Curve tracks, save/load shortcuts for sequence files are also available.
+          The context menu allows you to initialize, copy, paste and duplicate whole sequences. On Note and Curve tracks, save/load shortcuts for sequence files are also available.
         </p>
         <h4>Context Menu</h4>
         <table>
@@ -1061,7 +1061,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the selected sequence and all its content to the default state.</td></tr>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init Seq</td><td style="text-align: left">Initialize the selected sequence and all its content to the default state. This is a whole-sequence action, not a selection-aware step action.</td></tr>
             <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected sequence and all its content to the clipboard.</td></tr>
             <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste the clipboard contents onto the selected sequence.</td></tr>
             <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Duplicate</td><td style="text-align: left">Copy the selected sequence to the next sequence slot on the selected track.</td></tr>
@@ -1294,7 +1294,7 @@
         </table>
         <h4>Section Selection</h4>
         <p>
-          Sequences contain up to 64 steps, of which only 16 are shown on the page. Press <code>PREV</code> and <code>NEXT</code> to select one of the available 16-step sections: 1-16, 17-32, 33-48 and 49-64 as needed by the current pattern length. In the Vinx fork this navigation wraps cyclically across the available sections. The currently selected section is indicated by the 4 LEDs in the bottom-left corner as well as with the step indices above each step on the page.
+          Sequences contain up to 64 steps, of which only 16 are shown on the page. Press <code>PREV</code> and <code>NEXT</code> to select one of the available 16-step sections: 1-16, 17-32, 33-48 and 49-64 as needed by the current pattern length. The currently selected section is indicated by the 4 LEDs in the bottom-left corner as well as with the step indices above each step on the page.
         </p>
         <h4>Editing Steps</h4>
         <p>
@@ -1313,8 +1313,8 @@
           <li>When editing a Curve track, select multiple steps with <code>SHIFT</code> + step, then hold <code>SHIFT</code> and turn the <code>ENCODER</code> to select a shape. The shape will be spread across the selected steps.</li>
           <li>When editing a Curve track, select multiple steps with <code>SHIFT</code> + step and press <code>SHIFT</code> + <code>ENCODER</code> to reverse the shapes.</li>
           <li>When editing a Note track, select any steps you want and press <code>SHIFT</code> + <code>NEXT</code> or <code>PREV</code> to move the selected step by 1 step.</li>
-          <li>When editing a Note or a Curve track, selecting any steps and using the Init context menu function initializes just the selected steps.</li>
-          <li>When editing a Note or a Curve track, pressing <code>PAGE</code> + <code>S7</code> undoes the last change.</li>
+          <li>When editing a sequence page, <code>Init Layer</code> on the Steps page is selection-aware, while <code>Init Seq</code> on the Sequence page context menu still initializes the whole sequence.</li>
+          <li>When editing a Note track, pressing <code>PAGE</code> + <code>S7</code> undoes the last change.</li>
           <li>When editing a Note track, holding a step and pressing <code>F1</code> to <code>F5</code> sets the note octave respectively to 1V, 2V, 3V, 4V or 5V. This can be used to quickly create accents.</li>
           <li>When editing a Stochastic track, pressing <code>PAGE</code> + <code>S7</code> loops the sequence. Length is calculated by Sequence First Step and Sequence Last Step.</li>
           <li>When editing a Stochastic track, pressing <code>PAGE</code> + <code>S6</code> clears the loop and enters a new one.</li>
@@ -1426,14 +1426,14 @@
             <tr><td style="text-align: left">Acid</td><td style="text-align: left">Note-track generator for acid-like Gate / Note / Slide motion.</td></tr>
             <tr><td style="text-align: left">Chaos</td><td style="text-align: left">Experimental Note-track multi-layer generator that now opens a <code>CHAOS MODE</code> submenu for <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.</td></tr>
             <tr><td style="text-align: left">Euclidean</td><td style="text-align: left">Euclidean generator based on Bjorklund's algorithm.</td></tr>
-            <tr><td style="text-align: left">Init Seq</td><td style="text-align: left">Reset sequence steps within the current generator scope. If a persistent selection exists it is used first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
+            <tr><td style="text-align: left">Init Steps</td><td style="text-align: left">Reset sequence steps within the current generator scope. If a persistent selection exists it is used first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
           </tbody>
         </table>
         <p>
           Note: <em>Acid</em> and <em>Chaos</em> appear only on Note tracks. Other track modes keep the smaller generator set appropriate to their data model.
         </p>
         <p>
-          On the current line, the Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Seq</code>.
+          On the current line, the Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Steps</code>.
         </p>
         <p>
           On the current hotfix line, this also restores the expected <code>Init Layer</code> behavior on the step page.
@@ -1949,7 +1949,6 @@
         <p>
           Note: to set up a 24 PPQN input or output clock resolution, set the divisor to <code>2</code>. In this context, the divisor is applied to 48 PPQN rather than the internal 192 PPQN resolution.
         </p>
-
         <h3 id="pages-system">System</h3>
         <p>
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
@@ -2877,6 +2876,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
     <footer class="inner">
       <p class="copyright">
         Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+      <p class="footer-contact">
+        Contact and bug reports: <a href="mailto:vincenzo.scorza@gmail.com">vincenzo.scorza@gmail.com</a>
       </p>
     </footer>
   </div>
