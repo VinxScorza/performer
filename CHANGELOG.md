@@ -4,7 +4,7 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
-# v0.3.2-vinx.1.4.9
+# v0.3.2-vinx.1.4.9 (31 March 2026)
 - Refine external clock input behavior by adding `Reset Pulse` as a new mode alongside `Reset Gate`, `Run`, and `Start/Stop`, and make it respond only to the rising edge so reset pulses resync the slave clock without turning the falling edge into an implicit start
 - Add per-step `Gate Offset` and `Gate Length` layers to `Curve` tracks, including edit-page, overview, and Python bindings support
 - Fix `Curve`-track entry and Launchpad handling when the new `Gate Offset` or `Gate Length` layers are selected
