@@ -117,6 +117,8 @@ CurveSequenceEditPage::CurveSequenceEditPage(PageManager &manager, PageContext &
 void CurveSequenceEditPage::enter() {
     updateMonitorStep();
 
+    _inMemorySequence = _project.selectedCurveSequence();
+
     _showDetail = false;
 }
 
@@ -266,6 +268,20 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
                 step.gateProbability() + 1, CurveSequence::GateProbability::Range
             );
             break;
+        case Layer::GateOffset:
+            SequencePainter::drawOffset(
+                canvas,
+                x + 2, bottomY, stepWidth - 4, 2,
+                step.gateOffset(), CurveSequence::GateOffset::Min - 1, CurveSequence::GateOffset::Max + 1
+            );
+            break;
+        case Layer::GateLength:
+            SequencePainter::drawLength(
+                canvas,
+                x + 2, bottomY, stepWidth - 4, 2,
+                step.gateLength() + 1, CurveSequence::GateLength::Range
+            );
+            break;
         case Layer::Last:
             break;
         }
@@ -289,7 +305,7 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     // handle detail display
 
     if (_showDetail) {
-        if (!(layer() == Layer::ShapeVariationProbability || layer() == Layer::GateProbability) || _stepSelection.none()) {
+        if (!(layer() == Layer::ShapeVariationProbability || layer() == Layer::GateProbability || layer() == Layer::GateOffset || layer() == Layer::GateLength) || _stepSelection.none()) {
             _showDetail = false;
         }
         if (_stepSelection.isPersisted() && os::ticks() > _showDetailTicks + os::time::ms(500)) {
@@ -362,8 +378,15 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         if (key.is(Key::Step15)) {
             track.togglePatternFollowDisplay();
         } else {
+            _inMemorySequence = _project.selectedCurveSequence();
             quickEdit(key.quickEdit());
         }
+        event.consume();
+        return;
+    }
+
+    if (key.pageModifier() && key.is(Key::Step6)) {
+        _project.setSelectedCurveSequence(_inMemorySequence);
         event.consume();
         return;
     }
@@ -373,6 +396,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isEncoder() && layer() == Layer::Shape && globalKeyState()[Key::Shift] && _stepSelection.count() > 1) {
+        _inMemorySequence = _project.selectedCurveSequence();
         for (size_t stepIndex = 0; stepIndex < _stepSelection.size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
@@ -397,6 +421,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
 
     if (key.isLeft()) {
         if (key.shiftModifier()) {
+            _inMemorySequence = _project.selectedCurveSequence();
             sequence.shiftSteps(_stepSelection.selected(), -1);
         } else {
             track.setPatternFollowDisplay(false);
@@ -407,6 +432,7 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
     }
     if (key.isRight()) {
         if (key.shiftModifier()) {
+            _inMemorySequence = _project.selectedCurveSequence();
             sequence.shiftSteps(_stepSelection.selected(), 1);
         } else {
             track.setPatternFollowDisplay(false);
@@ -432,10 +458,16 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
             setLayer(event.value() > 0 ? Layer::Shape : Layer::ShapeVariation);
             break;
         case Layer::Gate:
-            setLayer(Layer::GateProbability);
+            setLayer(event.value() > 0 ? Layer::GateOffset : Layer::GateLength);
+            break;
+        case Layer::GateOffset:
+            setLayer(event.value() > 0 ? Layer::GateProbability : Layer::Gate);
             break;
         case Layer::GateProbability:
-            setLayer(Layer::Gate);
+            setLayer(event.value() > 0 ? Layer::GateLength : Layer::GateOffset);
+            break;
+        case Layer::GateLength:
+            setLayer(event.value() > 0 ? Layer::Gate : Layer::GateProbability);
             break;
         default:
             break;
@@ -445,6 +477,8 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
         _showDetail = true;
         _showDetailTicks = os::ticks();
     }
+
+    _inMemorySequence = sequence;
 
     for (size_t stepIndex = 0, multiStepsProcessed = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
@@ -496,6 +530,12 @@ void CurveSequenceEditPage::encoder(EncoderEvent &event) {
                 break;
             case Layer::GateProbability:
                 step.setGateProbability(step.gateProbability() + event.value());
+                break;
+            case Layer::GateOffset:
+                step.setGateOffset(step.gateOffset() + event.value());
+                break;
+            case Layer::GateLength:
+                step.setGateLength(step.gateLength() + event.value());
                 break;
             case Layer::Last:
                 break;
@@ -553,9 +593,15 @@ void CurveSequenceEditPage::switchLayer(int functionKey, bool shift) {
     case Function::Gate:
         switch (layer()) {
         case Layer::Gate:
+            setLayer(Layer::GateOffset);
+            break;
+        case Layer::GateOffset:
             setLayer(Layer::GateProbability);
             break;
         case Layer::GateProbability:
+            setLayer(Layer::GateLength);
+            break;
+        case Layer::GateLength:
             setLayer(Layer::Gate);
             break;
         default:
@@ -578,6 +624,8 @@ int CurveSequenceEditPage::activeFunctionKey() {
         return 2;
     case Layer::Gate:
     case Layer::GateProbability:
+    case Layer::GateOffset:
+    case Layer::GateLength:
         return 3;
     case Layer::Last:
         break;
@@ -634,6 +682,7 @@ void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step
     case Layer::Min:
     case Layer::Max:
     case Layer::Gate:
+        break;
     case Layer::GateProbability:
         SequencePainter::drawProbability(
             canvas,
@@ -642,6 +691,28 @@ void CurveSequenceEditPage::drawDetail(Canvas &canvas, const CurveSequence::Step
         );
         str.reset();
         str("%.1f%%", 100.f * (step.gateProbability()) / (CurveSequence::GateProbability::Range-1));
+        canvas.setColor(Color::Bright);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+    case Layer::GateOffset:
+        SequencePainter::drawOffset(
+            canvas,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
+            step.gateOffset(), CurveSequence::GateOffset::Min - 1, CurveSequence::GateOffset::Max + 1
+        );
+        str.reset();
+        str("%.1f%%", 100.f * step.gateOffset() / float(CurveSequence::GateOffset::Max + 1));
+        canvas.setColor(Color::Bright);
+        canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
+        break;
+    case Layer::GateLength:
+        SequencePainter::drawLength(
+            canvas,
+            64 + 32 + 8, 32 - 4, 64 - 16, 8,
+            step.gateLength() + 1, CurveSequence::GateLength::Range
+        );
+        str.reset();
+        str("%.1f%%", 100.f * (step.gateLength() + 1) / float(CurveSequence::GateLength::Range));
         canvas.setColor(Color::Bright);
         canvas.drawTextCentered(64 + 32 + 64, 32 - 4, 32, 8, str);
         break;
@@ -692,6 +763,7 @@ bool CurveSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void CurveSequenceEditPage::initSequence() {
+    _inMemorySequence = _project.selectedCurveSequence();
     auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
     builder->clearLayer(_stepSelection.selected());
     builder->showPreview();
@@ -705,17 +777,20 @@ void CurveSequenceEditPage::copySequence() {
 }
 
 void CurveSequenceEditPage::pasteSequence() {
+    _inMemorySequence = _project.selectedCurveSequence();
     _model.clipBoard().pasteCurveSequenceSteps(_project.selectedCurveSequence(), _stepSelection.selected());
     showMessage("STEPS PASTED");
 }
 
 void CurveSequenceEditPage::duplicateSequence() {
+    _inMemorySequence = _project.selectedCurveSequence();
     _project.selectedCurveSequence().duplicateSteps();
     showMessage("STEPS DUPLICATED");
 }
 
 
 void CurveSequenceEditPage::generateSequence() {
+    _inMemorySequence = _project.selectedCurveSequence();
     _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
         if (success) {
             auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());

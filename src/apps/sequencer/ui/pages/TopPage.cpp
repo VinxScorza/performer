@@ -208,6 +208,14 @@ void TopPage::setMode(Mode mode) {
 }
 
 void TopPage::setMainPage(Page &page) {
+    if (_manager.top() == &_manager.pages().system && &page != &_manager.pages().system) {
+        if (_manager.pages().system.requestLeave([this, &page] () {
+            setMainPage(page);
+        })) {
+            return;
+        }
+    }
+
     if (_manager.stackSize() < 2) {
         _manager.push(&page);
     } else {

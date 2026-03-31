@@ -17,6 +17,7 @@
 #define SettingSyncSong "syncsong"
 #define SettingChaosSeqLayers "chaosseq"
 #define SettingChaosPatLayers "chaospat"
+#define SettingMenuWrap "menuwrap"
 
 static constexpr uint16_t DefaultChaosTargetMask = 0x3fff;
 
@@ -158,7 +159,7 @@ class LaunchpadStyleSetting : public Setting<int> {
         "LP Style",
         {"classic", "blue"},
         {0, 1},
-        0
+        1
     ) {}
 };
 
@@ -177,10 +178,10 @@ class LaunchpadNoteStyle : public Setting<int> {
     public:
     LaunchpadNoteStyle() : Setting(
         SettingLaunchpadNoteStyle,
-        "LP note style",
+        "LP Note Style",
         {"classic", "circuit"},
         {0, 1},
-        1
+        0
     ) {}
 };
 
@@ -192,6 +193,17 @@ class SyncSong : public Setting<int> {
         {"yes", "no"},
         {1, 0},
         0
+    ) {}
+};
+
+class MenuWrapSetting : public Setting<uint8_t> {
+public:
+    MenuWrapSetting() : Setting(
+        SettingMenuWrap,
+        "Menu Wrap",
+        {"off", "on"},
+        {uint8_t(0), uint8_t(1)},
+        uint8_t(1)
     ) {}
 };
 
@@ -234,6 +246,7 @@ public:
 
         addSetting(new LaunchpadStyleSetting());
         addSetting(new LaunchpadNoteStyle());
+        addSetting(new MenuWrapSetting());
     }
 
     //----------------------------------------

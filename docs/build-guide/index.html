@@ -12,10 +12,10 @@
     <header class="inner">
       <nav class="site-nav" aria-label="Main">
         <a href="../index.html">PER|FORMER</a>
+        <a href="../features/index.html">Features</a>
         <a href="../manual/index.html">User Manual</a>
-        <a href="../testdrive/index.html">Simulator</a>
+        <a href="../testdrive/index.html">Web Simulator</a>
         <a href="../cheatsheet/index.html">LP Cheatsheet</a>
-        <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
         <a href="../build-guide/index.html" aria-current="page">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
         <a href="../license/index.html">License</a>
@@ -37,6 +37,12 @@
         </p>
         <p>
           This page is based on the original Westlicht build guide.
+        </p>
+        <p>
+          The lower part of this page also includes practical notes for building, launching, and using the local <code>Desktop Simulator</code>, including MIDI and Launchpad setup.
+        </p>
+        <p>
+          If you just want the browser-based build, use the published <a href="../testdrive/index.html">Web Simulator</a> instead of the local desktop flow described below.
         </p>
       </section>
 
@@ -85,7 +91,7 @@ vagrant ssh</code></pre>
         <h2>Build directories</h2>
         <p>
           After setup, build directories are available under <code>build/[stm32|sim]/[release|debug]</code>.
-          Use <code>release</code> for hardware builds and <code>debug</code> for the simulator.
+          Use <code>release</code> for hardware builds and <code>debug</code> for the Desktop Simulator.
         </p>
       </section>
 
@@ -104,10 +110,68 @@ make -j
       </section>
 
       <section>
-        <h2>Build for simulator</h2>
+        <h2>Build for Desktop Simulator</h2>
         <pre><code>cd build/sim/debug
 make -j
 ./src/apps/sequencer/sequencer</code></pre>
+        <p>
+          Here, <code>Desktop Simulator</code> means the native local simulator build, distinct from the
+          browser-based <a href="../testdrive/index.html">Web Simulator</a> published on the site.
+        </p>
+        <p>
+          The Desktop Simulator can use external MIDI ports. Run <code>./src/apps/sequencer/sequencer --midi</code> to list
+          the available ports, then use options such as <code>--midi-port</code>, <code>--midi-in</code>, <code>--midi-out</code>,
+          <code>--usb-midi-port</code>, <code>--usb-midi-in</code>, <code>--usb-midi-out</code>, <code>--trace-midi</code>, and <code>--trace-dio</code> to route DIN and USB MIDI or inspect simulator traffic from the terminal.
+          Use <code>none</code>, <code>off</code>, or <code>-</code> to disable a default input or output assignment.
+        </p>
+        <p>
+          By default, the Desktop Simulator now starts with both DIN MIDI and USB MIDI disabled, so it does not keep probing missing MIDI devices unless you explicitly assign them from the command line.
+        </p>
+        <p>
+          Useful launch commands:
+        </p>
+        <pre><code>./src/apps/sequencer/sequencer --midi
+./src/apps/sequencer/sequencer --midi-port "Your MIDI Port"
+./src/apps/sequencer/sequencer --midi-in "Your MIDI In" --midi-out none
+./src/apps/sequencer/sequencer --usb-midi-port "Your USB MIDI Port"
+./src/apps/sequencer/sequencer --trace-midi
+./src/apps/sequencer/sequencer --trace-dio</code></pre>
+        <p>
+          On macOS, some devices expose port directions from the device point of view. For example, a Launchpad Mini MK3
+          on the simulated USB MIDI port may need <code>--usb-midi-in "Launchpad Mini MK3 LPMiniMK3 DAW Out"</code> and
+          <code>--usb-midi-out "Launchpad Mini MK3 LPMiniMK3 DAW In"</code>.
+        </p>
+        <pre><code>./src/apps/sequencer/sequencer \
+  --usb-midi-in "Launchpad Mini MK3 LPMiniMK3 DAW Out" \
+  --usb-midi-out "Launchpad Mini MK3 LPMiniMK3 DAW In"</code></pre>
+        <p>
+          In the current Vinx setup, the simulator-side USB MIDI workflow has only been validated with a
+          <code>Launchpad Mini MK3</code> on macOS / OS X, since that is the only Launchpad currently available for local testing.
+        </p>
+        <p>
+          Current validation scope: Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with
+          <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.
+        </p>
+        <p>
+          The simulator also infers the Launchpad model from the selected USB port names, so a Mini MK3 is no longer
+          exposed to the firmware as the old Mini Mk2 default device.
+        </p>
+        <p>
+          For Launchpad-style USB controllers, the simulator also mirrors the matching sibling input and output ports
+          (<code>DAW</code> / <code>MIDI</code>) when possible, so pad presses and initialization messages can still land
+          on the endpoint the device actually uses.
+        </p>
+        <p>
+          When a MIDI connection is active, the lower status area shows <code>DIN MIDI ...</code> and <code>USB MIDI ...</code>
+          indicators with states such as <code>OFF</code>, <code>WAIT</code>, and <code>OPEN</code>.
+        </p>
+        <p>
+          When <code>--trace-midi</code> is enabled, the terminal prints the incoming DIN and USB MIDI messages that actually reach the simulator, which is useful when testing routing, Launchpad input, or external controller behavior.
+        </p>
+        <p>
+          When <code>--trace-dio</code> is enabled, the terminal prints simulated <code>CLK OUT</code> and <code>RESET OUT</code>
+          transitions as they happen, which is useful for checking clock pulse timing independently from the UI rendering.
+        </p>
       </section>
 
     </main>

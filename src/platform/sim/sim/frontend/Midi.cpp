@@ -25,9 +25,11 @@ static void errorCallback(RtMidiError::Type type, const std::string &errorText, 
 }
 
 bool Midi::Port::send(uint8_t data) {
-    if (_output.isPortOpen()) {
+    if (_outputOpen) {
         std::vector<uint8_t> message = { data };
-        _output.sendMessage(&message);
+        for (auto &output : _outputs) {
+            output->sendMessage(&message);
+        }
         return true;
     }
 
@@ -35,9 +37,11 @@ bool Midi::Port::send(uint8_t data) {
 }
 
 bool Midi::Port::send(const uint8_t *data, size_t length) {
-    if (_output.isPortOpen()) {
+    if (_outputOpen) {
         std::vector<uint8_t> message(data, data + length);
-        _output.sendMessage(&message);
+        for (auto &output : _outputs) {
+            output->sendMessage(&message);
+        }
         return true;
     }
 
@@ -48,7 +52,19 @@ void Midi::Port::update() {
     if (!_open) {
         open();
     } else {
-        if (_error || findPort(_input, _portIn) == -1 || findPort(_output, _portOut) == -1) {
+        bool inputMissing = false;
+        for (size_t i = 0; i < _inputs.size() && !inputMissing; ++i) {
+            if (findPort(*_inputs[i], _portIns[i]) == -1) {
+                inputMissing = true;
+            }
+        }
+        bool outputMissing = false;
+        for (size_t i = 0; i < _outputs.size() && !outputMissing; ++i) {
+            if (findPort(*_outputs[i], _portOuts[i]) == -1) {
+                outputMissing = true;
+            }
+        }
+        if (_error || inputMissing || outputMissing) {
             close();
         }
 
@@ -58,6 +74,16 @@ void Midi::Port::update() {
             _recvQueue.pop_front();
         }
     }
+}
+
+void Midi::Port::setPorts(const std::vector<std::string> &portIns, const std::vector<std::string> &portOuts) {
+    if (_portIns == portIns && _portOuts == portOuts) {
+        return;
+    }
+
+    close();
+    _portIns = portIns;
+    _portOuts = portOuts;
 }
 
 void Midi::Port::notifyError() {
@@ -74,45 +100,61 @@ void Midi::Port::open() {
         return;
     }
 
-    // open input
-    try {
-        int index = findPort(_input, _portIn);
-        if (index >= 0) {
-            _input.openPort(index);
-            _input.ignoreTypes(false, false, false);
-            _input.setCallback(recvCallback, this);
-            _input.setErrorCallback(errorCallback, this);
-        } else {
-            _input.closePort();
-            return;
+    bool openedAny = false;
+
+    _inputs.clear();
+    for (const auto &portIn : _portIns) {
+        if (portIn.empty()) {
+            continue;
         }
-    } catch (RtMidiError &error) {
-        if (_firstOpenAttempt) {
-            std::cout << "Failed to open MIDI input port '" << _portIn << "'" << std::endl;
-            error.printMessage();
-            _firstOpenAttempt = false;
+
+        try {
+            std::unique_ptr<RtMidiIn> input(new RtMidiIn());
+            int index = findPort(*input, portIn);
+            if (index >= 0) {
+                input->openPort(index);
+                input->ignoreTypes(false, false, false);
+                input->setCallback(recvCallback, this);
+                input->setErrorCallback(errorCallback, this);
+                _inputs.emplace_back(std::move(input));
+                _inputOpen = true;
+                openedAny = true;
+            }
+        } catch (RtMidiError &error) {
+            if (_firstOpenAttempt) {
+                std::cout << "Failed to open MIDI input port '" << portIn << "'" << std::endl;
+                error.printMessage();
+                _firstOpenAttempt = false;
+            }
         }
-        _input.closePort();
-        return;
     }
 
-    // open output
-    try {
-        int index = findPort(_output, _portOut);
-        if (index >= 0) {
-            _output.openPort(index);
-            _output.setErrorCallback(errorCallback, this);
-        } else {
-            _output.closePort();
-            return;
+    _outputs.clear();
+    for (const auto &portOut : _portOuts) {
+        if (portOut.empty()) {
+            continue;
         }
-    } catch (RtMidiError &error) {
-        if (_firstOpenAttempt) {
-            std::cout << "Failed to open MIDI output port '" << _portOut << "'" << std::endl;
-            error.printMessage();
-            _firstOpenAttempt = false;
+
+        try {
+            std::unique_ptr<RtMidiOut> output(new RtMidiOut());
+            int index = findPort(*output, portOut);
+            if (index >= 0) {
+                output->openPort(index);
+                output->setErrorCallback(errorCallback, this);
+                _outputs.emplace_back(std::move(output));
+                _outputOpen = true;
+                openedAny = true;
+            }
+        } catch (RtMidiError &error) {
+            if (_firstOpenAttempt) {
+                std::cout << "Failed to open MIDI output port '" << portOut << "'" << std::endl;
+                error.printMessage();
+                _firstOpenAttempt = false;
+            }
         }
-        _output.closePort();
+    }
+
+    if (!openedAny) {
         return;
     }
 
@@ -129,8 +171,21 @@ void Midi::Port::close() {
         return;
     }
 
-    _input.closePort();
-    _output.closePort();
+    if (_inputOpen) {
+        for (auto &input : _inputs) {
+            input->closePort();
+        }
+        _inputs.clear();
+        _inputOpen = false;
+    }
+
+    if (_outputOpen) {
+        for (auto &output : _outputs) {
+            output->closePort();
+        }
+        _outputs.clear();
+        _outputOpen = false;
+    }
 
     if (_disconnectHandler) {
         _disconnectHandler();

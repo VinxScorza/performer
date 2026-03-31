@@ -10,6 +10,8 @@
 
 class ArpSequenceListModel : public RoutableListModel {
 public:
+    static constexpr int ScaleSelectionCount = 1 + 20 + CONFIG_USER_SCALE_COUNT;
+
     enum Item {
         Name,
         Divisor,
@@ -28,7 +30,7 @@ public:
     ArpSequenceListModel()
     {
         _scales[0] = -1;
-        for (int i = 1; i < 23; ++i) {
+        for (int i = 1; i < ScaleSelectionCount; ++i) {
             _scales[i] = i-1;
         }
 
@@ -227,7 +229,7 @@ private:
                 bool isRouted = Routing::isRouted(Routing::Target::Scale, trackIndex);
                 if (!isRouted) {
                     int trackIndex = _sequence->trackIndex();
-                    _selectedScale[trackIndex] = clamp(_selectedScale[trackIndex] + value, 0, 23);
+                    _selectedScale[trackIndex] = clamp(_selectedScale[trackIndex] + value, 0, ScaleSelectionCount - 1);
                 }
             }
             break;
@@ -342,7 +344,7 @@ private:
 
     ArpSequence *_sequence;
     private:
-        std::array<int, 23> _scales;
+        std::array<int, ScaleSelectionCount> _scales;
         std::array<int, 8> _selectedScale;
         bool _editScale = false;
 };

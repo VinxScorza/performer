@@ -48,6 +48,7 @@ public:
 
     enum class ClockInputMode : uint8_t {
         Reset = 0,
+        ResetPulse,
         Run,
         StartStop,
         Last
@@ -55,7 +56,8 @@ public:
 
     static const char *clockInputModeName(ClockInputMode mode) {
         switch (mode) {
-        case ClockInputMode::Reset:     return "Reset";
+        case ClockInputMode::Reset:     return "Reset Gate";
+        case ClockInputMode::ResetPulse:return "Reset Pulse";
         case ClockInputMode::Run:       return "Run";
         case ClockInputMode::StartStop: return "Start/Stop";
         case ClockInputMode::Last:      break;

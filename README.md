@@ -2,79 +2,30 @@
 
 # Vinx Scorza Fork
 
-## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a>
+## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Click for FEATURES</a>
 
-This is a <u>personal fork</u> of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a> of the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
+This is a personal fork of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a>, itself based on the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
 
-Current fork version: `0.3.2-vinx.1.4.8`.
+The Vinx Scorza line begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference. Current fork version: `0.3.2-vinx.1.4.9`.
 
-IMPORTANT NOTE: I am not a software developer. I am just an artist shaping the instrument I want to perform with.
+If you are looking for a more conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines. If you are interested in a more hands-on, performance-oriented evolution of PER|FORMER, you are in the right place. I am very grateful to Simon Kallweit for creating and developing the original Westlicht PER|FORMER. If you would like to support this fork and the upstream work behind it financially, you can donate here: <a href="https://vinxscorza.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Vinx Scorza</a> · <a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Mebitek</a> · <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Simon Kallweit / Westlicht</a>.
 
-The Vinx Scorza fork begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference.
+Primary documentation for this fork: <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">Vinx Scorza fork website</a> · <a href="https://vinxscorza.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Vinx Scorza user manual</a> · <a href="https://vinxscorza.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Vinx Scorza Web Simulator</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Vinx Scorza features</a> · <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek Performer fork</a> · <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>
 
-I am very grateful to <a href="https://mebitek.github.io/performer/" target="_blank" rel="noopener noreferrer">Mebitek</a> for the work done on his fork, and of course to <a href="https://westlicht.github.io/performer/" target="_blank" rel="noopener noreferrer">Simon Kallweit</a> for creating and developing the original Westlicht PER|FORMER.
+## Major Features
 
-If you would like to support their work financially, you can donate here:
-<a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Mebitek</a> · <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Simon Kallweit / Westlicht</a>
+- `Chaos`: A deliberately rough experimental workflow built around `Vandalize Sequence`, pattern-wide `Wreck Pattern`, explicit compare, and safer destructive behavior. Machine-level `Chaos Defaults` let sequence vandalizing and pattern wrecking start from different default target masks.
+- `Generators`: `Acid`, `Random`, and `Euclidean` have all been pushed further, with stronger preview workflows, cleaner defaults, and more character. Generator pages stay playable, compare states are clearer, and reset behavior is more intentional than a silent reroll.
+- `Clock & Sequencing`: External clock behavior, step editing, and scale handling have all been tightened for real use on hardware. `Reset Gate`, `Reset Pulse`, and voltage-mode user-scale support all push the core behavior further without throwing away legacy workflows.
+- `System & Live Workflow`: Machine settings, save flow, menu wrap, LCD behavior, and live interaction have all been refined to feel more coherent on the instrument itself. There is constant work on reliability around generator state handling, timing defaults, memory pressure, and destructive workflows.
+- `Launchpad, Simulators & Docs`: Launchpad behavior, the Desktop Simulator, the Web Simulator, and the documentation layer have all evolved alongside the firmware itself. The result is a fork with its own maintained website, manual, simulator tooling, fork map, and feature archive.
 
-Primary documentation for this fork:
-- <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">Vinx Scorza fork website</a>
-- <a href="https://vinxscorza.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Vinx Scorza user manual</a>
-- <a href="https://vinxscorza.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Vinx Scorza test drive</a>
-- <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Vinx Scorza changelog</a>
+Current validation scope:
+- Real hardware testing is still useful for `Reset Pulse` / `Reset Gate`.
+- Real hardware testing is still useful for `Voltage Mode` user scales in `Note`, `Arp`, and `Stochastic`.
+- Desktop Simulator USB MIDI has been validated well on `macOS / OS X` with `Launchpad Mini MK3`, but not yet across other Launchpads or operating systems.
 
-- <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek Performer fork</a>
-- <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>
-
-## Notes
-
-If you are looking for a more conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines.
-
-If you are interested in a more hands-on, performance-oriented evolution of PER|FORMER, you are in the right place.
-
-The Vinx Scorza website should be considered the main user-facing documentation entry point for this fork:
-<a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">https://vinxscorza.github.io/performer/</a>
-
-The manual lives here:
-<a href="https://vinxscorza.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">https://vinxscorza.github.io/performer/manual/</a>
-
-The changelog for this fork lives here:
-<a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md</a>
-
-If you need historical upstream reference material, the Mebitek manual is still available here:
-<a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">https://mebitek.github.io/performer/manual/</a>
-
-Westlicht and Mebitek remain essential upstream references for hardware lineage, earlier firmware behavior, and project history, but this repository and its documentation are the primary reference for Vinx-specific behavior.
-
-The current `v0.3.2-vinx.1.4.8` line then reworks `Chaos` around a `CHAOS MODE` entry with `Vandalize Sequence` and `Wreck Pattern`.
-
-`Wreck Pattern` applies the same destructive multi-layer idea across all Note tracks in the current pattern while keeping preview, `A/B`, `Cancel`, and `Apply` grouped at pattern level. With an explicit step selection it uses that shared selection; otherwise each Note track keeps its own `First Step` / `Last Step` range.
-
-Both `Chaos` modes now enter on `ORIGINAL`, loading their defaults without immediately generating or revealing a preview. The first visible result appears only after an explicit `CHAOS` press; until then, `A/B` does not pull a hidden preview forward.
-
-When `Chaos` is on `ORIGINAL`, pressing `CHAOS` now brings the preview forward with the same dedicated popup used by `A/B`: `VANDALIZED` on `Vandalize Sequence` and `WRECKED` on `Wreck Pattern`.
-
-`System -> Chaos Defaults` now stores separate default target masks for `Seq Layers to Vandalize` and `Pat Layers to Wreck`, using the same 4x4 grid as the generator itself.
-
-These `Chaos Defaults` are persistent machine-level user settings, not project data. Changing project does not change them, and loading a project does not overwrite them. Closing the `Chaos Defaults` page now saves them directly to flash, so they survive reboot without an extra manual settings save step.
-
-Generator pages and their related modal menus now keep transport controls alive, so `PLAY/STOP` and `TEMPO` continue to respond without leaving `GEN`.
-
-The `System` page now lands on `Settings` by default instead of `Calibration`.
-
-`RESETGEN` now behaves as a true generator-default restore: it resets shaping parameters to their neutral defaults without forcing a new reroll state.
-
-The startup screen now reports the current `v0.3.2-vinx.1.4.8` line correctly.
-
-Entering `Chaos -> Wreck Pattern` now opens a dedicated warning popup before the generator page. `F1` jumps to the `PROJ PAGE`, `F3` confirms `WRECK`, and `F5` cancels.
-
-Repeated re-entry into `Chaos`, including `Vandalize Sequence` and `Wreck Pattern`, is now guarded by explicit generator and builder teardown so the same generator path can be reopened safely without leaving stale state behind.
-
-`Vandalize Sequence` now keeps its backup state local to the active Note sequence instead of carrying every Note track in the current pattern, which avoids unnecessary memory pressure when only the current sequence is being vandalized.
-
-WARNING: `Chaos -> Wreck Pattern` is a wildly experimental feature: a pattern-wide chaos process that should be used only after saving your project.
-
-On the current `1.4.8` line, the `Wreck Pattern` backend has also been reworked to keep only the original target-step backups and regenerate the preview in place, specifically to improve reliability on hardware without changing the user-facing workflow.
+For the broader curated overview, see <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">FEATURES</a>. For the exact technical chronology, including the inherited upstream history, see the repository <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>.
 
 To clone this repository:
 
@@ -85,7 +36,7 @@ cd performer
 
 Then follow the standard build instructions for Westlicht Performer below.
 
---- ORIGINAL DOCUMENTATION BELOW (Westlicht Performer) ---
+--- ORIGINAL WESTLICHT DOCUMENTATION BELOW, WITH VINX ADDITIONS WHERE RELEVANT ---
 
 # PER|FORMER
 
@@ -108,7 +59,7 @@ If you want to do development on the firmware, the following is a quick guide on
 First you have to clone this repository (make sure to add the `--recursive` option to also clone all the submodules):
 
 ```
-git clone --recursive https://github.com/Westlicht/performer.git
+git clone --recursive https://github.com/VinxScorza/performer.git
 ```
 
 After cloning, enter the performer directory:
@@ -253,6 +204,33 @@ To run the simulator, use the following:
 
 Note that you have to start the simulator from the build directory in order for it to find all the assets.
 
+Desktop simulator MIDI can be configured from the command line. Use `./src/apps/sequencer/sequencer --midi` to list available ports, then launch with options such as:
+
+```
+./src/apps/sequencer/sequencer --midi-port "Your MIDI Port"
+./src/apps/sequencer/sequencer --midi-in "Your Keyboard In" --midi-out "Your Synth Out"
+./src/apps/sequencer/sequencer --usb-midi-port "Your Launchpad Port"
+```
+
+By default, the Desktop Simulator now starts with both DIN MIDI and USB MIDI disabled, so it does not try to open missing macOS MIDI devices unless you explicitly assign them.
+Use `--trace-midi` to inspect incoming simulator MIDI messages and `--trace-dio` if you want terminal output for the simulated `CLK OUT` and `RESET OUT` digital lines.
+
+Use `none`, `off`, or `-` to disable a default input or output assignment, for example:
+
+```
+./src/apps/sequencer/sequencer --midi-out none
+```
+
+On macOS, some devices expose port directions from the device point of view instead of the simulator point of view. For example, a Launchpad Mini MK3 on the simulated USB MIDI port may need:
+
+```
+./src/apps/sequencer/sequencer --usb-midi-in "Launchpad Mini MK3 LPMiniMK3 DAW Out" --usb-midi-out "Launchpad Mini MK3 LPMiniMK3 DAW In"
+```
+
+In the current Vinx setup, the simulator-side USB MIDI workflow has only been validated on macOS / OS X with a `Launchpad Mini MK3`, since that is the only Launchpad currently available for local testing.
+The simulator now also infers the Launchpad model from the selected USB port names, so a Mini MK3 is no longer exposed to the firmware as the old Mini Mk2 default device.
+For Launchpad-style USB controllers, the simulator also mirrors both the matching sibling input and output ports (`DAW` / `MIDI`) when possible, so pad presses and initialization messages can still land on the endpoint the device actually uses.
+
 ### Source code directory structure
 
 The following is a quick overview of the source code directory structure:
@@ -281,7 +259,7 @@ The two platforms both have a common subdirectories:
 
 The main sequencer application has the following structure:
 
-- `asteroids` - Asteroids game
+- `asteroids` - Asteroids game (disabled in active builds)
 - `engine` - Engine responsible for running the sequencer core
 - `model` - Data model storing the live state of the sequencer and many methods to change that state
 - `python` - Python bindings for running tests using python

@@ -109,7 +109,9 @@ static const LayerMapItem curveSequenceLayerMap[] = {
     [int(CurveSequence::Layer::Min)]                        =  { 0, 1 },
     [int(CurveSequence::Layer::Max)]                        =  { 0, 2 },
     [int(CurveSequence::Layer::Gate)]                       =  { 0, 3 },
-    [int(CurveSequence::Layer::GateProbability)]            =  { 1, 3 },
+    [int(CurveSequence::Layer::GateProbability)]            =  { 2, 3 },
+    [int(CurveSequence::Layer::GateOffset)]                 =  { 1, 3 },
+    [int(CurveSequence::Layer::GateLength)]                 =  { 3, 3 },
 };
 
 static const LayerMapItem performLayerMap[] = {
@@ -185,6 +187,8 @@ static const RangeMap *curveSequenceLayerRangeMap[] = {
     [int(CurveSequence::Layer::Max)]                        = &curveMinMaxRangeMap,
     [int(CurveSequence::Layer::Gate)]                       = nullptr,
     [int(CurveSequence::Layer::GateProbability)]            = nullptr,
+    [int(CurveSequence::Layer::GateOffset)]                 = nullptr,
+    [int(CurveSequence::Layer::GateLength)]                 = nullptr,
 };
 
 UserSettings _userSettings;
@@ -1701,6 +1705,8 @@ void LaunchpadController::sequenceDrawCurveSequence() {
         break;
     case CurveSequence::Layer::ShapeVariationProbability:
     case CurveSequence::Layer::GateProbability:
+    case CurveSequence::Layer::GateOffset:
+    case CurveSequence::Layer::GateLength:
         drawCurveSequenceBars(sequence, layer, currentStep);
         break;
     default:

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Features | PER FORMER eurorack sequencer</title>
+  <meta name="description" content="Detailed Vinx Scorza fork evolution and feature history for the PER|FORMER firmware line.">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body class="features-page">
+  <div id="header_wrap" class="outer">
+    <header class="inner">
+      <nav class="site-nav" aria-label="Main">
+        <a href="../index.html">PER|FORMER</a>
+        <a href="../features/index.html" aria-current="page">Features</a>
+        <a href="../manual/index.html">User Manual</a>
+        <a href="../testdrive/index.html">Web Simulator</a>
+        <a href="../cheatsheet/index.html">LP Cheatsheet</a>
+        <a href="../build-guide/index.html">Build Guide</a>
+        <a href="../donate/index.html">Donate</a>
+        <a href="../license/index.html">License</a>
+        <a href="../forks/index.html">Forks</a>
+        <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
+      </nav>
+      <h1 id="project_title">PER|FORMER</h1>
+      <h2 id="project_tagline">features</h2>
+      <p id="project_credit">forked and maintained by Vinx Scorza</p>
+    </header>
+  </div>
+
+  <div id="main_content_wrap" class="outer">
+    <main id="main_content" class="inner">
+      <section>
+        <h2>Features</h2>
+        <div class="changelog-intro">
+          <p>
+            This page is the curated web summary of the Vinx Scorza line. It focuses only on the Vinx fork, starting from <code>v0.3.2-vinx.1</code>, and reorganizes the work by topic instead of strict release order so it is easier to understand what this branch actually adds.
+          </p>
+          <p>
+            The current local documentation line is aligned through <code>v0.3.2-vinx.1.4.9</code>. If you want the exact chronological log, including inherited upstream history, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h4>Core Sequencing</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              The fork began with direct sequencing fixes, and that foundation still shapes the line.
+            </p>
+            <ul>
+              <li>Stabilize step shifting across <code>Note</code>, <code>Logic</code>, <code>Curve</code>, <code>Stochastic</code>, and <code>Arp</code>, including the old 64-step crash/reboot case and shifting inside non-zero subranges.</li>
+              <li>Expand <code>Curve</code> tracks with per-step <code>Gate Offset</code> and <code>Gate Length</code> layers, including edit-page and overview support.</li>
+              <li>Restore undo on <code>Curve</code> editing so it matches the long-standing Note workflow.</li>
+              <li>Fix scale-selection limits so the full built-in plus user-scale set is reachable again across the main sequence types.</li>
+              <li>Make MIDI note capture follow the active scale's octave span, so voltage-mode user scales are handled as their own scales instead of being forced back into fixed <code>1V/oct</code> assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Clock &amp; Sync</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              Clock behavior has been adjusted with real hardware compatibility and safer external sync in mind.
+            </p>
+            <ul>
+              <li>Change the default output clock pulse from <code>1ms</code> to <code>10ms</code> for broader module compatibility.</li>
+              <li>Rescale the Swing UI to a more natural <code>0%-99%</code> display while preserving the original engine timing under the hood for project compatibility.</li>
+              <li>Clarify the old reset behavior as <code>Reset Gate</code> and add <code>Reset Pulse</code> as a distinct external clock input mode.</li>
+              <li>Make <code>Reset Pulse</code> react only to the rising edge, so reset pulses resync the slave clock without smuggling in a hidden start command on the falling edge.</li>
+              <li>Change the default <code>Reset CV</code> behavior to <code>Off</code>, so Note tracks hold their last CV value on stop unless the project explicitly asks otherwise.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Chaos</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              <code>Chaos</code> is the boldest Vinx-specific branch so far: intentionally rough, selection-aware, destructive when needed, and built around explicit preview/apply safety.
+            </p>
+            <ul>
+              <li>Add <code>Chaos</code> as an experimental Note-track generator built around explicit preview/apply safety rather than hidden destruction.</li>
+              <li>Define it as a multi-layer macro-random tool driven by one global <code>Amount</code> and a dedicated 4x4 target matrix.</li>
+              <li>Make Chaos selection-aware so it can work locally when needed instead of always hitting the whole sequence.</li>
+              <li>Extend the idea into <code>CHAOS MODE</code>, split between <code>Vandalize Sequence</code> and the broader, more dangerous <code>Wreck Pattern</code>.</li>
+              <li>Add <code>System -&gt; Chaos Defaults</code> so sequence vandalizing and pattern wrecking can start from different default target masks.</li>
+              <li>Wrap the destructive side of Chaos in warnings, clearer compare states, and tighter memory handling so the feature stays bold without becoming sloppy.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Acid</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              <code>Acid</code> is one of the clearest Vinx-specific expansions of the generator system: more opinionated, more musical, and much more layered than the upstream set.
+            </p>
+            <ul>
+              <li>Add <code>Acid</code> as a new Note-track generator with non-destructive preview.</li>
+              <li>Split it into a more local <code>Layer</code> workflow and a broader <code>Phrase</code> workflow.</li>
+              <li>Use <code>Acid -&gt; Layer</code> to project acid-like motion onto the active <code>Gate</code>, <code>Note</code>, or <code>Slide</code> layer.</li>
+              <li>Use <code>Acid -&gt; Phrase</code> to write a coordinated <code>Gate + Note + Slide</code> phrase over the current selection or pattern length.</li>
+              <li>Tighten the parameter model, especially around density and slide behavior, so the generator lands closer to intentional target counts.</li>
+              <li>Give Acid its own dedicated LCD previews instead of forcing it into generic generator visuals.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Random</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              <code>Random</code> evolved from a quick reroll tool into a more deliberate generator with seed identity, compare flow, and safer preview behavior.
+            </p>
+            <ul>
+              <li>Rework <code>Generate -&gt; Random</code> around a non-destructive preview/apply model with compare, regeneration, and explicit commit.</li>
+              <li>Add <code>Variation</code> for controlled deviation from the original sequence instead of always jumping to a fully unrelated result.</li>
+              <li>Move to full 32-bit hexadecimal seeds, with cleaner seed handling on entry and during editing.</li>
+              <li>Keep the seed stable while shaping the result through the other Random parameters, so editing feels intentional instead of slippery.</li>
+              <li>Make Random preview more expressive on the LCD, including layer-aware views on Note tracks.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Generator UX</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              Beyond individual generators, the Vinx line keeps refining how generator pages behave, compare, reset, and stay usable during live work.
+            </p>
+            <ul>
+              <li>Reorder and clean up the generator menu as the generator family grows, so the page still feels intentional instead of bolted together.</li>
+              <li>Make <code>Generate</code> open on the current 16-step bank and keep LEDs and bank navigation aligned with that bank.</li>
+              <li>Rework <code>Euclidean</code> around compare, reseed, and direct parameter editing while enforcing sane relationships such as <code>Beats &lt;= Steps</code>.</li>
+              <li>Make <code>RESETGEN</code> restore neutral defaults instead of quietly rerolling the generator state.</li>
+              <li>Keep transport responsive inside generator pages so the sequencer remains playable while shaping material.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>UI &amp; LCD</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              The fork puts a lot of attention into how the sequencer actually reads while performing: clearer LCD previews, more meaningful step graphics, and less unnecessary redraw noise.
+            </p>
+            <ul>
+              <li>Redesign generator previews around richer 64-step displays instead of tiny helper views.</li>
+              <li>Keep the active 16-step bank visible inside the larger 64-step picture and add a playback-following playhead.</li>
+              <li>Refine the bank indicator, Random preview rendering, and Acid lane alignment so the LCD reads more cleanly at a glance.</li>
+              <li>Improve Note-like step graphics by making gate offset, length, retrigger, condition, and slide visually clearer.</li>
+              <li>Reduce unnecessary LCD traffic by lowering the default UI refresh to <code>30 fps</code> and skipping redraws when nothing actually changed.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>System &amp; Defaults</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              Many of the most practical Vinx changes live in machine settings, save flow, and startup behavior rather than in flashy sequencing features.
+            </p>
+            <ul>
+              <li>Add direct save from <code>System</code> and simplify the surrounding machine-settings flow.</li>
+              <li>Prompt to save when leaving <code>System -&gt; Settings</code> after changing user settings, including <code>Chaos Defaults</code>.</li>
+              <li>Return <code>Chaos Defaults</code> to the normal machine-settings save path instead of treating them as a special auto-written case.</li>
+              <li>Add <code>Menu Wrap</code> as an on-by-default preference for cyclic list navigation.</li>
+              <li>Evolve <code>Dim Sequence</code>, screensaver timing, wake behavior, and the default landing tab of <code>System</code> to better fit real use on the module.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Launchpad</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              The Vinx line treats Launchpad support as a first-class live-performance layer, not just an accessory.
+            </p>
+            <ul>
+              <li>Keep Launchpad as a first-class machine-level layer through <code>LP Style</code> and <code>LP Note Style</code>.</li>
+              <li>Change the default Launchpad settings to <code>LP Style = Blue</code> and <code>LP Note Style = Classic</code>.</li>
+              <li>Support both classic and circuit-style note editing approaches depending on workflow preference.</li>
+              <li>Align manual, cheat sheet wrapper, and site references around the current Launchpad terminology.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Simulators</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              The simulator side of the fork is now a real part of the ecosystem: useful for development, useful for testing, and documented as such.
+            </p>
+            <ul>
+              <li>Clearly distinguish the browser-based <code>Web Simulator</code> from the native local <code>Desktop Simulator</code>.</li>
+              <li>Make the Desktop Simulator much more usable by exposing DIN and USB MIDI routing from the command line and starting with MIDI disabled unless explicitly assigned.</li>
+              <li>Add lightweight status indicators plus terminal tracing for incoming MIDI and simulated digital outputs.</li>
+              <li>Improve Launchpad support by inferring the model from USB port names and mirroring sibling <code>DAW</code> / <code>MIDI</code> endpoints when needed.</li>
+              <li>Keep the bundled Web Simulator state, sound map, and controller expectations aligned with the current Vinx line.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Documentation</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              Documentation is part of the fork, not an afterthought: website, manual, build notes, simulator pages, and reference material now evolve together.
+            </p>
+            <ul>
+              <li>Progressively realign the user manual to the Vinx line, including the appendix and Launchpad material.</li>
+              <li>Keep the manual intentionally text-first, removing images while preserving technical detail, settings tables, and workflow clarity.</li>
+              <li>Rename and clarify simulator-facing pages around <code>Web Simulator</code> and <code>Desktop Simulator</code>.</li>
+              <li>Add and maintain dedicated <code>Forks</code> and <code>Features</code> pages for the wider ecosystem and for the identity of this fork.</li>
+              <li>Expand the Build Guide with practical notes for simulator launch, MIDI routing, Launchpad setup, and terminal tracing.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Current Validation Scope</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              The current line is locally verified and actively used, but a few areas still benefit from broader hardware coverage.
+            </p>
+            <ul>
+              <li>Real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code>.</li>
+              <li>Real hardware testing is still useful for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>.</li>
+              <li>Desktop Simulator USB MIDI has been validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="footer_wrap" class="outer">
+    <footer class="inner">
+      <p class="copyright">
+        Vinx Scorza fork based on the Mebitek fork of the Westlicht Performer firmware.
+      </p>
+      <p class="footer-contact">
+        Contact and bug reports: <a href="mailto:vincenzo.scorza@gmail.com">vincenzo.scorza@gmail.com</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

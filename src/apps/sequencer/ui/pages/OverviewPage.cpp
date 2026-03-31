@@ -641,6 +641,18 @@ void OverviewPage::keyPress(KeyPressEvent &event) {
                 _project.setSelectedCurveSequenceLayer(CurveSequence::Layer::Gate);
                 break;
             case CurveSequence::Layer::Gate:
+                showMessage("Gate Ofs");
+                _project.setSelectedCurveSequenceLayer(CurveSequence::Layer::GateOffset);
+                break;
+            case CurveSequence::Layer::GateOffset:
+                showMessage("Gate Prob");
+                _project.setSelectedCurveSequenceLayer(CurveSequence::Layer::GateProbability);
+                break;
+            case CurveSequence::Layer::GateProbability:
+                showMessage("Length");
+                _project.setSelectedCurveSequenceLayer(CurveSequence::Layer::GateLength);
+                break;
+            case CurveSequence::Layer::GateLength:
                 showMessage("Shape");
                 _project.setSelectedCurveSequenceLayer(CurveSequence::Layer::Shape);
                 break;
@@ -902,6 +914,15 @@ void OverviewPage::encoder(EncoderEvent &event) {
                             case CurveSequence::Layer::Gate:
                                 step.setGate(step.gate()+ event.value());
                                 break;
+                            case CurveSequence::Layer::GateOffset:
+                                step.setGateOffset(step.gateOffset() + event.value());
+                                break;
+                            case CurveSequence::Layer::GateProbability:
+                                step.setGateProbability(step.gateProbability() + event.value());
+                                break;
+                            case CurveSequence::Layer::GateLength:
+                                step.setGateLength(step.gateLength() + event.value());
+                                break;
                             default:
                                 break;
                         }
@@ -1066,7 +1087,38 @@ void OverviewPage::drawCurveDetail(Canvas &canvas, const CurveSequence::Step &st
                     canvas.hline(64 + 64 + (i*2), 24, 1);
                 }
             }
+            break;
         }
+        case CurveSequence::Layer::GateOffset:
+            SequencePainter::drawOffset(
+                canvas,
+                64 + 32 + 8, 32 - 4, 64 - 16, 8,
+                step.gateOffset(), CurveSequence::GateOffset::Min - 1, CurveSequence::GateOffset::Max + 1
+            );
+            str("%.1f%%", 100.f * step.gateOffset() / float(CurveSequence::GateOffset::Max + 1));
+            canvas.setFont(Font::Small);
+            canvas.drawTextCentered(64 + 64, 32 - 4, 32, 8, str);
+            break;
+        case CurveSequence::Layer::GateProbability:
+            SequencePainter::drawProbability(
+                canvas,
+                64 + 32 + 8, 32 - 4, 64 - 16, 8,
+                step.gateProbability(), CurveSequence::GateProbability::Range - 1
+            );
+            str("%.1f%%", 100.f * step.gateProbability() / float(CurveSequence::GateProbability::Range - 1));
+            canvas.setFont(Font::Small);
+            canvas.drawTextCentered(64 + 64, 32 - 4, 32, 8, str);
+            break;
+        case CurveSequence::Layer::GateLength:
+            SequencePainter::drawLength(
+                canvas,
+                64 + 32 + 8, 32 - 4, 64 - 16, 8,
+                step.gateLength() + 1, CurveSequence::GateLength::Range
+            );
+            str("%.1f%%", 100.f * (step.gateLength() + 1) / float(CurveSequence::GateLength::Range));
+            canvas.setFont(Font::Small);
+            canvas.drawTextCentered(64 + 64, 32 - 4, 32, 8, str);
+            break;
         default:
             break;
     }

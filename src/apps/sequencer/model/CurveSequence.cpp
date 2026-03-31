@@ -16,6 +16,8 @@ Types::LayerRange CurveSequence::layerRange(Layer layer) {
     CASE(Max)
     CASE(Gate)
     CASE(GateProbability)
+    CASE(GateOffset)
+    CASE(GateLength)
     case Layer::Last:
         break;
     }
@@ -44,6 +46,10 @@ int CurveSequence::layerDefaultValue(Layer layer)
         return step.gate();
     case Layer::GateProbability:
         return step.gateProbability();
+    case Layer::GateOffset:
+        return step.gateOffset();
+    case Layer::GateLength:
+        return step.gateLength();
     case Layer::Last:
         break;
     }
@@ -67,6 +73,10 @@ int CurveSequence::Step::layerValue(Layer layer) const {
         return gate();
     case Layer::GateProbability:
         return gateProbability();
+    case Layer::GateOffset:
+        return gateOffset();
+    case Layer::GateLength:
+        return gateLength();
     case Layer::Last:
         break;
     }
@@ -97,6 +107,12 @@ void CurveSequence::Step::setLayerValue(Layer layer, int value) {
     case Layer::GateProbability:
         setGateProbability(value);
         break;
+    case Layer::GateOffset:
+        setGateOffset(value);
+        break;
+    case Layer::GateLength:
+        setGateLength(value);
+        break;
     case Layer::Last:
         break;
     }
@@ -112,6 +128,8 @@ void CurveSequence::Step::clear() {
     setMax(Max::Max);
     setGate(0);
     setGateProbability(GateProbability::Max);
+    setGateOffset(0);
+    setGateLength(3);
 }
 
 void CurveSequence::Step::write(VersionedSerializedWriter &writer) const {

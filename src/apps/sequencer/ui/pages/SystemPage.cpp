@@ -17,16 +17,16 @@ enum Function {
 };
 
 static const char *functionNames[] = { "CAL", nullptr, "UTILS", "UPDATE", "SETTINGS" };
+static const char *saveFunctionNames[] = { "CAL", "SAVE", "UTILS", "UPDATE", "SETTINGS" };
 
 enum CalibrationEditFunction {
     Auto        = 0,
 };
 
-static const char *calibrationEditFunctionNames[] = { "AUTO", nullptr, nullptr, nullptr, nullptr };
+static const char *calibrationEditFunctionNames[] = { "AUTO", "SAVE", nullptr, nullptr, nullptr };
 
 enum class ContextAction {
     Init,
-    Save,
     Backup,
     Restore,
     Last
@@ -34,7 +34,6 @@ enum class ContextAction {
 
 static const ContextMenuModel::Item contextMenuItems[] = {
     { "INIT" },
-    { "SAVE" },
     { "BACKUP" },
     { "RESTORE" }
 };
@@ -51,6 +50,7 @@ SystemPage::SystemPage(PageManager &manager, PageContext &context) :
 void SystemPage::enter() {
     setOutputIndex(_project.selectedTrackIndex());
     setMode(Mode::Settings);
+    updateUserSettingsSnapshot();
 
     _engine.suspend();
     _engine.setGateOutput(0xff);
@@ -79,7 +79,7 @@ void SystemPage::draw(Canvas &canvas) {
         if (edit()) {
             WindowPainter::drawFooter(canvas, calibrationEditFunctionNames, pageKeyState());
         } else {
-            WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
+            WindowPainter::drawFooter(canvas, saveFunctionNames, pageKeyState(), int(_mode));
         }
         ListPage::draw(canvas);
         break;
@@ -109,7 +109,7 @@ void SystemPage::draw(Canvas &canvas) {
     }
     case Mode::Settings: {
         WindowPainter::drawActiveFunction(canvas, "SETTINGS");
-        WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), int(_mode));
+        WindowPainter::drawFooter(canvas, saveFunctionNames, pageKeyState(), int(_mode));
         ListPage::draw(canvas);
         break;
     }
@@ -176,6 +176,12 @@ void SystemPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isFunction()) {
+        if ((key.function() == 1) && (_mode == Mode::Calibration || _mode == Mode::Settings)) {
+            saveSettings();
+            event.consume();
+            return;
+        }
+
         if (_mode == Mode::Calibration && edit()) {
             if (CalibrationEditFunction(key.function()) == CalibrationEditFunction::Auto) {
                 _settings.calibration().cvOutput(_project.selectedTrackIndex()).setUserDefined(selectedRow(), false);
@@ -184,18 +190,20 @@ void SystemPage::keyPress(KeyPressEvent &event) {
         } else {
             switch (Function(key.function())) {
             case Function::Calibration:
-                setMode(Mode::Calibration);
+                requestModeChange(Mode::Calibration);
                 break;
             case Function::Utilities:
-                setMode(Mode::Utilities);
+                requestModeChange(Mode::Utilities);
                 break;
             case Function::Update:
-                setMode(Mode::Update);
+                requestModeChange(Mode::Update);
                 break;
             case Function::Settings:
-                setMode(Mode::Settings);
+                requestModeChange(Mode::Settings);
                 break;
             }
+            event.consume();
+            return;
         }
     }
 
@@ -245,6 +253,24 @@ void SystemPage::encoder(EncoderEvent &event) {
         ListPage::encoder(event);
         break;
     }
+}
+
+void SystemPage::requestModeChange(Mode mode) {
+    if (mode == _mode) {
+        return;
+    }
+
+    if (requestSaveIfNeeded([this, mode] () {
+        setMode(mode);
+    })) {
+        return;
+    }
+
+    setMode(mode);
+}
+
+bool SystemPage::requestLeave(std::function<void()> onContinue) {
+    return requestSaveIfNeeded(std::move(onContinue));
 }
 
 void SystemPage::setMode(Mode mode) {
@@ -307,9 +333,6 @@ void SystemPage::contextAction(int index) {
     case ContextAction::Init:
         initSettings();
         break;
-    case ContextAction::Save:
-        saveSettings();
-        break;
     case ContextAction::Backup:
         backupSettings();
         break;
@@ -366,18 +389,22 @@ void SystemPage::restoreSettings() {
     }
 }
 
-void SystemPage::saveSettingsToFlash() {
+void SystemPage::saveSettingsToFlash(std::function<void()> onDone) {
     _engine.suspend();
     _manager.pages().busy.show("SAVING SETTINGS ...");
 
     FileManager::task([this] () {
         _model.settings().writeToFlash();
         return fs::OK;
-    }, [this] (fs::Error result) {
+    }, [this, onDone] (fs::Error result) {
+        updateUserSettingsSnapshot();
         showMessage("SETTINGS SAVED");
         // TODO lock ui mutex
         _manager.pages().busy.close();
         _engine.resume();
+        if (onDone) {
+            onDone();
+        }
     });
 }
 
@@ -452,4 +479,45 @@ void SystemPage::showChaosDefaults() {
             _manager.pages().chaosDefaults.show(mode);
         }
     });
+}
+
+void SystemPage::updateUserSettingsSnapshot() {
+    _userSettingsSnapshot = serializeUserSettings();
+}
+
+bool SystemPage::userSettingsDirty() const {
+    return serializeUserSettings() != _userSettingsSnapshot;
+}
+
+bool SystemPage::requestSaveIfNeeded(std::function<void()> onContinue) {
+    if (_mode == Mode::Settings && userSettingsDirty()) {
+        _manager.pages().confirmation.show("SAVE SETTINGS?", [this, onContinue] (bool result) {
+            if (result) {
+                saveSettingsToFlash([onContinue] () {
+                    if (onContinue) {
+                        onContinue();
+                    }
+                });
+            } else if (onContinue) {
+                onContinue();
+            }
+        });
+        return true;
+    }
+
+    return false;
+}
+
+std::vector<uint8_t> SystemPage::serializeUserSettings() const {
+    std::vector<uint8_t> data;
+
+    VersionedSerializedWriter writer([&data] (const void *source, size_t len) {
+        const auto *bytes = static_cast<const uint8_t *>(source);
+        data.insert(data.end(), bytes, bytes + len);
+    }, Settings::Version);
+
+    _settings.userSettings().write(writer);
+    writer.writeHash();
+
+    return data;
 }
