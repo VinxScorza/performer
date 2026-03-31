@@ -8,6 +8,9 @@
 
 #include "model/Settings.h"
 
+#include <functional>
+#include <vector>
+
 class SystemPage : public ListPage {
 public:
     SystemPage(PageManager &manager, PageContext &context);
@@ -22,6 +25,8 @@ public:
     virtual void keyUp(KeyEvent &event) override;
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
+
+    bool requestLeave(std::function<void()> onContinue);
 
 private:
     enum class Mode : uint8_t {
@@ -41,6 +46,7 @@ private:
     void contextAction(int index);
     bool contextActionEnabled(int index) const;
 
+    void requestModeChange(Mode mode);
     void initSettings();
     void saveSettings();
     void backupSettings();
@@ -48,9 +54,13 @@ private:
     void formatSdCard();
     void showChaosDefaults();
 
-    void saveSettingsToFlash();
+    bool requestSaveIfNeeded(std::function<void()> onContinue);
+    void saveSettingsToFlash(std::function<void()> onDone = {});
     void backupSettingsToFile();
     void restoreSettingsFromFile();
+    void updateUserSettingsSnapshot();
+    bool userSettingsDirty() const;
+    std::vector<uint8_t> serializeUserSettings() const;
 
     Mode _mode = Mode::Calibration;
     Settings &_settings;
@@ -63,4 +73,5 @@ private:
     //LpSettingsListModel _lpSettingsListModel;
 
     uint32_t _encoderDownTicks;
+    std::vector<uint8_t> _userSettingsSnapshot;
 };

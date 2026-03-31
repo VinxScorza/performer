@@ -19,7 +19,6 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
-    void saveAndClose();
     uint16_t &targetMask();
     const char *activeFunction() const;
     bool targetEnabled(int index) const;

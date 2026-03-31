@@ -30,6 +30,8 @@ public:
     typedef UnsignedValue<8> Max;
     typedef UnsignedValue<4> Gate;
     typedef UnsignedValue<3> GateProbability;
+    typedef SignedValue<4> GateOffset;
+    typedef UnsignedValue<5> GateLength;
 
     enum class Layer {
         Shape,
@@ -39,6 +41,8 @@ public:
         Max,
         Gate,
         GateProbability,
+        GateOffset,
+        GateLength,
         Last
     };
 
@@ -51,6 +55,8 @@ public:
         case Layer::Max:                        return "MAX";
         case Layer::Gate:                       return "GATE";
         case Layer::GateProbability:            return "GATE PROB";
+        case Layer::GateOffset:                 return "GATE OFFSET";
+        case Layer::GateLength:                 return "LENGTH";
         case Layer::Last:                       break;
         }
         return nullptr;
@@ -128,6 +134,20 @@ public:
             _data1.gateProbability = GateProbability::clamp(gateProbability);
         }
 
+        // gateOffset
+
+        int gateOffset() const { return GateOffset::Min + int(_data1.gateOffset); }
+        void setGateOffset(int gateOffset) {
+            _data1.gateOffset = GateOffset::clamp(gateOffset) - GateOffset::Min;
+        }
+
+        // gateLength
+
+        int gateLength() const { return _data1.gateLength; }
+        void setGateLength(int gateLength) {
+            _data1.gateLength = GateLength::clamp(gateLength);
+        }
+
         int layerValue(Layer layer) const;
         void setLayerValue(Layer layer, int value);
 
@@ -143,7 +163,7 @@ public:
         void read(VersionedSerializedReader &reader);
 
         bool operator==(const Step &other) const {
-            return _data0.raw == other._data0.raw;
+            return _data0.raw == other._data0.raw && _data1.raw == other._data1.raw;
         }
 
         bool operator!=(const Step &other) const {
@@ -163,7 +183,8 @@ public:
             uint16_t raw;
             BitField<uint16_t, 0, Gate::Bits> gate;
             BitField<uint16_t, 4, GateProbability::Bits> gateProbability;
-            // 9 bits left
+            BitField<uint16_t, 7, GateOffset::Bits> gateOffset;
+            BitField<uint16_t, 11, GateLength::Bits> gateLength;
         } _data1;
     };
 

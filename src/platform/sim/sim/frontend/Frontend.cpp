@@ -20,12 +20,26 @@
 #include <sstream>
 #include <iomanip>
 #include <stdexcept>
+#include <algorithm>
+#include <set>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
 
 namespace sim {
+
+static std::string formatMidiBytes(const std::vector<uint8_t> &message) {
+    std::ostringstream stream;
+    stream << std::hex << std::setfill('0');
+    for (size_t i = 0; i < message.size(); ++i) {
+        if (i != 0) {
+            stream << ' ';
+        }
+        stream << std::setw(2) << int(message[i]);
+    }
+    return stream.str();
+}
 
 #ifdef __EMSCRIPTEN__
 static Frontend *g_instance;
@@ -54,9 +68,8 @@ static void addWidget(std::vector<T> &list, T widget, int index) {
 Frontend::Frontend(Simulator &simulator) :
     _simulator(simulator)
 {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
-        throw std::runtime_error(std::string("SDL_Init failed: ") + SDL_GetError());
-    }
+    _midiConfig = new MidiConfig(defaultMidiPortConfig);
+    _usbMidiConfig = new MidiConfig(defaultUsbMidiPortConfig);
 
 #ifdef __EMSCRIPTEN__
     g_instance = this;
@@ -64,6 +77,8 @@ Frontend::Frontend(Simulator &simulator) :
 }
 
 Frontend::~Frontend() {
+    delete _midiConfig;
+    delete _usbMidiConfig;
     SDL_Quit();
 }
 
@@ -71,6 +86,14 @@ int Frontend::main(int argc, char *argv[]) {
     args::ArgumentParser parser("PER|FORMER Simulator", "");
     args::HelpFlag help(parser, "help", "Display this help menu", { 'h', "help" });
     args::Flag showMidiPorts(parser, "midi", "Show available MIDI ports", { 'm', "midi" });
+    args::Flag traceMidi(parser, "trace-midi", "Print incoming simulator MIDI messages", { "trace-midi" });
+    args::Flag traceDio(parser, "trace-dio", "Print CLK OUT and RESET OUT changes", { "trace-dio" });
+    args::ValueFlag<std::string> midiPort(parser, "port", "Use the same MIDI DIN input/output port name", { "midi-port" });
+    args::ValueFlag<std::string> midiIn(parser, "port", "MIDI DIN input port name", { "midi-in" });
+    args::ValueFlag<std::string> midiOut(parser, "port", "MIDI DIN output port name", { "midi-out" });
+    args::ValueFlag<std::string> usbMidiPort(parser, "port", "Use the same USB MIDI input/output port name", { "usb-midi-port" });
+    args::ValueFlag<std::string> usbMidiIn(parser, "port", "USB MIDI input port name", { "usb-midi-in" });
+    args::ValueFlag<std::string> usbMidiOut(parser, "port", "USB MIDI output port name", { "usb-midi-out" });
 
     try {
         parser.ParseCLI(argc, argv);
@@ -88,7 +111,11 @@ int Frontend::main(int argc, char *argv[]) {
         return 0;
     }
 
-
+    configureMidiPort(*_midiConfig, args::get(midiPort), args::get(midiIn), args::get(midiOut));
+    configureMidiPort(*_usbMidiConfig, args::get(usbMidiPort), args::get(usbMidiIn), args::get(usbMidiOut));
+    inferUsbMidiDeviceIds(*_usbMidiConfig);
+    _traceMidi = traceMidi;
+    _traceDio = traceDio;
 
     try {
         run();
@@ -98,6 +125,160 @@ int Frontend::main(int argc, char *argv[]) {
     }
 
     return 0;
+}
+
+void Frontend::configureMidiPort(MidiConfig &config, const std::string &port, const std::string &portIn, const std::string &portOut) {
+    if (!port.empty()) {
+        config.portIn = normalizeMidiPortValue(port);
+        config.portOut = normalizeMidiPortValue(port);
+    }
+
+    if (!portIn.empty()) {
+        config.portIn = normalizeMidiPortValue(portIn);
+    }
+
+    if (!portOut.empty()) {
+        config.portOut = normalizeMidiPortValue(portOut);
+    }
+}
+
+std::string Frontend::normalizeMidiPortValue(const std::string &value) {
+    if (value == "-" || value == "none" || value == "off") {
+        return "";
+    }
+
+    return value;
+}
+
+void Frontend::inferUsbMidiDeviceIds(MidiConfig &config) {
+    auto lower = [] (std::string text) {
+        std::transform(text.begin(), text.end(), text.begin(), [] (unsigned char c) {
+            return char(std::tolower(c));
+        });
+        return text;
+    };
+
+    std::string combined = lower(config.portIn + " " + config.portOut);
+
+    config.vendorId = 0x1235;
+
+    if (combined.find("lpminimk3") != std::string::npos || combined.find("mini mk3") != std::string::npos) {
+        config.productId = 0x0113;
+    } else if (combined.find("launchpad x") != std::string::npos || combined.find("lpx") != std::string::npos) {
+        config.productId = 0x0103;
+    } else if (combined.find("pro mk3") != std::string::npos || combined.find("launchpad pro mk3") != std::string::npos) {
+        config.productId = 0x0123;
+    } else if (combined.find("launchpad pro") != std::string::npos) {
+        config.productId = 0x0051;
+    } else if (combined.find("mini mk2") != std::string::npos || combined.find("launchpad mini 2") != std::string::npos) {
+        config.productId = 0x0037;
+    } else if (combined.find("launchpad mk2") != std::string::npos) {
+        config.productId = 0x0069;
+    } else if (combined.find("launchpad mini") != std::string::npos) {
+        config.productId = 0x0036;
+    } else if (combined.find("launchpad s") != std::string::npos) {
+        config.productId = 0x0020;
+    }
+}
+
+std::vector<std::string> Frontend::usbMidiInputPorts(const MidiConfig &config) {
+    std::vector<std::string> ports;
+    std::set<std::string> seen;
+
+    auto addPort = [&] (const std::string &port) {
+        if (!port.empty() && seen.insert(port).second) {
+            ports.emplace_back(port);
+        }
+    };
+
+    addPort(config.portIn);
+
+    auto addSibling = [&] (const std::string &from, const std::string &to) {
+        if (config.portIn.find(from) != std::string::npos) {
+            std::string sibling = config.portIn;
+            sibling.replace(config.portIn.find(from), from.size(), to);
+            addPort(sibling);
+        }
+    };
+
+    addSibling("DAW Out", "MIDI Out");
+    addSibling("MIDI Out", "DAW Out");
+    addSibling("DAW OUT", "MIDI OUT");
+    addSibling("MIDI OUT", "DAW OUT");
+
+    return ports;
+}
+
+std::vector<std::string> Frontend::usbMidiOutputPorts(const MidiConfig &config) {
+    std::vector<std::string> ports;
+    std::set<std::string> seen;
+
+    auto addPort = [&] (const std::string &port) {
+        if (!port.empty() && seen.insert(port).second) {
+            ports.emplace_back(port);
+        }
+    };
+
+    addPort(config.portOut);
+
+    auto addSibling = [&] (const std::string &from, const std::string &to) {
+        if (config.portOut.find(from) != std::string::npos) {
+            std::string sibling = config.portOut;
+            sibling.replace(config.portOut.find(from), from.size(), to);
+            addPort(sibling);
+        }
+    };
+
+    addSibling("DAW In", "MIDI In");
+    addSibling("MIDI In", "DAW In");
+    addSibling("DAW IN", "MIDI IN");
+    addSibling("MIDI IN", "DAW IN");
+
+    return ports;
+}
+
+void Frontend::updateMidiStatusLabels() {
+    updateMidiStatusLabel(_midiStatusLabel, "DIN", _midiPort);
+    updateMidiStatusLabel(_usbMidiStatusLabel, "USB", _usbMidiPort);
+}
+
+void Frontend::updateMidiStatusLabel(const Label::Ptr &label, const char *prefix, const std::shared_ptr<Midi::Port> &port) {
+    if (!label || !port) {
+        return;
+    }
+
+    bool inputEnabled = port->inputEnabled();
+    bool outputEnabled = port->outputEnabled();
+    bool inputOpen = port->inputOpen();
+    bool outputOpen = port->outputOpen();
+
+    std::string status;
+    Color color(0.72f, 0.78f, 0.82f, 1.f);
+
+    if (!inputEnabled && !outputEnabled) {
+        status = "OFF";
+        color = Color(0.45f, 0.48f, 0.52f, 1.f);
+    } else if ((inputEnabled == inputOpen) && (outputEnabled == outputOpen)) {
+        status = "OPEN";
+        color = Color(0.45f, 0.95f, 0.68f, 1.f);
+    } else {
+        status = "WAIT";
+        color = Color(1.f, 0.78f, 0.35f, 1.f);
+    }
+
+    std::string mode;
+    if (inputEnabled && outputEnabled) {
+        mode = "I/O";
+    } else if (inputEnabled) {
+        mode = "IN";
+    } else if (outputEnabled) {
+        mode = "OUT";
+    } else {
+        mode = "--";
+    }
+
+    label->setText(tfm::format("%s MIDI %s %s", prefix, mode, status));
+    label->setColor(color);
 }
 
 #ifdef __EMSCRIPTEN__
@@ -163,6 +344,7 @@ void Frontend::update() {
     _lastUpdateTicks = currentTicks;
 
     _midi.update();
+    updateMidiStatusLabels();
     _window->update();
 }
 
@@ -185,6 +367,10 @@ double Frontend::ticks() const {
 }
 
 void Frontend::setup() {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
+        throw std::runtime_error(std::string("SDL_Init failed: ") + SDL_GetError());
+    }
+
     _timerFrequency = SDL_GetPerformanceFrequency();
     _timerStart = SDL_GetPerformanceCounter();
 
@@ -400,6 +586,22 @@ void Frontend::setupControls() {
         });
 
     }
+
+    _midiStatusLabel = _window->createWidget<Label>(
+        Vector2f(Frontpanel::windowWidth - 230.f, Frontpanel::windowHeight + 60.f),
+        Vector2f(100.f, 10.f),
+        "",
+        Color(0.72f, 0.78f, 0.82f, 1.f)
+    );
+
+    _usbMidiStatusLabel = _window->createWidget<Label>(
+        Vector2f(Frontpanel::windowWidth - 120.f, Frontpanel::windowHeight + 60.f),
+        Vector2f(100.f, 10.f),
+        "",
+        Color(0.72f, 0.78f, 0.82f, 1.f)
+    );
+
+    updateMidiStatusLabels();
 }
 
 // // button label
@@ -414,9 +616,12 @@ void Frontend::setupControls() {
 
 void Frontend::setupMidi() {
     _midiPort = std::make_shared<Midi::Port>(
-        midiPortConfig.portIn,
-        midiPortConfig.portOut,
+        _midiConfig->portIn,
+        _midiConfig->portOut,
         [this] (const std::vector<uint8_t> &message) {
+            if (_traceMidi) {
+                std::cout << "[DIN IN] " << formatMidiBytes(message) << std::endl;
+            }
             if (message.size() >= 1 && message.size() <= 3) {
                 _simulator.writeMidiInput(MidiEvent::makeMessage(0, MidiMessage(message.data(), message.size())));
             }
@@ -426,15 +631,18 @@ void Frontend::setupMidi() {
     _midi.registerPort(_midiPort);
 
     _usbMidiPort = std::make_shared<sim::Midi::Port>(
-        usbMidiPortConfig.portIn,
-        usbMidiPortConfig.portOut,
+        usbMidiInputPorts(*_usbMidiConfig),
+        usbMidiOutputPorts(*_usbMidiConfig),
         [this] (const std::vector<uint8_t> &message) {
+            if (_traceMidi) {
+                std::cout << "[USB IN] " << formatMidiBytes(message) << std::endl;
+            }
             if (message.size() >= 1 && message.size() <= 3) {
                 _simulator.writeMidiInput(MidiEvent::makeMessage(1, MidiMessage(message.data(), message.size())));
             }
         },
         [this] () {
-            _simulator.writeMidiInput(MidiEvent::makeConnect(1, usbMidiPortConfig.vendorId, usbMidiPortConfig.productId));
+            _simulator.writeMidiInput(MidiEvent::makeConnect(1, _usbMidiConfig->vendorId, _usbMidiConfig->productId));
         },
         [this] () {
             _simulator.writeMidiInput(MidiEvent::makeDisconnect(1));
@@ -500,6 +708,25 @@ void Frontend::writeDac(int channel, uint16_t value) {
 }
 
 void Frontend::writeDigitalOutput(int pin, bool value) {
+    if (_traceDio) {
+        const char *name = nullptr;
+        switch (pin) {
+        case 0:
+            name = "CLK OUT";
+            break;
+        case 1:
+            name = "RESET OUT";
+            break;
+        default:
+            break;
+        }
+
+        if (name) {
+            std::cout << "[DOUT] " << name << " " << (value ? "HIGH" : "LOW")
+                      << " @ tick " << uint32_t(_simulator.ticks()) << std::endl;
+        }
+    }
+
     if (pin >= 0 && pin < int(_digitalOutputJacks.size())) {
         _digitalOutputJacks[pin]->setState(value);
     }

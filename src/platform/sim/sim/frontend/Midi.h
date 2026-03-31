@@ -8,6 +8,7 @@
 #include <functional>
 #include <deque>
 #include <mutex>
+#include <vector>
 
 #include <cstdint>
 
@@ -25,7 +26,7 @@ public:
             const std::string &portIn,
             const std::string &portOut,
             RecvHandler recvHandler
-        ) : _portIn(portIn), _portOut(portOut), _recvHandler(recvHandler) {}
+        ) : Port(std::vector<std::string>{portIn}, std::vector<std::string>{portOut}, recvHandler) {}
 
         Port(
             const std::string &portIn,
@@ -33,14 +34,35 @@ public:
             RecvHandler recvHandler,
             ConnectHandler connectHandler,
             DisconnectHandler disconnectHandler
-        ) : _portIn(portIn), _portOut(portOut), _recvHandler(recvHandler), _connectHandler(connectHandler), _disconnectHandler(disconnectHandler) {}
+        ) : Port(std::vector<std::string>{portIn}, std::vector<std::string>{portOut}, recvHandler, connectHandler, disconnectHandler) {}
+
+        Port(
+            const std::vector<std::string> &portIns,
+            const std::vector<std::string> &portOuts,
+            RecvHandler recvHandler
+        ) : _portIns(portIns), _portOuts(portOuts), _recvHandler(recvHandler) {}
+
+        Port(
+            const std::vector<std::string> &portIns,
+            const std::vector<std::string> &portOuts,
+            RecvHandler recvHandler,
+            ConnectHandler connectHandler,
+            DisconnectHandler disconnectHandler
+        ) : _portIns(portIns), _portOuts(portOuts), _recvHandler(recvHandler), _connectHandler(connectHandler), _disconnectHandler(disconnectHandler) {}
 
         bool isOpen() const { return _open; }
+        bool inputOpen() const { return _inputOpen; }
+        bool outputOpen() const { return _outputOpen; }
+        bool inputEnabled() const { return !_portIns.empty(); }
+        bool outputEnabled() const { return !_portOuts.empty(); }
+        const std::string &inputPortName() const { return _portIns.front(); }
+        const std::string &outputPortName() const { return _portOuts.front(); }
 
         bool send(uint8_t data);
         bool send(const uint8_t *data, size_t length);
 
         void update();
+        void setPorts(const std::vector<std::string> &portIns, const std::vector<std::string> &portOuts);
 
         void notifyError();
         void receive(const std::vector<uint8_t> &message);
@@ -49,15 +71,17 @@ public:
         void open();
         void close();
 
-        std::string _portIn;
-        std::string _portOut;
+        std::vector<std::string> _portIns;
+        std::vector<std::string> _portOuts;
         RecvHandler _recvHandler;
         ConnectHandler _connectHandler;
         DisconnectHandler _disconnectHandler;
 
         bool _open = false;
-        RtMidiIn _input;
-        RtMidiOut _output;
+        bool _inputOpen = false;
+        bool _outputOpen = false;
+        std::vector<std::unique_ptr<RtMidiIn>> _inputs;
+        std::vector<std::unique_ptr<RtMidiOut>> _outputs;
 
         bool _firstOpenAttempt = true;
         bool _error = false;

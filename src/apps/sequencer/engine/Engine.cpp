@@ -914,7 +914,8 @@ void Engine::initClock() {
         // interrupt context
 
         // start clock on first clock pulse if reset is not hold and clock is not running
-        if (clockSetup.clockInputMode() == ClockSetup::ClockInputMode::Reset && !_clock.isRunning() && !_dio.resetInput.get()) {
+        if ((clockSetup.clockInputMode() == ClockSetup::ClockInputMode::Reset || clockSetup.clockInputMode() == ClockSetup::ClockInputMode::ResetPulse) &&
+            !_clock.isRunning() && !_dio.resetInput.get()) {
             _clock.slaveStart(ClockSourceExternal);
             startSong();
         }
@@ -934,6 +935,11 @@ void Engine::initClock() {
             } else {
                 _clock.slaveStart(ClockSourceExternal);
                 startSong();
+            }
+            break;
+        case ClockSetup::ClockInputMode::ResetPulse:
+            if (value) {
+                _clock.slaveReset(ClockSourceExternal);
             }
             break;
         case ClockSetup::ClockInputMode::Run:
@@ -1017,6 +1023,8 @@ void Engine::updateClockSetup() {
         if (resetInput && running) {
             _clock.slaveReset(ClockSourceExternal);
         }
+        break;
+    case ClockSetup::ClockInputMode::ResetPulse:
         break;
     case ClockSetup::ClockInputMode::Run:
         if (resetInput && !running) {

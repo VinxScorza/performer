@@ -5,7 +5,6 @@
 #include "ui/painters/WindowPainter.h"
 
 #include "engine/generators/ChaosGenerator.h"
-#include "model/FileManager.h"
 
 static const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, "CLOSE" };
 
@@ -74,9 +73,6 @@ void ChaosDefaultsPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "");
     WindowPainter::drawActiveFunction(canvas, activeFunction());
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState());
-    canvas.setFont(Font::Tiny);
-    canvas.setColor(Color::Medium);
-    canvas.drawText(1, Height - 3, "autosaved settings");
 
     constexpr int columns = 4;
     constexpr int rows = 4;
@@ -141,7 +137,7 @@ void ChaosDefaultsPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
 
     if (key.isFunction() && key.function() == 4) {
-        saveAndClose();
+        close();
         event.consume();
         return;
     }
@@ -175,22 +171,6 @@ void ChaosDefaultsPage::encoder(EncoderEvent &event) {
         _cursor = chaosCellFromScanIndex(scanIndex);
     }
     event.consume();
-}
-
-void ChaosDefaultsPage::saveAndClose() {
-    _engine.suspend();
-    _manager.pages().busy.show("SAVING SETTINGS ...");
-
-    FileManager::task([this] () {
-        _model.settings().writeToFlash();
-        return fs::OK;
-    }, [this] (fs::Error result) {
-        (void)result;
-        _manager.pages().busy.close();
-        _engine.resume();
-        showMessage("SETTINGS SAVED");
-        close();
-    });
 }
 
 uint16_t &ChaosDefaultsPage::targetMask() {

@@ -40,7 +40,7 @@ void GeneratorSelectPage::draw(Canvas &canvas) {
     canvas.setFont(Font::Tiny);
     canvas.setBlendMode(BlendMode::Set);
 
-    constexpr int listTop = 13;
+    constexpr int listTop = 12;
     constexpr int lineHeight = 8;
 
     for (int row = 0; row < _listModel.rows(); ++row) {

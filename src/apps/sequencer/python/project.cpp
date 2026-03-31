@@ -233,6 +233,7 @@ void register_project(py::module &m) {
 
     py::enum_<ClockSetup::ClockInputMode>(clockSetup, "ClockInputMode")
         .value("Reset", ClockSetup::ClockInputMode::Reset)
+        .value("ResetPulse", ClockSetup::ClockInputMode::ResetPulse)
         .value("Run", ClockSetup::ClockInputMode::Run)
         .value("StartStop", ClockSetup::ClockInputMode::StartStop)
         .export_values()
@@ -638,6 +639,8 @@ void register_project(py::module &m) {
         .value("Max", CurveSequence::Layer::Max)
         .value("Gate", CurveSequence::Layer::Gate)
         .value("GateProbability", CurveSequence::Layer::GateProbability)
+        .value("GateOffset", CurveSequence::Layer::GateOffset)
+        .value("GateLength", CurveSequence::Layer::GateLength)
         .export_values()
     ;
 
@@ -650,6 +653,8 @@ void register_project(py::module &m) {
         .def_property("max", &CurveSequence::Step::max, &CurveSequence::Step::setMax)
         .def_property("gate", &CurveSequence::Step::gate, &CurveSequence::Step::setGate)
         .def_property("gateProbability", &CurveSequence::Step::gateProbability, &CurveSequence::Step::setGateProbability)
+        .def_property("gateOffset", &CurveSequence::Step::gateOffset, &CurveSequence::Step::setGateOffset)
+        .def_property("gateLength", &CurveSequence::Step::gateLength, &CurveSequence::Step::setGateLength)
         .def("clear", &CurveSequence::Step::clear)
     ;
 

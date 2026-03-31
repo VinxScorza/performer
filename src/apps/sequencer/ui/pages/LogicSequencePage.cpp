@@ -25,7 +25,7 @@ enum class SaveContextAction {
 };
 
 static const ContextMenuModel::Item contextMenuItems[] = {
-    { "INIT" },
+    { "INIT SEQ" },
     { "COPY" },
     { "PASTE" },
     { "DUPL" },
@@ -284,5 +284,4 @@ void LogicSequencePage::loadSequenceFromSlot(int slot) {
         _engine.resume();
     });
 }
-
 

@@ -24,7 +24,7 @@ enum class SaveContextAction {
 };
 
 static const ContextMenuModel::Item contextMenuItems[] = {
-    { "INIT" },
+    { "INIT SEQ" },
     { "COPY" },
     { "PASTE" },
     { "DUPL" },

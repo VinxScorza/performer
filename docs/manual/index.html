@@ -12,10 +12,10 @@
     <header class="inner">
       <nav class="site-nav" aria-label="Main">
         <a href="../index.html">PER|FORMER</a>
+        <a href="../features/index.html">Features</a>
         <a href="../manual/index.html" aria-current="page">User Manual</a>
-        <a href="../testdrive/index.html">Simulator</a>
+        <a href="../testdrive/index.html">Web Simulator</a>
         <a href="../cheatsheet/index.html">LP Cheatsheet</a>
-        <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>
         <a href="../build-guide/index.html">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
         <a href="../license/index.html">License</a>
@@ -48,7 +48,6 @@
             </div>
             <nav class="manual-sidebar-nav">
               <ul>
-                <li><a href="#manual-wip">Work in Progress</a></li>
                 <li><a href="#manual-overview">User Manual</a></li>
                 <li><a href="#manual-toc">Table of Contents</a></li>
                 <li><a href="#introduction">Introduction</a>
@@ -134,27 +133,26 @@
         </aside>
         <div class="manual-body">
       <section>
-        <h3 id="manual-wip">Work in Progress</h3>
-        <p>
-          This manual is being actively adapted for the Vinx Scorza fork, and the current line is aligned through <code>v0.3.2-vinx.1.4.8</code>.
-        </p>
-        <p>
-          It still draws on earlier upstream documentation where useful, but the main workflow pages and the current appendix/Launchpad material have already been rewritten and realigned for this fork.
-        </p>
-        <p>
-          Images have been removed on purpose; tables, settings and technical descriptions are being kept and cleaned up.
-        </p>
-        <p>
-          Historical upstream reference:
-          <a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Mebitek User Manual</a>
-        </p>
-      </section>
-
-      <section>
         <h3 id="manual-overview">User Manual</h3>
         <p>
           The goal of this page is to consolidate and adapt the manual structure and content for the
-          Vinx Scorza fork, while preserving the technical detail needed to use the module confidently.
+          Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
+        </p>
+        <p>
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.4.9</code>.
+        </p>
+        <p>
+          Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.
+        </p>
+        <p>
+          Earlier upstream documentation is still referenced where useful, but the main workflow pages and the current appendix/Launchpad material have already been rewritten and realigned for this fork.
+        </p>
+        <p>
+          Images have been removed on purpose; tables, settings, and technical descriptions are being kept and cleaned up.
+        </p>
+        <p class="manual-historical-note">
+          Historical upstream reference:
+          <a href="https://mebitek.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Mebitek User Manual</a>
         </p>
       </section>
 
@@ -1175,7 +1173,7 @@
             <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Shape, Shape Variation, Shape Variation Probability</td></tr>
             <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Minimum</td></tr>
             <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Maximum</td></tr>
-            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Gate, Gate Probability</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Gate, Gate Offset, Gate Probability, Gate Length</td></tr>
           </tbody>
         </table>
         <p>The following layers are available in Stochastic mode:</p>
@@ -1248,7 +1246,7 @@
           <li>When editing a Curve track, select multiple steps with <code>SHIFT</code> + step and press <code>SHIFT</code> + <code>ENCODER</code> to reverse the shapes.</li>
           <li>When editing a Note track, select any steps you want and press <code>SHIFT</code> + <code>NEXT</code> or <code>PREV</code> to move the selected step by 1 step.</li>
           <li>When editing a sequence page, <code>Init Layer</code> on the Steps page is selection-aware, while <code>Init Seq</code> on the Sequence page context menu still initializes the whole sequence.</li>
-          <li>When editing a Note track, pressing <code>PAGE</code> + <code>S7</code> undoes the last change.</li>
+          <li>When editing a Note or Curve track, pressing <code>PAGE</code> + <code>S7</code> undoes the last change.</li>
           <li>When editing a Note track, holding a step and pressing <code>F1</code> to <code>F5</code> sets the note octave respectively to 1V, 2V, 3V, 4V or 5V. This can be used to quickly create accents.</li>
           <li>When editing a Stochastic track, pressing <code>PAGE</code> + <code>S7</code> loops the sequence. Length is calculated by Sequence First Step and Sequence Last Step.</li>
           <li>When editing a Stochastic track, pressing <code>PAGE</code> + <code>S6</code> clears the loop and enters a new one.</li>
@@ -1444,7 +1442,7 @@
           In practice, <em>Chaos</em> is not trying to be harmonically clever. It is a deliberately rough exploratory tool: a selection-aware, multi-layer macro-random pass with a single global intensity and explicit target toggles.
         </p>
         <p>
-          <code>System -&gt; Chaos Defaults</code> now stores separate persistent target masks for <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code>, each edited through the same 4x4 grid. These defaults are loaded automatically when you enter <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.
+          <code>System -&gt; Chaos Defaults</code> stores separate target masks for <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code>, each edited through the same 4x4 grid. These defaults are loaded automatically when you enter <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.
         </p>
         <p>
           On the current line, repeated re-entry into <code>Chaos</code>, including <code>Vandalize Sequence</code> and <code>Wreck Pattern</code>, now tears down the previous generator and builder explicitly before constructing the next one, avoiding stale-state instability on hardware.
@@ -1809,6 +1807,9 @@
         <p>
           Note: the items defined in a user scale represent a single octave of the scale. The remaining octaves are inferred by repetition.
         </p>
+        <p>
+          In the current Vinx firmware, MIDI note capture on Note, Stochastic and Arpeggiator tracks follows the octave span of the active scale, so voltage-mode user scales are interpreted according to their own octave range instead of assuming fixed <code>1V/oct</code>.
+        </p>
         <h4>Context Menu</h4>
         <table>
           <thead>
@@ -1872,7 +1873,7 @@
             <tr><td style="text-align: left">Mode</td><td style="text-align: left">Auto, Master or Slave.</td></tr>
             <tr><td style="text-align: left">Shift Mode</td><td style="text-align: left">Determines how <code>SHIFT</code> + <code>PLAY</code> behaves.</td></tr>
             <tr><td style="text-align: left">Input Divisor</td><td style="text-align: left">Clock interpretation for incoming pulses.</td></tr>
-            <tr><td style="text-align: left">Input Mode</td><td style="text-align: left">Reset, Run or Start/Stop control logic.</td></tr>
+            <tr><td style="text-align: left">Input Mode</td><td style="text-align: left"><code>Reset Gate</code>, <code>Reset Pulse</code>, <code>Run</code>, or <code>Start/Stop</code> control logic for the reset jack while slaving to external clock.</td></tr>
             <tr><td style="text-align: left">Output Divisor</td><td style="text-align: left">Outgoing clock pulse timing.</td></tr>
             <tr><td style="text-align: left">Output Swing</td><td style="text-align: left">Applies project swing to analog clock out.</td></tr>
             <tr><td style="text-align: left">Output Pulse</td><td style="text-align: left">Pulse width in milliseconds. In the Vinx fork the default is <code>10ms</code>.</td></tr>
@@ -1891,7 +1892,7 @@
           On the current line, entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>.
         </p>
         <p>
-          The startup page on the current line also reports the <code>v0.3.2-vinx.1.4.8</code> version string correctly.
+          The startup page on the current line also reports the <code>v0.3.2-vinx.1.4.9</code> version string correctly.
         </p>
         <table>
           <thead>
@@ -1904,11 +1905,21 @@
             <tr><td style="text-align: left">Calibration</td><td style="text-align: left">Millivolt calibration of the 8 CV outputs.</td></tr>
             <tr><td style="text-align: left">Utilities</td><td style="text-align: left">SD card utility functions.</td></tr>
             <tr><td style="text-align: left">Update</td><td style="text-align: left">Shows firmware version and enters bootloader.</td></tr>
-            <tr><td style="text-align: left">User Settings</td><td style="text-align: left">Brightness, screensaver, wake mode, dim sequence, Launchpad style, pattern change behavior and the <code>Chaos Defaults</code> entry.</td></tr>
+            <tr><td style="text-align: left">User Settings</td><td style="text-align: left">Brightness, screensaver, wake mode, dim sequence, Launchpad style, pattern change behavior, menu wrap, and the <code>Chaos Defaults</code> entry.</td></tr>
           </tbody>
         </table>
         <p>
           The System page requires confirmation before opening to prevent accidental entry.
+        </p>
+        <h4>Save Shortcut</h4>
+        <p>
+          On both <em>Calibration</em> and <em>User Settings</em>, <code>F2</code> is a direct <code>SAVE</code> shortcut for writing the current machine settings to flash.
+        </p>
+        <p>
+          This persistent save writes the current machine settings state to flash memory, including any changes made in <code>Chaos Defaults</code>, so those values are restored again after reboot.
+        </p>
+        <p>
+          When leaving the <em>User Settings</em> tab after changing any user setting, including <code>Chaos Defaults</code>, the firmware now asks whether you want to save. This prompt appears both when moving to another <em>System</em> tab and when leaving the <em>System</em> page entirely. Choosing <code>NO</code> skips the save and continues the navigation.
         </p>
         <h4>Calibration</h4>
         <p>
@@ -1928,9 +1939,8 @@
           </thead>
           <tbody>
             <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init</td><td style="text-align: left">Initialize the settings to their default state.</td></tr>
-            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Save</td><td style="text-align: left">Save the settings to flash memory.</td></tr>
-            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Backup</td><td style="text-align: left">Back up the settings to the SD card.</td></tr>
-            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Restore</td><td style="text-align: left">Restore the settings from the SD card.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Backup</td><td style="text-align: left">Back up the settings to the SD card.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Restore</td><td style="text-align: left">Restore the settings from the SD card.</td></tr>
           </tbody>
         </table>
         <h4>User Settings</h4>
@@ -1947,14 +1957,18 @@
             <tr><td style="text-align: left">Screensaver</td><td style="text-align: left">Off, 3s, 5s, 10s, 30s, 1m, 5m, 10m, 15m, 30m</td><td style="text-align: left">Blank the display after a period of inactivity. In the current Vinx line the default is <code>15m</code>.</td></tr>
             <tr><td style="text-align: left">Wake Mode</td><td style="text-align: left">Always, Required</td><td style="text-align: left">Determine when the display wakes from the screensaver. In the current Vinx line the default is <code>required</code>, so the first gesture after wake restores the display without also triggering the underlying action.</td></tr>
             <tr><td style="text-align: left">Dim Sequence</td><td style="text-align: left">off, dim, dim+</td><td style="text-align: left">Reduce sequence-page brightness using three display-intensity levels. In the Vinx fork the default is <code>dim</code>, mainly to help tame display noise leaking into the audio band.</td></tr>
-            <tr><td style="text-align: left">LP Style</td><td style="text-align: left">Classic, Blue</td><td style="text-align: left">Select Launchpad color scheme.</td></tr>
+            <tr><td style="text-align: left">LP Style</td><td style="text-align: left">Classic, Blue</td><td style="text-align: left">Select Launchpad color scheme. In the current Vinx line the default is <code>Blue</code>.</td></tr>
             <tr><td style="text-align: left">Pattern Change</td><td style="text-align: left">Immediate, Sync</td><td style="text-align: left">Swap the default pattern launch behavior.</td></tr>
-            <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style.</td></tr>
+            <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style. In the current Vinx line the default is <code>Classic</code>.</td></tr>
+            <tr><td style="text-align: left">Menu Wrap</td><td style="text-align: left">Off, On</td><td style="text-align: left">Choose whether list-based menus wrap cyclically from last to first and from first to last. In the current Vinx line the default is <code>on</code>.</td></tr>
             <tr><td style="text-align: left">Chaos Defaults</td><td style="text-align: left">open</td><td style="text-align: left">Open the dedicated <em>Chaos</em> defaults page, where <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code> are edited with the same 4x4 target grid used by the generator.</td></tr>
           </tbody>
         </table>
         <p>
-          These two <em>Chaos</em> defaults are persistent machine-level user settings, not project data. They define which layer toggles are active by default when entering <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>. Closing the page saves them directly to flash, so they survive reboot without a separate manual settings save.
+          These two <em>Chaos</em> defaults are machine-level user settings, not project data. They define which layer toggles are active by default when entering <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>. Like the other machine settings, they must be saved from <em>System</em> if you want them to survive reboot.
+        </p>
+        <p>
+          Leaving the <em>User Settings</em> tab after changing them triggers the same save prompt used for the rest of the machine settings.
         </p>
       </section>
 
@@ -2300,7 +2314,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <a href="https://customer.novationmusic.com/sites/customer/files/novation/downloads/6961/launchpad-s-and-mini-advanced-features-guide_0.pdf" target="_blank" rel="noopener noreferrer">Launchpad S and Mini Advanced Features Guide</a>.
         </p>
         <p>
-          For a faster local overview, see also the <a href="../cheatsheet/index.html">Cheat Sheet</a>.
+          For a faster local overview, see also the <a href="../cheatsheet/index.html">Launchpad Cheat Sheet</a>.
         </p>
         <p>
           In this manual, Launchpad controls are named as in the local cheat sheet: <code>TOP1..8</code> for the top row, <code>TRK1..8</code> for the scene / track side buttons, and <code>GRID</code> for the 8x8 pad matrix. When a bare number is used in a Launchpad shortcut, it refers to a pad on the <code>GRID</code>.
@@ -2386,7 +2400,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           The visualization on the grid depends on the selected layer. Binary layers such as <em>Gate</em> and <em>Slide</em> can be visualized directly on the 8x8 grid without the need for navigation. Other layers use navigation to various degrees in order to allow programming the steps. When editing the <em>Note</em> layer, the base note, first note per octave, is visualized to help orientation. When editing a note sequence, double pressing a button can be used to toggle the step gate no matter what layer is edited other than <em>Gate</em> or <em>Slide</em>.
         </p>
         <p>
-          In the current fork, <em>LP Note Style</em> can be set to <em>classic</em> or <em>circuit</em>. The circuit-style editor is the current default and is available on the Note track note layer, the dedicated stochastic note-probability note editor, and the arpeggiator note layer.
+          In the current fork, <em>LP Note Style</em> can be set to <em>classic</em> or <em>circuit</em>. The classic editor is the current default, while the circuit-style editor remains available on the Note track note layer, the dedicated stochastic note-probability note editor, and the arpeggiator note layer.
         </p>
         <h4>Pattern Mode</h4>
         <p>
@@ -2520,7 +2534,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           After the firmware is written to flash memory, it is verified again to ensure it was written correctly. If verification fails, the firmware is erased from flash memory. In that state the sequencer will always boot back into the bootloader, allowing a different firmware image to be loaded.
         </p>
         <p>
-          For release history and fork-specific changes, see the <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">Changelog</a>.
+          For release history and fork-specific changes, see the <a href="../features/index.html">Features</a> page.
         </p>
       </section>
         </div>

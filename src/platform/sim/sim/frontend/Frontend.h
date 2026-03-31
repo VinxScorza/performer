@@ -24,6 +24,8 @@
 
 namespace sim {
 
+struct MidiConfig;
+
 class Frontend : private TargetInputHandler, TargetOutputHandler {
 public:
     Frontend(Simulator &simulator);
@@ -53,6 +55,13 @@ private:
 
     void setupMidi();
     void setupInstruments();
+    void configureMidiPort(MidiConfig &config, const std::string &port, const std::string &portIn, const std::string &portOut);
+    static std::string normalizeMidiPortValue(const std::string &value);
+    static void inferUsbMidiDeviceIds(MidiConfig &config);
+    static std::vector<std::string> usbMidiInputPorts(const MidiConfig &config);
+    static std::vector<std::string> usbMidiOutputPorts(const MidiConfig &config);
+    void updateMidiStatusLabels();
+    void updateMidiStatusLabel(const Label::Ptr &label, const char *prefix, const std::shared_ptr<Midi::Port> &port);
 
     // TargetInputHandler
     void writeButton(int index, bool pressed) override;
@@ -73,6 +82,11 @@ private:
     Audio _audio;
     std::unique_ptr<InstrumentSetup> _instruments;
 
+    MidiConfig *_midiConfig = nullptr;
+    MidiConfig *_usbMidiConfig = nullptr;
+    bool _traceMidi = false;
+    bool _traceDio = false;
+
     double _timerFrequency;
     double _timerStart;
 
@@ -88,6 +102,8 @@ private:
     Window::Ptr _window;
     Encoder::Ptr _encoder;
     Display::Ptr _lcd;
+    Label::Ptr _midiStatusLabel;
+    Label::Ptr _usbMidiStatusLabel;
     Jack::Ptr _midiInputJack;
     Jack::Ptr _midiOutputJack;
     std::vector<Jack::Ptr> _digitalInputJacks;

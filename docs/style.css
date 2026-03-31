@@ -167,6 +167,22 @@ pre code {
   color: #e5dcc0;
 }
 
+.section-callout {
+  display: inline-block;
+  margin-left: 0 !important;
+  padding: 6px 12px;
+  border: 1px solid rgba(203, 178, 111, 0.24);
+  border-radius: 8px;
+  background: rgba(203, 178, 111, 0.08);
+  color: #f4edcf !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.section-callout + ul {
+  margin-bottom: 0.9em;
+}
+
 #main_content ul + p,
 #main_content ol + p {
   margin-top: 1.2em;
@@ -205,6 +221,11 @@ pre code {
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: var(--muted);
+}
+
+.manual-historical-note {
+  font-size: 13px;
   color: var(--muted);
 }
 
@@ -687,6 +708,77 @@ strong {
   border: 0;
 }
 
+.changelog-intro {
+  margin: 0 0 26px;
+  padding: 18px 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.changelog-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.release-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.release-entry {
+  padding: 18px 20px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid #3a3a3a;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.release-entry p:last-child,
+.release-entry ul:last-child {
+  margin-bottom: 0;
+}
+
+.release-version {
+  margin: 0 0 6px;
+  margin-left: 0 !important;
+  padding: 0;
+  border: 0 !important;
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.release-date {
+  margin: 0 0 12px;
+  color: #d9c98a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.release-summary {
+  margin: 0 0 12px;
+  color: #e8e0bf;
+}
+
+.release-entry ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.release-entry li + li {
+  margin-top: 0.45em;
+}
+
+.features-page #main_content h3 {
+  margin-left: 0;
+}
+
+.features-page #main_content h4 {
+  margin-left: 0;
+}
+
 @media (max-width: 720px) {
   #header_wrap .inner {
     padding: 16px 0 22px;
@@ -754,5 +846,21 @@ strong {
 
   .svg-embed {
     min-height: 560px;
+  }
+
+  .release-entry {
+    padding: 16px 16px 14px;
+  }
+
+  .release-version {
+    font-size: 21px;
+  }
+
+  .features-page #main_content h3 {
+    margin-left: 0;
+  }
+
+  .features-page #main_content h4 {
+    margin-left: 0;
   }
 }

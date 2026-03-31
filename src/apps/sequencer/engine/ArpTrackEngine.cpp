@@ -671,12 +671,17 @@ int ArpTrackEngine::noteFromMidiNote(uint8_t midiNote) const {
     const auto &sequence = activeSequence();
     const auto &scale = sequence.selectedScale(_model.project().scale());
     int rootNote = sequence.selectedRootNote(_model.project().rootNote());
+    float octaveVolts = scale.noteToVolts(scale.notesPerOctave()) - scale.noteToVolts(0);
+    float semitoneVolts = octaveVolts * (1.f / 12.f);
+    float volts = (int(midiNote) - 60) * semitoneVolts;
 
     if (scale.isChromatic()) {
-        return scale.noteFromVolts((midiNote - 60 - rootNote) * (1.f / 12.f));
+        volts -= rootNote * semitoneVolts;
     } else {
-        return scale.noteFromVolts((midiNote - 60) * (1.f / 12.f));
+        // Non-chromatic scales ignore root-note transposition here, matching the existing behavior.
     }
+
+    return scale.noteFromVolts(volts);
 }
 
 void ArpTrackEngine::addNote(int note, int index, Type type, int octave) {

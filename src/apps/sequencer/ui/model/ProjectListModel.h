@@ -8,10 +8,12 @@
 
 class ProjectListModel : public RoutableListModel {
 public:
+    static constexpr int ScaleCount = 20 + CONFIG_USER_SCALE_COUNT;
+
     ProjectListModel(Project &project) :
         _project(project)
     {
-        for (int i = 0; i < 23; ++i) {
+        for (int i = 0; i < ScaleCount; ++i) {
             _scales[i] = i;
         }
     }
@@ -196,7 +198,7 @@ private:
             _project.editSyncMeasure(value, shift);
             break;
         case Scale:
-            _selectedScale = clamp(_selectedScale + value, 0, 23);
+            _selectedScale = clamp(_selectedScale + value, 0, ScaleCount - 1);
             break;
         case RootNote:
             _project.editRootNote(value, shift);
@@ -244,7 +246,7 @@ private:
     
     Project &_project;
     private:
-        std::array<int, 23> _scales;
+        std::array<int, ScaleCount> _scales;
         int _selectedScale = 0;
         bool _editScale = false;
 };

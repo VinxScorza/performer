@@ -166,6 +166,8 @@ void CurveTrackEngine::changePattern() {
 }
 
 void CurveTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
+    static constexpr int GateResolution = 32;
+
     int rotate = _curveTrack.rotate();
     int shapeProbabilityBias = _curveTrack.shapeProbabilityBias();
     int gateProbabilityBias = _curveTrack.gateProbabilityBias();
@@ -183,10 +185,14 @@ void CurveTrackEngine::triggerStep(uint32_t tick, uint32_t divisor) {
     int gate = step.gate();
     for (int i = 0; i < 4; ++i) {
         if (gate & (1 << i) && evalGate(step, gateProbabilityBias)) {
-            uint32_t gateStart = (divisor * i) / 4;
-            uint32_t gateLength = divisor / 8;
-            _gateQueue.pushReplace({ Groove::applySwing(tick + gateStart, swing()), true });
-            _gateQueue.pushReplace({ Groove::applySwing(tick + gateStart + gateLength, swing()), false });
+            int32_t gateStart = int32_t((divisor * i) / 4) + int32_t((divisor * step.gateOffset()) / GateResolution);
+            gateStart = clamp(gateStart, int32_t(0), int32_t(divisor - 1));
+
+            uint32_t gateLength = std::max<uint32_t>(1, (divisor * uint32_t(step.gateLength() + 1) + GateResolution - 1) / GateResolution);
+            uint32_t gateEnd = std::min<uint32_t>(divisor, uint32_t(gateStart) + gateLength);
+
+            _gateQueue.pushReplace({ Groove::applySwing(tick + uint32_t(gateStart), swing()), true });
+            _gateQueue.pushReplace({ Groove::applySwing(tick + gateEnd, swing()), false });
         }
     }
 }
