@@ -14,17 +14,18 @@
         <a href="../index.html">PER|FORMER</a>
         <a href="../features/index.html" aria-current="page">Features</a>
         <a href="../manual/index.html">User Manual</a>
-        <a href="../testdrive/index.html">Web Simulator</a>
         <a href="../cheatsheet/index.html">LP Cheatsheet</a>
+        <a href="../testdrive/index.html">Web Simulator</a>
         <a href="../build-guide/index.html">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
         <a href="../license/index.html">License</a>
         <a href="../forks/index.html">Forks</a>
         <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
       </nav>
+      <button type="button" class="site-theme-toggle" aria-pressed="false">Invert Colors</button>
       <h1 id="project_title">PER|FORMER</h1>
       <h2 id="project_tagline">features</h2>
-      <p id="project_credit">forked and maintained by Vinx Scorza</p>
+      <p id="project_credit">forked and maintained by <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">Vinx Scorza</a></p>
     </header>
   </div>
 
@@ -37,7 +38,7 @@
             This page is the curated web summary of the Vinx Scorza line. It focuses only on the Vinx fork, starting from <code>v0.3.2-vinx.1</code>, and reorganizes the work by topic instead of strict release order so it is easier to understand what this branch actually adds.
           </p>
           <p>
-            The current local documentation line is aligned through <code>v0.3.2-vinx.1.4.9</code>. If you want the exact chronological log, including inherited upstream history, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
+            This documentation line is aligned through <code>v0.3.2-vinx.1.5.0</code>. If you want the exact chronological log, including inherited upstream history, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
           </p>
         </div>
       </section>
@@ -47,7 +48,7 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              The fork began with direct sequencing fixes, and that foundation still shapes the line.
+              The fork began with direct sequencing fixes, and that foundation still shapes everything above it.
             </p>
             <ul>
               <li>Stabilize step shifting across <code>Note</code>, <code>Logic</code>, <code>Curve</code>, <code>Stochastic</code>, and <code>Arp</code>, including the old 64-step crash/reboot case and shifting inside non-zero subranges.</li>
@@ -65,7 +66,7 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              Clock behavior has been adjusted with real hardware compatibility and safer external sync in mind.
+              Clock behavior has been adjusted with real hardware compatibility and safer external sync as priorities.
             </p>
             <ul>
               <li>Change the default output clock pulse from <code>1ms</code> to <code>10ms</code> for broader module compatibility.</li>
@@ -88,6 +89,7 @@
             <ul>
               <li>Add <code>Chaos</code> as an experimental Note-track generator built around explicit preview/apply safety rather than hidden destruction.</li>
               <li>Define it as a multi-layer macro-random tool driven by one global <code>Amount</code> and a dedicated 4x4 target matrix.</li>
+              <li>Keep <code>Chaos</code> on the original material at page entry and require an explicit <code>CHAOS</code> action before the first destructive preview.</li>
               <li>Make Chaos selection-aware so it can work locally when needed instead of always hitting the whole sequence.</li>
               <li>Extend the idea into <code>CHAOS MODE</code>, split between <code>Vandalize Sequence</code> and the broader, more dangerous <code>Wreck Pattern</code>.</li>
               <li>Add <code>System -&gt; Chaos Defaults</code> so sequence vandalizing and pattern wrecking can start from different default target masks.</li>
@@ -106,6 +108,7 @@
             </p>
             <ul>
               <li>Add <code>Acid</code> as a new Note-track generator with non-destructive preview.</li>
+              <li>Generate the first Acid preview immediately on entry instead of waiting for a separate reroll action.</li>
               <li>Split it into a more local <code>Layer</code> workflow and a broader <code>Phrase</code> workflow.</li>
               <li>Use <code>Acid -&gt; Layer</code> to project acid-like motion onto the active <code>Gate</code>, <code>Note</code>, or <code>Slide</code> layer.</li>
               <li>Use <code>Acid -&gt; Phrase</code> to write a coordinated <code>Gate + Note + Slide</code> phrase over the current selection or pattern length.</li>
@@ -121,10 +124,11 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              <code>Random</code> evolved from a quick reroll tool into a more deliberate generator with seed identity, compare flow, and safer preview behavior.
+              <code>Random</code> evolved from a quick reroll tool into a more deliberate generator with stronger seed identity, compare flow, and safer preview behavior.
             </p>
             <ul>
               <li>Rework <code>Generate -&gt; Random</code> around a non-destructive preview/apply model with compare, regeneration, and explicit commit.</li>
+              <li>Generate the first Random preview immediately on entry, so compare starts from a real candidate instead of an empty generator state.</li>
               <li>Add <code>Variation</code> for controlled deviation from the original sequence instead of always jumping to a fully unrelated result.</li>
               <li>Move to full 32-bit hexadecimal seeds, with cleaner seed handling on entry and during editing.</li>
               <li>Keep the seed stable while shaping the result through the other Random parameters, so editing feels intentional instead of slippery.</li>
@@ -139,13 +143,13 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              Beyond individual generators, the Vinx line keeps refining how generator pages behave, compare, reset, and stay usable during live work.
+              Beyond individual generators, the Vinx line keeps refining how generator pages behave, compare, reset, and remain usable during live work.
             </p>
             <ul>
               <li>Reorder and clean up the generator menu as the generator family grows, so the page still feels intentional instead of bolted together.</li>
               <li>Make <code>Generate</code> open on the current 16-step bank and keep LEDs and bank navigation aligned with that bank.</li>
-              <li>Rework <code>Euclidean</code> around compare, reseed, and direct parameter editing while enforcing sane relationships such as <code>Beats &lt;= Steps</code>.</li>
-              <li>Make <code>RESETGEN</code> restore neutral defaults instead of quietly rerolling the generator state.</li>
+              <li>Rework <code>Euclidean</code> around compare, immediate preview-on-entry, reseed, and direct parameter editing while enforcing sane relationships such as <code>Beats &lt;= Steps</code>.</li>
+              <li>Make <code>ResetGen</code> restore neutral defaults instead of quietly rerolling the generator state.</li>
               <li>Keep transport responsive inside generator pages so the sequencer remains playable while shaping material.</li>
             </ul>
           </article>
@@ -179,7 +183,7 @@
             </p>
             <ul>
               <li>Add direct save from <code>System</code> and simplify the surrounding machine-settings flow.</li>
-              <li>Prompt to save when leaving <code>System -&gt; Settings</code> after changing user settings, including <code>Chaos Defaults</code>.</li>
+              <li>Prompt to save when leaving <code>System -&gt; Settings</code> after changing user settings, including <code>Chaos Defaults</code>, instead of treating those changes as silently disposable.</li>
               <li>Return <code>Chaos Defaults</code> to the normal machine-settings save path instead of treating them as a special auto-written case.</li>
               <li>Add <code>Menu Wrap</code> as an on-by-default preference for cyclic list navigation.</li>
               <li>Evolve <code>Dim Sequence</code>, screensaver timing, wake behavior, and the default landing tab of <code>System</code> to better fit real use on the module.</li>
@@ -197,9 +201,11 @@
             </p>
             <ul>
               <li>Keep Launchpad as a first-class machine-level layer through <code>LP Style</code> and <code>LP Note Style</code>.</li>
-              <li>Change the default Launchpad settings to <code>LP Style = Blue</code> and <code>LP Note Style = Classic</code>.</li>
+              <li>Change the default Launchpad settings to <code>LP Style = Blue</code> and <code>LP Note Style = Circuit</code>.</li>
               <li>Support both classic and circuit-style note editing approaches depending on workflow preference.</li>
-              <li>Align manual, cheat sheet wrapper, and site references around the current Launchpad terminology.</li>
+              <li>Fix the recent Launchpad regressions around <code>LP Note Style: Classic</code>, Circuit editor targeting, Pattern edited-state drawing, screensaver wake, and Performer fill release.</li>
+              <li>Add an experimental Launchpad <code>Generators Mode</code> for Note tracks in LP <code>Sequence</code> mode: <code>TOP 8 + TOP 4</code> can jump straight into <code>Steps</code>, the generator grid is laid out as <code>1 / 2 / 10 / 3 / 11 / 4 / 8</code>, the current generator pad rerolls in place, LP-side <code>A/B</code>, <code>ResetGen</code>, cancel, and apply stay available, <code>TRK 1..8</code> can retarget the mode to another <code>Note</code> track after forcing a cancel first, the compare/reset buttons expose their state through the current <code>LP Style</code> color language, and off-context controls no longer trap the user inside the mini-mode.</li>
+              <li>Align the manual, LP Cheatsheet, embedded LP reference, and site terminology around the current Launchpad workflow.</li>
             </ul>
           </article>
         </div>
@@ -213,7 +219,7 @@
               The simulator side of the fork is now a real part of the ecosystem: useful for development, useful for testing, and documented as such.
             </p>
             <ul>
-              <li>Clearly distinguish the browser-based <code>Web Simulator</code> from the native local <code>Desktop Simulator</code>.</li>
+              <li>Clearly distinguish the browser-based <code>Web Simulator</code> from the native <code>Desktop Simulator</code>.</li>
               <li>Make the Desktop Simulator much more usable by exposing DIN and USB MIDI routing from the command line and starting with MIDI disabled unless explicitly assigned.</li>
               <li>Add lightweight status indicators plus terminal tracing for incoming MIDI and simulated digital outputs.</li>
               <li>Improve Launchpad support by inferring the model from USB port names and mirroring sibling <code>DAW</code> / <code>MIDI</code> endpoints when needed.</li>
@@ -228,7 +234,7 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              Documentation is part of the fork, not an afterthought: website, manual, build notes, simulator pages, and reference material now evolve together.
+              Documentation is part of the fork, not an afterthought: the website, manual, build notes, simulator pages, and reference material now evolve together.
             </p>
             <ul>
               <li>Progressively realign the user manual to the Vinx line, including the appendix and Launchpad material.</li>
@@ -246,7 +252,7 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              The current line is locally verified and actively used, but a few areas still benefit from broader hardware coverage.
+              The current line is actively used and locally verified, but a few areas still benefit from broader hardware coverage.
             </p>
             <ul>
               <li>Real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code>.</li>
@@ -269,5 +275,6 @@
       </p>
     </footer>
   </div>
+  <script src="../theme.js"></script>
 </body>
 </html>

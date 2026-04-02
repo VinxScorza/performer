@@ -49,9 +49,6 @@ void WreckPatternWarningPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isTempo()) {
-        if (!key.pageModifier()) {
-            _manager.pages().tempo.show();
-        }
         event.consume();
         return;
     }
@@ -63,12 +60,15 @@ void WreckPatternWarningPage::keyPress(KeyPressEvent &event) {
     switch (Function(key.function())) {
     case Function::Save:
         closeWithResult(Action::Save);
+        event.consume();
         break;
     case Function::Wreck:
         closeWithResult(Action::Wreck);
+        event.consume();
         break;
     case Function::Cancel:
         closeWithResult(Action::Cancel);
+        event.consume();
         break;
     }
 }

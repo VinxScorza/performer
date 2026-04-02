@@ -19,7 +19,6 @@
 #include <bitset>
 #include <cstdint>
 #include <initializer_list>
-#include <iostream>
 
 class ArpSequence {
 public:

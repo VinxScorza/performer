@@ -9,7 +9,6 @@
 #include "model/Curve.h"
 
 #include "core/utils/StringBuilder.h"
-#include <iostream>
 #include <map>
 
 enum class ContextAction {

@@ -4,6 +4,25 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.5.0 (2 April 2026)
+- Rename the `Chaos` generator page labels from `CHAOS ON SEQ` / `CHAOS ON PAT` to `VNDLZ SEQ` / `WRECK PAT`, while keeping the `GENERATOR` page header
+- Show the active Chaos seed in both `Vandalize Sequence` and `Wreck Pattern`, while the untouched source still reads `ORIGINAL`
+- Fix `LP Note Style: Classic` drawing on the Launchpad `Note` layer so non-home navigation positions light the edited note correctly instead of only updating the underlying step value
+- Fix `Stochastic -> Note Prob` and `Arp -> Note` Launchpad handling so the dedicated Circuit keyboard/editor is used only when `LP Note Style = Circuit`, while `Classic` returns to the normal layer/navigation view
+- Change the default `LP Note Style` machine setting from `Classic` to `Circuit`
+- Make Launchpad input wake the display from the screensaver like panel input
+- Fix `Stochastic Circuit Keyboard` probability and double-press targeting so `1..16` and note-toggle actions follow the actual selected note slot instead of drifting through stale octave-aware selection state
+- Remove the non-editable derived `Rest Prob` display from the first Launchpad `Rest Probability` row, leaving only the editable `Rest Prob 2 / 4 / 8` ranges
+- Fix Launchpad behavior in `Pattern`, `Performer`, and `Note Circuit Keyboard`: edited `Arp` patterns are shown again in `Pattern`, `Performer TOP 7 + TRK` fills are released correctly, and `Note Circuit Keyboard` step editing now matches the documented `1..16` range
+- Add an experimental Launchpad `Generators Mode` for `Note` tracks in LP `Sequence` mode: `TOP 8 + TOP 4` jumps to `Steps` when needed and toggles the mode, `GRID 1 / 2 / 10 / 3 / 11 / 4 / 8` select `Random`, `Acid Phrase`, `Acid Layer`, `Vandalize`, `Wreck`, `Euclidean`, and `Init`, pressing the currently selected generator pad rerolls it in place, and `TOP 5 / 6 / 7 / 8` map to `A/B`, `ResetGen`, `Cancel`, and `Apply`
+- Refine Launchpad `Generators Mode` feedback so `TOP 5` distinguishes `A` / `B` compare state and `TOP 6` distinguishes reset-neutral from generated/edited state, using the current `LP Style` color language
+- Refine Launchpad `Generators Mode` routing so unmapped GRID pads and `TOP 1..3` stay neutral, `TRK 1..8` retarget the mode to another `Note` track when possible, and off-context controls no longer trap you until `Cancel`, `Apply`, or the mode toggle
+- Fix remaining modal selector regressions introduced by modal redispatch so `Confirmation`, `File Select`, and `Chaos Defaults` no longer leak key presses to the underlying page when they close or ignore non-context keys
+- Remove stray `#include <iostream>` usage from the STM32 sequencer code so the firmware no longer drags in the full `iostream` / locale runtime, recovering a large amount of flash and SRAM
+- Clean up minor simulator build warnings by replacing boolean bitwise `|` usage in `ListPage` / `QuickEditPage` and removing an unused `ArpTrackEngine` field
+- Replace the `VersionedSerializedReader` variable-length skip buffer with fixed-size chunked reads, removing the remaining Clang VLA warning in simulator builds
+- Rework the Launchpad cheatsheet/doc site into a split `Reference + tables` format and update the manual/cheatsheet wording around `LP Note Style`, `Stochastic Circuit Keyboard`, `Arp Circuit Keyboard`, and Launchpad-specific workflows
+
 # v0.3.2-vinx.1.4.9 (31 March 2026)
 - Refine external clock input behavior by adding `Reset Pulse` as a new mode alongside `Reset Gate`, `Run`, and `Start/Stop`, and make it respond only to the rising edge so reset pulses resync the slave clock without turning the falling edge into an implicit start
 - Add per-step `Gate Offset` and `Gate Length` layers to `Curve` tracks, including edit-page, overview, and Python bindings support

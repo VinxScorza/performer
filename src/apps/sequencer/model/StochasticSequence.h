@@ -15,7 +15,6 @@
 #include <bitset>
 #include <cstdint>
 #include <initializer_list>
-#include <iostream>
 
 class StochasticSequence {
 public:

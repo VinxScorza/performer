@@ -6,7 +6,6 @@
 
 #include "model/NoteSequence.h"
 #include "model/Scale.h"
-#include <iostream>
 
 class NoteSequenceListModel : public RoutableListModel {
 public:

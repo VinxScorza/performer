@@ -192,8 +192,6 @@ private:
 
     int _prevPattern = 0;
 
-    uint32_t _realtiveTick;
-
     struct Gate {
         uint32_t tick;
         bool gate;

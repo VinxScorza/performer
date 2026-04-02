@@ -18,7 +18,6 @@
 #include <bitset>
 #include <cstdint>
 #include <initializer_list>
-#include <iostream>
 #include <map>
 
 class NoteSequence {

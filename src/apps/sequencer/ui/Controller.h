@@ -27,6 +27,8 @@ public:
 
     virtual void recvMidi(uint8_t cable, const MidiMessage &message) = 0;
 
+    virtual void uiPageChanged() {}
+
 protected:
     bool sendMidi(uint8_t cable, const MidiMessage &message);
 

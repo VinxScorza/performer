@@ -18,6 +18,7 @@ public:
     virtual void update() override;
 
     virtual void recvMidi(uint8_t cable, const MidiMessage &message) override;
+    virtual void uiPageChanged() override;
 
 private:
     using Color = LaunchpadDevice::Color;
@@ -82,6 +83,17 @@ private:
         Performer,
     };
 
+    enum class LaunchpadGenerator : uint8_t {
+        None,
+        Random,
+        AcidPhrase,
+        AcidLayer,
+        Vandalize,
+        Wreck,
+        Euclidean,
+        Init,
+    };
+
     void setMode(Mode mode);
 
     // Global handlers
@@ -132,6 +144,15 @@ private:
     void manageCircuitKeyboard(const Button &button);
     void manageStochasticCircuitKeyboard(const Button &button);
     void manageArpCircuitKeyboard(const Button &button);
+    bool generatorModeSupported() const;
+    bool generatorModeEditPage() const;
+    bool generatorModePreviewPage() const;
+    void cancelGeneratorMode();
+    LaunchpadGenerator generatorModeGrid(int gridIndex) const;
+    void setGeneratorMode(bool active);
+    void sequenceDrawGeneratorMode();
+    bool sequenceButtonGeneratorMode(const Button &button, ButtonAction action);
+    void sequenceOpenGenerator(LaunchpadGenerator generator);
     void drawRunningKeyboardCircuit(int row, int col, const NoteSequence::Step &step, const Scale &scale, int rootNote);
     void drawRunningStochasticKeyboardCircuit(int row, int col, const StochasticSequence::Step &step, const Scale &scale, int rootNote);
     void drawRunningArpKeyboardCircuit(int row, int col, const ArpSequence::Step &step, const Scale &scale, int rootNote);
@@ -284,6 +305,10 @@ private:
     } _performNavigation;
 
     int _performSelectedLayer = 0;
+    bool _generatorMode = false;
+    bool _generatorApplyArmed = false;
+    bool _generatorApplyCanceled = false;
+    LaunchpadGenerator _selectedGenerator = LaunchpadGenerator::Random;
 
     bool _performFollowMode = false;
 };

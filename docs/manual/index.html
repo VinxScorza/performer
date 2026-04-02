@@ -14,17 +14,18 @@
         <a href="../index.html">PER|FORMER</a>
         <a href="../features/index.html">Features</a>
         <a href="../manual/index.html" aria-current="page">User Manual</a>
-        <a href="../testdrive/index.html">Web Simulator</a>
         <a href="../cheatsheet/index.html">LP Cheatsheet</a>
+        <a href="../testdrive/index.html">Web Simulator</a>
         <a href="../build-guide/index.html">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
         <a href="../license/index.html">License</a>
         <a href="../forks/index.html">Forks</a>
         <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
       </nav>
+      <button type="button" class="site-theme-toggle" aria-pressed="false">Invert Colors</button>
       <h1 id="project_title">PER|FORMER</h1>
       <h2 id="project_tagline">user manual</h2>
-      <p id="project_credit">forked and maintained by Vinx Scorza</p>
+      <p id="project_credit">forked and maintained by <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">Vinx Scorza</a></p>
     </header>
   </div>
 
@@ -33,7 +34,7 @@
       <div class="manual-layout">
         <aside class="manual-sidebar" aria-label="Manual contents">
           <div class="manual-sidebar-panel">
-            <a class="manual-sidebar-top" href="#header_wrap">TOP</a>
+            <a class="manual-sidebar-top" href="#header_wrap">Back to Top</a>
             <div class="manual-search">
               <label class="manual-search-label" for="manual-search-input">Search</label>
               <input
@@ -109,6 +110,7 @@
                 <li><a href="#appendix">Appendix</a>
                   <ul>
                     <li><a href="#appendix-recording">Recording</a></li>
+                    <li><a href="#appendix-clock-input-modes">Clock Input Modes</a></li>
                     <li><a href="#appendix-divisors">Divisors</a></li>
                     <li><a href="#appendix-run-modes">Run Modes</a></li>
                     <li><a href="#appendix-play-modes">Play Modes</a></li>
@@ -122,6 +124,7 @@
                     <li><a href="#appendix-logic-operators">Logic Operators</a></li>
                     <li><a href="#appendix-midi-program-change">MIDI Program Change</a></li>
                     <li><a href="#appendix-launchpad">Launchpad</a></li>
+                    <li><a href="#appendix-desktop-simulator">Desktop Simulator</a></li>
                     <li><a href="#appendix-usb-midi-devices">USB MIDI Devices</a></li>
                     <li><a href="#appendix-calibration-procedure">Calibration Procedure</a></li>
                     <li><a href="#appendix-firmware-update">Firmware Update</a></li>
@@ -139,7 +142,7 @@
           Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
         </p>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.4.9</code>.
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.5.0</code>.
         </p>
         <p>
           Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.
@@ -168,6 +171,8 @@
           <li><a href="#pages">Pages</a></li>
           <li><a href="#appendix">Appendix</a></li>
           <li><a href="#appendix-launchpad">Launchpad</a></li>
+          <li><a href="#appendix-desktop-simulator">Desktop Simulator</a></li>
+          <li><a href="#appendix-clock-input-modes">Clock Input Modes</a></li>
           <li><a href="#appendix-firmware-update">Firmware Update</a></li>
         </ul>
       </section>
@@ -180,6 +185,16 @@
         <p>
           The <a href="#concepts">Concepts</a> chapter introduces the overall architecture and functionality of the sequencer. The <a href="#ui">User Interface</a> chapter gives an overview of the user interface and introduces key concepts of how to use the sequencer. The <a href="#pages">Pages</a> chapter goes into more detail in terms of functionality and user interface of the various modes and contexts in the sequencer and introduces common workflows. Finally, the <a href="#appendix">Appendix</a> contains reference tables for some of the parameters commonly used in the sequencer as well as additional information on how to use the Novation Launchpad, calibrate the CV outputs and update the firmware.
         </p>
+        <h3 id="introduction-upstream-differences">If You Come from Westlicht or Mebitek</h3>
+        <p>
+          The Vinx line keeps the overall PER|FORMER workflow intact, but it is no longer just a conservative maintenance fork. The largest differences from older upstream lines are concentrated around four areas: generator workflow, clock/reset behavior, machine settings, and the simulator/Launchpad ecosystem.
+        </p>
+        <ul>
+          <li>Generators are more explicit and safer: <em>Random</em>, <em>Acid</em>, <em>Euclidean</em>, and <em>Chaos</em> all lean on preview, compare, cancel, and apply instead of silent destructive edits.</li>
+          <li>Clock input behavior has been extended with <code>Reset Gate</code> and <code>Reset Pulse</code>, so external reset handling can be chosen more deliberately depending on the incoming signal.</li>
+          <li>Some settings that are easy to assume project-local are actually machine settings in the Vinx line, including Launchpad behavior, <code>Menu Wrap</code>, and <code>Chaos Defaults</code>.</li>
+          <li>The Vinx fork is maintained together with a broader support layer: manual, feature history, Web Simulator, Desktop Simulator, and tested Launchpad workflows.</li>
+        </ul>
       </section>
 
       <section>
@@ -706,6 +721,9 @@
           Note: <em>Tempo</em> and <em>Swing</em> are routable parameters.
         </p>
         <p>
+          In practical use, <em>Monitor Mode</em>, <em>Record Mode</em>, <em>MIDI Input</em>, and <em>CV/Gate Input</em> define the live-input behavior for the whole project. They are the first place to check when monitoring, recording, or external note entry does not behave as expected.
+        </p>
+        <p>
           Double-clicking <code>F1</code> - <code>F5</code> provides shortcuts into Project, Layout, Routing, MIDI Output and User Scale.
         </p>
         <h4>Context Menu</h4>
@@ -802,6 +820,7 @@
             <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
             <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track.</td></tr>
             <tr><td style="text-align: left">Fill Mode</td><td style="text-align: left">None, Gates, Next Pattern, Condition</td><td style="text-align: left">Determines what the track does when fill is engaged.</td></tr>
+            <tr><td style="text-align: left">Fill Muted</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Determines whether fills can still affect the track while it is muted.</td></tr>
             <tr><td style="text-align: left">CV Update Mode</td><td style="text-align: left">Gate, Always</td><td style="text-align: left">Updates CV only on active gates or on every step.</td></tr>
             <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Duration of pitch slides for steps with Slide enabled.</td></tr>
             <tr><td style="text-align: left">Octave</td><td style="text-align: left">-10 - +10</td><td style="text-align: left">Octave transposition amount.</td></tr>
@@ -811,7 +830,7 @@
             <tr><td style="text-align: left">Retrig P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Retrigger probability bias added to the sequence.</td></tr>
             <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Length bias added to the sequence.</td></tr>
             <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Note variation probability bias added to the sequence.</td></tr>
-            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes.</td></tr>
+            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes. This is a per-track setting and is saved with the project.</td></tr>
             <tr><td style="text-align: left">Logic Track</td><td style="text-align: left">1 - 8</td><td style="text-align: left">Select the Logic track whose values should be output.</td></tr>
             <tr><td style="text-align: left">Logic Track In</td><td style="text-align: left">1 - 2</td><td style="text-align: left">Select the input of the Logic track.</td></tr>
           </tbody>
@@ -838,7 +857,7 @@
             <tr><td style="text-align: left">Rotate</td><td style="text-align: left"><a href="#appendix-rotation">Rotation</a></td><td style="text-align: left">Playback rotation applied to the sequence.</td></tr>
             <tr><td style="text-align: left">Shape P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Shape probability bias added to the sequence.</td></tr>
             <tr><td style="text-align: left">Gate P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Gate probability bias added to the sequence.</td></tr>
-            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes.</td></tr>
+            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes. This is a per-track setting and is saved with the project.</td></tr>
             <tr><td style="text-align: left">Curve CV Input</td><td style="text-align: left">Off, CV1, CV2, CV3, CV4</td><td style="text-align: left">Select CV input for curve recording.</td></tr>
             <tr><td style="text-align: left">Min</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Minimum output voltage percentage for the curve track.</td></tr>
             <tr><td style="text-align: left">Max</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Maximum output voltage percentage for the curve track.</td></tr>
@@ -895,6 +914,8 @@
           <tbody>
             <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
             <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track; fixed to Aligned in practice.</td></tr>
+            <tr><td style="text-align: left">Fill Mode</td><td style="text-align: left">None, Gates, Next Pattern, Condition</td><td style="text-align: left">Determines what the track does when fill is engaged.</td></tr>
+            <tr><td style="text-align: left">Fill Muted</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Determines whether fills can still affect the track while it is muted.</td></tr>
             <tr><td style="text-align: left">CV Update Mode</td><td style="text-align: left">Gate, Always</td><td style="text-align: left">Updates CV only on active gates or on every step.</td></tr>
             <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Duration of pitch slides for steps with Slide enabled.</td></tr>
             <tr><td style="text-align: left">Octave</td><td style="text-align: left">-10 - +10</td><td style="text-align: left">Octave transposition amount.</td></tr>
@@ -919,6 +940,7 @@
             <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
             <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track.</td></tr>
             <tr><td style="text-align: left">Fill Mode</td><td style="text-align: left">None, Gates, Next Pattern, Condition</td><td style="text-align: left">Determines what the track does when fill is engaged.</td></tr>
+            <tr><td style="text-align: left">Fill Muted</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Determines whether fills can still affect the track while it is muted.</td></tr>
             <tr><td style="text-align: left">CV Update Mode</td><td style="text-align: left">Gate, Always</td><td style="text-align: left">Updates CV only on active gates or on every step.</td></tr>
             <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Duration of pitch slides for steps with Slide enabled.</td></tr>
             <tr><td style="text-align: left">Octave</td><td style="text-align: left">-10 - +10</td><td style="text-align: left">Octave transposition amount.</td></tr>
@@ -928,7 +950,7 @@
             <tr><td style="text-align: left">Retrig P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Retrigger probability bias added to the sequence.</td></tr>
             <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Length bias added to the sequence.</td></tr>
             <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Note variation probability bias added to the sequence.</td></tr>
-            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes.</td></tr>
+            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes. This is a per-track setting and is saved with the project.</td></tr>
             <tr><td style="text-align: left">Input Track 1</td><td style="text-align: left">Not selectable</td><td style="text-align: left">Shows the related Note track as input 1.</td></tr>
             <tr><td style="text-align: left">Input Track 2</td><td style="text-align: left">Not selectable</td><td style="text-align: left">Shows the related Note track as input 2.</td></tr>
             <tr><td style="text-align: left">Detailed View</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Show a detailed view of the logic track including the two input tracks.</td></tr>
@@ -950,6 +972,7 @@
             <tr><td style="text-align: left">Track Name</td><td style="text-align: left">-</td><td style="text-align: left">Press <code>ENCODER</code> to edit the track name.</td></tr>
             <tr><td style="text-align: left">Play Mode</td><td style="text-align: left"><a href="#appendix-play-modes">Play Modes</a></td><td style="text-align: left">Mode used for playing sequences in this track; fixed to Aligned in practice.</td></tr>
             <tr><td style="text-align: left">Fill Mode</td><td style="text-align: left">None, Gates, Next Pattern, Condition</td><td style="text-align: left">Determines what the track does when fill is engaged.</td></tr>
+            <tr><td style="text-align: left">Fill Muted</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Determines whether fills can still affect the track while it is muted.</td></tr>
             <tr><td style="text-align: left">CV Update Mode</td><td style="text-align: left">Gate, Always</td><td style="text-align: left">Updates CV only on active gates or on every step.</td></tr>
             <tr><td style="text-align: left">Slide Time</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Duration of pitch slides for steps with Slide enabled.</td></tr>
             <tr><td style="text-align: left">Octave</td><td style="text-align: left">-10 - +10</td><td style="text-align: left">Octave transposition amount.</td></tr>
@@ -958,7 +981,7 @@
             <tr><td style="text-align: left">Retrig P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Retrigger probability bias added to the sequence.</td></tr>
             <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Length bias added to the sequence.</td></tr>
             <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">-100% - +100%</td><td style="text-align: left">Note variation probability bias added to the sequence.</td></tr>
-            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes.</td></tr>
+            <tr><td style="text-align: left">Pattern Follow</td><td style="text-align: left">Off, Display, Launchpad, Display+LP</td><td style="text-align: left">Enable pattern follow; use <code>PAGE</code> + <code>S16</code> to cycle modes. This is a per-track setting and is saved with the project.</td></tr>
             <tr><td style="text-align: left">Mode</td><td style="text-align: left"><a href="#appendix-arpeggiator-modes">Arpeggiator Modes</a></td><td style="text-align: left">Arpeggiator mode.</td></tr>
             <tr><td style="text-align: left">Hold</td><td style="text-align: left">No, Yes</td><td style="text-align: left">Hold chords in the arpeggiator after keys are released.</td></tr>
             <tr><td style="text-align: left">Octaves</td><td style="text-align: left">Off, Up 1-5, Up Down 1-5, Down 1-5, Down Up 1-5</td><td style="text-align: left">Octave order and range for the arpeggiator.</td></tr>
@@ -1130,7 +1153,7 @@
           On Note-like step views, the inner box of each step is used as a compact visual summary: <em>Gate Offset</em> shifts the box left or right inside the step and <em>Length</em> changes its width. A full-width box still corresponds to <code>100%</code> length, as in earlier firmware versions.
         </p>
         <p>
-          In the current Vinx line, additional compact cues are layered onto this view: a small condition mark appears next to the step number when a step condition is active, retrigger marks are shown directly inside the step box when other layers are being viewed, and slide is hinted with a small tie between adjacent step boxes. The result is still shorthand rather than a literal event diagram, but it gives a denser at-a-glance overview than the earlier striped retrigger-only representation.
+          Additional compact cues are layered onto this view: a small condition mark appears next to the step number when a step condition is active, retrigger marks are shown directly inside the step box when other layers are being viewed, and slide is hinted with a small tie between adjacent step boxes. The result is still shorthand rather than a literal event diagram, but it gives a denser at-a-glance overview than the earlier striped retrigger-only representation.
         </p>
         <p>
           In a Logic track, if detailed view is enabled, a visual representation of the input tracks is visible for each step: a dot means input track 1 has gate on, an empty square means input track 2 has gate on, a combination of dot and empty square means both input tracks have gate on and finally the full square means logic gate is on. A visual feedback is shown when the logic gate output is on. Use <code>SHIFT</code> to show the status of the inputs instead of the sequence gates.
@@ -1176,6 +1199,9 @@
             <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Gate, Gate Offset, Gate Probability, Gate Length</td></tr>
           </tbody>
         </table>
+        <p>
+          On the current Vinx line, the Curve track gate group is no longer just an on/off trigger lane: it now includes per-step <em>Gate Offset</em> and <em>Gate Length</em>, so each curve step can shift its trigger earlier or later and define its own gate duration.
+        </p>
         <p>The following layers are available in Stochastic mode:</p>
         <table>
           <thead>
@@ -1338,14 +1364,25 @@
           You can access generators in each sequence layer to generate their values through the context menu with <code>SHIFT</code> + <code>PAGE</code>.
         </p>
         <p>
-          In the Vinx fork, generator work is explicitly preview-oriented. Most generators still create a non-destructive preview immediately on entry, and the page opens on the current 16-step bank while still showing the full 64-step sequence overview where applicable. <em>Chaos</em> is now the exception: it enters on <code>ORIGINAL</code> and waits for an explicit <code>CHAOS</code> press before revealing the first generated result or enabling <code>A/B</code> preview compare.
+          In the Vinx fork, generator work is explicitly preview-oriented. Most generators create a non-destructive preview immediately on entry, and the page opens on the current 16-step bank while still showing the full 64-step sequence overview where applicable. <em>Chaos</em> is the exception: it enters on <code>ORIGINAL</code> and waits for an explicit <code>CHAOS</code> press before revealing the first generated result or enabling <code>A/B</code> compare.
         </p>
         <p>
           The general workflow is: open the generator, adjust parameters against the live preview, use <code>A/B</code> to compare preview and original material, then use <code>Cancel</code> to discard or <code>Apply</code> to write the result into the sequence.
         </p>
         <p>
-          The current line also adds an experimental Note-track generator called <em>Chaos</em>. It keeps the same non-destructive safety model as the other generators, but deliberately uses a rougher multi-layer random workflow.
+          The Vinx line also adds an experimental Note-track generator called <em>Chaos</em>. It keeps the same non-destructive safety model as the other generators, but deliberately uses a rougher multi-layer random workflow.
         </p>
+        <h4>How to Think About the Vinx Generators</h4>
+        <p>
+          In practice, these generators are not all trying to solve the same problem. The easiest way to approach them is to treat each one as a different kind of intervention on existing material.
+        </p>
+        <ul>
+          <li><em>Random</em> is the most neutral reshaping tool: good for reworking a single active layer while still blending against the original material.</li>
+          <li><em>Acid</em> is the character generator: it is meant to push Note-track material toward acid-like phrasing, either across a full phrase or only on the active layer.</li>
+          <li><em>Euclidean</em> is the structural rhythm tool: it is the clearest choice when you want an intentional pulse distribution defined by <code>Steps</code>, <code>Beats</code>, and <code>Offset</code>.</li>
+          <li><em>Chaos</em> is the rough exploratory tool: it works across multiple Note-track layers at once and is best treated as a deliberate vandalism pass rather than a harmonically careful generator.</li>
+          <li><em>Init Seq</em> is the reset tool: use it when you want to clear the current generator scope rather than shape it.</li>
+        </ul>
         <table>
           <thead>
             <tr>
@@ -1365,10 +1402,7 @@
           Note: <em>Acid</em> and <em>Chaos</em> appear only on Note tracks. Other track modes keep the smaller generator set appropriate to their data model.
         </p>
         <p>
-          On the current line, the Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Seq</code>.
-        </p>
-        <p>
-          On the current hotfix line, this also restores the expected <code>Init Layer</code> behavior on the step page.
+          The Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Seq</code>. The current firmware also restores the expected <code>Init Layer</code> behavior on the step page.
         </p>
         <h4>Context Menu</h4>
         <p>
@@ -1384,26 +1418,35 @@
           </thead>
           <tbody>
             <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">NEW RAND</td><td style="text-align: left">Pick a new random configuration for the current generator context. In <em>Random</em> this refreshes seed, smooth and range while keeping bias centered. In <em>Acid -&gt; Layer</em> it refreshes seed plus the layer-relevant main parameter without changing variation.</td></tr>
-            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">RESETGEN</td><td style="text-align: left">Restore the generator shaping parameters to their defined defaults and rebuild the preview, without forcing a new reroll state.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">ResetGen</td><td style="text-align: left">Restore the generator shaping parameters to their defined defaults and rebuild the preview, without forcing a new reroll state.</td></tr>
             <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Cancel</td><td style="text-align: left">Discard the preview and return to the original sequence data.</td></tr>
             <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Apply</td><td style="text-align: left">Commit the preview to the selected sequence layer.</td></tr>
             <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Var</td><td style="text-align: left">Displays the current variation amount in seed-driven generators. In <em>Acid -&gt; Layer</em>, <code>F5</code> is also mirrored as a direct <code>NEW RAND</code> shortcut on the main generator page.</td></tr>
           </tbody>
         </table>
         <p>
+          <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em> build their first generated preview immediately on entry. <em>Chaos</em> is different: it enters on <strong>ORIGINAL</strong> and waits for an explicit <code>CHAOS</code> press before producing the first destructive preview.
+        </p>
+        <p>
           On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material. Parameter edits keep updating the hidden preview in the background, while explicit reroll actions such as <code>NEW RAND</code> reveal the new preview immediately.
         </p>
         <p>
-          On the current line, <code>RESETGEN</code> is now intentionally separated from reroll actions: <em>Random</em> resets to <code>Smooth 0</code>, <code>Bias 0</code>, <code>Range 5</code>, <code>Var 100</code>; <em>Acid</em> resets to <code>Density 50</code>, <code>Slide 10</code>, <code>Range 35</code>, <code>Var 100</code>; and <em>Euclidean</em> resets to <code>Steps 16</code>, <code>Beats 1</code>, <code>Offset 0</code>. Rerolling remains an explicit action via <code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>.
+          <code>ResetGen</code> is intentionally separated from reroll actions: <em>Random</em> resets to <code>Smooth 0</code>, <code>Bias 0</code>, <code>Range 5</code>, <code>Var 100</code>; <em>Acid</em> resets to <code>Density 50</code>, <code>Slide 10</code>, <code>Range 35</code>, <code>Var 100</code>; and <em>Euclidean</em> resets to <code>Steps 16</code>, <code>Beats 1</code>, <code>Offset 0</code>. Rerolling remains an explicit action via <code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>.
         </p>
         <p>
           Generator pages and their related modal menus keep the transport controls active, so <code>PLAY/STOP</code> and <code>TEMPO</code> continue to respond without leaving <code>GEN</code>.
         </p>
         <p>
+          In practical use, the main Vinx generator rule is simple: entering a generator should let you inspect and shape a preview first, while rerolling, resetting, cancelling, and applying remain explicit separate actions instead of being hidden behind ordinary parameter edits.
+        </p>
+        <p>
+          A simple working habit is: enter the generator, shape the preview with the current parameters, use <code>A/B</code> to judge whether the generated result actually beats the source, then either <code>Apply</code> or back out cleanly with <code>Cancel</code>. The generators are meant to support that kind of deliberate use rather than blind destructive iteration.
+        </p>
+        <p>
           Note: <em>Chaos</em> currently does not use this separate generator context menu. Its main actions stay directly on the page itself.
         </p>
         <p>
-          On the current line, <em>Euclidean</em> now uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code> triggers <code>NEW EUCL</code>, and <code>F3</code>, <code>F4</code> and <code>F5</code> control <code>Steps</code>, <code>Beats</code> and <code>Offset</code>. Its context menu keeps only <code>RESETGEN</code>, <code>Cancel</code> and <code>Apply</code>.
+          <em>Euclidean</em> uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code> triggers <code>NEW EUCL</code>, and <code>F3</code>, <code>F4</code> and <code>F5</code> control <code>Steps</code>, <code>Beats</code> and <code>Offset</code>. Its context menu keeps only <code>ResetGen</code>, <code>Cancel</code> and <code>Apply</code>.
         </p>
         <h4>Chaos</h4>
         <p>
@@ -1416,11 +1459,22 @@
           Both <em>Chaos</em> modes now enter on <code>ORIGINAL</code>. Their scope, target mask, and amount defaults are loaded immediately, but no generated result is shown until you explicitly press <code>CHAOS</code>. Before that first reroll, <code>A/B</code> stays on the original view instead of pulling a hidden preview forward.
         </p>
         <p>
+          Once a Chaos preview exists, both <code>Vandalize Sequence</code> and <code>Wreck Pattern</code> show the current seed in the page footer just like the other seed-based generator flows; when you switch back to the untouched source, the footer reads <code>ORIGINAL</code>.
+        </p>
+        <p>
           The generator page uses a 4x4 matrix of direct layer toggles. The available targets are <code>Gate</code>, <code>G Offset</code>, <code>G Prob</code>, <code>Retrig</code>, <code>Length</code>, <code>L Range</code>, <code>L Prob</code>, <code>R Prob</code>, <code>Note</code>, <code>N Slide</code>, <code>N Range</code>, <code>N Prob</code>, <code>N Bypass</code>, and <code>Cond</code>, plus dedicated <code>All On</code> and <code>All Off</code> cells.
         </p>
         <p>
           <code>Vandalize Sequence</code> is selection-aware like the other generators: if a persistent step selection exists it is used as the target area first; otherwise the generator falls back to the current sequence <em>First Step</em> / <em>Last Step</em> range. <code>Wreck Pattern</code> keeps the same non-destructive preview model, but expands the target to all Note tracks in the current pattern. With an explicit step selection, that selection is shared across the affected Note tracks; without one, each Note track uses its own <em>First Step</em> / <em>Last Step</em> window.
         </p>
+        <h5>Quick Workflow</h5>
+        <ol>
+          <li>Choose whether you want to damage only the active Note sequence or the whole current pattern across Note tracks.</li>
+          <li>Set the target mask first, because the 4x4 matrix defines what kinds of data Chaos is even allowed to touch.</li>
+          <li>Adjust <code>Amount</code> before rerolling repeatedly; this is usually more important than repeatedly hitting <code>CHAOS</code> at a fixed intensity.</li>
+          <li>Use <code>A/B</code> aggressively. <em>Chaos</em> is designed to be exploratory, so the compare step matters more here than with the more controlled generators.</li>
+          <li>Only <code>Apply</code> when the damage is genuinely better than the source. If you are unsure, <code>Cancel</code> and come back later.</li>
+        </ol>
         <table>
           <thead>
             <tr>
@@ -1445,13 +1499,13 @@
           <code>System -&gt; Chaos Defaults</code> stores separate target masks for <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code>, each edited through the same 4x4 grid. These defaults are loaded automatically when you enter <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.
         </p>
         <p>
-          On the current line, repeated re-entry into <code>Chaos</code>, including <code>Vandalize Sequence</code> and <code>Wreck Pattern</code>, now tears down the previous generator and builder explicitly before constructing the next one, avoiding stale-state instability on hardware.
+          Re-entering <code>Chaos</code>, including <code>Vandalize Sequence</code> and <code>Wreck Pattern</code>, now tears down the previous generator and builder explicitly before constructing the next one, avoiding stale-state instability on hardware.
         </p>
         <p>
-          On the current line, <code>Vandalize Sequence</code> also keeps its backup state local to the active Note sequence instead of carrying every Note track in the current pattern, reducing unnecessary memory pressure in the single-sequence path.
+          <code>Vandalize Sequence</code> keeps its backup state local to the active Note sequence instead of carrying every Note track in the current pattern, reducing unnecessary memory pressure in the single-sequence path.
         </p>
         <p>
-          On the current line, <code>Wreck Pattern</code> also keeps only the original target-step backups and regenerates its preview in place, reducing runtime memory pressure while preserving the same <code>A/B</code>, <code>Cancel</code> and <code>Apply</code> workflow.
+          <code>Wreck Pattern</code> keeps only the original target-step backups and regenerates its preview in place, reducing runtime memory pressure while preserving the same <code>A/B</code>, <code>Cancel</code> and <code>Apply</code> workflow.
         </p>
         <p>
           Entering <code>Wreck Pattern</code> now opens a dedicated warning popup before the generator page. <code>F1</code> jumps to the <code>PROJ PAGE</code>, <code>F3</code> confirms <code>WRECK</code>, and <code>F5</code> cancels.
@@ -1478,6 +1532,9 @@
         <p>
           Euclidean uses <code>NEW RAND</code> wording in the context menu, but unlike the seed-driven generators it simply randomizes <em>Steps</em>, <em>Beats</em> and <em>Offset</em>.
         </p>
+        <p>
+          In the Vinx line, <em>Euclidean</em> behaves much more like the other modern generators than it did in older upstream documentation: it supports <code>A/B</code> comparison directly on the main page, keeps <code>Beats &lt;= Steps</code> enforced even while randomizing, and is best used as a deliberate rhythm-construction tool rather than as a blind randomizer.
+        </p>
         <h4>Random</h4>
         <p>The following options are available:</p>
         <table>
@@ -1501,6 +1558,9 @@
         </p>
         <p>
           On entry, <em>Random</em> immediately creates a preview. The footer shows <code>A/B</code> plus the editable parameters, and the LCD preview shows the full sequence with the current 16-step bank framed. On Note tracks, the preview is layer-aware and uses different visual styles for gate-like, note-like, slide-like and length-like layers so that the preview better matches the active destination layer.
+        </p>
+        <p>
+          The easiest way to use <em>Random</em> in the Vinx fork is to treat it as a layer shaper rather than a total replacement generator: <code>Seed</code> chooses the base state, <code>Smooth</code> and <code>Bias</code> change the character of that state, <code>Range</code> limits how far it can push, and <code>Variation</code> decides how strongly the result departs from the original layer.
         </p>
         <h4>Acid</h4>
         <p>
@@ -1540,6 +1600,9 @@
         </p>
         <p>
           Note: if steps are selected, <em>Acid</em> works on the selection only. If no steps are selected, it works on the current pattern length defined by the sequence <em>First Step</em> and <em>Last Step</em>. <em>Phrase</em> is intended to generate a coordinated result across <code>Gate</code>, <code>Note</code> and <code>Slide</code>, while <em>Layer</em> keeps the action constrained to the active layer.
+        </p>
+        <p>
+          The practical distinction is simple: use <em>Phrase</em> when you want a whole acid idea to appear at once, and use <em>Layer</em> when the existing phrase is already good but one aspect of it, such as gates, note motion, or slides, needs to be pushed harder.
         </p>
 
         <h3 id="pages-song">Song</h3>
@@ -1633,6 +1696,9 @@
         <p>
           Pattern changes can be scheduled either by latching or by sync. The page also lets you select which pattern is currently being edited independently of the one currently playing.
         </p>
+        <p>
+          The easiest way to think about the <em>Pattern</em> page is as a three-part live tool: it launches patterns, chooses the current edit target, and manages the snapshot safety layer for on-the-fly pattern surgery.
+        </p>
         <table>
           <thead>
             <tr>
@@ -1650,6 +1716,13 @@
         </table>
         <p>
           Note: the currently playing Pattern can be selected as a routing target on the <a href="#pages-routing">Routing</a> page.
+        </p>
+        <h4>Live Workflow</h4>
+        <p>
+          For direct performance use, the logic is simple: use immediate launches when you want a hard cut, use <code>F1</code> latching when you want to prepare multiple pattern changes and fire them together, and use <code>F2</code> sync when you want the change to land cleanly on the next musical boundary.
+        </p>
+        <p>
+          Snapshots are the safety net in that workflow. They let you temporarily tear into the currently playing material, then either commit the result back or abandon it without having touched the original pattern set.
         </p>
         <h4>Editing Pattern</h4>
         <p>
@@ -1681,6 +1754,9 @@
         <p>
           The page visualizes the mute state of every track, the currently playing steps and a percentage bar representing fill state and fill amount.
         </p>
+        <p>
+          If the <em>Pattern</em> page is where structure changes are prepared, the <em>Performer</em> page is where pressure and contrast are applied in real time. It is the faster page for mutes, fills, and crowd-pleasing tension control during playback.
+        </p>
         <table>
           <thead>
             <tr>
@@ -1699,6 +1775,13 @@
         </table>
         <p>
           Note: <em>Mute</em>, <em>Fill</em> and <em>Fill Amount</em> can be selected as routing targets on the <a href="#pages-routing">Routing</a> page.
+        </p>
+        <h4>Live Workflow</h4>
+        <p>
+          A practical performance approach is: use direct mutes for immediate subtraction, use latched actions when you want several state changes to land together, and use synced actions when the musical grid matters more than raw immediacy.
+        </p>
+        <p>
+          Fills are especially powerful when treated as temporary energy controls rather than binary switches. Short held fills create tension; latched fills can temporarily reframe a whole section; and per-track fill amounts let that tension be dialed rather than simply turned on or off.
         </p>
         <h4>Tempo</h4>
         <p>
@@ -1728,6 +1811,9 @@
           There can be up to 16 routes. Use <code>F1</code> and <code>F2</code>, or hold <code>SHIFT</code> and rotate the encoder, to select the route being edited.
         </p>
         <p>
+          The simplest way to think about a route is: take one external signal, decide what parameter it should move, then define how strongly and across what range that movement should happen. In live use, routing is less about deep modulation theory than about giving hands, pedals, CV, or MIDI controllers access to the few things that matter most in performance.
+        </p>
+        <p>
           Note: most routable parameters can also be reached from their home pages via context menus on the <a href="#pages-project">Project</a> and <a href="#pages-track">Track</a> pages.
         </p>
         <table>
@@ -1749,6 +1835,13 @@
         </table>
         <p>
           Press <code>F5</code> to commit routing changes. Press <code>F3</code> to reset the selected route to its default state. Press <code>F4</code> to enter MIDI learn mode and assign a MIDI source directly from the controller.
+        </p>
+        <h4>Practical Use</h4>
+        <p>
+          Good first routing targets are usually the ones that are already musically meaningful on their own: tempo, swing, fill amount, mute/fill state, track transposition, probability biases, or sequence boundaries. A route becomes useful when it gives you fast external access to a parameter you would otherwise keep reaching for during performance.
+        </p>
+        <p>
+          The commit-based behavior matters here: editing a route does not immediately destabilize the running patch. You can set up the source, target, and range first, then commit when the mapping actually looks right.
         </p>
         <p>
           Note: routed parameters are marked with an arrow when displayed on other pages.
@@ -1808,7 +1901,7 @@
           Note: the items defined in a user scale represent a single octave of the scale. The remaining octaves are inferred by repetition.
         </p>
         <p>
-          In the current Vinx firmware, MIDI note capture on Note, Stochastic and Arpeggiator tracks follows the octave span of the active scale, so voltage-mode user scales are interpreted according to their own octave range instead of assuming fixed <code>1V/oct</code>.
+          MIDI note capture on Note, Stochastic and Arpeggiator tracks follows the octave span of the active scale, so voltage-mode user scales are interpreted according to their own octave range instead of assuming fixed <code>1V/oct</code>. This is intended to make arbitrary voltage tables usable beyond plain Note sequencing as well, although additional real-hardware validation is still useful for these workflows.
         </p>
         <h4>Context Menu</h4>
         <table>
@@ -1873,7 +1966,7 @@
             <tr><td style="text-align: left">Mode</td><td style="text-align: left">Auto, Master or Slave.</td></tr>
             <tr><td style="text-align: left">Shift Mode</td><td style="text-align: left">Determines how <code>SHIFT</code> + <code>PLAY</code> behaves.</td></tr>
             <tr><td style="text-align: left">Input Divisor</td><td style="text-align: left">Clock interpretation for incoming pulses.</td></tr>
-            <tr><td style="text-align: left">Input Mode</td><td style="text-align: left"><code>Reset Gate</code>, <code>Reset Pulse</code>, <code>Run</code>, or <code>Start/Stop</code> control logic for the reset jack while slaving to external clock.</td></tr>
+            <tr><td style="text-align: left">Input Mode</td><td style="text-align: left"><code>Reset Gate</code>, <code>Reset Pulse</code>, <code>Run</code>, or <code>Start/Stop</code> control logic for the reset jack while slaving to external clock. <code>Reset Pulse</code> reacts only to the rising edge of the reset input, while <code>Reset Gate</code> keeps the older gate-style reset/run behavior.</td></tr>
             <tr><td style="text-align: left">Output Divisor</td><td style="text-align: left">Outgoing clock pulse timing.</td></tr>
             <tr><td style="text-align: left">Output Swing</td><td style="text-align: left">Applies project swing to analog clock out.</td></tr>
             <tr><td style="text-align: left">Output Pulse</td><td style="text-align: left">Pulse width in milliseconds. In the Vinx fork the default is <code>10ms</code>.</td></tr>
@@ -1884,15 +1977,15 @@
         <p>
           Note: to set up a 24 PPQN input or output clock resolution, set the divisor to <code>2</code>. In this context, the divisor is applied to 48 PPQN rather than the internal 192 PPQN resolution.
         </p>
+        <p>
+          In practical terms, <code>Reset Pulse</code> is the safer choice when you want incoming reset pulses to resync the slave clock without using the falling edge as an implicit start command.
+        </p>
         <h3 id="pages-system">System</h3>
         <p>
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
         <p>
-          On the current line, entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>.
-        </p>
-        <p>
-          The startup page on the current line also reports the <code>v0.3.2-vinx.1.4.9</code> version string correctly.
+          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page also reports the <code>v0.3.2-vinx.1.5.0</code> version string correctly.
         </p>
         <table>
           <thead>
@@ -1919,7 +2012,7 @@
           This persistent save writes the current machine settings state to flash memory, including any changes made in <code>Chaos Defaults</code>, so those values are restored again after reboot.
         </p>
         <p>
-          When leaving the <em>User Settings</em> tab after changing any user setting, including <code>Chaos Defaults</code>, the firmware now asks whether you want to save. This prompt appears both when moving to another <em>System</em> tab and when leaving the <em>System</em> page entirely. Choosing <code>NO</code> skips the save and continues the navigation.
+          When leaving the <em>User Settings</em> tab after changing any user setting, including <code>Chaos Defaults</code>, the firmware now asks whether you want to save. This prompt appears both when moving to another <em>System</em> tab and when leaving the <em>System</em> page entirely. Choosing <code>NO</code> skips the save and continues the navigation. This automatic prompt applies to <em>User Settings</em>, not to <em>Calibration</em>.
         </p>
         <h4>Calibration</h4>
         <p>
@@ -1954,13 +2047,13 @@
           </thead>
           <tbody>
             <tr><td style="text-align: left">Brightness</td><td style="text-align: left">0 - 10</td><td style="text-align: left">Reduce overall display brightness. Lower brightness may reduce noise.</td></tr>
-            <tr><td style="text-align: left">Screensaver</td><td style="text-align: left">Off, 3s, 5s, 10s, 30s, 1m, 5m, 10m, 15m, 30m</td><td style="text-align: left">Blank the display after a period of inactivity. In the current Vinx line the default is <code>15m</code>.</td></tr>
-            <tr><td style="text-align: left">Wake Mode</td><td style="text-align: left">Always, Required</td><td style="text-align: left">Determine when the display wakes from the screensaver. In the current Vinx line the default is <code>required</code>, so the first gesture after wake restores the display without also triggering the underlying action.</td></tr>
+            <tr><td style="text-align: left">Screensaver</td><td style="text-align: left">Off, 3s, 5s, 10s, 30s, 1m, 5m, 10m, 15m, 30m</td><td style="text-align: left">Blank the display after a period of inactivity. The default is <code>15m</code>.</td></tr>
+            <tr><td style="text-align: left">Wake Mode</td><td style="text-align: left">Always, Required</td><td style="text-align: left">Determine when the display wakes from the screensaver. The default is <code>required</code>, so the first panel gesture after wake restores the display without also triggering the underlying action. Launchpad input also wakes the display.</td></tr>
             <tr><td style="text-align: left">Dim Sequence</td><td style="text-align: left">off, dim, dim+</td><td style="text-align: left">Reduce sequence-page brightness using three display-intensity levels. In the Vinx fork the default is <code>dim</code>, mainly to help tame display noise leaking into the audio band.</td></tr>
-            <tr><td style="text-align: left">LP Style</td><td style="text-align: left">Classic, Blue</td><td style="text-align: left">Select Launchpad color scheme. In the current Vinx line the default is <code>Blue</code>.</td></tr>
+            <tr><td style="text-align: left">LP Style</td><td style="text-align: left">Classic, Blue</td><td style="text-align: left">Select Launchpad color scheme. The default is <code>Blue</code>. This is a machine setting stored in flash when saved from <em>System</em>.</td></tr>
             <tr><td style="text-align: left">Pattern Change</td><td style="text-align: left">Immediate, Sync</td><td style="text-align: left">Swap the default pattern launch behavior.</td></tr>
-            <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style. In the current Vinx line the default is <code>Classic</code>.</td></tr>
-            <tr><td style="text-align: left">Menu Wrap</td><td style="text-align: left">Off, On</td><td style="text-align: left">Choose whether list-based menus wrap cyclically from last to first and from first to last. In the current Vinx line the default is <code>on</code>.</td></tr>
+            <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style. The default is <code>Circuit</code>. This is a machine setting stored in flash when saved from <em>System</em>.</td></tr>
+            <tr><td style="text-align: left">Menu Wrap</td><td style="text-align: left">Off, On</td><td style="text-align: left">Choose whether list-based menus and selector pages based on lists wrap cyclically from last to first and from first to last. The default is <code>on</code>. This does not turn ordinary inline value selectors into cyclic controls.</td></tr>
             <tr><td style="text-align: left">Chaos Defaults</td><td style="text-align: left">open</td><td style="text-align: left">Open the dedicated <em>Chaos</em> defaults page, where <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code> are edited with the same 4x4 target grid used by the generator.</td></tr>
           </tbody>
         </table>
@@ -1969,6 +2062,13 @@
         </p>
         <p>
           Leaving the <em>User Settings</em> tab after changing them triggers the same save prompt used for the rest of the machine settings.
+        </p>
+        <h4>Project vs Machine Settings</h4>
+        <p>
+          This distinction matters a lot in practice. Track parameters, sequence data, user scales, and per-track follow behavior belong to the current project. By contrast, entries under <em>System -&gt; User Settings</em> are machine-level values stored in flash, so they survive reboot once saved.
+        </p>
+        <p>
+          This means settings such as <code>LP Style</code>, <code>LP Note Style</code>, <code>Menu Wrap</code>, screensaver behavior, and <code>Chaos Defaults</code> should be thought of as part of the instrument configuration itself, not as part of a single song or project file.
         </p>
       </section>
 
@@ -1985,6 +2085,9 @@
         <p>
           Recording mode is selected on the Project page. Recording itself is armed or disarmed with <code>PAGE</code> + <code>PLAY</code>.
         </p>
+        <p>
+          The important split is this: the <em>Project</em> page decides how incoming notes are monitored and recorded globally, while the selected track mode and sequence settings decide what those notes mean once they are interpreted or written.
+        </p>
         <h4>Live Recording</h4>
         <p>
           <em>Overdub</em> and <em>Overwrite</em> enable live recording. In Overdub mode, played notes are added to the existing sequence, potentially replacing existing steps. In Overwrite mode, steps are cleared as the play head advances and replaced by incoming notes. The sequence length is not changed automatically, so it must be set in advance.
@@ -1998,6 +2101,56 @@
         <h4>Step Recording</h4>
         <p>
           In Step Record mode, each played note fills the next step in the active Note sequence. Slides can be recorded by moving pitch bend while holding a note, and ties can be recorded by moving the modulation control while holding a note. Recording starts at the first step and wraps around at the last step.
+        </p>
+        <h4>Project Input Settings</h4>
+        <p>
+          <code>Monitor Mode</code> controls whether incoming notes are heard immediately, only while stopped, or not monitored at all. <code>Record Mode</code> decides whether incoming notes are layered on top of existing steps, overwrite what the playhead reaches, or advance one step at a time in step-record mode. <code>MIDI Input</code> selects whether the project listens to DIN MIDI, USB MIDI, both, or neither for monitoring and recording.
+        </p>
+        <p>
+          So if live input feels wrong, start on the <em>Project</em> page first; if the musical result feels wrong, then inspect the current track mode, scale, root note, and sequence context.
+        </p>
+        <h4>Scales and Incoming Notes</h4>
+        <p>
+          On Note, Stochastic, and Arpeggiator tracks, incoming note data is not treated as raw chromatic pitch alone. It is interpreted through the active scale and root note, because the sequencer fundamentally stores note indexes into voltage tables rather than fixed semitone values.
+        </p>
+        <p>
+          This also applies more correctly to user scales in <code>Voltage Mode</code>: MIDI note capture follows the octave span of the active scale instead of assuming fixed <code>1V/oct</code>. This matters when the scale is being used for Buchla-style or other non-standard voltage tables.
+        </p>
+        <h4>MIDI/CV Use</h4>
+        <p>
+          A <em>MIDI/CV</em> track is not the same thing as recording notes into a Note sequence. In <em>MIDI/CV</em> mode, the track behaves as a live converter from incoming MIDI notes to CV/gate outputs, optionally with voice allocation, note priority, split ranges, and its own arpeggiator behavior.
+        </p>
+        <p>
+          This makes <em>MIDI/CV</em> useful for external sequencing or live keyboard playing even when you are not trying to write notes into a PER|FORMER sequence at all.
+        </p>
+        <h4>Arpeggiator and Stochastic Input Notes</h4>
+        <p>
+          The Arpeggiator track can work both from programmed step content and from live input notes. Stochastic and Arpeggiator note entry also inherit the active scale logic, which is why scale and root-note settings matter even outside plain Note sequencing.
+        </p>
+        <p>
+          For these less standard note-entry workflows, especially with user scales in <code>Voltage Mode</code>, the current firmware is intended to behave correctly, but additional real-hardware validation is still useful.
+        </p>
+
+        <h3 id="appendix-clock-input-modes">Clock Input Modes</h3>
+        <p>
+          When the sequencer is slaved to an external clock, <code>Input Mode</code> defines how the reset jack is interpreted. This matters more here than in older upstream documentation, because <code>Reset Gate</code> and <code>Reset Pulse</code> are intentionally separate behaviors.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Mode</th>
+              <th style="text-align: left">Practical meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>Reset Gate</code></td><td style="text-align: left">Best for older gate-style reset/run signals where the reset line may remain high rather than arriving as a short pulse.</td></tr>
+            <tr><td style="text-align: left"><code>Reset Pulse</code></td><td style="text-align: left">Best for short reset pulses when you want the rising edge to resync the slave clock without using the falling edge as an implicit start command.</td></tr>
+            <tr><td style="text-align: left"><code>Run</code></td><td style="text-align: left">Use when the external source provides a dedicated run-state signal rather than distinct reset pulses.</td></tr>
+            <tr><td style="text-align: left"><code>Start/Stop</code></td><td style="text-align: left">Use when the external source behaves more like a transport command source, explicitly starting and stopping playback.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          If you are unsure, the practical choice is usually between <code>Reset Gate</code> and <code>Reset Pulse</code>. If the source emits clean reset pulses, prefer <code>Reset Pulse</code>. If the source behaves more like a held reset/run gate, <code>Reset Gate</code> is usually the safer match.
         </p>
 
         <h3 id="appendix-divisors">Divisors</h3>
@@ -2293,6 +2446,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           This section is now being reviewed directly against the current Vinx fork implementation. The core behaviors below have already been realigned, but Launchpad coverage may still receive another dedicated cleanup pass later.
         </p>
         <p>
+          In practice, the currently rewritten Launchpad workflow in this manual has been tested primarily on <code>Launchpad Mini MK3</code>. Other supported Launchpad models should still work, but broader re-validation across devices remains useful.
+        </p>
+        <p>
           The following Launchpad controllers have been tested and are working:
         </p>
         <ul>
@@ -2316,12 +2472,47 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         <p>
           For a faster local overview, see also the <a href="../cheatsheet/index.html">Launchpad Cheat Sheet</a>.
         </p>
+        <div class="cheatsheet-reference-actions">
+          <a
+            class="cheatsheet-reference-detach"
+            href="../doc/launchpad-cheat-sheet-vinx-scorza-lp-only.svg"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Open LP Reference SVG</a>
+          <a
+            class="cheatsheet-reference-detach"
+            href="../cheatsheet/index.html"
+          >Open LP Cheatsheet</a>
+        </div>
+        <div class="embed-frame">
+          <object
+            data="../doc/launchpad-cheat-sheet-vinx-scorza-lp-only.svg"
+            type="image/svg+xml"
+            class="svg-embed"
+          >
+            <p>
+              The Launchpad reference SVG could not be displayed here.
+              <a href="../doc/launchpad-cheat-sheet-vinx-scorza-lp-only.svg" target="_blank" rel="noopener noreferrer">Open the LP reference SVG</a>
+              or
+              <a href="../cheatsheet/index.html">open the LP Cheatsheet page</a>.
+            </p>
+          </object>
+        </div>
+        <p style="margin-top: 18px;">
+          Use the embedded reference as the visual map of the device, then use the <a href="../cheatsheet/index.html">LP Cheatsheet</a> for the full per-mode function tables.
+        </p>
         <p>
-          In this manual, Launchpad controls are named as in the local cheat sheet: <code>TOP1..8</code> for the top row, <code>TRK1..8</code> for the scene / track side buttons, and <code>GRID</code> for the 8x8 pad matrix. When a bare number is used in a Launchpad shortcut, it refers to a pad on the <code>GRID</code>.
+          In this manual, Launchpad controls are named as in the local cheat sheet: <code>TOP 1..8</code> for the top row, <code>TRK 1..8</code> for the scene / track side buttons, and <code>GRID</code> for the 8x8 pad matrix. When a bare number is used in a Launchpad shortcut, it refers to a pad on the <code>GRID</code>.
+        </p>
+        <p>
+          In the Vinx fork, Launchpad is best thought of as a dedicated performance surface for the pages that really support it well: <em>Sequence</em>, <em>Pattern</em>, and <em>Performer</em>. It is not meant to replace the whole front panel or every system/menu interaction.
+        </p>
+        <p>
+          The machine-level settings <code>LP Style</code> and <code>LP Note Style</code> are part of this workflow. <code>LP Style</code> changes the controller color language, while <code>LP Note Style</code> changes how note-oriented editing is presented on compatible note editors.
         </p>
         <h4>Global Functions</h4>
         <p>
-          <code>TOP8</code> acts as a shift button and can be pressed in combination with other buttons to access secondary functions. The following functions are always available:
+          <code>TOP 8</code> acts as the main global modifier.
         </p>
         <table>
           <thead>
@@ -2331,14 +2522,14 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>TOP8</code> + <code>TOP7</code></td><td style="text-align: left">Start and stop the sequencer.</td></tr>
-            <tr><td style="text-align: left"><code>TOP8</code> + <code>TOP1</code></td><td style="text-align: left">Switch to sequence mode.</td></tr>
-            <tr><td style="text-align: left"><code>TOP8</code> + <code>TOP2</code></td><td style="text-align: left">Switch to pattern mode.</td></tr>
-            <tr><td style="text-align: left"><code>TOP8</code> + <code>TOP3</code></td><td style="text-align: left">Switch to performance mode.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 8</code></td><td style="text-align: left">SHIFT.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 8</code> + <code>TOP 1</code> - <code>TOP 3</code></td><td style="text-align: left">Enter Sequence, Pattern, or Performer mode.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 8</code> + <code>TOP 7</code></td><td style="text-align: left">Toggle PLAY / STOP.</td></tr>
+            <tr><td style="text-align: left"><code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Select track. These buttons are also used with modifiers.</td></tr>
           </tbody>
         </table>
         <p>
-          Because the 8x8 grid of the Launchpad can only represent part of the data to be edited, the grid only acts as a window into a larger virtual 64x64 grid. Hold <code>TOP1</code> to enter navigation mode, where the position of the window can be selected:
+          Because the 8x8 grid can only represent part of the editable data, it acts as a window into a larger virtual 64x64 space. Hold <code>TOP 1</code> to enter navigation mode:
         </p>
         <table>
           <thead>
@@ -2348,17 +2539,17 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>TOP1</code> + <code>TOP2</code></td><td style="text-align: left">Move window left.</td></tr>
-            <tr><td style="text-align: left"><code>TOP1</code> + <code>TOP3</code></td><td style="text-align: left">Move window right.</td></tr>
-            <tr><td style="text-align: left"><code>TOP1</code> + <code>TOP4</code></td><td style="text-align: left">Move window up.</td></tr>
-            <tr><td style="text-align: left"><code>TOP1</code> + <code>TOP5</code></td><td style="text-align: left">Move window down.</td></tr>
-            <tr><td style="text-align: left"><code>TOP1</code> + <code>GRID</code></td><td style="text-align: left">Move window to a specific position.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 1</code> + <code>TOP 2</code></td><td style="text-align: left">Move window left.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 1</code> + <code>TOP 3</code></td><td style="text-align: left">Move window right.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 1</code> + <code>TOP 4</code></td><td style="text-align: left">Move window up.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 1</code> + <code>TOP 5</code></td><td style="text-align: left">Move window down.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 1</code> + <code>GRID</code></td><td style="text-align: left">Move window to a specific position.</td></tr>
           </tbody>
         </table>
         <p>
-          Note: Navigation is available in both sequence and pattern mode.
+          Navigation is available in both Sequence and Pattern mode.
         </p>
-        <p>Both modes also allow controlling track mutes and fills:</p>
+        <p><em>Sequence</em>, <em>Pattern</em>, and <em>Performer</em> all allow controlling track mute, solo, and fill from the Launchpad surface:</p>
         <table>
           <thead>
             <tr>
@@ -2367,12 +2558,14 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>TOP7</code> + <code>GRID</code></td><td style="text-align: left">Toggle selected note to 5V.</td></tr>
-            <tr><td style="text-align: left"><code>TOP7</code> + <code>TRK1</code> - <code>TRK8</code></td><td style="text-align: left">Momentary fill for the selected track while held. Releasing the buttons clears the fill.</td></tr>
-            <tr><td style="text-align: left"><code>TOP8</code> + <code>TRK1</code> - <code>TRK8</code></td><td style="text-align: left">Mute or unmute track immediately.</td></tr>
-            <tr><td style="text-align: left"><code>TOP6</code> + <code>TRK1</code> - <code>TRK8</code></td><td style="text-align: left">Solo or unsolo track.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 7</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Momentary fill for the selected track while held. Releasing <code>TRK</code> or <code>TOP 7</code> clears the fill.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 8</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Mute or unmute track immediately.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 6</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Toggle track solo.</td></tr>
           </tbody>
         </table>
+        <p>
+          The <code>TOP 7</code> gesture is not a general global shortcut. In the current Vinx implementation it is used contextually on compatible Note editors and on Note-track rows in Performer Overview. On Note Gate pages it applies to the visible grid; on circuit-style Note pages it applies only to pads <code>1..16</code>, where it switches between the scale base note and the same note at octave <code>+5</code>.
+        </p>
         <p>
           Note: synced or latched mute launching is available from the panel <a href="#pages-performer">Performer</a> page, but not from the Launchpad surface in the current Vinx implementation.
         </p>
@@ -2388,65 +2581,122 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>TRK1</code> - <code>TRK8</code></td><td style="text-align: left">Select active track.</td></tr>
-            <tr><td style="text-align: left"><code>TOP2</code> + <code>GRID</code></td><td style="text-align: left">Select active layer.</td></tr>
-            <tr><td style="text-align: left"><code>TOP3</code> + <code>GRID</code></td><td style="text-align: left">Select first step.</td></tr>
-            <tr><td style="text-align: left"><code>TOP4</code> + <code>GRID</code></td><td style="text-align: left">Select last step.</td></tr>
-            <tr><td style="text-align: left"><code>TOP5</code> + <code>GRID</code></td><td style="text-align: left">Select run mode.</td></tr>
-            <tr><td style="text-align: left"><code>TOP6</code> + <code>GRID</code></td><td style="text-align: left">Select follow mode for the selected track or, in Stochastic mode, set rest probabilities.</td></tr>
+            <tr><td style="text-align: left"><code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Select active track.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 2</code> + <code>GRID</code></td><td style="text-align: left">Select active layer.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 3</code> + <code>GRID</code></td><td style="text-align: left">Select first step.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 4</code> + <code>GRID</code></td><td style="text-align: left">Select last step.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 5</code> + <code>GRID</code></td><td style="text-align: left">Select run mode; on Arpeggiator tracks this selects arpeggiator mode instead.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 6</code> + <code>GRID</code></td><td style="text-align: left">Select follow mode on Note, Curve and Logic tracks; on Stochastic and Arpeggiator tracks this opens the Rest Probability editor for the editable Rest Prob 2/4/8 ranges.</td></tr>
           </tbody>
         </table>
         <p>
-          The visualization on the grid depends on the selected layer. Binary layers such as <em>Gate</em> and <em>Slide</em> can be visualized directly on the 8x8 grid without the need for navigation. Other layers use navigation to various degrees in order to allow programming the steps. When editing the <em>Note</em> layer, the base note, first note per octave, is visualized to help orientation. When editing a note sequence, double pressing a button can be used to toggle the step gate no matter what layer is edited other than <em>Gate</em> or <em>Slide</em>.
+          The visualization on the grid depends on the selected layer. Binary layers such as <em>Gate</em> and <em>Slide</em> can be visualized directly on the 8x8 grid without the need for navigation. Other layers use navigation to various degrees in order to allow programming the steps. When editing the <em>Note</em> layer, the base note, first note per octave, is visualized to help orientation.
         </p>
         <p>
-          In the current fork, <em>LP Note Style</em> can be set to <em>classic</em> or <em>circuit</em>. The classic editor is the current default, while the circuit-style editor remains available on the Note track note layer, the dedicated stochastic note-probability note editor, and the arpeggiator note layer.
+          In the current fork, <em>LP Note Style</em> can be set to <em>Classic</em> or <em>Circuit</em>. <em>Circuit</em> is the current default and the main Launchpad workflow of the fork: it enables the dedicated note overlays on the Note track note layer, on the Stochastic <em>Note Prob</em> editor, and on the Arpeggiator <em>Note</em> layer. <em>Classic</em> remains available as the compatible non-overlay form, keeping those editors in their normal layer/navigation view.
+        </p>
+        <p>
+          Double-press behavior is not global across all Launchpad editing. In the current Vinx implementation it is used on the Stochastic and Arpeggiator Circuit note editors, where it toggles the selected note state and writes the current octave context back into the step. On the Arpeggiator Circuit note editor this gesture also adds or removes the note from the arpeggiator when MIDI Keyboard mode is OFF.
+        </p>
+        <p>
+          The Launchpad color language should also be read relative to <code>LP Style</code>, not as a fixed universal set of absolute colors. The controller still communicates mute, selection, playback and pattern state, but the visible palette changes with the selected Launchpad style.
+        </p>
+        <p>
+          On the current Vinx line, the Note editor also has an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, if the selected track is <em>Note</em>, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. In it, <code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 8</code> select <em>Random</em>, <em>Acid Phrase</em>, <em>Acid Layer</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, and <em>Init</em>. <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies. Pressing the currently selected generator pad again rerolls it in place: Random, Acid Phrase, and Acid Layer use NEW RAND; Vandalize and Wreck retrigger CHAOS; Euclidean retriggers NEW EUCL; and Init does nothing. <code>TRK 1..8</code> force a Cancel first, then move the mode to the pressed track if it is a <em>Note</em> track; otherwise they just leave the <em>Generators Mode</em> and select that track. <code>TOP 4..8</code> stay neutral when they are not doing an active <em>Generators Mode</em> action. On the machine, <code>PAGE</code>, <code>SHIFT</code>, <code>PREV</code>, and <code>NEXT</code> stay neutral too. Any other machine or LP control outside this mini-mode forces Cancel and exits <em>Generators Mode</em>. Their colors remain relative to <code>LP Style</code>: semantically, <code>TOP 5</code> distinguishes the <code>A</code> / <code>B</code> side of the compare, while <code>TOP 6</code> distinguishes reset-neutral from generated or edited state.
         </p>
         <h4>Pattern Mode</h4>
         <p>
-          Pattern mode allows selecting the currently playing pattern on all tracks. Each column on the <code>GRID</code> represents one track, allowing individual patterns to be launched per track. <code>TRK1</code> to <code>TRK8</code> act as scene launch buttons, allowing the same pattern number to be launched on all tracks simultaneously. This is very similar to how Ableton Live allows launching clips and scenes on a Launchpad. Active patterns are shown as bright green, non-empty patterns are shown in dim colors, yellow for Note tracks and red for Curve tracks.
+          Pattern mode launches patterns per Track or across all Tracks.
         </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Buttons</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>GRID</code></td><td style="text-align: left">Launch Track patterns. Each column is a Track and each row is a Pattern.</td></tr>
+            <tr><td style="text-align: left"><code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Launch the same Pattern number on all Tracks. Launch timing follows the current execute type.</td></tr>
+            <tr><td style="text-align: left">Hold <code>TOP 2</code></td><td style="text-align: left">Use latch execute type. Requested changes are committed when <code>TOP 2</code> is released.</td></tr>
+            <tr><td style="text-align: left">Hold <code>TOP 3</code></td><td style="text-align: left">Toggle Immediate | Sync relative to the current <em>Pattern Change</em> default.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 7</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Momentary track fill while held.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 8</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Mute or unmute track immediately.</td></tr>
+          </tbody>
+        </table>
         <p>
-          In addition, holding <code>TOP2</code> while selecting patterns and scenes allows using latching mode. This means that the patterns are switched at the moment when <code>TOP2</code> is released. Holding <code>TOP3</code> while selecting patterns and scenes toggles between immediate and synced launch behavior relative to the current <em>Pattern Change</em> setting: if the global default is immediate, <code>TOP3</code> makes the launch synced; if the global default is sync, <code>TOP3</code> makes the launch immediate.
-        </p>
-        <p>
-          Requested patterns due to latching or syncing are shown in dim green.
+          Pattern state colors depend on <code>LP Style</code>. Requested patterns due to latching or syncing use their own state cues, distinct from the currently playing pattern.
         </p>
         <h4>Performance Mode</h4>
         <p>
-          Performance mode allows the user to perform quick live edits. There are two modes available, accessible by holding <code>TOP2</code> and selecting one of the first two grid pads on the top row:
+          Performance mode has two layers: <em>Sequence Length</em> and <em>Overview</em>.
         </p>
-        <ul>
-          <li><code>TOP2 + 1</code> - Sequence Length: Holding a step and then pressing another one sets first step and last step of the sequence, resulting in looping the current slice of the sequence until the grid buttons are released.</li>
-          <li><code>TOP2 + 2</code> - Overview Page: each row represents one track and allows gates to be entered quickly. <code>TOP6</code> plus the pad at GRID row 3, column 1 enables follow mode globally, or you can select per-track follow mode for the overview page. All other functions are still available for the selected track.</li>
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Buttons</th>
+              <th style="text-align: left">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>TOP 2 + 1</code></td><td style="text-align: left">Enter <em>Sequence Length</em>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 2 + 2</code></td><td style="text-align: left">Enter <em>Overview</em>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 6</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Toggle track solo.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 7</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Momentary track fill while held.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          <em>Sequence Length</em> temporarily overrides first/last step across all Note, Curve, Stochastic, and Logic tracks. Hold one pad to loop a single step, or hold two pads to define a temporary first/last range. Releasing the held pad(s) restores the original range.
+        </p>
+        <p>
+          In <em>Overview</em>, each row represents one track and the columns map the currently visible steps. <code>TOP 6 + GRID</code> selects per-track follow mode for Note, Curve, and Logic tracks, while pad <code>17</code> toggles Performer follow. On Note-track rows, <code>TOP 7 + GRID</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code>.
+        </p>
         <h4 id="appendix-circuit">Circuit Note Editor</h4>
         <p>The visualization on the grid follows this schema:</p>
         <ul>
-          <li>The first 2 rows represent gates for the current 16-step section.</li>
-          <li>Rows 4 and 5 represent the note keyboard. Available notes in the current scale are highlighted; chromatic notes outside the current scale remain available through bypass-scale entry.</li>
-          <li>Row 7 represents the octave switcher from -4 to +3 octaves.</li>
-          <li>Row 8 provides quick section shortcuts for the four 16-step banks.</li>
-          <li>Pressing a pad in the first 2 rows toggles the corresponding gate.</li>
-          <li>Holding a valid keyboard note and then pressing one of the first-2-row pads writes that note into the step and enables the gate if needed.</li>
+          <li><code>GRID 1..16</code> edits gates for the current 16-step section.</li>
+          <li><code>GRID 25..40</code> is the note keyboard. Available notes in the current scale are highlighted; notes outside the current scale remain available through chromatic bypass-scale entry.</li>
+          <li><code>GRID 49..56</code> selects octave from <code>-4</code> to <code>+3</code>.</li>
+          <li><code>GRID 57..60</code> selects one of the four 16-step banks.</li>
+          <li>Pressing a pad in <code>GRID 1..16</code> toggles the corresponding gate.</li>
+          <li>Holding a valid note pad in <code>GRID 25..40</code> and then pressing a pad in <code>GRID 1..16</code> writes that note into the step and enables the gate if needed.</li>
+          <li><code>TOP 7 + 1..16</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code>.</li>
         </ul>
         <h4 id="appendix-stochastic-circuit">Stochastic Circuit Note Editor</h4>
+        <p>This editor is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Stochastic layer is <code>Note Prob</code>.</p>
         <ul>
-          <li>The first 2 rows represent the probability amount of the currently selected note slot.</li>
-          <li>Row 3 is a quick visual representation of the running stochastic index.</li>
-          <li>Rows 4 and 5 represent the note keyboard, with scale-aware highlighting and chromatic fallback for bypass-scale style selection.</li>
-          <li>In this editor, the last pad on row 4 raises the track octave and the last pad on row 5 lowers it.</li>
-          <li>Row 7 represents the local octave selector from -4 to +3 octaves for note entry.</li>
-          <li>Row 8 exposes the stochastic shortcuts currently implemented in the fork: use loop, clear loop, and reseed.</li>
+          <li><code>GRID 1..16</code> edits <em>Note Variation Probability</em> for the currently selected note target. If that probability is <code>0</code>, the pads remain dark.</li>
+          <li><code>GRID 17..24</code> shows the running stochastic index.</li>
+          <li><code>GRID 25..40</code> selects the note target, with scale-aware highlighting and chromatic fallback for notes outside the current scale.</li>
+          <li>In this editor, <code>32</code> raises the global Track octave by <code>+1</code> and <code>40</code> lowers it by <code>-1</code>.</li>
+          <li><code>GRID 49..56</code> selects local octave from <code>-4</code> to <code>+3</code>.</li>
+          <li><code>GRID 57..59</code> selects the stochastic shortcuts currently implemented in the fork: use loop, clear loop, and reseed.</li>
+          <li>Double-press on a note target toggles the selected note state and writes the current octave back into the stochastic step.</li>
         </ul>
         <h4 id="appendix-arpeggiator-circuit">Arpeggiator Circuit Note Editor</h4>
+        <p>This editor is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Arpeggiator layer is <code>Note</code>.</p>
         <ul>
-          <li>The first 2 rows represent gate probability for the currently selected arpeggiator note slot.</li>
-          <li>Row 3 is a quick visual representation of the running arpeggiator index.</li>
-          <li>Rows 4 and 5 represent the note keyboard. In this editor the last pad on row 4 raises track octave and the last pad on row 5 lowers it.</li>
-          <li>Row 7 represents the local octave selector from -4 to +3 octaves for note entry.</li>
-          <li>Row 8 exposes the arpeggiator shortcuts currently implemented in the fork: keyboard input mode and hold mode.</li>
+          <li><code>GRID 1..16</code> edits gate probability for the currently selected arpeggiator note target. If that probability is <code>0</code>, the pads remain dark.</li>
+          <li><code>GRID 17..24</code> shows the running arpeggiator index.</li>
+          <li><code>GRID 25..40</code> selects the note target. In this editor, <code>32</code> raises the global Track octave by <code>+1</code> and <code>40</code> lowers it by <code>-1</code>.</li>
+          <li><code>GRID 49..56</code> selects local octave from <code>-4</code> to <code>+3</code>.</li>
+          <li><code>GRID 57..58</code> selects the MIDI Keyboard options currently implemented in the fork: keyboard input mode and hold mode. Hold works only when MIDI Keyboard mode is ON.</li>
+          <li>When MIDI Keyboard mode is OFF, double-press on a note target toggles the note state and also adds or removes that note from the arpeggiator. When MIDI Keyboard mode is ON, no double-press action is implemented.</li>
         </ul>
+
+        <h3 id="appendix-desktop-simulator">Desktop Simulator</h3>
+        <p>
+          The Vinx fork is maintained with two simulator contexts: the browser-based <em>Web Simulator</em> published on the site, and the native local <em>Desktop Simulator</em> built from the repository. Only the <em>Desktop Simulator</em> is intended for real MIDI and Launchpad integration.
+        </p>
+        <p>
+          The <em>Desktop Simulator</em> accepts separate DIN and USB MIDI port assignments from the command line, starts with MIDI disabled by default, and exposes lightweight status indicators plus terminal tracing for MIDI and digital outputs. This makes it useful not just as a demo build, but as a real development and testing tool for clock, MIDI, USB, and Launchpad behavior.
+        </p>
+        <p>
+          The best-validated USB Launchpad workflow is currently on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>. Broader validation across other Launchpad models and operating systems is still useful.
+        </p>
+        <p>
+          For concrete build and launch commands, see the <a href="../build-guide/index.html">Build Guide</a> and the <a href="../testdrive/index.html">Web Simulator</a> page.
+        </p>
 
         <h3 id="appendix-usb-midi-devices">USB MIDI Devices</h3>
         <p>
@@ -2539,6 +2789,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
       </section>
         </div>
       </div>
+      <script src="../theme.js"></script>
       <script>
         (function() {
           var header = document.getElementById('header_wrap');

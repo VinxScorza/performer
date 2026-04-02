@@ -43,9 +43,6 @@ void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isTempo()) {
-        if (!key.pageModifier()) {
-            _manager.pages().tempo.show();
-        }
         event.consume();
         return;
     }
@@ -54,9 +51,11 @@ void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
         switch (Function(key.function())) {
         case Function::Cancel:
             closeWithResult(false);
+            event.consume();
             break;
         case Function::OK:
             closeWithResult(true);
+            event.consume();
             break;
         }
         return;
@@ -64,6 +63,7 @@ void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
 
     if (key.is(Key::Encoder)) {
         closeWithResult(true);
+        event.consume();
         return;
     }
 

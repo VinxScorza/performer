@@ -6,7 +6,6 @@
 
 #include "model/LogicSequence.h"
 #include "model/Scale.h"
-#include <iostream>
 
 class LogicSequenceListModel : public RoutableListModel {
 public:

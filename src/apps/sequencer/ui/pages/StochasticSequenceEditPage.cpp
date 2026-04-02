@@ -13,7 +13,6 @@
 
 #include "core/utils/StringBuilder.h"
 #include <cstddef>
-#include <iostream>
 
 enum class ContextAction {
     Init,

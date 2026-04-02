@@ -8,7 +8,6 @@
 #include "model/PlayState.h"
 
 #include "core/utils/StringBuilder.h"
-#include <iostream>
 
 enum class Function {
     Latch       = 0,

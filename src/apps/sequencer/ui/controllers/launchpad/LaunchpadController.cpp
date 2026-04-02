@@ -1,11 +1,14 @@
 #include "LaunchpadController.h"
 
 #include "LaunchpadDevice.h"
+#include "ui/ControllerManager.h"
+#include "ui/pages/NoteSequenceEditPage.h"
+#include "ui/pages/GeneratorPage.h"
+#include "ui/pages/Pages.h"
 #include "core/Debug.h"
 #include "os/os.h"
 #include <algorithm>
 #include <functional>
-#include <iostream>
 #include <map>
 #include <ratio>
 #include <set>
@@ -251,6 +254,12 @@ LaunchpadController::~LaunchpadController() {
     _deviceContainer.destroy(_device);
 }
 
+void LaunchpadController::uiPageChanged() {
+    if (_mode == Mode::Sequence && _generatorMode && !generatorModeSupported()) {
+        cancelGeneratorMode();
+    }
+}
+
 void LaunchpadController::update() {
      _style = _userSettings.get<LaunchpadStyleSetting>(SettingLaunchpadStyle)->getValue();
      _patternChangeDefault = _userSettings.get<PatternChange>(SettingPatternChange)->getValue();
@@ -281,27 +290,87 @@ void LaunchpadController::setMode(Mode mode) {
 //----------------------------------------
 
 void LaunchpadController::globalDraw() {
+    if (_generatorMode && generatorModeSupported()) {
+        setFunctionLed(3, colorYellow());
+    }
+
     if (buttonState<Shift>()) {
         for (int col = 0; col < 8; ++col) {
             bool selected = col == int(_mode) || col == 7;
             setFunctionLed(col, selected ? colorYellow() : colorOff());
+        }
+        if (_generatorMode && generatorModeSupported()) {
+            setFunctionLed(3, colorYellow());
         }
         mirrorButton<Play>(_style);
     }
 }
 
 bool LaunchpadController::globalButton(const Button &button, ButtonAction action) {
+    if (_mode == Mode::Sequence && _generatorMode && generatorModeSupported()) {
+        if (button.is<Shift>()) {
+            if (action == ButtonAction::Down) {
+                _generatorApplyArmed = generatorModePreviewPage();
+                _generatorApplyCanceled = false;
+                return true;
+            }
+            if (action == ButtonAction::Up) {
+                if (_generatorApplyArmed && !_generatorApplyCanceled && generatorModePreviewPage()) {
+                    if (auto *pages = _manager.pages()) {
+                        pages->generator.commit();
+                        setGeneratorMode(false);
+                    }
+                }
+                _generatorApplyArmed = false;
+                _generatorApplyCanceled = false;
+                return true;
+            }
+        }
+
+        if (buttonState<Shift>() && button.isFunction() && button.function() == 3 && action == ButtonAction::Down) {
+            _generatorApplyCanceled = true;
+            setGeneratorMode(false);
+            return true;
+        }
+    }
+
     if (action == ButtonAction::Down) {
         if (buttonState<Shift>() && button.isFunction()) {
             switch (button.function()) {
             case 0:
+                if (_mode == Mode::Sequence && _generatorMode) {
+                    cancelGeneratorMode();
+                }
                 setMode(Mode::Sequence);
                 break;
             case 1:
+                if (_mode == Mode::Sequence && _generatorMode) {
+                    cancelGeneratorMode();
+                }
                 setMode(Mode::Pattern);
                 break;
             case 2:
+                if (_mode == Mode::Sequence && _generatorMode) {
+                    cancelGeneratorMode();
+                }
                 setMode(Mode::Performer);
+                break;
+            case 3:
+                if (_mode == Mode::Sequence && _project.selectedTrack().trackMode() == Track::TrackMode::Note) {
+                    if (_generatorMode && generatorModeSupported()) {
+                        setGeneratorMode(false);
+                        return true;
+                    }
+
+                    if (!generatorModeSupported()) {
+                        if (auto *pages = _manager.pages()) {
+                            pages->top.setMode(TopPage::Mode::SequenceEdit);
+                        }
+                    }
+
+                    setGeneratorMode(true);
+                    return true;
+                }
                 break;
             case 6:
                 _engine.togglePlay();
@@ -384,6 +453,10 @@ void LaunchpadController::sequenceExit() {
 void LaunchpadController::sequenceDraw() {
     sequenceUpdateNavigation();
 
+    if (_generatorMode && !generatorModeSupported()) {
+        setGeneratorMode(false);
+    }
+
     mirrorButton<Navigate>(_style);
 
     // selected track
@@ -393,6 +466,11 @@ void LaunchpadController::sequenceDraw() {
         return;
     } else {
         drawTracksGateAndSelected(_engine, _project.selectedTrackIndex());
+    }
+
+    if (_generatorMode && generatorModeSupported()) {
+        sequenceDrawGeneratorMode();
+        return;
     }
 
     if (buttonState<Navigate>()) {
@@ -427,6 +505,9 @@ void LaunchpadController::sequenceDraw() {
 }
 
 void LaunchpadController::sequenceButton(const Button &button, ButtonAction action) {
+    if (_generatorMode && generatorModeSupported() && sequenceButtonGeneratorMode(button, action)) {
+        return;
+    }
 
     if (action == ButtonAction::Down) {
         if (buttonState<Shift>()) {
@@ -599,8 +680,10 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                         break;
                     }
                     auto &sequence = _project.selectedStochasticSequence();
-                    sequence.step(selectedNote).toggleGate();
-                    sequence.step(selectedNote).setNoteOctave(selectedOctave);                
+                    int octave = roundDownDivide(fullSelectedNote, 12);
+                    int stepNoteCleared = fullSelectedNote - (octave * 12);
+                    sequence.step(stepNoteCleared).toggleGate();
+                    sequence.step(stepNoteCleared).setNoteOctave(selectedOctave);
                     }
                 break;
             }
@@ -630,6 +713,223 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                 break;
             }
             }
+        }
+    }
+}
+
+bool LaunchpadController::generatorModeSupported() const {
+    return _manager.uiPageKind() == ControllerManager::UiPageKind::NoteSequenceEdit ||
+           _manager.uiPageKind() == ControllerManager::UiPageKind::Generator;
+}
+
+bool LaunchpadController::generatorModeEditPage() const {
+    return _manager.uiPageKind() == ControllerManager::UiPageKind::NoteSequenceEdit;
+}
+
+bool LaunchpadController::generatorModePreviewPage() const {
+    return _manager.uiPageKind() == ControllerManager::UiPageKind::Generator;
+}
+
+void LaunchpadController::cancelGeneratorMode() {
+    if (!_generatorMode) {
+        return;
+    }
+
+    if (generatorModePreviewPage()) {
+        if (auto *pages = _manager.pages()) {
+            pages->generator.revert();
+        }
+    }
+
+    setGeneratorMode(false);
+}
+
+LaunchpadController::LaunchpadGenerator LaunchpadController::generatorModeGrid(int gridIndex) const {
+    switch (gridIndex) {
+    case 0:
+        return LaunchpadGenerator::Random;
+    case 1:
+        return LaunchpadGenerator::AcidPhrase;
+    case 9:
+        return LaunchpadGenerator::AcidLayer;
+    case 2:
+        return LaunchpadGenerator::Vandalize;
+    case 10:
+        return LaunchpadGenerator::Wreck;
+    case 3:
+        return LaunchpadGenerator::Euclidean;
+    case 7:
+        return LaunchpadGenerator::Init;
+    default:
+        return LaunchpadGenerator::None;
+    }
+}
+
+void LaunchpadController::setGeneratorMode(bool active) {
+    _generatorMode = active;
+    _generatorApplyArmed = false;
+    _generatorApplyCanceled = false;
+}
+
+void LaunchpadController::sequenceDrawGeneratorMode() {
+    for (int row = 0; row < 8; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            setGridLed(row, col, colorOff());
+        }
+    }
+
+    const struct {
+        int row;
+        int col;
+        LaunchpadGenerator generator;
+    } slots[] = {
+        { 0, 0, LaunchpadGenerator::Random },
+        { 0, 1, LaunchpadGenerator::AcidPhrase },
+        { 1, 1, LaunchpadGenerator::AcidLayer },
+        { 0, 2, LaunchpadGenerator::Vandalize },
+        { 1, 2, LaunchpadGenerator::Wreck },
+        { 0, 3, LaunchpadGenerator::Euclidean },
+        { 0, 7, LaunchpadGenerator::Init },
+    };
+
+    for (const auto &slot : slots) {
+        setGridLed(slot.row, slot.col, _selectedGenerator == slot.generator ? colorGreen() : colorYellow(1));
+    }
+
+    bool previewPage = generatorModePreviewPage();
+    bool showingPreview = false;
+    bool resetState = false;
+    if (previewPage) {
+        if (auto *pages = _manager.pages()) {
+            showingPreview = pages->generator.launchpadShowingPreview();
+            resetState = pages->generator.launchpadResetState();
+        }
+    }
+
+    setFunctionLed(3, colorYellow());
+    setFunctionLed(4, previewPage ? (showingPreview ? colorGreen() : colorYellow()) : colorYellow(1));
+    setFunctionLed(5, previewPage ? (resetState ? colorYellow() : colorRed()) : colorYellow(1));
+    setFunctionLed(6, colorRed());
+    setFunctionLed(7, previewPage ? colorGreen() : colorGreen(1));
+}
+
+bool LaunchpadController::sequenceButtonGeneratorMode(const Button &button, ButtonAction action) {
+    if (action != ButtonAction::Down) {
+        return button.isGrid() || button.isFunction() || button.isScene();
+    }
+
+    if (button.isGrid()) {
+        LaunchpadGenerator generator = generatorModeGrid(button.gridIndex());
+        if (generator != LaunchpadGenerator::None) {
+            if (generatorModePreviewPage()) {
+                if (generator == _selectedGenerator) {
+                    if (generator != LaunchpadGenerator::Init) {
+                        if (auto *pages = _manager.pages()) {
+                            pages->generator.launchpadRandomize();
+                        }
+                    }
+                } else {
+                    if (auto *pages = _manager.pages()) {
+                        pages->generator.revert();
+                    }
+                    sequenceOpenGenerator(generator);
+                }
+                return true;
+            }
+
+            if (generatorModeEditPage()) {
+                sequenceOpenGenerator(generator);
+                return true;
+            }
+        }
+        return true;
+    }
+
+    if (button.isScene()) {
+        cancelGeneratorMode();
+        _project.setSelectedTrackIndex(button.scene());
+
+        if (_project.selectedTrack().trackMode() == Track::TrackMode::Note) {
+            if (!generatorModeSupported()) {
+                if (auto *pages = _manager.pages()) {
+                    pages->top.setMode(TopPage::Mode::SequenceEdit);
+                }
+            }
+            setGeneratorMode(true);
+        }
+
+        return true;
+    }
+
+    if (!button.isFunction()) {
+        cancelGeneratorMode();
+        return false;
+    }
+
+    if ((button.function() >= 0 && button.function() <= 2) || button.function() == 3 || button.function() == 7) {
+        return true;
+    }
+
+    if (button.function() == 4) {
+        if (generatorModePreviewPage()) {
+            if (auto *pages = _manager.pages()) {
+                pages->generator.togglePreview();
+            }
+        }
+        return true;
+    }
+
+    if (button.function() == 5) {
+        if (generatorModePreviewPage()) {
+            if (auto *pages = _manager.pages()) {
+                pages->generator.init();
+            }
+        }
+        return true;
+    }
+
+    if (button.function() == 6) {
+        if (generatorModePreviewPage()) {
+            if (auto *pages = _manager.pages()) {
+                pages->generator.revert();
+            }
+        }
+        setGeneratorMode(false);
+        return true;
+    }
+
+    cancelGeneratorMode();
+    return false;
+}
+
+void LaunchpadController::sequenceOpenGenerator(LaunchpadGenerator generator) {
+    _selectedGenerator = generator;
+
+    if (auto *pages = _manager.pages()) {
+        switch (generator) {
+        case LaunchpadGenerator::Random:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Random);
+            break;
+        case LaunchpadGenerator::AcidPhrase:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::AcidPhrase);
+            break;
+        case LaunchpadGenerator::AcidLayer:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::AcidLayer);
+            break;
+        case LaunchpadGenerator::Vandalize:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Vandalize);
+            break;
+        case LaunchpadGenerator::Wreck:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Wreck);
+            break;
+        case LaunchpadGenerator::Euclidean:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Euclidean);
+            break;
+        case LaunchpadGenerator::Init:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Init);
+            break;
+        case LaunchpadGenerator::None:
+            break;
         }
     }
 }
@@ -668,7 +968,7 @@ void LaunchpadController::manageCircuitKeyboard(const Button &button) {
                          
                     
                 break;
-            } else if (button.row >= 0 && button.row <= 2) {
+            } else if (button.row >= 0 && button.row < 2) {
                 auto &sequence = _project.selectedNoteSequence();
                 const auto &scale = sequence.selectedScale(_project.scale());
                 auto layer = _project.selectedNoteSequenceLayer();
@@ -991,11 +1291,12 @@ void LaunchpadController::sequenceUpdateNavigation() {
     }
     case Track::TrackMode::Stochastic: {
         auto layer = _project.selectedStochasticSequenceLayer();
+        bool stochasticCircuitEditor = _noteStyle == 1 && layer == StochasticSequence::Layer::NoteVariationProbability;
         _sequence.navigation.left = 0;
-        _sequence.navigation.right = layer == StochasticSequence::Layer::Gate || layer == StochasticSequence::Layer::Slide || layer == StochasticSequence::Layer::NoteVariationProbability ? 0 : 1;
+        _sequence.navigation.right = layer == StochasticSequence::Layer::Gate || layer == StochasticSequence::Layer::Slide || stochasticCircuitEditor ? 0 : 1;
 
         auto range = StochasticSequence::layerRange(_project.selectedStochasticSequenceLayer());
-        _sequence.navigation.top = layer == StochasticSequence::Layer::NoteVariationProbability ? 0 : range.max / 8;
+        _sequence.navigation.top = stochasticCircuitEditor ? 0 : range.max / 8;
         _sequence.navigation.bottom = (range.min - 7) / 8;
 
         break;
@@ -1013,11 +1314,12 @@ void LaunchpadController::sequenceUpdateNavigation() {
     }
     case Track::TrackMode::Arp: {
         auto layer = _project.selectedArpSequenceLayer();
+        bool arpCircuitEditor = _noteStyle == 1 && layer == ArpSequence::Layer::Note;
         _sequence.navigation.left = 0;
-        _sequence.navigation.right = layer == ArpSequence::Layer::Gate || layer == ArpSequence::Layer::Slide || layer == ArpSequence::Layer::Note ? 0 : 1;
+        _sequence.navigation.right = layer == ArpSequence::Layer::Gate || layer == ArpSequence::Layer::Slide || arpCircuitEditor ? 0 : 1;
 
         auto range = ArpSequence::layerRange(_project.selectedArpSequenceLayer());
-        _sequence.navigation.top = layer == ArpSequence::Layer::Note ? 0 : range.max / 8;
+        _sequence.navigation.top = arpCircuitEditor ? 0 : range.max / 8;
         _sequence.navigation.bottom = (range.min - 7) / 8;
 
         break;
@@ -1491,7 +1793,6 @@ void LaunchpadController::sequenceDrawStepRange(int highlight) {
 
 void LaunchpadController::stochasticDrawRestProbability() {
     const auto &sequence = _project.selectedStochasticSequence();
-    drawBar(0, sequence.restProbability());
     drawBar(2, sequence.restProbability2());
     drawBar(4, sequence.restProbability4());
     drawBar(6, sequence.restProbability8());
@@ -1499,7 +1800,6 @@ void LaunchpadController::stochasticDrawRestProbability() {
 
 void LaunchpadController::arpDrawRestProbability() {
     const auto &sequence = _project.selectedArpSequence();
-    drawBar(0, sequence.restProbability());
     drawBar(2, sequence.restProbability2());
     drawBar(4, sequence.restProbability4());
     drawBar(6, sequence.restProbability8());
@@ -1643,7 +1943,11 @@ void LaunchpadController::sequenceDrawStochasticSequence() {
         drawStochasticSequenceBits(sequence, layer, currentStep);
         break;
     case StochasticSequence::Layer::NoteVariationProbability:
-        drawStochasticSequenceNotes(sequence, layer, currentStep);
+        if (_noteStyle == 1) {
+            drawStochasticSequenceNotes(sequence, layer, currentStep);
+        } else {
+            drawStochasticSequenceBars(sequence, layer, currentStep);
+        }
         break;
     case StochasticSequence::Layer::Condition:
         drawStochasticSequenceDots(sequence, layer, currentStep);
@@ -1671,7 +1975,11 @@ void LaunchpadController::sequenceDrawArpSequence() {
         drawArpSequenceBits(sequence, layer, currentStep);
         break;
     case ArpSequence::Layer::Note:
-        drawArpSequenceNotes(sequence, layer, currentStep);
+        if (_noteStyle == 1) {
+            drawArpSequenceNotes(sequence, layer, currentStep);
+        } else {
+            drawArpSequenceBars(sequence, layer, currentStep);
+        }
         break;
     case ArpSequence::Layer::Condition:
         drawArpSequenceDots(sequence, layer, currentStep);
@@ -1743,7 +2051,7 @@ void LaunchpadController::patternDraw() {
         navigationDraw(_pattern.navigation);
     } else {
         for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
-            // draw edited patterns (note tracks -> dim yellow, curve tracks -> dim red)
+            // draw edited patterns for the visible 8-pattern page
             for (int row = 0; row < 8; ++row) {
                 int patternIndex = row - _pattern.navigation.row * 8;
                 const auto &track = _project.track(trackIndex);
@@ -1766,6 +2074,11 @@ void LaunchpadController::patternDraw() {
                     break;
                 case Track::TrackMode::Logic:
                     if (track.logicTrack().sequence(patternIndex).isEdited()) {
+                        setGridLed(row, trackIndex, colorRed(2));
+                    }
+                    break;
+                case Track::TrackMode::Arp:
+                    if (track.arpTrack().sequence(patternIndex).isEdited()) {
                         setGridLed(row, trackIndex, colorRed(2));
                     }
                     break;
@@ -2149,6 +2462,14 @@ void LaunchpadController::performerButton(const Button &button, ButtonAction act
             _project.setSelectedTrackIndex(button.scene());
         }
     } else if (action == ButtonAction::Up) {
+        if (buttonState<Fill>()) {
+            if (button.isScene()) {
+                _project.playState().fillTrack(button.scene(), false);
+            }
+        }
+        if (button.is<Fill>()) {
+            _project.playState().fillAll(false);
+        }
         if (button.isGrid() && (!buttonState<FirstStep>() && !buttonState<LastStep>())) {
             if (_performButton.firstStepButton.row != -1 && !buttonState(_performButton.firstStepButton.row, _performButton.firstStepButton.col )) {
                 _performButton.firstStepButton = Button(-1,-1);
@@ -2362,7 +2683,7 @@ void LaunchpadController::drawStochasticSequenceDots(const StochasticSequence &s
 }
 
 void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, NoteSequence::Layer layer, int currentStep) {
-    int ofs = _sequence.navigation.col * 16;
+    int stepOfs = _sequence.navigation.col * 16;
 
     auto &scale = sequence.selectedScale(_project.scale());
     const Scale &bypassScale = Scale::get(0);
@@ -2372,7 +2693,7 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
         // draw steps
         for (int row = 0; row < 2; ++row) {
             for (int col = 0; col < 8; ++col) {
-                int stepIndex = col + ofs + (row*8);
+                int stepIndex = col + stepOfs + (row * 8);
                 int lastStep = sequence.lastStep();
                 followModeAction(currentStep, lastStep);
                 const auto &step = sequence.step(stepIndex);   
@@ -2462,10 +2783,12 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
 
 
     } else {
+        int noteOfs = _sequence.navigation.row * 8;
+
         // draw octave lines
         int octave = sequence.selectedScale(_project.scale()).notesPerOctave();
         for (int row = 0; row < 8; ++row) {
-            if (modulo(row + ofs, octave) == 0) {
+            if (modulo(row + noteOfs, octave) == 0) {
                 for (int col = 0; col < 2; ++col) {
                     setGridLed(7 - row, col, colorYellow(1));
                 }
@@ -2478,7 +2801,7 @@ void LaunchpadController::drawNoteSequenceNotes(const NoteSequence &sequence, No
             int lastStep = sequence.lastStep();
             followModeAction(currentStep, lastStep);        
             const auto &step = sequence.step(stepIndex);
-            setGridLed((7 - step.layerValue(layer)) + ofs, col, stepColor(step.gate(), stepIndex == currentStep));
+            setGridLed((7 - step.layerValue(layer)) + noteOfs, col, stepColor(step.gate(), stepIndex == currentStep));
         }
     }
 }
@@ -2617,199 +2940,203 @@ void LaunchpadController::drawStochasticSequenceBars(const StochasticSequence &s
 void LaunchpadController::drawStochasticSequenceNotes(const StochasticSequence &sequence, StochasticSequence::Layer layer, int currentStep) {
 
     const auto &scale = sequence.selectedScale(_project.scale());
-      const Scale &bypassScale = Scale::get(0);
-        int stepIndex = selectedNote;
-        const auto &step = sequence.step(stepIndex);  
-        if (step.noteVariationProbability() > 7) { 
-            drawBarH(0, step.noteVariationProbability(), true, false);
-            drawBarH(1, step.noteVariationProbability()-8, true, false);
-        } else {
-            drawBarH(0, step.noteVariationProbability(), true, false);
-        }
+    const Scale &bypassScale = Scale::get(0);
+    int selectedChromaticOctave = roundDownDivide(fullSelectedNote, 12);
+    int selectedStepIndex = fullSelectedNote - (selectedChromaticOctave * 12);
+    int selectedScaleNote = selectedNote - (scale.notesPerOctave() * selectedOctave);
+    int selectedChromaticNote = fullSelectedNote - (bypassScale.notesPerOctave() * selectedOctave);
+    const auto &step = sequence.step(selectedStepIndex);
 
-        auto stochasticEngine = _engine.selectedTrackEngine().as<StochasticEngine>();
-        for (int col = 0; col < 8; ++col) {
-            if (col == stochasticEngine.currentIndex()%8) {
-                if (stochasticEngine.currentIndex()<8) {
-                    setCustomGridLed(2, col, Color(1,0));
-                } else if (stochasticEngine.currentIndex() >=8 && stochasticEngine.currentIndex() <16) {
-                    setCustomGridLed(2, col, Color(1,1));
-                } else if (stochasticEngine.currentIndex() >=16 && stochasticEngine.currentIndex() <24) {
-                    setCustomGridLed(2, col, Color(1,2));
-                } else if (stochasticEngine.currentIndex() >=24 && stochasticEngine.currentIndex() <32) { 
-                    setCustomGridLed(2, col, Color(1,3));
-                } else if (stochasticEngine.currentIndex() >=40 && stochasticEngine.currentIndex() <48) {
-                    setCustomGridLed(2, col, Color(2,0));
-                } else if (stochasticEngine.currentIndex() >=48 && stochasticEngine.currentIndex() <56) {
-                    setCustomGridLed(2, col, Color(2,1));
-                } else {
-                    setCustomGridLed(2, col, Color(2,2));
-                }
+    if (step.noteVariationProbability() > 7) {
+        drawBarH(0, step.noteVariationProbability(), true, false);
+        drawBarH(1, step.noteVariationProbability() - 8, true, false);
+    } else if (step.noteVariationProbability() > 0) {
+        drawBarH(0, step.noteVariationProbability(), true, false);
+        drawBarH(1, -1, false, false);
+    } else {
+        drawBarH(0, -1, false, false);
+        drawBarH(1, -1, false, false);
+    }
+
+    auto stochasticEngine = _engine.selectedTrackEngine().as<StochasticEngine>();
+    for (int col = 0; col < 8; ++col) {
+        if (col == stochasticEngine.currentIndex() % 8) {
+            if (stochasticEngine.currentIndex() < 8) {
+                setCustomGridLed(2, col, Color(1,0));
+            } else if (stochasticEngine.currentIndex() >= 8 && stochasticEngine.currentIndex() < 16) {
+                setCustomGridLed(2, col, Color(1,1));
+            } else if (stochasticEngine.currentIndex() >= 16 && stochasticEngine.currentIndex() < 24) {
+                setCustomGridLed(2, col, Color(1,2));
+            } else if (stochasticEngine.currentIndex() >= 24 && stochasticEngine.currentIndex() < 32) {
+                setCustomGridLed(2, col, Color(1,3));
+            } else if (stochasticEngine.currentIndex() >= 40 && stochasticEngine.currentIndex() < 48) {
+                setCustomGridLed(2, col, Color(2,0));
+            } else if (stochasticEngine.currentIndex() >= 48 && stochasticEngine.currentIndex() < 56) {
+                setCustomGridLed(2, col, Color(2,1));
             } else {
-                setGridLed(2, col, colorOff());
+                setCustomGridLed(2, col, Color(2,2));
             }
+        } else {
+            setGridLed(2, col, colorOff());
         }
+    }
 
-        int rootNote = sequence.selectedRootNote(_model.project().rootNote());
+    int rootNote = sequence.selectedRootNote(_model.project().rootNote());
 
-        // draw keyboard
-        for (int row = 3; row<=4; ++row) {
-            for (int col = 0; col < 8; col++) {
-                int index = (col+((row-3)*8));
-            
-                if (noteGridValues[index]==1) {
-                    int n = getMapValue(semitones, index);
-                    if (row == 4) {
-                        n = getMapValue(tones, col);
-                    }
-                    if (scale.isNotePresent(n)) {
-                        n = scale.getNoteIndex(n);
-                        int stepIndex = -1;
-                        if (row == 3) {
-                            stepIndex = getMapValue(semitones, col);
-                        } else if (row == 4) {
-                            stepIndex = getMapValue(tones, col);
-                        }
-                        const auto &step = sequence.step(stepIndex);
-                        Color alternate = colorGreen(2);
-                        if (step.gate()) {
-                            alternate = colorYellow(1);
-                        }
+    // draw keyboard
+    for (int row = 3; row <= 4; ++row) {
+        for (int col = 0; col < 8; col++) {
+            int index = (col + ((row - 3) * 8));
 
-                        Color color = selectedNote == n && !fullNoteSelected ? colorYellow() : alternate;
-                        setGridLed(row, col, color);
-                    } else {
-                        int stepIndex = -1;
-                        if (row == 3) {
-                            stepIndex = getMapValue(semitones, col);
-                        } else if (row == 4) {
-                            stepIndex = getMapValue(tones, col);
-                        }
-                        const auto &step = sequence.step(stepIndex);
-                        Color alternate = colorGreen(1);
-                        if (step.gate()) {
-                            alternate = colorYellow(1);
-                        }
-                        n = bypassScale.getNoteIndex(n);
-                        Color color = selectedNote == n && fullNoteSelected ? colorYellow() : alternate;
-                        setGridLed(row, col, color);
-                        
-                    }
+            if (noteGridValues[index] == 1) {
+                int n = getMapValue(semitones, index);
+                if (row == 4) {
+                    n = getMapValue(tones, col);
                 }
-                if (_engine.state().running()) {
-                    const auto &step = sequence.step(currentStep);
-
-                    if (step.bypassScale()) {
-                        drawRunningStochasticKeyboardCircuit(row, col, step, bypassScale, rootNote);
-                    } else {
-                        drawRunningStochasticKeyboardCircuit(row, col, step, scale, rootNote);
+                if (scale.isNotePresent(n)) {
+                    n = scale.getNoteIndex(n);
+                    int stepIndex = -1;
+                    if (row == 3) {
+                        stepIndex = getMapValue(semitones, col);
+                    } else if (row == 4) {
+                        stepIndex = getMapValue(tones, col);
                     }
+                    const auto &step = sequence.step(stepIndex);
+                    Color alternate = colorGreen(2);
+                    if (step.gate()) {
+                        alternate = colorYellow(1);
+                    }
+
+                    Color color = selectedScaleNote == n && !fullNoteSelected ? colorYellow() : alternate;
+                    setGridLed(row, col, color);
+                } else {
+                    int stepIndex = -1;
+                    if (row == 3) {
+                        stepIndex = getMapValue(semitones, col);
+                    } else if (row == 4) {
+                        stepIndex = getMapValue(tones, col);
+                    }
+                    const auto &step = sequence.step(stepIndex);
+                    Color alternate = colorGreen(1);
+                    if (step.gate()) {
+                        alternate = colorYellow(1);
+                    }
+                    n = bypassScale.getNoteIndex(n);
+                    Color color = selectedChromaticNote == n && fullNoteSelected ? colorYellow() : alternate;
+                    setGridLed(row, col, color);
+                }
+            }
+            if (_engine.state().running()) {
+                const auto &step = sequence.step(currentStep);
+
+                if (step.bypassScale()) {
+                    drawRunningStochasticKeyboardCircuit(row, col, step, bypassScale, rootNote);
+                } else {
+                    drawRunningStochasticKeyboardCircuit(row, col, step, scale, rootNote);
                 }
 
                 Color transposeUpColor = colorOff();
                 switch (_project.selectedTrack().stochasticTrack().octave()) {
-                    case 0:
-                        transposeUpColor = colorOff();
-                        break;
-                    case 1:
-                        transposeUpColor = Color(0,1);
-                        break;
-                    case 2:
-                        transposeUpColor = Color(0,2);
-                        break;
-                    case 3:
-                        transposeUpColor = Color(0,3);
-                        break;
-                    case 4:
-                        transposeUpColor = Color(1,0);
-                        break;
-                    case 5:
-                        transposeUpColor = Color(1,1);
-                        break;
-                    case 6:
-                        transposeUpColor = Color(1,2);
-                        break;
-                    case 7:
-                        transposeUpColor = Color(1, 3);
-                        break;
-                    case 8:
-                        transposeUpColor = Color(2, 0);
-                        break;
-                    case 9:
-                        transposeUpColor = Color(2,1);
-                        break;
-                    case 10:
-                        transposeUpColor = Color(2,2);
-                        break;
+                case 0:
+                    transposeUpColor = colorOff();
+                    break;
+                case 1:
+                    transposeUpColor = Color(0,1);
+                    break;
+                case 2:
+                    transposeUpColor = Color(0,2);
+                    break;
+                case 3:
+                    transposeUpColor = Color(0,3);
+                    break;
+                case 4:
+                    transposeUpColor = Color(1,0);
+                    break;
+                case 5:
+                    transposeUpColor = Color(1,1);
+                    break;
+                case 6:
+                    transposeUpColor = Color(1,2);
+                    break;
+                case 7:
+                    transposeUpColor = Color(1, 3);
+                    break;
+                case 8:
+                    transposeUpColor = Color(2, 0);
+                    break;
+                case 9:
+                    transposeUpColor = Color(2,1);
+                    break;
+                case 10:
+                    transposeUpColor = Color(2,2);
+                    break;
                 }
 
-                setCustomGridLed(3, 7,  transposeUpColor);
+                setCustomGridLed(3, 7, transposeUpColor);
 
                 Color transposeDownColor = colorOff();
                 switch (_project.selectedTrack().stochasticTrack().octave()) {
-                    case 0:
-                        transposeDownColor = colorOff();
-                        break;
-                    case -1:
-                        transposeDownColor = Color(0,1);
-                        break;
-                    case -2:
-                        transposeDownColor = Color(0,2);
-                        break;
-                    case -3:
-                        transposeDownColor = Color(0,3);
-                        break;
-                    case -4:
-                        transposeDownColor = Color(1,0);
-                        break;
-                    case -5:
-                        transposeDownColor = Color(1,1);
-                        break;
-                    case -6:
-                        transposeDownColor = Color(1,2);
-                        break;
-                    case -7:
-                        transposeDownColor = Color(1, 3);
-                        break;
-                    case -8:
-                        transposeDownColor = Color(2, 0);
-                        break;
-                    case -9:
-                        transposeDownColor = Color(2,1);
-                        break;
-                    case -10:
-                        transposeDownColor = Color(2,2);
-                        break;
+                case 0:
+                    transposeDownColor = colorOff();
+                    break;
+                case -1:
+                    transposeDownColor = Color(0,1);
+                    break;
+                case -2:
+                    transposeDownColor = Color(0,2);
+                    break;
+                case -3:
+                    transposeDownColor = Color(0,3);
+                    break;
+                case -4:
+                    transposeDownColor = Color(1,0);
+                    break;
+                case -5:
+                    transposeDownColor = Color(1,1);
+                    break;
+                case -6:
+                    transposeDownColor = Color(1,2);
+                    break;
+                case -7:
+                    transposeDownColor = Color(1, 3);
+                    break;
+                case -8:
+                    transposeDownColor = Color(2, 0);
+                    break;
+                case -9:
+                    transposeDownColor = Color(2,1);
+                    break;
+                case -10:
+                    transposeDownColor = Color(2,2);
+                    break;
                 }
 
-                setCustomGridLed(4, 7,  transposeDownColor);
+                setCustomGridLed(4, 7, transposeDownColor);
             }
         }
+    }
 
-        // draw octave
-        for (int col = 0; col < 8; ++col) {
-            int o = getMapValue(octaveMap, col);
-            setGridLed(6, col, o==selectedOctave ? colorYellow(): colorYellow(1));
+    // draw octave
+    for (int col = 0; col < 8; ++col) {
+        int o = getMapValue(octaveMap, col);
+        setGridLed(6, col, o == selectedOctave ? colorYellow() : colorYellow(1));
 
-            if (_engine.state().running()) {
-                const auto &step = sequence.step(currentStep);
-                int octave = step.noteOctave();
-                for (auto const& x : octaveMap)
-                    {
-                        if (step.gate() && octave == x.second) {
-                            setGridLed(6, x.first, step.gate() && octave == x.second ? colorRed() : colorYellow(1));
-                            break;
-                        }
-                    
-                    }
+        if (_engine.state().running()) {
+            const auto &step = sequence.step(currentStep);
+            int octave = step.noteOctave();
+            for (auto const &x : octaveMap) {
+                if (step.gate() && octave == x.second) {
+                    setGridLed(6, x.first, step.gate() && octave == x.second ? colorRed() : colorYellow(1));
+                    break;
+                }
             }
         }
+    }
 
-
-        // draw options
-        setGridLed(7, 0, sequence.useLoop() ? colorYellow(): colorYellow(1));
-        setGridLed(7, 1, sequence.clearLoop() ? colorYellow(): colorYellow(1));
-        setGridLed(7,2, !sequence.useLoop() && !sequence.isEmpty() && sequence.reseed() == 1 ? colorYellow(): colorYellow(1));
+    // draw options
+    setGridLed(7, 0, sequence.useLoop() ? colorYellow() : colorYellow(1));
+    setGridLed(7, 1, sequence.clearLoop() ? colorYellow() : colorYellow(1));
+    setGridLed(7, 2, !sequence.useLoop() && !sequence.isEmpty() && sequence.reseed() == 1 ? colorYellow() : colorYellow(1));
 }
 
 void LaunchpadController::drawArpSequenceBits(const ArpSequence &sequence, ArpSequence::Layer layer, int currentStep) {
@@ -2859,8 +3186,12 @@ void LaunchpadController::drawArpSequenceNotes(const ArpSequence &sequence, ArpS
     if (step.gateProbability() > 7) { 
         drawBarH(0, step.gateProbability(), true, false);
         drawBarH(1, step.gateProbability()-8, true, false);
-    } else {
+    } else if (step.gateProbability() > 0) {
         drawBarH(0, step.gateProbability(), true, false);
+        drawBarH(1, -1, false, false);
+    } else {
+        drawBarH(0, -1, false, false);
+        drawBarH(1, -1, false, false);
     }
 
     auto &arpEngine = _engine.selectedTrackEngine().as<ArpTrackEngine>();
@@ -3167,10 +3498,18 @@ void LaunchpadController::drawBar(int col, int value, bool active, bool current)
 }
 
 void LaunchpadController::drawBarH(int col, int value, bool active, bool current) {
-    for (int i = 0; i <= value; ++i) {
+    for (int i = 0; i < 8; ++i) {
+        setGridLed(col, i, colorOff());
+    }
+    if (!active || value < 0) {
+        return;
+    }
+    for (int i = 0; i <= value && i < 8; ++i) {
         setGridLed(col, i, colorYellow());
     }
-    setGridLed(col, value, stepColor(active, current));
+    if (value < 8) {
+        setGridLed(col, value, stepColor(active, current));
+    }
 }
 
 //----------------------------------------

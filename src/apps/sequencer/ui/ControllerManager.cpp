@@ -32,6 +32,13 @@ void ControllerManager::update() {
     }
 }
 
+void ControllerManager::setUiPageKind(UiPageKind uiPageKind) {
+    _uiPageKind = uiPageKind;
+    if (_controller) {
+        _controller->uiPageChanged();
+    }
+}
+
 bool ControllerManager::recvMidi(MidiPort port, uint8_t cable, const MidiMessage &message) {
     if (_controller && port == _port) {
         _controller->recvMidi(cable, message);

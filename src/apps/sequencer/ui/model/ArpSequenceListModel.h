@@ -6,7 +6,6 @@
 
 #include "model/ArpSequence.h"
 #include "model/Scale.h"
-#include <iostream>
 
 class ArpSequenceListModel : public RoutableListModel {
 public:

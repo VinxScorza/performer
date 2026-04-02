@@ -19,7 +19,6 @@
 
 #include "core/utils/StringBuilder.h"
 #include <bitset>
-#include <iostream>
 
 enum class ContextAction {
     Init,
@@ -1146,6 +1145,49 @@ void NoteSequenceEditPage::generateSequence() {
     });
 }
 
+void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) {
+    if (_stepSelection.none()) {
+        _stepSelection.selectAll();
+    }
+
+    switch (generator) {
+    case LaunchpadGenerator::Random:
+    case LaunchpadGenerator::Euclidean: {
+        destroyActiveBuilder();
+        auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
+        _activeBuilder = ActiveBuilder::Note;
+
+        auto generatorMode = generator == LaunchpadGenerator::Random ? Generator::Mode::Random : Generator::Mode::Euclidean;
+        auto *generated = Generator::execute(generatorMode, *builder, _stepSelection.selected());
+        if (generated) {
+            _manager.pages().generator.show(generated, &_stepSelection);
+        }
+        break;
+    }
+    case LaunchpadGenerator::AcidPhrase:
+        showAcidGenerator(AcidSequenceBuilder::ApplyMode::Phrase);
+        break;
+    case LaunchpadGenerator::AcidLayer:
+        showAcidGenerator(AcidSequenceBuilder::ApplyMode::Layer);
+        break;
+    case LaunchpadGenerator::Vandalize:
+        showChaosGenerator(ChaosGenerator::Scope::Sequence);
+        break;
+    case LaunchpadGenerator::Wreck:
+        showChaosGenerator(ChaosGenerator::Scope::Pattern);
+        break;
+    case LaunchpadGenerator::Init: {
+        auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
+        Generator::execute(Generator::Mode::InitLayer, *builder, _stepSelection.selected());
+        builder->showPreview();
+        builder->apply();
+        showMessage("SEQUENCE INITIALIZED");
+        _builderContainer.destroy(builder);
+        break;
+    }
+    }
+}
+
 void NoteSequenceEditPage::showAcidGenerator() {
     const bool allowLayer = layer() == Layer::Gate || layer() == Layer::Note || layer() == Layer::Slide;
 
@@ -1154,20 +1196,24 @@ void NoteSequenceEditPage::showAcidGenerator() {
             return;
         }
 
-        destroyActiveBuilder();
-        auto builder = _builderContainer.create<AcidSequenceBuilder>(
-            _project.selectedNoteSequence(),
-            layer(),
-            applyMode,
-            _stepSelection.selected()
-        );
-        _activeBuilder = ActiveBuilder::Acid;
-
-        auto generator = Generator::execute(Generator::Mode::Acid, *builder, _stepSelection.selected());
-        if (generator) {
-            _manager.pages().generator.show(generator, &_stepSelection);
-        }
+        showAcidGenerator(applyMode);
     });
+}
+
+void NoteSequenceEditPage::showAcidGenerator(AcidSequenceBuilder::ApplyMode applyMode) {
+    destroyActiveBuilder();
+    auto builder = _builderContainer.create<AcidSequenceBuilder>(
+        _project.selectedNoteSequence(),
+        layer(),
+        applyMode,
+        _stepSelection.selected()
+    );
+    _activeBuilder = ActiveBuilder::Acid;
+
+    auto generator = Generator::execute(Generator::Mode::Acid, *builder, _stepSelection.selected());
+    if (generator) {
+        _manager.pages().generator.show(generator, &_stepSelection);
+    }
 }
 
 void NoteSequenceEditPage::showChaosGenerator() {

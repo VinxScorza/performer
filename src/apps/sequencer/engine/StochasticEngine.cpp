@@ -17,7 +17,6 @@
 #include <climits>
 #include <cstddef>
 #include <cstdlib>
-#include <iostream>
 #include <ctime>
 #include <iterator>
 #include <random>

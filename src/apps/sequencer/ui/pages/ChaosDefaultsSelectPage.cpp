@@ -34,9 +34,11 @@ void ChaosDefaultsSelectPage::keyPress(KeyPressEvent &event) {
         switch (Function(key.function())) {
         case Function::Cancel:
             closeWithResult(false);
+            event.consume();
             break;
         case Function::OK:
             closeWithResult(true);
+            event.consume();
             break;
         }
         return;
@@ -44,10 +46,12 @@ void ChaosDefaultsSelectPage::keyPress(KeyPressEvent &event) {
 
     if (key.is(Key::Encoder)) {
         closeWithResult(true);
+        event.consume();
         return;
     }
 
     ListPage::keyPress(event);
+    event.consume();
 }
 
 void ChaosDefaultsSelectPage::closeWithResult(bool result) {

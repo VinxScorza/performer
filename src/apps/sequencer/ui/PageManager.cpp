@@ -75,8 +75,14 @@ int PageManager::fps() const {
 void PageManager::dispatchEvent(Event &event) {
     // handle modal page
     if (top()->isModal() && !event.consumed()) {
-        top()->dispatchEvent(event);
-        return;
+        Page *modalTop = top();
+        modalTop->dispatchEvent(event);
+
+        // If the modal page closed itself without consuming the event,
+        // let the underlying page handle the original action.
+        if (event.consumed() || top() == modalTop) {
+            return;
+        }
     }
 
     // handle top to bottom
