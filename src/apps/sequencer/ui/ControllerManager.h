@@ -11,6 +11,9 @@
 #include "core/midi/MidiMessage.h"
 #include "core/utils/Container.h"
 
+class PageManager;
+struct Pages;
+
     static const ControllerInfo controllerInfos[] = {
         { 0x1235, 0x0020, ControllerInfo::Type::Launchpad },    // Novation Launchpad S
         { 0x1235, 0x0036, ControllerInfo::Type::Launchpad },    // Novation Launchpad Mini Mk1
@@ -27,6 +30,12 @@ class ControllerManager {
 
 
 public:
+    enum class UiPageKind : uint8_t {
+        Other,
+        NoteSequenceEdit,
+        Generator,
+    };
+
     ControllerManager(Model &model, Engine &engine);
 
     void connect(uint16_t vendorId, uint16_t productId);
@@ -39,6 +48,17 @@ public:
     int fps() const { return 50; }
 
     bool recvMidi(MidiPort port, uint8_t cable, const MidiMessage &message);
+
+    void setUiContext(PageManager &pageManager, Pages &pages) {
+        _pageManager = &pageManager;
+        _pages = &pages;
+    }
+
+    void setUiPageKind(UiPageKind uiPageKind);
+
+    UiPageKind uiPageKind() const { return _uiPageKind; }
+    PageManager *pageManager() const { return _pageManager; }
+    Pages *pages() const { return _pages; }
 
     static const ControllerInfo *findController(uint16_t vendorId, uint16_t productId) {
         for (size_t i = 0; i < sizeof(controllerInfos) / sizeof(controllerInfos[0]); ++i) {
@@ -58,6 +78,9 @@ private:
     MidiPort _port;
     Container<LaunchpadController> _controllerContainer;
     Controller *_controller = nullptr;
+    PageManager *_pageManager = nullptr;
+    Pages *_pages = nullptr;
+    UiPageKind _uiPageKind = UiPageKind::Other;
 
     friend class Controller;
 };

@@ -3,7 +3,6 @@
 
 #include "ModelUtils.h"
 #include "Routing.h"
-#include <iostream>
 
 Types::LayerRange ArpSequence::layerRange(Layer layer) {
     #define CASE(_layer_) \

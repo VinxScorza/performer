@@ -43,8 +43,17 @@ void Ui::init() {
     _pageKeyState.reset();
     _globalKeyState.reset();
 
+    _controllerManager.setUiContext(_pageManager, _pages);
+
     _pageManager.setPageSwitchHandler([this] (Page *page) {
         _pageKeyState.reset();
+        if (page == &_pages.noteSequenceEdit) {
+            _controllerManager.setUiPageKind(ControllerManager::UiPageKind::NoteSequenceEdit);
+        } else if (page == &_pages.generator) {
+            _controllerManager.setUiPageKind(ControllerManager::UiPageKind::Generator);
+        } else {
+            _controllerManager.setUiPageKind(ControllerManager::UiPageKind::Other);
+        }
     });
 
     _pageManager.push(&_pages.top);
@@ -201,7 +210,10 @@ void Ui::handleEncoder() {
 void Ui::handleMidi() {
     while (_receiveMidiEvents.readable()) {
         auto receiveEvent = _receiveMidiEvents.read();
-        if (!_controllerManager.recvMidi(receiveEvent.port, receiveEvent.cable, receiveEvent.message)) {
+        bool controllerConsumed = _controllerManager.recvMidi(receiveEvent.port, receiveEvent.cable, receiveEvent.message);
+        if (controllerConsumed) {
+            _screensaver.off();
+        } else {
             // only process events from cable 0
             if (receiveEvent.cable == 0) {
                 MidiEvent midiEvent(receiveEvent.port, receiveEvent.message);

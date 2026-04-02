@@ -47,12 +47,16 @@ void ConfirmationPage::keyPress(KeyPressEvent &event) {
         switch (Function(key.function())) {
         case Function::No:
             closeWithResult(false);
+            event.consume();
             break;
         case Function::Yes:
             closeWithResult(true);
+            event.consume();
             break;
         }
     }
+
+    event.consume();
 }
 
 void ConfirmationPage::closeWithResult(bool result) {

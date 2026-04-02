@@ -13,7 +13,6 @@
 #include "model/Scale.h"
 #include "ui/MatrixMap.h"
 #include <climits>
-#include <iostream>
 #include <ctime>
 
 static Random rng;

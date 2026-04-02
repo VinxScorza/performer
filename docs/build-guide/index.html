@@ -14,17 +14,18 @@
         <a href="../index.html">PER|FORMER</a>
         <a href="../features/index.html">Features</a>
         <a href="../manual/index.html">User Manual</a>
-        <a href="../testdrive/index.html">Web Simulator</a>
         <a href="../cheatsheet/index.html">LP Cheatsheet</a>
+        <a href="../testdrive/index.html">Web Simulator</a>
         <a href="../build-guide/index.html" aria-current="page">Build Guide</a>
         <a href="../donate/index.html">Donate</a>
         <a href="../license/index.html">License</a>
         <a href="../forks/index.html">Forks</a>
         <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">About Me</a>
       </nav>
+      <button type="button" class="site-theme-toggle" aria-pressed="false">Invert Colors</button>
       <h1 id="project_title">PER|FORMER</h1>
       <h2 id="project_tagline">build guide</h2>
-      <p id="project_credit">forked and maintained by Vinx Scorza</p>
+      <p id="project_credit">forked and maintained by <a href="https://vincenzoscorza.it" target="_blank" rel="noopener noreferrer">Vinx Scorza</a></p>
     </header>
   </div>
 
@@ -128,6 +129,9 @@ make -j
           By default, the Desktop Simulator now starts with both DIN MIDI and USB MIDI disabled, so it does not keep probing missing MIDI devices unless you explicitly assign them from the command line.
         </p>
         <p>
+          In the current Vinx line, <code>LP Note Style</code> defaults to <code>Circuit</code>, so dedicated Launchpad Circuit editors are the normal reference workflow when you test Launchpad behavior through the Desktop Simulator.
+        </p>
+        <p>
           Useful launch commands:
         </p>
         <pre><code>./src/apps/sequencer/sequencer --midi
@@ -187,5 +191,6 @@ make -j
       </p>
     </footer>
   </div>
+  <script src="../theme.js"></script>
 </body>
 </html>

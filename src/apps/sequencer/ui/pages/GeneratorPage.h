@@ -41,7 +41,10 @@ public:
     void revert();
     void commit();
     void togglePreview();
+    void launchpadRandomize();
     void showPreviewStateMessage();
+    bool launchpadShowingPreview() const;
+    bool launchpadResetState() const;
 
 private:
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;
@@ -60,6 +63,7 @@ private:
     int _section = 0;
     int _chaosCursor = 0;
     bool _chaosPreviewArmed = false;
+    bool _launchpadResetState = false;
     bool _applied = false;
     char _variationMenuLabel[16] = "VAR";
     ContextMenuModel::Item _contextMenuItems[5];

@@ -6,6 +6,7 @@
 #include "ui/model/NoteSequenceListModel.h"
 
 #include "engine/generators/SequenceBuilder.h"
+#include "engine/generators/Generator.h"
 #include "engine/generators/ChaosGenerator.h"
 #include "ui/KeyPressEventTracker.h"
 
@@ -13,6 +14,16 @@
 
 class NoteSequenceEditPage : public BasePage {
 public:
+    enum class LaunchpadGenerator : uint8_t {
+        Random,
+        AcidPhrase,
+        AcidLayer,
+        Vandalize,
+        Wreck,
+        Euclidean,
+        Init,
+    };
+
     NoteSequenceEditPage(PageManager &manager, PageContext &context);
 
     virtual void enter() override;
@@ -26,6 +37,8 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
     virtual void midi(MidiEvent &event) override;
+
+    void openLaunchpadGenerator(LaunchpadGenerator generator);
 
 private:
     typedef NoteSequence::Layer Layer;
@@ -57,6 +70,7 @@ private:
     void tieNotes();
     void generateSequence();
     void showAcidGenerator();
+    void showAcidGenerator(AcidSequenceBuilder::ApplyMode applyMode);
     void showChaosGenerator();
     void showChaosGenerator(ChaosGenerator::Scope scope);
     void showProjectSavePage();

@@ -169,6 +169,7 @@ void GeneratorPage::enter() {
     _valueRange.second = 7;
     _chaosCursor = 0;
     _chaosPreviewArmed = false;
+    _launchpadResetState = false;
 
     switch (_project.selectedTrack().trackMode()) {
     case Track::TrackMode::Note:
@@ -194,6 +195,7 @@ void GeneratorPage::enter() {
     }
 
     if (chaosGeneratorMode(_generator->mode())) {
+        _launchpadResetState = true;
         _generator->showOriginal();
         return;
     }
@@ -201,6 +203,7 @@ void GeneratorPage::enter() {
     _generator->randomizeParams();
     _generator->update();
     _generator->showPreview();
+    _launchpadResetState = false;
 }
 
 void GeneratorPage::exit() {
@@ -265,7 +268,7 @@ void GeneratorPage::draw(Canvas &canvas) {
     }
     case Generator::Mode::Chaos: {
         const auto &chaos = *static_cast<const ChaosGenerator *>(_generator);
-        activeFunction(chaos.patternScope() ? "CHAOS ON PAT" : "CHAOS ON SEQ");
+        activeFunction(chaos.patternScope() ? "WRECK PAT" : "VNDLZ SEQ");
         break;
     }
     default:
@@ -359,9 +362,7 @@ void GeneratorPage::draw(Canvas &canvas) {
         const auto &generator = *static_cast<const ChaosGenerator *>(_generator);
         Font prevFont = canvas.font();
         FixedStringBuilder<16> seedStr;
-        if (generator.patternScope()) {
-            seedStr("");
-        } else if (!_generator->showingPreview()) {
+        if (!_generator->showingPreview()) {
             seedStr("ORIGINAL");
         } else {
             seedStr("%08X", generator.seed());
@@ -375,10 +376,8 @@ void GeneratorPage::draw(Canvas &canvas) {
 
         FixedStringBuilder<16> amountStr("%d%%", generator.amount());
 
-        if (!generator.patternScope()) {
-            canvas.setColor(Color::Medium);
-            canvas.drawText(chaosX0 + ((chaosX1 - chaosX0 + 1) - canvas.textWidth(seedStr)) / 2, y, seedStr);
-        }
+        canvas.setColor(Color::Medium);
+        canvas.drawText(chaosX0 + ((chaosX1 - chaosX0 + 1) - canvas.textWidth(seedStr)) / 2, y, seedStr);
 
         canvas.setColor(pageKeyState()[Key::F1] ? Color::Bright : Color::Medium);
         canvas.drawText(amtX0 + ((amtX1 - amtX0 + 1) - canvas.textWidth(amountStr)) / 2, y, amountStr);
@@ -490,6 +489,9 @@ void GeneratorPage::keyUp(KeyEvent &event) {
 
 void GeneratorPage::keyPress(KeyPressEvent &event) {
     const auto &key = event.key();
+    auto leaveWithCancel = [&] () {
+        revert();
+    };
 
     if (key.isContextMenu()) {
         if (chaosGeneratorMode(_generator->mode())) {
@@ -523,10 +525,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isTempo()) {
-        if (!key.pageModifier()) {
-            _manager.pages().tempo.show();
-            event.consume();
-        }
+        event.consume();
         return;
     }
 
@@ -551,6 +550,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
                 chaos->randomizeSeed();
                 chaos->update();
                 chaos->showPreview();
+                _launchpadResetState = false;
                 if (!wasShowingPreview) {
                     showPreviewStateMessage();
                 }
@@ -575,16 +575,19 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
                 chaos->setAllTargets(true);
                 chaos->update();
                 refreshChaosView();
+                _launchpadResetState = false;
             } else if (_chaosCursor == ChaosAllOffCell) {
                 chaos->setAllTargets(false);
                 chaos->update();
                 refreshChaosView();
+                _launchpadResetState = false;
             } else {
                 ChaosGenerator::Target target;
                 if (chaosCellTarget(_chaosCursor, target)) {
                     chaos->toggleTarget(target);
                     chaos->update();
                     refreshChaosView();
+                    _launchpadResetState = false;
                 }
             }
             event.consume();
@@ -651,8 +654,47 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
     if (key.isRight()) {
         _section = (_section + 1) % 4;
         event.consume();
+        return;
     }
-    
+
+    auto functionKeyInContext = [&] () {
+        if (!key.isFunction()) {
+            return false;
+        }
+
+        if (chaosGeneratorMode(_generator->mode())) {
+            return key.function() == 0 || key.function() == 2 || key.function() == 3 || key.function() == 4;
+        }
+
+        if (seedDrivenGenerator(_generator->mode())) {
+            return key.function() == 0 || (acidLayerGenerator(_generator) && key.function() == 4);
+        }
+
+        if (euclideanGeneratorMode(_generator->mode())) {
+            return key.function() == 0 || key.function() == 1 ||
+                   key.function() == 2 || key.function() == 3 || key.function() == 4;
+        }
+
+        return false;
+    };
+
+    bool contextKey =
+        key.isStep() ||
+        key.isEncoder() ||
+        key.isLeft() ||
+        key.isRight() ||
+        key.isTempo() ||
+        key.isPage() ||
+        key.isShift() ||
+        key.isContextMenu() ||
+        functionKeyInContext() ||
+        (key.isShift() && event.count() == 2) ||
+        (key.isStep() && key.shiftModifier());
+
+    if (!contextKey) {
+        leaveWithCancel();
+        return;
+    }
 
     event.consume();
 }
@@ -666,6 +708,9 @@ void GeneratorPage::encoder(EncoderEvent &event) {
             chaos->update();
             if (_generator->showingPreview()) {
                 chaos->showPreview();
+            }
+            if (event.value() != 0) {
+                _launchpadResetState = false;
             }
             return;
         }
@@ -718,6 +763,7 @@ void GeneratorPage::encoder(EncoderEvent &event) {
     }
 
     if (changed) {
+        _launchpadResetState = false;
         _generator->update();
         if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
             _generator->showPreview();
@@ -1295,6 +1341,7 @@ void GeneratorPage::contextAction(int index) {
             random->randomizeContextParams();
             random->update();
             _generator->showPreview();
+            _launchpadResetState = false;
             break;
         }
         case Generator::Mode::Acid: {
@@ -1302,12 +1349,14 @@ void GeneratorPage::contextAction(int index) {
             acid->randomizeContextParams();
             acid->update();
             _generator->showPreview();
+            _launchpadResetState = false;
             break;
         }
         case Generator::Mode::Euclidean:
             _generator->randomizeParams();
             _generator->update();
             _generator->showPreview();
+            _launchpadResetState = false;
             break;
         default:
             break;
@@ -1346,6 +1395,7 @@ void GeneratorPage::init() {
     if (_generator->showingPreview()) {
         _generator->showPreview();
     }
+    _launchpadResetState = true;
 }
 
 void GeneratorPage::revert() {
@@ -1376,6 +1426,24 @@ void GeneratorPage::togglePreview() {
     }
 }
 
+void GeneratorPage::launchpadRandomize() {
+    if (chaosGeneratorMode(_generator->mode())) {
+        auto *chaos = static_cast<ChaosGenerator *>(_generator);
+        bool wasShowingPreview = _generator->showingPreview();
+        _chaosPreviewArmed = true;
+        chaos->randomizeSeed();
+        chaos->update();
+        chaos->showPreview();
+        _launchpadResetState = false;
+        if (!wasShowingPreview) {
+            showPreviewStateMessage();
+        }
+        return;
+    }
+
+    contextAction(int(ContextAction::RandomizeSeed));
+}
+
 void GeneratorPage::showPreviewStateMessage() {
     if (chaosGeneratorMode(_generator->mode())) {
         const auto *chaos = static_cast<const ChaosGenerator *>(_generator);
@@ -1385,4 +1453,12 @@ void GeneratorPage::showPreviewStateMessage() {
     } else {
         showMessage(seedDrivenGenerator(_generator->mode()) ? "CURRENT SEED" : "PREVIEW");
     }
+}
+
+bool GeneratorPage::launchpadShowingPreview() const {
+    return _generator && _generator->showingPreview();
+}
+
+bool GeneratorPage::launchpadResetState() const {
+    return _launchpadResetState;
 }

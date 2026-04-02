@@ -10,8 +10,6 @@
 #include "ui/ControllerManager.h"
 
 #include "os/os.h"
-#include <iostream>
-
 Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi) :
     _model(model),
     _project(model.project()),

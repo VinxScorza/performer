@@ -48,19 +48,24 @@ void FileSelectPage::keyPress(KeyPressEvent &event) {
         switch (Function(key.function())) {
         case Function::Cancel:
             closeWithResult(false);
+            event.consume();
             break;
         case Function::OK:
             closeWithResult(true);
+            event.consume();
             break;
         }
+        return;
     }
 
     if (key.is(Key::Encoder)) {
         closeWithResult(true);
+        event.consume();
         return;
     }
 
     ListPage::keyPress(event);
+    event.consume();
 }
 
 void FileSelectPage::closeWithResult(bool result) {

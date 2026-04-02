@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <functional>
+#include <algorithm>
 
 class VersionedSerializedReader {
 public:
@@ -65,9 +66,14 @@ public:
 
     void skip(size_t len, uint32_t addedInVersion, uint32_t removedInVersion) {
         if (_dataVersion >= addedInVersion && _dataVersion < removedInVersion) {
-            uint8_t dummy[len];
-            _reader(dummy, len);
-            _hash(dummy, len);
+            uint8_t dummy[64];
+            size_t remaining = len;
+            while (remaining > 0) {
+                size_t chunk = std::min(remaining, sizeof(dummy));
+                _reader(dummy, chunk);
+                _hash(dummy, chunk);
+                remaining -= chunk;
+            }
         }
     }
 

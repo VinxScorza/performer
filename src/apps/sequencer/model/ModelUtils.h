@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <bitset>
 #include <cstddef>
-#include <iostream>
 #include <vector>
 
 namespace ModelUtils {
