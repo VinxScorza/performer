@@ -400,6 +400,7 @@ void GeneratorPage::draw(Canvas &canvas) {
 
     switch (_generator->mode()) {
     case Generator::Mode::InitLayer:
+    case Generator::Mode::InitSteps:
         // no page
         break;
     case Generator::Mode::Euclidean:
@@ -596,6 +597,12 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
     }
 
+    if ((seedDrivenGenerator(_generator->mode()) || euclideanGeneratorMode(_generator->mode())) && key.isEncoder()) {
+        commit();
+        event.consume();
+        return;
+    }
+
     if (seedDrivenGenerator(_generator->mode()) && key.isFunction() && key.function() == 0) {
         togglePreview();
         event.consume();
@@ -663,11 +670,13 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         }
 
         if (chaosGeneratorMode(_generator->mode())) {
-            return key.function() == 0 || key.function() == 2 || key.function() == 3 || key.function() == 4;
+            return key.function() >= 0 && key.function() <= 4;
         }
 
         if (seedDrivenGenerator(_generator->mode())) {
-            return key.function() == 0 || (acidLayerGenerator(_generator) && key.function() == 4);
+            return key.function() == 0 ||
+                   (key.function() > 0 && key.function() < _generator->paramCount()) ||
+                   (acidLayerGenerator(_generator) && key.function() == 4);
         }
 
         if (euclideanGeneratorMode(_generator->mode())) {

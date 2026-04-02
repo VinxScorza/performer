@@ -6,7 +6,7 @@
 
 This is a personal fork of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a>, itself based on the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
 
-The Vinx Scorza line begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference. Current fork version: `0.3.2-vinx.1.5.0`.
+The Vinx Scorza line begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference. Current fork version: `0.3.2-vinx.1.5.1`.
 
 If you are looking for a more conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines. If you are interested in a more hands-on, performance-oriented evolution of PER|FORMER, you are in the right place. I am very grateful to Simon Kallweit for creating and developing the original Westlicht PER|FORMER. If you would like to support this fork and the upstream work behind it financially, you can donate here: <a href="https://vinxscorza.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Vinx Scorza</a> · <a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Mebitek</a> · <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Simon Kallweit / Westlicht</a>.
 

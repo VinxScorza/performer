@@ -763,8 +763,12 @@ bool CurveSequenceEditPage::contextActionEnabled(int index) const {
 
 void CurveSequenceEditPage::initSequence() {
     _inMemorySequence = _project.selectedCurveSequence();
+    auto selected = _stepSelection.selected();
+    if (!selected.any()) {
+        selected.set();
+    }
     auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
-    builder->clearLayer(_stepSelection.selected());
+    builder->clearLayer(selected);
     builder->showPreview();
     builder->apply();
     showMessage("LAYER INITIALIZED");
@@ -794,11 +798,15 @@ void CurveSequenceEditPage::generateSequence() {
         if (success) {
             auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
 
-            if (mode == Generator::Mode::InitLayer) {
-                Generator::execute(mode, *builder, _stepSelection.selected());
+            if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
+                auto selected = _stepSelection.selected();
+                if (!selected.any()) {
+                    selected.set();
+                }
+                Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();
-                showMessage("SEQUENCE INITIALIZED");
+                showMessage(mode == Generator::Mode::InitLayer ? "LAYER INITIALIZED" : "STEPS INITIALIZED");
                 return;
             }
 

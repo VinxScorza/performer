@@ -45,6 +45,7 @@ private:
     bool contextActionEnabled(int index) const;
 
     void initSequence();
+    bool initLayerToArpDefaults();
     void copySequence();
     void pasteSequence();
     void duplicateSequence();

@@ -282,8 +282,8 @@ void StochasticSequence::clear() {
     setRestProbability2(0);
     setRestProbability4(0);
     setRestProbability8(0);
-    setLowOctaveRange(0);
     setHighOctaveRange(0);
+    setLowOctaveRange(-3);
     setUseLoop(false);
     setReseed(false);
 

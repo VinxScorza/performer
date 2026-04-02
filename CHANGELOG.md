@@ -4,6 +4,15 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.5.1
+- Restore the `LP Note Style` machine-setting default to `Circuit`, so the firmware matches the current Launchpad documentation and intended fork workflow again
+- Fix generator reset semantics so `Init Layer` on `Steps` remains layer-only, `Init Steps` in the `GEN` chooser is a real all-step-layers reset, and both now use the current persistent selection first or the whole current track when no selection exists
+- Fix `Init Layer` / `Init Steps` behavior on `Stochastic` and `Arp`: `Init Layer` no longer clears full steps, `Arp` `Note` layer initialization restores its expected chromatic default, and `Init Steps` preserves the expected chromatic defaults for the first 12 note slots instead of flattening them through plain step clears
+- Fix `Stochastic Init Seq` so sequence clear restores the intended low/high octave defaults deterministically again
+- Fix generator footer navigation so switching between footer options in `Random`, `Acid`, and `Chaos` no longer exits the page unexpectedly
+- Lock LP track switching while the machine is inside the `Acid` / `Chaos` selector path, so those modal choices stay bound to the current track until you cancel or confirm them on the machine
+- Make encoder press commit the generator directly in `Random`, `Acid`, and `Euclidean`, so those pages can apply without reaching for `F5`
+
 # v0.3.2-vinx.1.5.0 (2 April 2026)
 - Refine the Chaos generator pages: rename the labels from CHAOS ON SEQ / CHAOS ON PAT to VNDLZ SEQ / WRECK PAT, and show the active seed in both Vandalize Sequence and Wreck Pattern while the untouched source still reads ORIGINAL
 - Fix LP Note Style: Classic drawing on the Launchpad Note layer so non-home navigation positions light the edited note correctly instead of only updating the underlying step value

@@ -19,11 +19,11 @@ public:
         case 1:
             return _allowAcid ? Generator::Mode::Acid : Generator::Mode::Euclidean;
         case 2:
-            return _allowAcid ? Generator::Mode::Chaos : Generator::Mode::InitLayer;
+            return _allowAcid ? Generator::Mode::Chaos : Generator::Mode::InitSteps;
         case 3:
             return _allowAcid ? Generator::Mode::Euclidean : Generator::Mode::Random;
         case 4:
-            return Generator::Mode::InitLayer;
+            return Generator::Mode::InitSteps;
         default:
             return Generator::Mode::Random;
         }

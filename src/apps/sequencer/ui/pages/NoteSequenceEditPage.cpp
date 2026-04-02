@@ -1056,8 +1056,12 @@ bool NoteSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void NoteSequenceEditPage::initSequence() {
+    auto selected = _stepSelection.selected();
+    if (!selected.any()) {
+        selected.set();
+    }
     auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
-    builder->clearLayer(_stepSelection.selected());
+    builder->clearLayer(selected);
     builder->showPreview();
     builder->apply();
     showMessage("LAYER INITIALIZED");
@@ -1110,12 +1114,16 @@ void NoteSequenceEditPage::tieNotes() {
 void NoteSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show(true, [this] (bool success, Generator::Mode mode) {
         if (success) {
-            if (mode == Generator::Mode::InitLayer) {
+            if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
+                auto selected = _stepSelection.selected();
+                if (!selected.any()) {
+                    selected.set();
+                }
                 auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
-                Generator::execute(mode, *builder, _stepSelection.selected());
+                Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();
-                showMessage("SEQUENCE INITIALIZED");
+                showMessage(mode == Generator::Mode::InitLayer ? "LAYER INITIALIZED" : "STEPS INITIALIZED");
                 return;
             }
 
@@ -1178,10 +1186,10 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
         break;
     case LaunchpadGenerator::Init: {
         auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
-        Generator::execute(Generator::Mode::InitLayer, *builder, _stepSelection.selected());
+        Generator::execute(Generator::Mode::InitSteps, *builder, _stepSelection.selected());
         builder->showPreview();
         builder->apply();
-        showMessage("SEQUENCE INITIALIZED");
+        showMessage("STEPS INITIALIZED");
         _builderContainer.destroy(builder);
         break;
     }

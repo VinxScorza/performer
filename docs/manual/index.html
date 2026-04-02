@@ -142,7 +142,7 @@
           Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
         </p>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.5.0</code>.
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.5.1</code>.
         </p>
         <p>
           Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.
@@ -1271,7 +1271,7 @@
           <li>When editing a Curve track, select multiple steps with <code>SHIFT</code> + step, then hold <code>SHIFT</code> and turn the <code>ENCODER</code> to select a shape. The shape will be spread across the selected steps.</li>
           <li>When editing a Curve track, select multiple steps with <code>SHIFT</code> + step and press <code>SHIFT</code> + <code>ENCODER</code> to reverse the shapes.</li>
           <li>When editing a Note track, select any steps you want and press <code>SHIFT</code> + <code>NEXT</code> or <code>PREV</code> to move the selected step by 1 step.</li>
-          <li>When editing a sequence page, <code>Init Layer</code> on the Steps page is selection-aware, while <code>Init Seq</code> on the Sequence page context menu still initializes the whole sequence.</li>
+          <li>When editing a sequence page, <code>Init Layer</code> on the Steps page uses the current persistent selection first and otherwise initializes the whole track layer; <code>Init Seq</code> on the Sequence page context menu still initializes the whole sequence.</li>
           <li>When editing a Note or Curve track, pressing <code>PAGE</code> + <code>S7</code> undoes the last change.</li>
           <li>When editing a Note track, holding a step and pressing <code>F1</code> to <code>F5</code> sets the note octave respectively to 1V, 2V, 3V, 4V or 5V. This can be used to quickly create accents.</li>
           <li>When editing a Stochastic track, pressing <code>PAGE</code> + <code>S7</code> loops the sequence. Length is calculated by Sequence First Step and Sequence Last Step.</li>
@@ -1307,7 +1307,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init Layer</td><td style="text-align: left">Initialize only the active layer. If a step selection exists it is applied there first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
+            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init Layer</td><td style="text-align: left">Initialize only the active layer. If a step selection exists it is applied there first; otherwise the whole current track layer is initialized.</td></tr>
             <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected steps to the clipboard.</td></tr>
             <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste steps in the clipboard to the selected steps.</td></tr>
             <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Duplicate</td><td style="text-align: left">Doubles the length of the sequence between First Step and Last Step and copies the first half to the second half.</td></tr>
@@ -1381,7 +1381,7 @@
           <li><em>Acid</em> is the character generator: it is meant to push Note-track material toward acid-like phrasing, either across a full phrase or only on the active layer.</li>
           <li><em>Euclidean</em> is the structural rhythm tool: it is the clearest choice when you want an intentional pulse distribution defined by <code>Steps</code>, <code>Beats</code>, and <code>Offset</code>.</li>
           <li><em>Chaos</em> is the rough exploratory tool: it works across multiple Note-track layers at once and is best treated as a deliberate vandalism pass rather than a harmonically careful generator.</li>
-          <li><em>Init Seq</em> is the reset tool: use it when you want to clear the current generator scope rather than shape it.</li>
+          <li><em>Init Steps</em> is the step reset tool inside the generator chooser: it initializes all step layers in the current generator scope, using the current persistent selection first or the whole current track when nothing is selected.</li>
         </ul>
         <table>
           <thead>
@@ -1395,14 +1395,14 @@
             <tr><td style="text-align: left">Acid</td><td style="text-align: left">Note-track generator for acid-like Gate / Note / Slide motion.</td></tr>
             <tr><td style="text-align: left">Chaos</td><td style="text-align: left">Experimental Note-track multi-layer generator that now opens a <code>CHAOS MODE</code> submenu for <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.</td></tr>
             <tr><td style="text-align: left">Euclidean</td><td style="text-align: left">Euclidean generator based on Bjorklund's algorithm.</td></tr>
-            <tr><td style="text-align: left">Init Seq</td><td style="text-align: left">Reset sequence steps within the current generator scope. If a persistent selection exists it is used first; otherwise the current <em>First Step</em> / <em>Last Step</em> range is used.</td></tr>
+            <tr><td style="text-align: left">Init Steps</td><td style="text-align: left">Initialize all step layers in the current generator scope. If a persistent selection exists it is used first; otherwise the whole current track is initialized.</td></tr>
           </tbody>
         </table>
         <p>
           Note: <em>Acid</em> and <em>Chaos</em> appear only on Note tracks. Other track modes keep the smaller generator set appropriate to their data model.
         </p>
         <p>
-          The Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Seq</code>. The current firmware also restores the expected <code>Init Layer</code> behavior on the step page.
+          The Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Steps</code>. The current firmware keeps <code>Init Layer</code> on the step-page context menu and <code>Init Steps</code> in the generator chooser distinct.
         </p>
         <h4>Context Menu</h4>
         <p>
@@ -1429,6 +1429,15 @@
         </p>
         <p>
           On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material. Parameter edits keep updating the hidden preview in the background, while explicit reroll actions such as <code>NEW RAND</code> reveal the new preview immediately.
+        </p>
+        <p>
+          The footer controls on <em>Random</em>, <em>Acid</em>, and <em>Chaos</em> are treated as in-context generator actions: switching between those footer options no longer drops you out of the generator page unexpectedly.
+        </p>
+        <p>
+          On <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, pressing the encoder now commits the generator directly, mirroring the apply action without needing to reach for the footer button.
+        </p>
+        <p>
+          While the machine is sitting inside the <em>Acid</em> or <em>Chaos</em> selector path, Launchpad track buttons no longer retarget the selection underneath it. In practice, those modal choices stay bound to the current track until you explicitly cancel or confirm them on the machine.
         </p>
         <p>
           <code>ResetGen</code> is intentionally separated from reroll actions: <em>Random</em> resets to <code>Smooth 0</code>, <code>Bias 0</code>, <code>Range 5</code>, <code>Var 100</code>; <em>Acid</em> resets to <code>Density 50</code>, <code>Slide 10</code>, <code>Range 35</code>, <code>Var 100</code>; and <em>Euclidean</em> resets to <code>Steps 16</code>, <code>Beats 1</code>, <code>Offset 0</code>. Rerolling remains an explicit action via <code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>.
@@ -1985,7 +1994,7 @@
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
         <p>
-          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page also reports the <code>v0.3.2-vinx.1.5.0</code> version string correctly.
+          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page also reports the <code>v0.3.2-vinx.1.5.1</code> version string correctly.
         </p>
         <table>
           <thead>

@@ -14,6 +14,7 @@ class Generator {
 public:
     enum class Mode {
         InitLayer,
+        InitSteps,
         Euclidean,
         Random,
         Acid,
@@ -23,7 +24,8 @@ public:
 
     static const char *modeName(Mode mode) {
         switch (mode) {
-        case Mode::InitLayer:   return "Init Steps";
+        case Mode::InitLayer:   return "Init Layer";
+        case Mode::InitSteps:   return "Init Steps";
         case Mode::Euclidean:   return "Euclidean";
         case Mode::Random:      return "Random";
         case Mode::Acid:        return "Acid";

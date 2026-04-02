@@ -147,6 +147,7 @@ private:
     bool generatorModeSupported() const;
     bool generatorModeEditPage() const;
     bool generatorModePreviewPage() const;
+    bool generatorTrackSelectionLocked() const;
     void cancelGeneratorMode();
     LaunchpadGenerator generatorModeGrid(int gridIndex) const;
     void setGeneratorMode(bool active);

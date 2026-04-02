@@ -29,6 +29,7 @@ void Generator::destroyActive() {
         generatorContainer.destroy(&generatorContainer.as<ChaosGenerator>());
         break;
     case Mode::InitLayer:
+    case Mode::InitSteps:
     case Mode::Last:
         break;
     }
@@ -36,7 +37,11 @@ void Generator::destroyActive() {
     activeGeneratorMode = Mode::Last;
 }
 
-static void initSequence(SequenceBuilder &builder, const std::bitset<CONFIG_STEP_COUNT> &selected) {
+static void initLayer(SequenceBuilder &builder, const std::bitset<CONFIG_STEP_COUNT> &selected) {
+    builder.clearLayer(selected);
+}
+
+static void initSteps(SequenceBuilder &builder, const std::bitset<CONFIG_STEP_COUNT> &selected) {
     builder.clearSteps(selected);
 }
 
@@ -45,7 +50,10 @@ Generator *Generator::execute(Generator::Mode mode, SequenceBuilder &builder, st
 
     switch (mode) {
     case Mode::InitLayer:
-        initSequence(builder, selected);
+        initLayer(builder, selected);
+        return nullptr;
+    case Mode::InitSteps:
+        initSteps(builder, selected);
         return nullptr;
     case Mode::Euclidean:
         activeGeneratorMode = mode;

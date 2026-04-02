@@ -591,6 +591,9 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                 }
                 
             } else if (button.isScene()) {
+                if (generatorTrackSelectionLocked()) {
+                    return;
+                }
                 _project.setSelectedTrackIndex(button.scene());
             }
         }
@@ -728,6 +731,20 @@ bool LaunchpadController::generatorModeEditPage() const {
 
 bool LaunchpadController::generatorModePreviewPage() const {
     return _manager.uiPageKind() == ControllerManager::UiPageKind::Generator;
+}
+
+bool LaunchpadController::generatorTrackSelectionLocked() const {
+    auto *pageManager = _manager.pageManager();
+    auto *pages = _manager.pages();
+
+    if (!pageManager || !pages) {
+        return false;
+    }
+
+    auto *top = pageManager->top();
+    return top == &pages->acidModeSelect ||
+           top == &pages->chaosScopeSelect ||
+           top == &pages->wreckPatternWarning;
 }
 
 void LaunchpadController::cancelGeneratorMode() {

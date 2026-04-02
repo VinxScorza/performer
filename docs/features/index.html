@@ -38,7 +38,7 @@
             This page is the curated web summary of the Vinx Scorza line. It focuses only on the Vinx fork, starting from <code>v0.3.2-vinx.1</code>, and reorganizes the work by topic instead of strict release order so it is easier to understand what this branch actually adds.
           </p>
           <p>
-            This documentation line is aligned through <code>v0.3.2-vinx.1.5.0</code>. If you want the exact chronological log, including inherited upstream history, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
+            This documentation line is aligned through <code>v0.3.2-vinx.1.5.1</code>. If you want the exact chronological log, including inherited upstream history, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
           </p>
         </div>
       </section>
@@ -133,6 +133,7 @@
               <li>Move to full 32-bit hexadecimal seeds, with cleaner seed handling on entry and during editing.</li>
               <li>Keep the seed stable while shaping the result through the other Random parameters, so editing feels intentional instead of slippery.</li>
               <li>Make Random preview more expressive on the LCD, including layer-aware views on Note tracks.</li>
+              <li>Keep footer actions in-context, so switching between footer options inside <code>Random</code>, <code>Acid</code>, and <code>Chaos</code> no longer exits the generator page unexpectedly.</li>
             </ul>
           </article>
         </div>
@@ -150,6 +151,7 @@
               <li>Make <code>Generate</code> open on the current 16-step bank and keep LEDs and bank navigation aligned with that bank.</li>
               <li>Rework <code>Euclidean</code> around compare, immediate preview-on-entry, reseed, and direct parameter editing while enforcing sane relationships such as <code>Beats &lt;= Steps</code>.</li>
               <li>Make <code>ResetGen</code> restore neutral defaults instead of quietly rerolling the generator state.</li>
+              <li>Separate <code>Init Layer</code>, <code>Init Steps</code>, and <code>Init Seq</code> cleanly again, with selection-aware behavior and whole-track fallback when no persistent step selection exists.</li>
               <li>Keep transport responsive inside generator pages so the sequencer remains playable while shaping material.</li>
             </ul>
           </article>

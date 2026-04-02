@@ -1037,11 +1037,42 @@ bool ArpSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void ArpSequenceEditPage::initSequence() {
+    if (initLayerToArpDefaults()) {
+        showMessage("LAYER INITIALIZED");
+        return;
+    }
+
+    auto selected = _stepSelection.selected();
+    if (!selected.any()) {
+        selected.set();
+    }
     auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
-    builder->clearLayer(_stepSelection.selected());
+    builder->clearLayer(selected);
     builder->showPreview();
     builder->apply();
     showMessage("LAYER INITIALIZED");
+}
+
+bool ArpSequenceEditPage::initLayerToArpDefaults() {
+    if (layer() != Layer::Note) {
+        return false;
+    }
+
+    auto selected = _stepSelection.selected();
+    if (!selected.any()) {
+        selected.set();
+    }
+    auto &sequence = _project.selectedArpSequence();
+    for (int stepIndex = 0; stepIndex < int(sequence.steps().size()); ++stepIndex) {
+        const bool targetStep = selected[stepIndex];
+        if (!targetStep) {
+            continue;
+        }
+
+        sequence.step(stepIndex).setNote(stepIndex < 12 ? stepIndex : 0);
+    }
+
+    return true;
 }
 
 void ArpSequenceEditPage::copySequence() {
@@ -1062,13 +1093,22 @@ void ArpSequenceEditPage::duplicateSequence() {
 void ArpSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show([this] (bool success, Generator::Mode mode) {
         if (success) {
+            if (mode == Generator::Mode::InitLayer && initLayerToArpDefaults()) {
+                showMessage("LAYER INITIALIZED");
+                return;
+            }
+
             auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
 
-            if (mode == Generator::Mode::InitLayer) {
-                Generator::execute(mode, *builder, _stepSelection.selected());
+            if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
+                auto selected = _stepSelection.selected();
+                if (!selected.any()) {
+                    selected.set();
+                }
+                Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();
-                showMessage("SEQUENCE INITIALIZED");
+                showMessage(mode == Generator::Mode::InitLayer ? "LAYER INITIALIZED" : "STEPS INITIALIZED");
                 return;
             }
 

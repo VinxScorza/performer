@@ -181,7 +181,7 @@ class LaunchpadNoteStyle : public Setting<int> {
         "LP Note Style",
         {"classic", "circuit"},
         {0, 1},
-        0
+        1
     ) {}
 };
 

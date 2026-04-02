@@ -41,6 +41,23 @@ public:
 };
 
 template<typename T>
+inline void restoreClearedStepDefaults(T &, int) {}
+
+template<>
+inline void restoreClearedStepDefaults<StochasticSequence>(StochasticSequence &sequence, int stepIndex) {
+    if (stepIndex >= 0 && stepIndex < 12) {
+        sequence.step(stepIndex).setNote(stepIndex);
+    }
+}
+
+template<>
+inline void restoreClearedStepDefaults<ArpSequence>(ArpSequence &sequence, int stepIndex) {
+    if (stepIndex >= 0 && stepIndex < 12) {
+        sequence.step(stepIndex).setNote(stepIndex);
+    }
+}
+
+template<typename T>
 class SequenceBuilderImpl : public SequenceBuilder {
 public:
     SequenceBuilderImpl(T &sequence, typename T::Layer layer) :
@@ -110,6 +127,7 @@ public:
         if (!selected.any()) {
             for (int i = _preview.firstStep(); i <= _preview.lastStep(); ++i) {
                 _preview.step(i).clear();
+                restoreClearedStepDefaults(_preview, i);
             }
             return;
         }
@@ -117,6 +135,7 @@ public:
         for (int i = 0; i < int(_preview.steps().size()); ++i) {
             if (selected[i]) {
                 _preview.step(i).clear();
+                restoreClearedStepDefaults(_preview, i);
             }
         }
     }
