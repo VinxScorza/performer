@@ -135,5 +135,74 @@
     </footer>
   </div>
   <script src="../theme.js"></script>
+  <script>
+    (function () {
+      const releaseNodes = Array.from(document.querySelectorAll("[data-latest-release]"));
+      const versionNodes = Array.from(document.querySelectorAll("[data-latest-version]"));
+      const repos = Array.from(
+        new Set(
+          releaseNodes
+            .map((node) => node.dataset.latestRelease)
+            .concat(versionNodes.map((node) => node.dataset.latestVersion))
+            .filter(Boolean)
+        )
+      );
+
+      if (!repos.length) {
+        return;
+      }
+
+      const dateFormatter = new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      });
+
+      const releaseByRepo = new Map();
+
+      const loadRelease = async (repo) => {
+        const response = await fetch("https://api.github.com/repos/" + repo + "/releases/latest", {
+          headers: { Accept: "application/vnd.github+json" },
+        });
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+        const payload = await response.json();
+        if (!payload || !payload.tag_name || !payload.published_at) {
+          throw new Error("Missing release data");
+        }
+        releaseByRepo.set(repo, {
+          version: payload.tag_name,
+          releaseDate: dateFormatter.format(new Date(payload.published_at)),
+        });
+      };
+
+      Promise.all(
+        repos.map(async (repo) => {
+          try {
+            await loadRelease(repo);
+          } catch (error) {
+            console.warn("[forks] latest release update failed for " + repo, error);
+          }
+        })
+      ).then(() => {
+        releaseNodes.forEach((node) => {
+          const repo = node.dataset.latestRelease;
+          const entry = repo ? releaseByRepo.get(repo) : null;
+          if (entry) {
+            node.textContent = "Latest release: " + entry.releaseDate;
+          }
+        });
+
+        versionNodes.forEach((node) => {
+          const repo = node.dataset.latestVersion;
+          const entry = repo ? releaseByRepo.get(repo) : null;
+          if (entry) {
+            node.textContent = "Latest version: " + entry.version;
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
