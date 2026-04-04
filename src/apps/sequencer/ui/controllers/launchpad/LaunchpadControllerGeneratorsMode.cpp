@@ -33,6 +33,63 @@ bool LaunchpadController::generatorTrackSelectionLocked() const {
            top == &pages->wreckPatternWarning;
 }
 
+bool LaunchpadController::handleGeneratorModeGlobalButtons(const Button &button, ButtonAction action) {
+    if (_mode != Mode::Sequence || !_generatorMode || !generatorModeSupported()) {
+        return false;
+    }
+
+    if (button.isFunction() && button.function() == 7) {
+        if (action == ButtonAction::Down) {
+            _generatorApplyArmed = generatorModePreviewPage();
+            _generatorApplyCanceled = false;
+            return true;
+        }
+        if (action == ButtonAction::Up) {
+            if (_generatorApplyArmed && !_generatorApplyCanceled && generatorModePreviewPage()) {
+                if (auto *pages = _manager.pages()) {
+                    pages->generator.commit();
+                    setGeneratorMode(false);
+                }
+            }
+            _generatorApplyArmed = false;
+            _generatorApplyCanceled = false;
+            return true;
+        }
+    }
+
+    if (buttonState(LaunchpadDevice::FunctionRow, 7) && button.isFunction() && button.function() == 3 && action == ButtonAction::Down) {
+        _generatorApplyCanceled = true;
+        setGeneratorMode(false);
+        return true;
+    }
+
+    return false;
+}
+
+bool LaunchpadController::handleGeneratorModeToggleShortcut(const Button &button) {
+    if (!buttonState(LaunchpadDevice::FunctionRow, 7) || !button.isFunction() || button.function() != 3) {
+        return false;
+    }
+
+    if (_mode != Mode::Sequence || _project.selectedTrack().trackMode() != Track::TrackMode::Note) {
+        return false;
+    }
+
+    if (_generatorMode && generatorModeSupported()) {
+        setGeneratorMode(false);
+        return true;
+    }
+
+    if (!generatorModeSupported()) {
+        if (auto *pages = _manager.pages()) {
+            pages->top.setMode(TopPage::Mode::SequenceEdit);
+        }
+    }
+
+    setGeneratorMode(true);
+    return true;
+}
+
 void LaunchpadController::cancelGeneratorMode() {
     if (!_generatorMode) {
         return;
@@ -122,6 +179,15 @@ bool LaunchpadController::sequenceButtonGeneratorMode(const Button &button, Butt
     }
 
     if (button.isGrid()) {
+        if (button.gridIndex() == 15) {
+            if (generatorModeEditPage()) {
+                if (auto *pages = _manager.pages()) {
+                    pages->noteSequenceEdit.launchpadUndo();
+                }
+            }
+            return true;
+        }
+
         LaunchpadGenerator generator = generatorModeGrid(button.gridIndex());
         if (generator != LaunchpadGenerator::None) {
             if (generatorModePreviewPage()) {

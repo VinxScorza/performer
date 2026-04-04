@@ -148,6 +148,8 @@ private:
     bool generatorModeEditPage() const;
     bool generatorModePreviewPage() const;
     bool generatorTrackSelectionLocked() const;
+    bool handleGeneratorModeGlobalButtons(const Button &button, ButtonAction action);
+    bool handleGeneratorModeToggleShortcut(const Button &button);
     void cancelGeneratorMode();
     LaunchpadGenerator generatorModeGrid(int gridIndex) const;
     void setGeneratorMode(bool active);
