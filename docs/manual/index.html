@@ -142,7 +142,7 @@
           Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
         </p>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.5.2</code>.
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.5.2</code> plus the active <code>1.5.3-launchpad-refactor</code> pre-release behavior.
         </p>
         <p>
           Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.
@@ -1437,7 +1437,7 @@
           On <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, pressing the encoder now commits the generator directly, mirroring the apply action without needing to reach for the footer button.
         </p>
         <p>
-          While the machine is sitting inside the <em>Acid</em> or <em>Chaos</em> selector path, Launchpad track buttons no longer retarget the selection underneath it. In practice, those modal choices stay bound to the current track until you explicitly cancel or confirm them on the machine.
+          Outside the LP <em>Generators Mode</em> mini-mode, Launchpad track/scene retarget is now locked across the machine generator path: the main <code>GEN</code> chooser, <em>Acid</em>/<em>Chaos</em> sub-selectors, and active generator pages. In practice, those choices stay bound to the current track until you explicitly cancel or confirm on the machine, preventing wrong-target apply/cancel edge cases.
         </p>
         <p>
           <code>ResetGen</code> is intentionally separated from reroll actions: <em>Random</em> resets to <code>Smooth 0</code>, <code>Bias 0</code>, <code>Range 5</code>, <code>Var 100</code>; <em>Acid</em> resets to <code>Density 50</code>, <code>Slide 10</code>, <code>Range 35</code>, <code>Var 100</code>; and <em>Euclidean</em> resets to <code>Steps 16</code>, <code>Beats 1</code>, <code>Offset 0</code>. Rerolling remains an explicit action via <code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>.
@@ -1573,7 +1573,7 @@
         </p>
         <h4>Acid</h4>
         <p>
-          <em>Acid</em> is available only on Note tracks. After selecting it, a mode selector appears with <code>Phrase</code> and, where relevant, <code>Layer</code>.
+          <em>Acid</em> is available only on Note tracks. After selecting it, a mode selector appears with <code>Layer</code> first and <code>Phrase</code> second, where relevant.
         </p>
         <table>
           <thead>
@@ -1994,7 +1994,7 @@
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
         <p>
-          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page also reports the <code>v0.3.2-vinx.1.5.2</code> version string correctly.
+          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page also reports the <code>v0.3.2-vinx.1.5.3</code> version string correctly.
         </p>
         <table>
           <thead>

@@ -4,6 +4,13 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.5.3 (branch: `1.5.3-launchpad-refactor`, in progress)
+- Launchpad refactor: complete the P1 structural split of Launchpad controller domains (high-risk area hardening)
+- Fix generator-selector track locking end-to-end: while the machine is inside the generator selector path (level 1 and deeper), Launchpad track/scene retarget is blocked so selection stays bound to the original track
+- Fix generator-page retarget regressions by keeping Launchpad track/scene switching locked while generator pages are active
+- Fix Launchpad Generators Mode UX regressions on hardware: stabilize overlay enter/exit behavior, keep selector mapping aligned (`GRID 2 = Acid Layer`, `GRID 10 = Acid Phrase`), restore visual feedback (`GRID 16`), and keep `Init Steps` / `Undo` flows stable without stale full-step selections
+- Extend simulator regression coverage for Launchpad generator locking and selector flows, including explicit scene-switch lock checks for machine selector and generator pages
+
 # v0.3.2-vinx.1.5.2 (3 April 2026)
 - Swap `Acid` mode order to `Layer` then `Phrase` in the machine `Acid` selector, and mirror that same swap in Launchpad `Generators Mode` (`GRID 2 = Acid Layer`, `GRID 10 = Acid Phrase`)
 - Add `GRID 16 = Undo` to Launchpad `Generators Mode` (mirrors machine `PAGE + S7`): on generator preview pages it first reverts the current preview in its active scope (including `Wreck Pattern`), and outside preview pages it restores the selected Note-sequence snapshot; accidental `GRID 8` immediate `Init Steps` can therefore be reverted safely

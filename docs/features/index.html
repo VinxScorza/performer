@@ -38,7 +38,7 @@
             This page is the curated web summary of the Vinx Scorza line. It focuses only on the Vinx fork, starting from <code>v0.3.2-vinx.1</code>, and reorganizes the work by topic instead of strict release order so it is easier to understand what this branch actually adds.
           </p>
           <p>
-            This documentation line is aligned through <code>v0.3.2-vinx.1.5.2</code>. If you want the exact chronological log, including inherited upstream history, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
+            This documentation line is aligned through <code>v0.3.2-vinx.1.5.2</code> plus the active <code>1.5.3-launchpad-refactor</code> pre-release branch. If you want the exact chronological log, including inherited upstream history, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
           </p>
         </div>
       </section>
@@ -207,6 +207,7 @@
               <li>Support both classic and circuit-style note editing approaches depending on workflow preference.</li>
               <li>Fix the recent Launchpad regressions around <code>LP Note Style: Classic</code>, Circuit editor targeting, Pattern edited-state drawing, screensaver wake, and Performer fill release.</li>
               <li>Add an experimental Launchpad <code>Generators Mode</code> on Note tracks in LP <code>Sequence</code> mode, with direct generator selection, reroll, <code>A/B</code>, <code>ResetGen</code>, <code>Apply</code>, track-to-track retargeting, and <code>GRID 16</code> undo behavior aligned with machine <code>PAGE + S7</code>.</li>
+              <li>Refactor the high-risk Launchpad controller area (P1): split <code>Generators Mode</code>, <code>TRK/scene</code> routing, track-scene LED drawing, and shared lock-policy helpers with stable behavior.</li>
               <li>Fix Launchpad <code>Note</code>, <code>Stochastic</code>, and <code>Arp</code> behavior across Classic and Circuit workflows, including editor targeting, Pattern edited-state drawing, the Rest Prob row, and the Note Circuit <code>1..16</code> step range.</li>
               <li>Align the manual, LP Cheatsheet, embedded LP reference, and site terminology around the current Launchpad workflow.</li>
             </ul>
