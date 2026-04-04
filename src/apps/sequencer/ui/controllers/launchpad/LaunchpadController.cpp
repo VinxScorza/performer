@@ -314,11 +314,8 @@ bool LaunchpadController::globalButton(const Button &button, ButtonAction action
 
     if (action == ButtonAction::Down &&
         button.isScene() &&
-        _manager.uiPageKind() == ControllerManager::UiPageKind::Generator) {
-        auto *pages = _manager.pages();
-        if (pages && pages->generator.launchpadTrackRetargetLocked()) {
-            return true;
-        }
+        generatorTrackSelectionLockedByUiKind()) {
+        return true;
     }
 
     if (action == ButtonAction::Down) {
@@ -3261,15 +3258,11 @@ void LaunchpadController::dispatchButtonEvent(const Button& button, ButtonAction
     }
 
     if (action == ButtonAction::Down && button.isScene()) {
-        auto *pageManager = _manager.pageManager();
-        if (pageManager && pageManager->top()->isModal()) {
+        if (modalTrackSelectionLocked()) {
             return;
         }
 
-        auto *pages = _manager.pages();
-        if (pages && pageManager &&
-            pageManager->top() == &pages->generator &&
-            pages->generator.launchpadTrackRetargetLocked()) {
+        if (generatorTrackSelectionLockedByTopPage()) {
             return;
         }
     }

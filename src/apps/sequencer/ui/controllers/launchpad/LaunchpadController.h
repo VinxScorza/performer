@@ -160,6 +160,9 @@ private:
     void sequenceSceneSolo(const Button &button);
     void sequenceSceneFill(const Button &button, bool active);
     void sequenceSceneSelectTrack(const Button &button);
+    bool modalTrackSelectionLocked() const;
+    bool generatorTrackSelectionLockedByUiKind() const;
+    bool generatorTrackSelectionLockedByTopPage() const;
     void drawRunningKeyboardCircuit(int row, int col, const NoteSequence::Step &step, const Scale &scale, int rootNote);
     void drawRunningStochasticKeyboardCircuit(int row, int col, const StochasticSequence::Step &step, const Scale &scale, int rootNote);
     void drawRunningArpKeyboardCircuit(int row, int col, const ArpSequence::Step &step, const Scale &scale, int rootNote);

@@ -3,6 +3,27 @@
 #include "ui/PageManager.h"
 #include "ui/pages/Pages.h"
 
+bool LaunchpadController::modalTrackSelectionLocked() const {
+    auto *pageManager = _manager.pageManager();
+    return pageManager && pageManager->top()->isModal();
+}
+
+bool LaunchpadController::generatorTrackSelectionLockedByUiKind() const {
+    auto *pages = _manager.pages();
+    return pages &&
+           _manager.uiPageKind() == ControllerManager::UiPageKind::Generator &&
+           pages->generator.launchpadTrackRetargetLocked();
+}
+
+bool LaunchpadController::generatorTrackSelectionLockedByTopPage() const {
+    auto *pages = _manager.pages();
+    auto *pageManager = _manager.pageManager();
+    return pages &&
+           pageManager &&
+           pageManager->top() == &pages->generator &&
+           pages->generator.launchpadTrackRetargetLocked();
+}
+
 void LaunchpadController::sequenceSceneMute(const Button &button) {
     if (button.isScene()) {
         _project.playState().toggleMuteTrack(button.scene());
@@ -26,8 +47,7 @@ void LaunchpadController::sequenceSceneSelectTrack(const Button &button) {
         return;
     }
 
-    auto *pageManager = _manager.pageManager();
-    if (pageManager && pageManager->top()->isModal()) {
+    if (modalTrackSelectionLocked()) {
         return;
     }
 
@@ -35,10 +55,7 @@ void LaunchpadController::sequenceSceneSelectTrack(const Button &button) {
         return;
     }
 
-    auto *pages = _manager.pages();
-    if (pages &&
-        _manager.uiPageKind() == ControllerManager::UiPageKind::Generator &&
-        pages->generator.launchpadTrackRetargetLocked()) {
+    if (generatorTrackSelectionLockedByUiKind()) {
         return;
     }
 
