@@ -28,7 +28,9 @@ bool LaunchpadController::generatorTrackSelectionLocked() const {
     }
 
     auto *top = pageManager->top();
-    return top == &pages->acidModeSelect ||
+    return top == &pages->contextMenu ||
+           top == &pages->generatorSelect ||
+           top == &pages->acidModeSelect ||
            top == &pages->chaosScopeSelect ||
            top == &pages->wreckPatternWarning;
 }
@@ -59,7 +61,19 @@ bool LaunchpadController::handleGeneratorModeGlobalButtons(const Button &button,
 
     if (buttonState(LaunchpadDevice::FunctionRow, 7) && button.isFunction() && button.function() == 3 && action == ButtonAction::Down) {
         _generatorApplyCanceled = true;
-        setGeneratorMode(false);
+        auto *pages = _manager.pages();
+        auto *pageManager = _manager.pageManager();
+
+        if (pages && pageManager && pageManager->top() == &pages->generator) {
+            pages->generator.revert();
+            setGeneratorMode(false);
+        } else {
+            cancelGeneratorMode();
+        }
+
+        if (pages) {
+            pages->top.setMode(TopPage::Mode::SequenceEdit);
+        }
         return true;
     }
 
@@ -76,7 +90,19 @@ bool LaunchpadController::handleGeneratorModeToggleShortcut(const Button &button
     }
 
     if (_generatorMode && generatorModeSupported()) {
-        setGeneratorMode(false);
+        auto *pages = _manager.pages();
+        auto *pageManager = _manager.pageManager();
+
+        if (pages && pageManager && pageManager->top() == &pages->generator) {
+            pages->generator.revert();
+            setGeneratorMode(false);
+        } else {
+            cancelGeneratorMode();
+        }
+
+        if (pages) {
+            pages->top.setMode(TopPage::Mode::SequenceEdit);
+        }
         return true;
     }
 
@@ -109,9 +135,9 @@ LaunchpadController::LaunchpadGenerator LaunchpadController::generatorModeGrid(i
     case 0:
         return LaunchpadGenerator::Random;
     case 1:
-        return LaunchpadGenerator::AcidPhrase;
-    case 9:
         return LaunchpadGenerator::AcidLayer;
+    case 9:
+        return LaunchpadGenerator::AcidPhrase;
     case 2:
         return LaunchpadGenerator::Vandalize;
     case 10:
@@ -129,6 +155,10 @@ void LaunchpadController::setGeneratorMode(bool active) {
     _generatorMode = active;
     _generatorApplyArmed = false;
     _generatorApplyCanceled = false;
+
+    if (auto *pages = _manager.pages()) {
+        pages->noteSequenceEdit.setLaunchpadGeneratorModeActive(active);
+    }
 }
 
 void LaunchpadController::sequenceDrawGeneratorMode() {
@@ -144,8 +174,8 @@ void LaunchpadController::sequenceDrawGeneratorMode() {
         LaunchpadGenerator generator;
     } slots[] = {
         { 0, 0, LaunchpadGenerator::Random },
-        { 0, 1, LaunchpadGenerator::AcidPhrase },
-        { 1, 1, LaunchpadGenerator::AcidLayer },
+        { 0, 1, LaunchpadGenerator::AcidLayer },
+        { 1, 1, LaunchpadGenerator::AcidPhrase },
         { 0, 2, LaunchpadGenerator::Vandalize },
         { 1, 2, LaunchpadGenerator::Wreck },
         { 0, 3, LaunchpadGenerator::Euclidean },
@@ -171,6 +201,9 @@ void LaunchpadController::sequenceDrawGeneratorMode() {
     setFunctionLed(5, previewPage ? (resetState ? colorYellow() : colorRed()) : colorYellow(1));
     setFunctionLed(6, colorRed());
     setFunctionLed(7, previewPage ? colorGreen() : colorGreen(1));
+
+    // GRID 16 (row 2, col 8 in user-facing coordinates) = UNDO
+    setGridLed(1, 7, colorYellow(1));
 }
 
 bool LaunchpadController::sequenceButtonGeneratorMode(const Button &button, ButtonAction action) {

@@ -1192,7 +1192,8 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
         return;
     }
 
-    if (_stepSelection.none()) {
+    // LP generator pages operate on all steps when no persistent selection exists.
+    if (generator != LaunchpadGenerator::Init && _stepSelection.none()) {
         _stepSelection.selectAll();
     }
 
@@ -1225,9 +1226,11 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
         showChaosGenerator(ChaosGenerator::Scope::Pattern);
         break;
     case LaunchpadGenerator::Init: {
+        destroyActiveBuilder();
         _inMemorySequence = _project.selectedNoteSequence();
+        auto selected = selectedOrAllSteps(_stepSelection);
         auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
-        Generator::execute(Generator::Mode::InitSteps, *builder, _stepSelection.selected());
+        Generator::execute(Generator::Mode::InitSteps, *builder, selected);
         builder->showPreview();
         builder->apply();
         showMessage("STEPS INITIALIZED");

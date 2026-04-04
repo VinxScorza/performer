@@ -1,4 +1,7 @@
 #include "LaunchpadController.h"
+#include "ui/ControllerManager.h"
+#include "ui/PageManager.h"
+#include "ui/pages/Pages.h"
 
 void LaunchpadController::sequenceSceneMute(const Button &button) {
     if (button.isScene()) {
@@ -23,7 +26,19 @@ void LaunchpadController::sequenceSceneSelectTrack(const Button &button) {
         return;
     }
 
+    auto *pageManager = _manager.pageManager();
+    if (pageManager && pageManager->top()->isModal()) {
+        return;
+    }
+
     if (generatorTrackSelectionLocked()) {
+        return;
+    }
+
+    auto *pages = _manager.pages();
+    if (pages &&
+        _manager.uiPageKind() == ControllerManager::UiPageKind::Generator &&
+        pages->generator.launchpadTrackRetargetLocked()) {
         return;
     }
 

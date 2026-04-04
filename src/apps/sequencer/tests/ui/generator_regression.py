@@ -80,6 +80,23 @@ class GeneratorRegressionTest(tf.UiTest):
             for i in range(count)
         )
 
+    def _assert_scene_switch_locked_in_generator_page(self, generator_index):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        p.setTrackMode(1, p.tracks[1].TrackMode.Curve)
+        c.selectPage("steps")
+        self._lp_connect()
+
+        self._open_generator_page(generator_index)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        self._lp_press_scene(1)
+        self.assertEqual(p.selectedTrackIndex, 0)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        c.press("f4").wait(20)  # Cancel
+
     def test_generator_footer_navigation_does_not_exit_page(self):
         c = self.controller
 
@@ -210,6 +227,13 @@ class GeneratorRegressionTest(tf.UiTest):
         self._lp_connect()
         c.selectPage("steps")
 
+        # Generator selector level 1 opened from machine.
+        self._open_generator_select_from_steps()
+        self._lp_press_scene(1)  # Try switching to track 2 from LP
+        self.assertEqual(p.selectedTrackIndex, 0)
+        self.assertTrue(self.env.sequencer.isModalPageTop)
+        c.press("f4").wait(20)   # Cancel selector
+
         # Acid selector opened from machine.
         self._open_generator_select_from_steps()
         c.right().wait(10)      # Acid
@@ -231,6 +255,18 @@ class GeneratorRegressionTest(tf.UiTest):
         self.assertEqual(p.selectedTrackIndex, 0)
         self.assertTrue(self.env.sequencer.isModalPageTop)
         c.press("f4").wait(20)   # Cancel selector
+
+    def test_launchpad_scene_switch_is_locked_inside_random_page(self):
+        self._assert_scene_switch_locked_in_generator_page(0)
+
+    def test_launchpad_scene_switch_is_locked_inside_euclidean_page(self):
+        self._assert_scene_switch_locked_in_generator_page(3)
+
+    def test_launchpad_scene_switch_is_locked_inside_acid_page(self):
+        self._assert_scene_switch_locked_in_generator_page(1)
+
+    def test_launchpad_scene_switch_is_locked_inside_chaos_page(self):
+        self._assert_scene_switch_locked_in_generator_page(2)
 
     def test_launchpad_grid16_undo_recovers_from_init_in_generators_mode(self):
         c = self.controller
@@ -258,6 +294,27 @@ class GeneratorRegressionTest(tf.UiTest):
         self._lp_press_grid(15)
         after_undo = self._note_signature(sequence, 16)
         self.assertEqual(after_undo, before)
+
+    def test_launchpad_toggle_exits_generators_mode_even_from_generator_preview(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        self._lp_connect()
+
+        self._lp_toggle_generators_mode()
+        self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
+
+        # Open Random from mini-mode.
+        self._lp_press_grid(0)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+
+        # Toggle must always close mini-mode and return to Steps.
+        self._lp_toggle_generators_mode()
+        self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
 
     def test_launchpad_acid_layer_falls_back_to_phrase_on_unsupported_layer(self):
         c = self.controller

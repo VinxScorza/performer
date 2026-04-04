@@ -45,6 +45,7 @@ public:
     void showPreviewStateMessage();
     bool launchpadShowingPreview() const;
     bool launchpadResetState() const;
+    bool launchpadTrackRetargetLocked() const;
 
 private:
     bool boundTrackContextValid() const;

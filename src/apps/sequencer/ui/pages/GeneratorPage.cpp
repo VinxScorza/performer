@@ -1524,3 +1524,7 @@ bool GeneratorPage::launchpadShowingPreview() const {
 bool GeneratorPage::launchpadResetState() const {
     return _launchpadResetState;
 }
+
+bool GeneratorPage::launchpadTrackRetargetLocked() const {
+    return _generator != nullptr;
+}

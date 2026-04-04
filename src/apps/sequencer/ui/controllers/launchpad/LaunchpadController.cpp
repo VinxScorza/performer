@@ -2,6 +2,7 @@
 
 #include "LaunchpadDevice.h"
 #include "ui/ControllerManager.h"
+#include "ui/PageManager.h"
 #include "ui/pages/NoteSequenceEditPage.h"
 #include "ui/pages/GeneratorPage.h"
 #include "ui/pages/Pages.h"
@@ -309,6 +310,15 @@ void LaunchpadController::globalDraw() {
 bool LaunchpadController::globalButton(const Button &button, ButtonAction action) {
     if (handleGeneratorModeGlobalButtons(button, action)) {
         return true;
+    }
+
+    if (action == ButtonAction::Down &&
+        button.isScene() &&
+        _manager.uiPageKind() == ControllerManager::UiPageKind::Generator) {
+        auto *pages = _manager.pages();
+        if (pages && pages->generator.launchpadTrackRetargetLocked()) {
+            return true;
+        }
     }
 
     if (action == ButtonAction::Down) {
@@ -3248,6 +3258,20 @@ void LaunchpadController::setSceneLed(int col, Color color) {    if (col >= 0 &&
 void LaunchpadController::dispatchButtonEvent(const Button& button, ButtonAction action) {
     if (globalButton(button, action)) {
         return;
+    }
+
+    if (action == ButtonAction::Down && button.isScene()) {
+        auto *pageManager = _manager.pageManager();
+        if (pageManager && pageManager->top()->isModal()) {
+            return;
+        }
+
+        auto *pages = _manager.pages();
+        if (pages && pageManager &&
+            pageManager->top() == &pages->generator &&
+            pages->generator.launchpadTrackRetargetLocked()) {
+            return;
+        }
     }
 
     CALL_MODE_FUNCTION(_mode, Button, button, action);
