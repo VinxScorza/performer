@@ -71,6 +71,7 @@ set(sources
     ui/Screensaver.cpp
     # ui/controllers/launchpad
     ui/controllers/launchpad/LaunchpadController.cpp
+    ui/controllers/launchpad/LaunchpadControllerGeneratorsMode.cpp
     ui/controllers/launchpad/LaunchpadDevice.cpp
     ui/controllers/launchpad/LaunchpadMk2Device.cpp
     ui/controllers/launchpad/LaunchpadMk3Device.cpp
