@@ -5,6 +5,7 @@
 
 #include "model/LogicSequence.h"
 #include "ui/LedPainter.h"
+#include "ui/StepSelectionUtils.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 #include "engine/SequenceUtils.h"
@@ -1126,10 +1127,7 @@ bool LogicSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void LogicSequenceEditPage::initSequence() {
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto builder = _builderContainer.create<LogicSequenceBuilder>(_project.selectedLogicSequence(), layer());
     builder->clearLayer(selected);
     builder->showPreview();
@@ -1187,10 +1185,7 @@ void LogicSequenceEditPage::generateSequence() {
             auto builder = _builderContainer.create<LogicSequenceBuilder>(_project.selectedLogicSequence(), layer());
 
             if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
-                auto selected = _stepSelection.selected();
-                if (!selected.any()) {
-                    selected.set();
-                }
+                auto selected = selectedOrAllSteps(_stepSelection);
                 Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();

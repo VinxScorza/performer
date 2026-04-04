@@ -157,6 +157,18 @@ void Ui::showAssert(const char *filename, int line, const char *msg) {
     _lastFrameBufferHash = hashFrameBuffer(_frameBuffer.data(), sizeof(_frameBufferData));
 }
 
+void Ui::connectLaunchpadForTest(uint16_t vendorId, uint16_t productId) {
+    _controllerManager.connect(vendorId, productId);
+}
+
+void Ui::disconnectLaunchpadForTest() {
+    _controllerManager.disconnect();
+}
+
+bool Ui::launchpadControllerConnectedForTest() const {
+    return const_cast<ControllerManager &>(_controllerManager).isConnected();
+}
+
 void Ui::handleKeys() {
     ButtonLedMatrix::Event event;
     while (_blm.nextEvent(event)) {

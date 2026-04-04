@@ -4,6 +4,7 @@
 
 #include "model/StochasticSequence.h"
 #include "ui/LedPainter.h"
+#include "ui/StepSelectionUtils.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
@@ -981,10 +982,7 @@ bool StochasticSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void StochasticSequenceEditPage::initSequence() {
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto builder = _builderContainer.create<StochasticSequenceBuilder>(_project.selectedStochasticSequence(), layer());
     builder->clearLayer(selected);
     builder->showPreview();
@@ -1042,10 +1040,7 @@ void StochasticSequenceEditPage::generateSequence() {
             auto builder = _builderContainer.create<StochasticSequenceBuilder>(_project.selectedStochasticSequence(), layer());
 
             if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
-                auto selected = _stepSelection.selected();
-                if (!selected.any()) {
-                    selected.set();
-                }
+                auto selected = selectedOrAllSteps(_stepSelection);
                 Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();

@@ -47,6 +47,9 @@ public:
     bool launchpadResetState() const;
 
 private:
+    bool boundTrackContextValid() const;
+    bool ensureBoundTrackContext();
+
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;
     void drawRandomGenerator(Canvas &canvas, const RandomGenerator &generator) const;
     void drawAcidGenerator(Canvas &canvas, const AcidGenerator &generator) const;
@@ -65,6 +68,8 @@ private:
     bool _chaosPreviewArmed = false;
     bool _launchpadResetState = false;
     bool _applied = false;
+    int _boundTrackIndex = -1;
+    Track::TrackMode _boundTrackMode = Track::TrackMode::Note;
     char _variationMenuLabel[16] = "VAR";
     ContextMenuModel::Item _contextMenuItems[5];
 };

@@ -4,6 +4,7 @@
 
 #include "model/ArpSequence.h"
 #include "ui/LedPainter.h"
+#include "ui/StepSelectionUtils.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
@@ -1042,10 +1043,7 @@ void ArpSequenceEditPage::initSequence() {
         return;
     }
 
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
     builder->clearLayer(selected);
     builder->showPreview();
@@ -1058,10 +1056,7 @@ bool ArpSequenceEditPage::initLayerToArpDefaults() {
         return false;
     }
 
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto &sequence = _project.selectedArpSequence();
     for (int stepIndex = 0; stepIndex < int(sequence.steps().size()); ++stepIndex) {
         const bool targetStep = selected[stepIndex];
@@ -1101,10 +1096,7 @@ void ArpSequenceEditPage::generateSequence() {
             auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
 
             if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
-                auto selected = _stepSelection.selected();
-                if (!selected.any()) {
-                    selected.set();
-                }
+                auto selected = selectedOrAllSteps(_stepSelection);
                 Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();

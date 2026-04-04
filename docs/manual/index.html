@@ -142,7 +142,7 @@
           Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
         </p>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.5.1</code>.
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.5.2</code>.
         </p>
         <p>
           Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.
@@ -1455,7 +1455,7 @@
           Note: <em>Chaos</em> currently does not use this separate generator context menu. Its main actions stay directly on the page itself.
         </p>
         <p>
-          <em>Euclidean</em> uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code> triggers <code>NEW EUCL</code>, and <code>F3</code>, <code>F4</code> and <code>F5</code> control <code>Steps</code>, <code>Beats</code> and <code>Offset</code>. Its context menu keeps only <code>ResetGen</code>, <code>Cancel</code> and <code>Apply</code>.
+          <em>Euclidean</em> uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code> triggers <code>NEW EUCL</code>, and <code>F3</code>, <code>F4</code> and <code>F5</code> control <code>Steps</code>, <code>Beats</code> and <code>Offset</code>. Rotating the encoder with no <code>F3/F4/F5</code> held now mirrors <code>NEW EUCL</code> reroll, while holding <code>F3</code>, <code>F4</code>, or <code>F5</code> edits only the bound parameter. Its context menu keeps only <code>ResetGen</code>, <code>Cancel</code> and <code>Apply</code>.
         </p>
         <h4>Chaos</h4>
         <p>
@@ -1994,7 +1994,7 @@
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
         <p>
-          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page also reports the <code>v0.3.2-vinx.1.5.1</code> version string correctly.
+          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page also reports the <code>v0.3.2-vinx.1.5.2</code> version string correctly.
         </p>
         <table>
           <thead>
@@ -2556,9 +2556,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           </tbody>
         </table>
         <p>
-          Navigation is available in both Sequence and Pattern mode.
+          Navigation is available in Sequence, Pattern, and Performer Overview mode.
         </p>
-        <p><em>Sequence</em>, <em>Pattern</em>, and <em>Performer</em> all allow controlling track mute, solo, and fill from the Launchpad surface:</p>
+        <p><em>Sequence</em> and <em>Performer</em> allow controlling track mute, solo, and fill from the Launchpad surface, while <em>Pattern</em> allows mute and fill:</p>
         <table>
           <thead>
             <tr>
@@ -2569,11 +2569,11 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <tbody>
             <tr><td style="text-align: left"><code>TOP 7</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Momentary fill for the selected track while held. Releasing <code>TRK</code> or <code>TOP 7</code> clears the fill.</td></tr>
             <tr><td style="text-align: left"><code>TOP 8</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Mute or unmute track immediately.</td></tr>
-            <tr><td style="text-align: left"><code>TOP 6</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Toggle track solo.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 6</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Toggle track solo (Sequence and Performer only; not Pattern).</td></tr>
           </tbody>
         </table>
         <p>
-          The <code>TOP 7</code> gesture is not a general global shortcut. In the current Vinx implementation it is used contextually on compatible Note editors and on Note-track rows in Performer Overview. On Note Gate pages it applies to the visible grid; on circuit-style Note pages it applies only to pads <code>1..16</code>, where it switches between the scale base note and the same note at octave <code>+5</code>.
+          The <code>TOP 7</code> gesture is not a general global shortcut. In the current Vinx implementation it is used contextually on compatible Note editors and on Note-track rows in Performer Overview. On Note Gate pages it applies to the visible grid; on circuit-style Note pages it applies only to pads <code>1..16</code>, where it switches between the scale base note and the same note at octave <code>+5</code>. This behavior is now considered <strong>Legacy / Deprecated</strong> and is kept for compatibility.
         </p>
         <p>
           Note: synced or latched mute launching is available from the panel <a href="#pages-performer">Performer</a> page, but not from the Launchpad surface in the current Vinx implementation.
@@ -2611,7 +2611,16 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           The Launchpad color language should also be read relative to <code>LP Style</code>, not as a fixed universal set of absolute colors. The controller still communicates mute, selection, playback and pattern state, but the visible palette changes with the selected Launchpad style.
         </p>
         <p>
-          On the current Vinx line, the Note editor also has an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, if the selected track is <em>Note</em>, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. In it, <code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 8</code> select <em>Random</em>, <em>Acid Phrase</em>, <em>Acid Layer</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, and <em>Init</em>. <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies. Pressing the currently selected generator pad again rerolls it in place: Random, Acid Phrase, and Acid Layer use NEW RAND; Vandalize and Wreck retrigger CHAOS; Euclidean retriggers NEW EUCL; and Init does nothing. <code>TRK 1..8</code> force a Cancel first, then move the mode to the pressed track if it is a <em>Note</em> track; otherwise they just leave the <em>Generators Mode</em> and select that track. <code>TOP 4..8</code> stay neutral when they are not doing an active <em>Generators Mode</em> action. On the machine, <code>PAGE</code>, <code>SHIFT</code>, <code>PREV</code>, and <code>NEXT</code> stay neutral too. Any other machine or LP control outside this mini-mode forces Cancel and exits <em>Generators Mode</em>. Their colors remain relative to <code>LP Style</code>: semantically, <code>TOP 5</code> distinguishes the <code>A</code> / <code>B</code> side of the compare, while <code>TOP 6</code> distinguishes reset-neutral from generated or edited state.
+          On the current Vinx line, the Note editor also has an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, if the selected track is <em>Note</em>, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. Toggling it OFF forces <code>Cancel</code> and returns to <code>Steps</code>. In it, <code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 8</code> select <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, and <em>Init Steps</em>, while <code>GRID 16</code> triggers <em>Undo</em> (same effect as machine <code>PAGE + S7</code>). <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies.
+        </p>
+        <p>
+          When this mode is active and no specific generator page is open yet, <code>Steps</code> shows a lightweight reference overlay that mirrors the LP generator map layout. This overlay is informational only: it does not change control semantics or execution flow.
+        </p>
+        <p>
+          Target binding in this mini-mode is strict: operations always target the currently selected Note track context. <code>TRK 1..8</code> first cancel the current generator preview, then retarget to the pressed track if it is a Note track; if it is not a Note track, the mode exits after cancel and only track selection changes. For <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, <em>Vandalize</em>, <em>Wreck</em>, and <em>Euclidean</em>, pressing the selected generator pad rerolls in place (<code>NEW RAND</code>, <code>CHAOS</code>, <code>NEW EUCL</code> respectively), but commit still requires explicit <code>Apply</code> (or encoder apply where available). <em>Init Steps</em> is intentionally different: in this mini-mode it applies <code>Init Steps</code> immediately on the current track and does not open a confirmation page. If track or mode context changes unexpectedly while a generator page is open, the operation fails closed (<code>GEN CANCELED</code>) instead of applying to the wrong track. Their colors remain relative to <code>LP Style</code>: semantically, <code>TOP 5</code> distinguishes the <code>A</code> / <code>B</code> side of the compare, while <code>TOP 6</code> distinguishes reset-neutral from generated or edited state.
+        </p>
+        <p>
+          In this mini-mode, <code>GRID 16</code> / <code>PAGE + S7</code> follows two phases: on a generator preview page (including <em>Wreck</em>) it first reverts the current preview in its active scope; once outside preview pages, it restores the selected Note sequence snapshot only. This is not a full multi-track rollback after <code>Apply</code>.
         </p>
         <h4>Pattern Mode</h4>
         <p>
@@ -2648,8 +2657,8 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>TOP 2 + 1</code></td><td style="text-align: left">Enter <em>Sequence Length</em>.</td></tr>
-            <tr><td style="text-align: left"><code>TOP 2 + 2</code></td><td style="text-align: left">Enter <em>Overview</em>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 2 + GRID 1</code></td><td style="text-align: left">Enter <em>Sequence Length</em>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 2 + GRID 2</code></td><td style="text-align: left">Enter <em>Overview</em>.</td></tr>
             <tr><td style="text-align: left"><code>TOP 6</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Toggle track solo.</td></tr>
             <tr><td style="text-align: left"><code>TOP 7</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Momentary track fill while held.</td></tr>
           </tbody>
@@ -2658,25 +2667,25 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <em>Sequence Length</em> temporarily overrides first/last step across all Note, Curve, Stochastic, and Logic tracks. Hold one pad to loop a single step, or hold two pads to define a temporary first/last range. Releasing the held pad(s) restores the original range.
         </p>
         <p>
-          In <em>Overview</em>, each row represents one track and the columns map the currently visible steps. <code>TOP 6 + GRID</code> selects per-track follow mode for Note, Curve, and Logic tracks, while pad <code>17</code> toggles Performer follow. On Note-track rows, <code>TOP 7 + GRID</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code>.
+          In <em>Overview</em>, each row represents one track and the columns map the currently visible steps. <code>TOP 6 + GRID</code> selects per-track follow mode for Note, Curve, and Logic tracks, while pad <code>17</code> toggles Performer follow. On Note-track rows, <code>TOP 7 + GRID</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code> (<strong>Legacy / Deprecated</strong>, compatibility-only).
         </p>
         <h4 id="appendix-circuit">Circuit Note Editor</h4>
         <p>The visualization on the grid follows this schema:</p>
         <ul>
           <li><code>GRID 1..16</code> edits gates for the current 16-step section.</li>
-          <li><code>GRID 25..40</code> is the note keyboard. Available notes in the current scale are highlighted; notes outside the current scale remain available through chromatic bypass-scale entry.</li>
+          <li><code>GRID 26..39</code> is the note keyboard. Available notes in the current scale are highlighted; notes outside the current scale remain available through chromatic bypass-scale entry.</li>
           <li><code>GRID 49..56</code> selects octave from <code>-4</code> to <code>+3</code>.</li>
           <li><code>GRID 57..60</code> selects one of the four 16-step banks.</li>
           <li>Pressing a pad in <code>GRID 1..16</code> toggles the corresponding gate.</li>
-          <li>Holding a valid note pad in <code>GRID 25..40</code> and then pressing a pad in <code>GRID 1..16</code> writes that note into the step and enables the gate if needed.</li>
-          <li><code>TOP 7 + 1..16</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code>.</li>
+          <li>Holding a valid note pad in <code>GRID 26..39</code> and then pressing a pad in <code>GRID 1..16</code> writes that note into the step and enables the gate if needed.</li>
+          <li><code>TOP 7 + 1..16</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code> (<strong>Legacy / Deprecated</strong>, compatibility-only).</li>
         </ul>
         <h4 id="appendix-stochastic-circuit">Stochastic Circuit Note Editor</h4>
         <p>This editor is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Stochastic layer is <code>Note Prob</code>.</p>
         <ul>
           <li><code>GRID 1..16</code> edits <em>Note Variation Probability</em> for the currently selected note target. If that probability is <code>0</code>, the pads remain dark.</li>
           <li><code>GRID 17..24</code> shows the running stochastic index.</li>
-          <li><code>GRID 25..40</code> selects the note target, with scale-aware highlighting and chromatic fallback for notes outside the current scale.</li>
+          <li><code>GRID 26..40</code> selects the note target, with scale-aware highlighting and chromatic fallback for notes outside the current scale.</li>
           <li>In this editor, <code>32</code> raises the global Track octave by <code>+1</code> and <code>40</code> lowers it by <code>-1</code>.</li>
           <li><code>GRID 49..56</code> selects local octave from <code>-4</code> to <code>+3</code>.</li>
           <li><code>GRID 57..59</code> selects the stochastic shortcuts currently implemented in the fork: use loop, clear loop, and reseed.</li>
@@ -2687,7 +2696,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         <ul>
           <li><code>GRID 1..16</code> edits gate probability for the currently selected arpeggiator note target. If that probability is <code>0</code>, the pads remain dark.</li>
           <li><code>GRID 17..24</code> shows the running arpeggiator index.</li>
-          <li><code>GRID 25..40</code> selects the note target. In this editor, <code>32</code> raises the global Track octave by <code>+1</code> and <code>40</code> lowers it by <code>-1</code>.</li>
+          <li><code>GRID 26..40</code> selects the note target. In this editor, <code>32</code> raises the global Track octave by <code>+1</code> and <code>40</code> lowers it by <code>-1</code>.</li>
           <li><code>GRID 49..56</code> selects local octave from <code>-4</code> to <code>+3</code>.</li>
           <li><code>GRID 57..58</code> selects the MIDI Keyboard options currently implemented in the fork: keyboard input mode and hold mode. Hold works only when MIDI Keyboard mode is ON.</li>
           <li>When MIDI Keyboard mode is OFF, double-press on a note target toggles the note state and also adds or removes that note from the arpeggiator. When MIDI Keyboard mode is ON, no double-press action is implemented.</li>

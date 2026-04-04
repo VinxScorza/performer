@@ -88,7 +88,12 @@ void register_project(py::module &m) {
         .def_property("selectedTrackIndex", &Project::selectedTrackIndex, &Project::setSelectedTrackIndex)
         .def_property("selectedPatternIndex", &Project::selectedPatternIndex, &Project::setSelectedPatternIndex)
         .def_property("selectedNoteSequenceLayer", &Project::selectedNoteSequenceLayer, &Project::setSelectedNoteSequenceLayer)
+        .def_property("selectedStochasticSequenceLayer", &Project::selectedStochasticSequenceLayer, &Project::setSelectedStochasticSequenceLayer)
         .def_property("selectedCurveSequenceLayer", &Project::selectedCurveSequenceLayer, &Project::setSelectedCurveSequenceLayer)
+        .def_property("selectedArpSequenceLayer", &Project::selectedArpSequenceLayer, &Project::setSelectedArpSequenceLayer)
+        .def_property_readonly("selectedNoteSequence", [] (Project &project) { return &project.selectedNoteSequence(); })
+        .def_property_readonly("selectedStochasticSequence", [] (Project &project) { return &project.selectedStochasticSequence(); })
+        .def_property_readonly("selectedArpSequence", [] (Project &project) { return &project.selectedArpSequence(); })
         .def("clear", &Project::clear)
         .def("clearPattern", &Project::clearPattern, "patternIndex"_a)
         .def("setTrackMode", &Project::setTrackMode, "trackIndex"_a, "trackMode"_a)
@@ -656,6 +661,160 @@ void register_project(py::module &m) {
         .def_property("gateOffset", &CurveSequence::Step::gateOffset, &CurveSequence::Step::setGateOffset)
         .def_property("gateLength", &CurveSequence::Step::gateLength, &CurveSequence::Step::setGateLength)
         .def("clear", &CurveSequence::Step::clear)
+    ;
+
+    // ------------------------------------------------------------------------
+    // StochasticSequence
+    // ------------------------------------------------------------------------
+
+    py::class_<StochasticSequence> stochasticSequence(m, "StochasticSequence");
+    stochasticSequence
+        .def_property("scale", &StochasticSequence::scale, &StochasticSequence::setScale)
+        .def_property("rootNote", &StochasticSequence::rootNote, &StochasticSequence::setRootNote)
+        .def_property("divisor", &StochasticSequence::divisor, &StochasticSequence::setDivisor)
+        .def_property("resetMeasure", &StochasticSequence::resetMeasure, &StochasticSequence::setResetMeasure)
+        .def_property("runMode", &StochasticSequence::runMode, &StochasticSequence::setRunMode)
+        .def_property("firstStep", &StochasticSequence::firstStep, &StochasticSequence::setFirstStep)
+        .def_property("lastStep", &StochasticSequence::lastStep, &StochasticSequence::setLastStep)
+        .def_property("sequenceFirstStep", &StochasticSequence::sequenceFirstStep, &StochasticSequence::setSequenceFirstStep)
+        .def_property("sequenceLastStep", &StochasticSequence::sequenceLastStep, &StochasticSequence::setSequenceLastStep)
+        .def_property(
+            "lowOctaveRange",
+            &StochasticSequence::lowOctaveRange,
+            [] (StochasticSequence &sequence, int value) { sequence.setLowOctaveRange(value); }
+        )
+        .def_property(
+            "highOctaveRange",
+            &StochasticSequence::highOctaveRange,
+            [] (StochasticSequence &sequence, int value) { sequence.setHighOctaveRange(value); }
+        )
+        .def_property_readonly("steps", [] (StochasticSequence &sequence) {
+            py::list result;
+            for (int i = 0; i < CONFIG_STEP_COUNT; ++i) {
+                result.append(&sequence.step(i));
+            }
+            return result;
+        })
+        .def("clear", &StochasticSequence::clear)
+        .def("clearSteps", &StochasticSequence::clearSteps)
+        .def("shiftSteps", &StochasticSequence::shiftSteps, "selected"_a, "direction"_a)
+        .def("duplicateSteps", &StochasticSequence::duplicateSteps)
+    ;
+
+    py::enum_<StochasticSequence::Layer>(stochasticSequence, "Layer")
+        .value("Gate", StochasticSequence::Layer::Gate)
+        .value("GateProbability", StochasticSequence::Layer::GateProbability)
+        .value("GateOffset", StochasticSequence::Layer::GateOffset)
+        .value("Retrigger", StochasticSequence::Layer::Retrigger)
+        .value("RetriggerProbability", StochasticSequence::Layer::RetriggerProbability)
+        .value("StageRepeats", StochasticSequence::Layer::StageRepeats)
+        .value("StageRepeatsMode", StochasticSequence::Layer::StageRepeatsMode)
+        .value("Length", StochasticSequence::Layer::Length)
+        .value("LengthVariationRange", StochasticSequence::Layer::LengthVariationRange)
+        .value("LengthVariationProbability", StochasticSequence::Layer::LengthVariationProbability)
+        .value("NoteVariationProbability", StochasticSequence::Layer::NoteVariationProbability)
+        .value("NoteOctave", StochasticSequence::Layer::NoteOctave)
+        .value("NoteOctaveProbability", StochasticSequence::Layer::NoteOctaveProbability)
+        .value("Slide", StochasticSequence::Layer::Slide)
+        .value("Condition", StochasticSequence::Layer::Condition)
+        .export_values()
+    ;
+
+    py::class_<StochasticSequence::Step> stochasticSequenceStep(stochasticSequence, "Step");
+    stochasticSequenceStep
+        .def_property("gate", &StochasticSequence::Step::gate, &StochasticSequence::Step::setGate)
+        .def_property("gateProbability", &StochasticSequence::Step::gateProbability, &StochasticSequence::Step::setGateProbability)
+        .def_property("gateOffset", &StochasticSequence::Step::gateOffset, &StochasticSequence::Step::setGateOffset)
+        .def_property("slide", &StochasticSequence::Step::slide, &StochasticSequence::Step::setSlide)
+        .def_property("retrigger", &StochasticSequence::Step::retrigger, &StochasticSequence::Step::setRetrigger)
+        .def_property("retriggerProbability", &StochasticSequence::Step::retriggerProbability, &StochasticSequence::Step::setRetriggerProbability)
+        .def_property("length", &StochasticSequence::Step::length, &StochasticSequence::Step::setLength)
+        .def_property("lengthVariationRange", &StochasticSequence::Step::lengthVariationRange, &StochasticSequence::Step::setLengthVariationRange)
+        .def_property("lengthVariationProbability", &StochasticSequence::Step::lengthVariationProbability, &StochasticSequence::Step::setLengthVariationProbability)
+        .def_property("note", &StochasticSequence::Step::note, &StochasticSequence::Step::setNote)
+        .def_property("noteOctave", &StochasticSequence::Step::noteOctave, &StochasticSequence::Step::setNoteOctave)
+        .def_property("noteOctaveProbability", &StochasticSequence::Step::noteOctaveProbability, &StochasticSequence::Step::setNoteOctaveProbability)
+        .def_property("noteVariationProbability", &StochasticSequence::Step::noteVariationProbability, &StochasticSequence::Step::setNoteVariationProbability)
+        .def_property("condition", &StochasticSequence::Step::condition, &StochasticSequence::Step::setCondition)
+        .def("clear", &StochasticSequence::Step::clear)
+    ;
+
+    // ------------------------------------------------------------------------
+    // ArpSequence
+    // ------------------------------------------------------------------------
+
+    py::class_<ArpSequence> arpSequence(m, "ArpSequence");
+    arpSequence
+        .def_property("scale", &ArpSequence::scale, &ArpSequence::setScale)
+        .def_property("rootNote", &ArpSequence::rootNote, &ArpSequence::setRootNote)
+        .def_property("divisor", &ArpSequence::divisor, &ArpSequence::setDivisor)
+        .def_property("resetMeasure", &ArpSequence::resetMeasure, &ArpSequence::setResetMeasure)
+        .def_property("firstStep", &ArpSequence::firstStep, &ArpSequence::setFirstStep)
+        .def_property("lastStep", &ArpSequence::lastStep, &ArpSequence::setLastStep)
+        .def_property(
+            "lowOctaveRange",
+            &ArpSequence::lowOctaveRange,
+            [] (ArpSequence &sequence, int value) { sequence.setLowOctaveRange(value); }
+        )
+        .def_property(
+            "highOctaveRange",
+            &ArpSequence::highOctaveRange,
+            [] (ArpSequence &sequence, int value) { sequence.setHighOctaveRange(value); }
+        )
+        .def_property_readonly("steps", [] (ArpSequence &sequence) {
+            py::list result;
+            for (int i = 0; i < CONFIG_STEP_COUNT; ++i) {
+                result.append(&sequence.step(i));
+            }
+            return result;
+        })
+        .def("clear", &ArpSequence::clear)
+        .def("clearSteps", &ArpSequence::clearSteps)
+        .def("shiftSteps", &ArpSequence::shiftSteps, "selected"_a, "direction"_a)
+        .def("duplicateSteps", &ArpSequence::duplicateSteps)
+    ;
+
+    py::enum_<ArpSequence::Layer>(arpSequence, "Layer")
+        .value("Gate", ArpSequence::Layer::Gate)
+        .value("GateProbability", ArpSequence::Layer::GateProbability)
+        .value("GateOffset", ArpSequence::Layer::GateOffset)
+        .value("Retrigger", ArpSequence::Layer::Retrigger)
+        .value("RetriggerProbability", ArpSequence::Layer::RetriggerProbability)
+        .value("Length", ArpSequence::Layer::Length)
+        .value("LengthVariationRange", ArpSequence::Layer::LengthVariationRange)
+        .value("LengthVariationProbability", ArpSequence::Layer::LengthVariationProbability)
+        .value("Note", ArpSequence::Layer::Note)
+        .value("NoteVariationRange", ArpSequence::Layer::NoteVariationRange)
+        .value("NoteVariationProbability", ArpSequence::Layer::NoteVariationProbability)
+        .value("NoteOctave", ArpSequence::Layer::NoteOctave)
+        .value("NoteOctaveProbability", ArpSequence::Layer::NoteOctaveProbability)
+        .value("Slide", ArpSequence::Layer::Slide)
+        .value("Condition", ArpSequence::Layer::Condition)
+        .export_values()
+    ;
+
+    py::class_<ArpSequence::Step> arpSequenceStep(arpSequence, "Step");
+    arpSequenceStep
+        .def_property("gate", &ArpSequence::Step::gate, &ArpSequence::Step::setGate)
+        .def_property("gateProbability", &ArpSequence::Step::gateProbability, &ArpSequence::Step::setGateProbability)
+        .def_property("gateOffset", &ArpSequence::Step::gateOffset, &ArpSequence::Step::setGateOffset)
+        .def_property("slide", &ArpSequence::Step::slide, &ArpSequence::Step::setSlide)
+        .def_property("retrigger", &ArpSequence::Step::retrigger, &ArpSequence::Step::setRetrigger)
+        .def_property("retriggerProbability", &ArpSequence::Step::retriggerProbability, &ArpSequence::Step::setRetriggerProbability)
+        .def_property("length", &ArpSequence::Step::length, &ArpSequence::Step::setLength)
+        .def_property("lengthVariationRange", &ArpSequence::Step::lengthVariationRange, &ArpSequence::Step::setLengthVariationRange)
+        .def_property("lengthVariationProbability", &ArpSequence::Step::lengthVariationProbability, &ArpSequence::Step::setLengthVariationProbability)
+        .def_property("note", &ArpSequence::Step::note, &ArpSequence::Step::setNote)
+        .def_property("noteVariationRange", &ArpSequence::Step::noteVariationRange, &ArpSequence::Step::setNoteVariationRange)
+        .def_property("noteVariationProbability", &ArpSequence::Step::noteVariationProbability, &ArpSequence::Step::setNoteVariationProbability)
+        .def_property(
+            "noteOctave",
+            static_cast<int (ArpSequence::Step::*)() const>(&ArpSequence::Step::noteOctave),
+            &ArpSequence::Step::setNoteOctave
+        )
+        .def_property("noteOctaveProbability", &ArpSequence::Step::noteOctaveProbability, &ArpSequence::Step::setNoteOctaveProbability)
+        .def_property("condition", &ArpSequence::Step::condition, &ArpSequence::Step::setCondition)
+        .def("clear", &ArpSequence::Step::clear)
     ;
 
     // ------------------------------------------------------------------------

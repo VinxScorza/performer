@@ -4,6 +4,17 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
+# v0.3.2-vinx.1.5.2 (3 April 2026)
+- Swap `Acid` mode order to `Layer` then `Phrase` in the machine `Acid` selector, and mirror that same swap in Launchpad `Generators Mode` (`GRID 2 = Acid Layer`, `GRID 10 = Acid Phrase`)
+- Add `GRID 16 = Undo` to Launchpad `Generators Mode` (mirrors machine `PAGE + S7`): on generator preview pages it first reverts the current preview in its active scope (including `Wreck Pattern`), and outside preview pages it restores the selected Note-sequence snapshot; accidental `GRID 8` immediate `Init Steps` can therefore be reverted safely
+- Align `Chaos` `ResetGen` with the other generators by keeping the current seed and current scope (`Vandalize` or `Wreck`) while resetting Chaos parameters
+- Make Euclidean encoder rotation reroll (`NEW EUCL`) when no `F3/F4/F5` parameter key is held, while keeping `F3/F4/F5 + encoder` as direct `Steps/Beats/Offset` edits
+- Harden `Init Layer` / `Init Steps` consistency across `Note`, `Stochastic`, `Arp`, `Curve`, and `Logic` step pages by centralizing the shared `selection-or-full-track` fallback used by generator init paths
+- Add extra defensive context guards around `Acid` / `Chaos` generator entry from `Note` step edit flows, so those actions are ignored if the active track is no longer a `Note` track
+- Harden Launchpad `Generators Mode` scene-key handling so track retargeting stays locked while the machine is inside the `Acid` / `Chaos` selector path
+- Harden modal dispatch so if a selector/modal closes during key handling, the same event is no longer redispatched to the underlying page
+- Add regression coverage in the simulator test harness for generator footer stability and selector cancel leak paths, and make existing project-page tests baseline-independent from simulator demo defaults
+
 # v0.3.2-vinx.1.5.1
 - Restore the `LP Note Style` machine-setting default to `Circuit`, so the firmware matches the current Launchpad documentation and intended fork workflow again
 - Fix generator reset semantics so `Init Layer` on `Steps` remains layer-only, `Init Steps` in the `GEN` chooser is a real all-step-layers reset, and both now use the current persistent selection first or the whole current track when no selection exists
@@ -22,7 +33,7 @@
 - Fix Stochastic Circuit Keyboard probability and double-press targeting so 1..16 and note-toggle actions follow the actual selected note slot instead of drifting through stale octave-aware selection state
 - Remove the non-editable derived Rest Prob display from the first Launchpad Rest Probability row, leaving only the editable Rest Prob 2 / 4 / 8 ranges
 - Fix Launchpad behavior in Pattern, Performer, and Note Circuit Keyboard: edited Arp patterns are shown again in Pattern, Performer TOP 7 + TRK fills are released correctly, and Note Circuit Keyboard step editing now matches the documented 1..16 range
-- Add an experimental Launchpad Generators Mode for Note tracks in LP Sequence mode: TOP 8 + TOP 4 jumps to Steps when needed and toggles the mode, GRID 1 / 2 / 10 / 3 / 11 / 4 / 8 select Random, Acid Phrase, Acid Layer, Vandalize, Wreck, Euclidean, and Init, pressing the currently selected generator pad rerolls it in place, and TOP 5 / 6 / 7 / 8 map to A/B, ResetGen, Cancel, and Apply
+- Add an experimental Launchpad Generators Mode for Note tracks in LP Sequence mode: TOP 8 + TOP 4 jumps to Steps when needed and toggles the mode, GRID 1 / 2 / 10 / 3 / 11 / 4 / 8 select Random, Acid Phrase, Acid Layer, Vandalize, Wreck, Euclidean, and Init Steps, pressing the currently selected generator pad rerolls it in place, and TOP 5 / 6 / 7 / 8 map to A/B, ResetGen, Cancel, and Apply
 - Refine Launchpad Generators Mode feedback and routing so TOP 5 distinguishes A / B, TOP 6 distinguishes reset-neutral from generated/edited state, unmapped GRID pads and TOP 1..3 stay neutral, TRK 1..8 can retarget the mode to another Note track, and off-context controls no longer trap the user until Cancel, Apply, or the mode toggle
 - Fix remaining modal selector regressions introduced by modal redispatch so Confirmation, File Select, and Chaos Defaults no longer leak key presses to the underlying page when they close or ignore non-context keys
 - Remove stray #include <iostream> usage from the STM32 sequencer code so the firmware no longer drags in the full iostream / locale runtime, recovering a large amount of flash and SRAM

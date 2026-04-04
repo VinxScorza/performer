@@ -17,6 +17,8 @@ ChaosScopeSelectPage::ChaosScopeSelectPage(PageManager &manager, PageContext &co
 void ChaosScopeSelectPage::show(ResultCallback callback) {
     _callback = callback;
     setSelectedRow(0);
+    _boundTrackIndex = _project.selectedTrackIndex();
+    _boundTrackMode = _project.selectedTrack().trackMode();
     ListPage::show();
 }
 
@@ -70,8 +72,14 @@ void ChaosScopeSelectPage::keyPress(KeyPressEvent &event) {
 }
 
 void ChaosScopeSelectPage::closeWithResult(bool result) {
+    bool effectiveResult = result && boundTrackContextValid();
     Page::close();
     if (_callback) {
-        _callback(result, _listModel.rowToScope(selectedRow()));
+        _callback(effectiveResult, _listModel.rowToScope(selectedRow()));
     }
+}
+
+bool ChaosScopeSelectPage::boundTrackContextValid() const {
+    return _project.selectedTrackIndex() == _boundTrackIndex &&
+           _project.selectedTrack().trackMode() == _boundTrackMode;
 }

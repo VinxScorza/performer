@@ -78,11 +78,16 @@ void PageManager::dispatchEvent(Event &event) {
         Page *modalTop = top();
         modalTop->dispatchEvent(event);
 
-        // If the modal page closed itself without consuming the event,
-        // let the underlying page handle the original action.
+        // Never redispatch the original action to underlying pages once a
+        // modal has handled the event dispatch cycle.
         if (event.consumed() || top() == modalTop) {
             return;
         }
+
+        // The modal closed itself without consuming the event; consume here
+        // to prevent key leaks into the now-exposed page.
+        event.consume();
+        return;
     }
 
     // handle top to bottom

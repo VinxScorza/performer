@@ -4,7 +4,7 @@
 
 // Version tag
 #define CONFIG_VERSION_MAGIC            0xfadebabe
-#define CONFIG_VERSION_NAME             "0.3.2-vinx.1.5.1"
+#define CONFIG_VERSION_NAME             "0.3.2-vinx.1.5.2"
 #define CONFIG_VERSION_MAJOR            0
 #define CONFIG_VERSION_MINOR            3
 #define CONFIG_VERSION_REVISION         2

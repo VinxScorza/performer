@@ -160,8 +160,25 @@ void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> 
     _generator = generator;
     _stepSelection = stepSelection;
     _applied = false;
+    _boundTrackIndex = _project.selectedTrackIndex();
+    _boundTrackMode = _project.selectedTrack().trackMode();
 
     BasePage::show();
+}
+
+bool GeneratorPage::boundTrackContextValid() const {
+    return _project.selectedTrackIndex() == _boundTrackIndex &&
+           _project.selectedTrack().trackMode() == _boundTrackMode;
+}
+
+bool GeneratorPage::ensureBoundTrackContext() {
+    if (boundTrackContextValid()) {
+        return true;
+    }
+
+    revert();
+    showMessage("GEN CANCELED");
+    return false;
 }
 
 void GeneratorPage::enter() {
@@ -494,6 +511,11 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         revert();
     };
 
+    if (!ensureBoundTrackContext()) {
+        event.consume();
+        return;
+    }
+
     if (key.isContextMenu()) {
         if (chaosGeneratorMode(_generator->mode())) {
             event.consume();
@@ -709,6 +731,10 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 }
 
 void GeneratorPage::encoder(EncoderEvent &event) {
+    if (!ensureBoundTrackContext()) {
+        return;
+    }
+
     if (chaosGeneratorMode(_generator->mode())) {
         auto *chaos = static_cast<ChaosGenerator *>(_generator);
 
@@ -759,6 +785,13 @@ void GeneratorPage::encoder(EncoderEvent &event) {
             default:
                 break;
             }
+            changed = true;
+        }
+    }
+
+    if (euclideanGeneratorMode(_generator->mode()) && !functionKeyHeld) {
+        if (event.value() != 0) {
+            _generator->randomizeParams();
             changed = true;
         }
     }
@@ -1342,6 +1375,10 @@ void GeneratorPage::contextShow(bool doubleClick) {
 }
 
 void GeneratorPage::contextAction(int index) {
+    if (!ensureBoundTrackContext()) {
+        return;
+    }
+
     switch (ContextAction(index)) {
     case ContextAction::RandomizeSeed:
         switch (_generator->mode()) {
@@ -1399,6 +1436,10 @@ bool GeneratorPage::contextActionEnabled(int index) const {
 }
 
 void GeneratorPage::init() {
+    if (!ensureBoundTrackContext()) {
+        return;
+    }
+
     _stepSelection->clear();
     _generator->init();
     if (_generator->showingPreview()) {
@@ -1415,6 +1456,10 @@ void GeneratorPage::revert() {
 }
 
 void GeneratorPage::commit() {
+    if (!ensureBoundTrackContext()) {
+        return;
+    }
+
     _stepSelection->clear();
     _generator->apply();
     _applied = true;
@@ -1422,6 +1467,10 @@ void GeneratorPage::commit() {
 }
 
 void GeneratorPage::togglePreview() {
+    if (!ensureBoundTrackContext()) {
+        return;
+    }
+
     if (chaosGeneratorMode(_generator->mode()) && !_chaosPreviewArmed && !_generator->showingPreview()) {
         return;
     }
@@ -1436,6 +1485,10 @@ void GeneratorPage::togglePreview() {
 }
 
 void GeneratorPage::launchpadRandomize() {
+    if (!ensureBoundTrackContext()) {
+        return;
+    }
+
     if (chaosGeneratorMode(_generator->mode())) {
         auto *chaos = static_cast<ChaosGenerator *>(_generator);
         bool wasShowingPreview = _generator->showingPreview();

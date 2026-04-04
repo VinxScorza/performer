@@ -18,6 +18,8 @@ void AcidModeSelectPage::show(bool allowLayer, ResultCallback callback) {
     _callback = callback;
     _listModel.setAllowLayer(allowLayer);
     setSelectedRow(0);
+    _boundTrackIndex = _project.selectedTrackIndex();
+    _boundTrackMode = _project.selectedTrack().trackMode();
     ListPage::show();
 }
 
@@ -71,8 +73,14 @@ void AcidModeSelectPage::keyPress(KeyPressEvent &event) {
 }
 
 void AcidModeSelectPage::closeWithResult(bool result) {
+    bool effectiveResult = result && boundTrackContextValid();
     Page::close();
     if (_callback) {
-        _callback(result, _listModel.rowToMode(selectedRow()));
+        _callback(effectiveResult, _listModel.rowToMode(selectedRow()));
     }
+}
+
+bool AcidModeSelectPage::boundTrackContextValid() const {
+    return _project.selectedTrackIndex() == _boundTrackIndex &&
+           _project.selectedTrack().trackMode() == _boundTrackMode;
 }

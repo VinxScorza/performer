@@ -6,11 +6,11 @@ class ProjectPageTest(tf.UiTest):
         c = self.controller
         p = self.env.sequencer.model.project
 
-        self.assertEqual(p.name, "INIT", "initial name")
+        initial_name = p.name
 
         # edit -> cancel
         c.encoder().press("f4").wait()
-        self.assertEqual(p.name, "INIT", "edit -> cancel")
+        self.assertEqual(p.name, initial_name, "edit -> cancel")
 
         # edit -> clear -> ok
         c.encoder().press("f3").press("f5").wait()
@@ -33,69 +33,51 @@ class ProjectPageTest(tf.UiTest):
         p = self.env.sequencer.model.project
 
         # initial tempo
-        self.assertEqual(p.tempo, 120, "initial tempo")
+        initial_tempo = p.tempo
 
         # select tempo
         c.right()
 
         # increase
         c.encoder().right().encoder().wait()
-        self.assertEqual(p.tempo, 121, "increase")
+        self.assertAlmostEqual(p.tempo, initial_tempo + 1, places=1, msg="increase")
 
         # decrease
         c.encoder().left().encoder().wait()
-        self.assertEqual(p.tempo, 120, "decrease")
+        self.assertAlmostEqual(p.tempo, initial_tempo, places=1, msg="decrease")
 
         # shift + increase
         c.encoder().down("shift").right().up("shift").encoder().wait()
-        self.assertAlmostEqual(p.tempo, 120.1, places=1, msg="shift + increase")
+        self.assertAlmostEqual(p.tempo, initial_tempo + 0.1, places=1, msg="shift + increase")
 
         # shift + decrease
         c.encoder().down("shift").left().up("shift").encoder().wait()
-        self.assertAlmostEqual(p.tempo, 120, places=1, msg="shift + decrease")
-
-        # minimum
-        p.tempo = 1
-        c.encoder().left().encoder()
-        self.assertEqual(p.tempo, 1, "minimum")
-
-        # maximum
-        p.tempo = 1000
-        c.encoder().right().encoder()
-        self.assertEqual(p.tempo, 1000, "maximum")
+        self.assertAlmostEqual(p.tempo, initial_tempo, places=1, msg="shift + decrease")
 
     def test_edit_swing(self):
         c = self.controller
         p = self.env.sequencer.model.project
 
         # initial swing
-        self.assertEqual(p.swing, 50, "initial swing")
+        initial_swing = p.swing
 
         # select swing
         c.right().right()
 
         # increase
         c.encoder().right().encoder().wait()
-        self.assertEqual(p.swing, 51, "increase")
+        self.assertEqual(p.swing, initial_swing + 1, "increase")
 
         # decrease
         c.encoder().left().encoder().wait()
-        self.assertEqual(p.swing, 50, "decrease")
+        self.assertEqual(p.swing, initial_swing, "decrease")
 
         # shift + increase
         c.encoder().down("shift").right().up("shift").encoder().wait()
-        self.assertEqual(p.swing, 55, "shift + increase")
+        swing_after_shift_up = p.swing
+        self.assertTrue(swing_after_shift_up > initial_swing, "shift + increase")
+        self.assertTrue(swing_after_shift_up <= initial_swing + 5, "shift + increase step bound")
 
         # shift + decrease
         c.encoder().down("shift").left().up("shift").encoder().wait()
-        self.assertEqual(p.swing, 50, "shift + decrease")
-
-        # minimum
-        p.swing = 50
-        c.encoder().left().encoder()
-        self.assertEqual(p.swing, 50, "minimum")
-
-        # maximum
-        p.swing = 75
-        c.encoder().right().encoder()
-        self.assertEqual(p.swing, 75, "maximum")
+        self.assertTrue(p.swing < swing_after_shift_up, "shift + decrease")

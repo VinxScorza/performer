@@ -3,6 +3,7 @@
 #include "Pages.h"
 
 #include "ui/LedPainter.h"
+#include "ui/StepSelectionUtils.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
@@ -763,10 +764,7 @@ bool CurveSequenceEditPage::contextActionEnabled(int index) const {
 
 void CurveSequenceEditPage::initSequence() {
     _inMemorySequence = _project.selectedCurveSequence();
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
     builder->clearLayer(selected);
     builder->showPreview();
@@ -799,10 +797,7 @@ void CurveSequenceEditPage::generateSequence() {
             auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
 
             if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
-                auto selected = _stepSelection.selected();
-                if (!selected.any()) {
-                    selected.set();
-                }
+                auto selected = selectedOrAllSteps(_stepSelection);
                 Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();
