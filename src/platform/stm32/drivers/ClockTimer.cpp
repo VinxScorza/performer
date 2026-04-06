@@ -10,6 +10,7 @@
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/cm3/nvic.h>
 
+#include <algorithm>
 #include <functional>
 
 #define TIMER TIM5

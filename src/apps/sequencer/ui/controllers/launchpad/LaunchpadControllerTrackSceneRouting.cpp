@@ -60,6 +60,22 @@ void LaunchpadController::sequenceSceneSelectTrack(const Button &button) {
     }
 
     _project.setSelectedTrackIndex(button.scene());
+
+    auto *pages = _manager.pages();
+    auto *pageManager = _manager.pageManager();
+    if (!pages || !pageManager) {
+        return;
+    }
+
+    auto *top = pageManager->top();
+    if (top == &pages->project ||
+        top == &pages->layout ||
+        top == &pages->routing ||
+        top == &pages->midiOutput ||
+        top == &pages->userScale ||
+        top == &pages->clockSetup) {
+        pages->top.setMode(TopPage::Mode::SequenceEdit);
+    }
 }
 
 void LaunchpadController::patternSceneMute(const Button &button) {

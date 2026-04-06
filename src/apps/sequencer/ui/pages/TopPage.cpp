@@ -92,6 +92,14 @@ void TopPage::keyPress(KeyPressEvent &event) {
 
     if (key.isTrackSelect()) {
         _project.setSelectedTrackIndex(key.trackSelect());
+        if (_mode == Mode::Project ||
+            _mode == Mode::Layout ||
+            _mode == Mode::Routing ||
+            _mode == Mode::MidiOutput ||
+            _mode == Mode::UserScale ||
+            _mode == Mode::Clock) {
+            setMode(Mode::SequenceEdit);
+        }
         event.consume();
     }
 

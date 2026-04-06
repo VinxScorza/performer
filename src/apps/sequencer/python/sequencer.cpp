@@ -22,6 +22,9 @@ void register_sequencer(py::module &m) {
         .def_property_readonly("launchpadControllerConnectedForTest", [] (SequencerApp &app) {
             return app.ui.launchpadControllerConnectedForTest();
         })
+        .def_property_readonly("launchpadGeneratorsModeActiveForTest", [] (SequencerApp &app) {
+            return app.ui.launchpadGeneratorsModeActiveForTest();
+        })
         .def("connectLaunchpadForTest", [] (SequencerApp &app, uint16_t vendorId, uint16_t productId) {
             app.ui.connectLaunchpadForTest(vendorId, productId);
         }, py::arg("vendorId") = 0x1235, py::arg("productId") = 0x0069)

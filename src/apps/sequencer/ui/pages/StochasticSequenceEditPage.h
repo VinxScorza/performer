@@ -5,6 +5,7 @@
 #include "ui/StepSelection.h"
 #include "ui/model/StochasticSequenceListModel.h"
 
+#include "engine/generators/Generator.h"
 #include "engine/generators/SequenceBuilder.h"
 #include "ui/KeyPressEventTracker.h"
 
@@ -25,6 +26,11 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
     virtual void midi(MidiEvent &event) override;
+    void openLaunchpadGenerator(Generator::Mode mode);
+    void setLaunchpadGeneratorModeActive(bool active) {
+        _launchpadGeneratorModeActive = active;
+    }
+    bool launchpadGeneratorModeActive() const { return _launchpadGeneratorModeActive; }
 
 private:
     typedef StochasticSequence::Layer Layer;
@@ -38,6 +44,7 @@ private:
 
     void updateMonitorStep();
     void drawDetail(Canvas &canvas, const StochasticSequence::Step &step);
+    void drawLaunchpadGeneratorOverlay(Canvas &canvas);
 
     void contextShow(bool doubleClick = false);
     void contextAction(int index);
@@ -75,5 +82,6 @@ private:
     StepSelection<CONFIG_STEP_COUNT> _stepSelection;
 
     Container<StochasticSequenceBuilder> _builderContainer;
+    bool _launchpadGeneratorModeActive = false;
 
 };

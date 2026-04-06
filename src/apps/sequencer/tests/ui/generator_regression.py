@@ -80,6 +80,12 @@ class GeneratorRegressionTest(tf.UiTest):
             for i in range(count)
         )
 
+    def _curve_signature(self, sequence, count=16):
+        return tuple(
+            (sequence.steps[i].shape, sequence.steps[i].gate, sequence.steps[i].min, sequence.steps[i].max)
+            for i in range(count)
+        )
+
     def _assert_scene_switch_locked_in_generator_page(self, generator_index):
         c = self.controller
         p = self.env.sequencer.model.project
@@ -116,6 +122,15 @@ class GeneratorRegressionTest(tf.UiTest):
         c.press("f2").wait(20)
         self.assertTrue(self.env.sequencer.isGeneratorPageTop)
         c.encoder().wait(20)    # Apply (encoder commit on Acid)
+        self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
+
+        # Euclidean
+        self._open_generator_page(3)
+        c.press("f1").wait(20)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        c.press("f2").wait(20)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        c.encoder().wait(20)    # Apply (encoder commit on Euclidean)
         self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
 
         # Chaos
@@ -268,7 +283,28 @@ class GeneratorRegressionTest(tf.UiTest):
     def test_launchpad_scene_switch_is_locked_inside_chaos_page(self):
         self._assert_scene_switch_locked_in_generator_page(2)
 
-    def test_launchpad_grid16_undo_recovers_from_init_in_generators_mode(self):
+    def test_launchpad_track_select_enters_steps_from_project_like_pages(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        self._lp_connect()
+
+        # Force Launchpad Sequence mode.
+        self._lp_function_down(7)
+        self._lp_press_function(0)
+        self._lp_function_up(7)
+        c.wait(30)
+
+        pages = ("project", "layout", "routing", "midiout", "userscale", "clock")
+        for page in pages:
+            c.selectPage(page)
+            self._lp_press_scene(0)  # TRK 1
+            self.assertEqual(p.selectedTrackIndex, 0, f"{page}: selected track")
+            self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop, f"{page}: jump to Steps")
+
+    def test_launchpad_grid16_is_neutral_in_generators_mode(self):
         c = self.controller
         p = self.env.sequencer.model.project
 
@@ -278,22 +314,144 @@ class GeneratorRegressionTest(tf.UiTest):
         self._lp_connect()
 
         sequence = p.selectedNoteSequence
-        sequence.steps[0].gate = True
-        sequence.steps[0].length = 13
-        sequence.steps[0].note = 46
+        sequence.steps[0].gate = False
+        p.selectedNoteSequenceLayer = sequence.Layer.Gate
         before = self._note_signature(sequence, 16)
 
         self._lp_toggle_generators_mode()
 
-        # GRID 8 (index 7) = Init Steps
-        self._lp_press_grid(7)
-        after_init = self._note_signature(sequence, 16)
-        self.assertNotEqual(after_init, before)
-
-        # GRID 16 (index 15) = Undo
+        # GRID 16 (index 15) = no action in current Generators Mode.
         self._lp_press_grid(15)
-        after_undo = self._note_signature(sequence, 16)
-        self.assertEqual(after_undo, before)
+        after = self._note_signature(sequence, 16)
+        self.assertEqual(after, before)
+        self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+    def test_launchpad_non_note_generators_mode_entropy_subset(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Curve)
+        c.selectPage("steps")
+        self._lp_connect()
+
+        sequence = p.tracks[0].curveTrack.sequences[0]
+        before = self._curve_signature(sequence, 16)
+
+        self._lp_toggle_generators_mode()
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+
+        # GRID 2 is unmapped in non-Note subset.
+        self._lp_press_grid(1)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+
+        # GRID 3 = Entropy.
+        self._lp_press_grid(2)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+
+        # Reroll on selected generator pad (Entropy/CHAOS action), then apply.
+        self._lp_press_grid(2)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        self._lp_press_function(7)
+        c.wait(50)
+
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+        self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+        after = self._curve_signature(sequence, 16)
+        self.assertNotEqual(after, before)
+
+    def test_launchpad_non_note_generators_mode_mapping_and_init(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Curve)
+        c.selectPage("steps")
+        self._lp_connect()
+
+        sequence = p.tracks[0].curveTrack.sequences[0]
+        sequence.steps[0].shape = 17
+        sequence.steps[0].gate = 3
+        sequence.steps[0].min = 22
+        sequence.steps[0].max = 200
+
+        # Random (GRID 1) opens generator page.
+        self._lp_toggle_generators_mode()
+        self._lp_press_grid(0)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        self._lp_press_function(6)  # TOP 7 Cancel
+        c.wait(30)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+        self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+        # Euclidean (GRID 4) opens generator page.
+        self._lp_toggle_generators_mode()
+        self._lp_press_grid(3)
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        self._lp_press_function(6)  # TOP 7 Cancel
+        c.wait(30)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+        self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+        # Init Steps (GRID 8) applies immediately and exits mode.
+        self._lp_toggle_generators_mode()
+        self._lp_press_grid(7)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+        self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+        # Curve step defaults restored by Init Steps.
+        self.assertEqual(sequence.steps[0].shape, 0)
+        self.assertEqual(sequence.steps[0].gate, 0)
+        self.assertEqual(sequence.steps[0].min, 0)
+        self.assertEqual(sequence.steps[0].max, 255)
+
+    def test_launchpad_non_note_generators_mode_switch_stays_active_on_stochastic_gate(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Stochastic)
+        p.selectedStochasticSequenceLayer = p.selectedStochasticSequence.Layer.Gate
+        c.selectPage("steps")
+        self._lp_connect()
+
+        self._lp_toggle_generators_mode()
+        self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+
+        # Open Random first, then repeatedly switch among subset generators.
+        self._lp_press_grid(0)  # Random
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+        for grid_index in (2, 3, 0, 2, 3, 0, 2, 3):
+            self._lp_press_grid(grid_index)  # Entropy / Euclidean / Random
+            self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+            self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+        self._lp_press_function(6)  # TOP 7 Cancel
+        c.wait(30)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+        self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+    def test_launchpad_init_steps_exits_generators_mode(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        self._lp_connect()
+
+        self._lp_toggle_generators_mode()
+        self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+        # GRID 8 (index 7) = Init Steps, immediate apply + exit mode.
+        self._lp_press_grid(7)
+        self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+        self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
 
     def test_launchpad_toggle_exits_generators_mode_even_from_generator_preview(self):
         c = self.controller
@@ -315,6 +473,58 @@ class GeneratorRegressionTest(tf.UiTest):
         self._lp_toggle_generators_mode()
         self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
         self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+
+    def test_machine_encoder_apply_exits_generators_mode_to_plain_steps(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        self._lp_connect()
+
+        sequence = p.selectedNoteSequence
+        p.selectedNoteSequenceLayer = sequence.Layer.Gate
+        sequence.steps[4].gate = False
+
+        self._lp_toggle_generators_mode()
+        self._lp_press_grid(0)  # Random
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+        c.encoder().wait(30)  # Machine encoder apply
+        self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+        self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
+
+    def test_top7_top8_undo_shortcut_matches_page_s7_on_note_steps(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        self._lp_connect()
+
+        sequence = p.selectedNoteSequence
+        p.selectedNoteSequenceLayer = sequence.Layer.Gate
+        sequence.steps[0].gate = False
+
+        # Refresh in-memory undo snapshot from current sequence.
+        c.selectPage("project")
+        c.selectPage("steps")
+
+        sequence.steps[0].gate = True
+        self.assertTrue(sequence.steps[0].gate)
+
+        # Hold TOP 7, press TOP 8 => launchpad undo shortcut.
+        self._lp_function_down(6)
+        self._lp_press_function(7)
+        self._lp_function_up(6)
+
+        self.assertFalse(sequence.steps[0].gate)
+
+        # Keep regression coverage focused on parity with PAGE+S7 shortcut semantics.
 
     def test_launchpad_acid_layer_falls_back_to_phrase_on_unsupported_layer(self):
         c = self.controller

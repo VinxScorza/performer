@@ -90,6 +90,7 @@ private:
         AcidLayer,
         Vandalize,
         Wreck,
+        Entropy,
         Euclidean,
         Init,
     };
@@ -99,6 +100,7 @@ private:
     // Global handlers
     void globalDraw();
     bool globalButton(const Button &button, ButtonAction action);
+    bool launchpadUndoShortcut();
 
     // Sequence mode
     void sequenceEnter();
@@ -144,9 +146,12 @@ private:
     void manageCircuitKeyboard(const Button &button);
     void manageStochasticCircuitKeyboard(const Button &button);
     void manageArpCircuitKeyboard(const Button &button);
+    bool generatorModeTrackSupported(Track::TrackMode mode) const;
+    bool generatorModeTrackSupported() const;
     bool generatorModeSupported() const;
     bool generatorModeEditPage() const;
     bool generatorModePreviewPage() const;
+    bool stepEditPageGeneratorModeActive() const;
     bool generatorTrackSelectionLocked() const;
     bool handleGeneratorModeGlobalButtons(const Button &button, ButtonAction action);
     bool handleGeneratorModeToggleShortcut(const Button &button);

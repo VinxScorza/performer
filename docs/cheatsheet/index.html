@@ -83,7 +83,12 @@
             <tr>
               <td><code>TOP 8 + TOP 7</code></td>
               <td>Toggle <code>PLAY | STOP</code>.</td>
-              <td>Global transport toggle.</td>
+              <td>Global transport toggle.<br>Hold <code>TOP 8</code> first, then press <code>TOP 7</code>.</td>
+            </tr>
+            <tr>
+              <td><code>TOP 7 + TOP 8</code></td>
+              <td>Undo / Redo (1-level).</td>
+              <td>On Steps edit pages (<code>Note</code>, <code>Curve</code>, <code>Logic</code>) only.<br>Same action as machine <code>PAGE + S7</code>; pressing again toggles back.</td>
             </tr>
             <tr>
               <td><code>TOP 8 + TRK 1..8</code></td>
@@ -268,13 +273,13 @@
             <tr>
               <td><code>TOP 8 + TOP 4</code></td>
               <td>Toggle Generators Mode.</td>
-              <td>Note Track only. Opens <code>Steps</code> if needed.</td>
+              <td>Track-type aware. Opens <code>Steps</code> if needed.</td>
             </tr>
           </tbody>
         </table>
 
         <h4>Generators Mode <code>TOP 8 + TOP 4</code></h4>
-        <p>This Sequence sub-view is available only on Note tracks and opens <code>Steps</code> first when needed.</p>
+        <p>This Sequence sub-view opens <code>Steps</code> first when needed.</p>
         <table>
           <colgroup>
             <col style="width: 20%">
@@ -294,21 +299,24 @@
               <td>Select generator.<br>Press selected generator pad again to reroll current generator.</td>
               <td>
                 <div class="grid-map">
-                  <div class="grid-map-title">Generator Pads</div>
+                  <div class="grid-map-title">Note Track</div>
                   <table class="grid-map-table">
                     <tbody>
                       <tr><td><code>1</code><br>Random</td><td><code>2</code><br>Acid Layer</td><td><code>3</code><br>Vandalize</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>8</code><br>Init Steps</td></tr>
-                      <tr><td></td><td><code>10</code><br>Acid Phrase</td><td><code>11</code><br>Wreck</td><td></td><td></td><td></td><td></td><td><code>16</code><br>Undo</td></tr>
+                      <tr><td></td><td><code>10</code><br>Acid Phrase</td><td><code>11</code><br>Wreck</td><td></td><td></td><td></td><td></td><td></td></tr>
                     </tbody>
                   </table>
                 </div>
-                <br>Random | Acid Layer | Acid Phrase: NEW RAND<br>Vandalize | Wreck: CHAOS<br>Euclidean: NEW EUCL<br>Init Steps: no reroll (pressing Init Steps again does nothing).
+                <div class="grid-map">
+                  <div class="grid-map-title">Curve | Stochastic | Logic | Arp Tracks</div>
+                  <table class="grid-map-table">
+                    <tbody>
+                      <tr><td><code>1</code><br>Random</td><td></td><td><code>3</code><br>Entropy</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>8</code><br>Init Steps</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br>Random | Acid Layer | Acid Phrase | Euclidean are single-tap (first press opens and generates immediately).<br>Vandalize | Wreck | Entropy are two-tap: first press opens on ORIGINAL, second press triggers CHAOS and creates the first preview.<br>Init Steps applies immediately and exits Generators Mode to plain Steps.
               </td>
-            </tr>
-            <tr>
-              <td><code>GRID 16</code></td>
-              <td>UNDO.</td>
-              <td>Same effect as machine <code>PAGE + S7</code>.<br>On generator preview pages (including Wreck), it first reverts the current preview in its current scope.<br>Outside preview pages, it restores the selected Note sequence snapshot (not a multi-track rollback).</td>
             </tr>
             <tr>
               <td><code>TOP 5..8</code></td>
@@ -322,12 +330,13 @@
                     </tbody>
                   </table>
                 </div>
+                <br>Applying from a generator page exits Generators Mode and returns to plain Steps.
               </td>
             </tr>
             <tr>
               <td><code>TRK 1..8</code></td>
               <td>Cancel first, then retarget track.</td>
-              <td>If the pressed track is Note, mode moves there. Otherwise it exits Generators Mode and selects that track.</td>
+              <td>If the pressed track supports this mode, mode moves there with that track type map. Otherwise it exits Generators Mode and selects that track.</td>
             </tr>
           </tbody>
         </table>

@@ -256,7 +256,10 @@ LaunchpadController::~LaunchpadController() {
 }
 
 void LaunchpadController::uiPageChanged() {
-    if (_mode == Mode::Sequence && _generatorMode && !generatorModeSupported()) {
+    if (_mode == Mode::Sequence &&
+        _generatorMode &&
+        !generatorModeSupported() &&
+        !generatorModeTrackSupported()) {
         cancelGeneratorMode();
     }
 }
@@ -316,6 +319,17 @@ bool LaunchpadController::globalButton(const Button &button, ButtonAction action
         button.isScene() &&
         generatorTrackSelectionLockedByUiKind()) {
         return true;
+    }
+
+    if (action == ButtonAction::Up) {
+        // TOP 7 + TOP 8 undo/redo shortcut:
+        // trigger on TOP 8 release while TOP 7 is still held to avoid
+        // edge cases around chord-down ordering.
+        if (button.isFunction() && button.function() == 7 && buttonState(LaunchpadDevice::FunctionRow, 6)) {
+            if (launchpadUndoShortcut()) {
+                return true;
+            }
+        }
     }
 
     if (action == ButtonAction::Down) {
@@ -410,6 +424,30 @@ bool LaunchpadController::globalButton(const Button &button, ButtonAction action
     return false;
 }
 
+bool LaunchpadController::launchpadUndoShortcut() {
+    auto *pages = _manager.pages();
+    auto *pageManager = _manager.pageManager();
+    if (!pages || !pageManager) {
+        return false;
+    }
+
+    auto *top = pageManager->top();
+    if (top == &pages->noteSequenceEdit) {
+        pages->noteSequenceEdit.launchpadUndo();
+        return true;
+    }
+    if (top == &pages->curveSequenceEdit) {
+        pages->curveSequenceEdit.launchpadUndo();
+        return true;
+    }
+    if (top == &pages->logicSequenceEdit) {
+        pages->logicSequenceEdit.launchpadUndo();
+        return true;
+    }
+
+    return false;
+}
+
 //----------------------------------------
 // Sequence mode
 //----------------------------------------
@@ -425,7 +463,9 @@ void LaunchpadController::sequenceExit() {
 void LaunchpadController::sequenceDraw() {
     sequenceUpdateNavigation();
 
-    if (_generatorMode && !generatorModeSupported()) {
+    if (_generatorMode &&
+        !generatorModeSupported() &&
+        !generatorModeTrackSupported()) {
         setGeneratorMode(false);
     }
 

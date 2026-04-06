@@ -5,6 +5,7 @@
 #include "ui/StepSelection.h"
 #include "ui/model/CurveSequenceListModel.h"
 
+#include "engine/generators/Generator.h"
 #include "engine/generators/SequenceBuilder.h"
 
 #include "core/utils/Container.h"
@@ -23,6 +24,12 @@ public:
     virtual void keyUp(KeyEvent &event) override;
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
+    void openLaunchpadGenerator(Generator::Mode mode);
+    void launchpadUndo();
+    void setLaunchpadGeneratorModeActive(bool active) {
+        _launchpadGeneratorModeActive = active;
+    }
+    bool launchpadGeneratorModeActive() const { return _launchpadGeneratorModeActive; }
 
 private:
     typedef CurveSequence::Layer Layer;
@@ -37,6 +44,7 @@ private:
     void updateMonitorStep();
 
     void drawDetail(Canvas &canvas, const CurveSequence::Step &step);
+    void drawLaunchpadGeneratorOverlay(Canvas &canvas);
 
     void contextShow(bool doubleClick = false);
     void contextAction(int index);
@@ -65,4 +73,5 @@ private:
     Container<CurveSequenceBuilder> _builderContainer;
 
     CurveSequence _inMemorySequence;
+    bool _launchpadGeneratorModeActive = false;
 };

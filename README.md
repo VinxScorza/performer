@@ -6,7 +6,7 @@
 
 This is a personal fork of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a>, itself based on the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
 
-The Vinx Scorza line begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference. Current released fork version: `0.3.2-vinx.1.5.2` (this branch currently includes `1.5.3-launchpad-refactor` pre-release work).
+The Vinx Scorza line begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference. Starting from `v0.4.0`, this fork uses standalone Vinx semantic versioning (`v0.x.y`) and no longer carries the inherited `v0.3.2-vinx.*` prefix. Historical entries remain unchanged as lineage reference.
 
 If you are looking for a more conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines. If you are interested in a more hands-on, performance-oriented evolution of PER|FORMER, you are in the right place. What I'm aiming for is a solid machine for live performance, but also a crazy one for experimenting.<br>
 I am very grateful to Simon Kallweit for creating and developing the original Westlicht PER|FORMER. If you would like to support this fork and the upstream work behind it financially, you can donate here:<br>
@@ -19,8 +19,9 @@ Primary documentation for this fork: <a href="https://vinxscorza.github.io/perfo
 - `Chaos`: A deliberately rough experimental workflow built around `Vandalize Sequence`, pattern-wide `Wreck Pattern`, explicit compare, and safer destructive behavior. Machine-level `Chaos Defaults` let sequence vandalizing and pattern wrecking start from different default target masks.
 - `Generators`: `Acid`, `Random`, and `Euclidean` have all been pushed further, with stronger preview workflows, cleaner defaults, and more character. They build their first preview immediately on entry, while `Chaos` stays on the original material until `CHAOS` is triggered explicitly. Generator pages stay playable, compare states are clearer, and reset behavior is more intentional than a silent reroll.
 - `Clock & Sequencing`: External clock behavior, step editing, and scale handling have all been tightened for real use on hardware. `Reset Gate`, `Reset Pulse`, and voltage-mode user-scale support all push the core behavior further without throwing away legacy workflows.
-- `System & Live Workflow`: Machine settings, save flow, menu wrap, LCD behavior, and live interaction have all been refined to feel more coherent on the instrument itself. There is constant work on reliability around generator state handling, timing defaults, memory pressure, and destructive workflows.
-- `Launchpad, Simulators & Docs`: Launchpad behavior, the Desktop Simulator, the Web Simulator, and the documentation layer have all evolved alongside the firmware itself. `LP Note Style` now defaults to `Circuit`, the current manual and LP Cheatsheet are aligned around the Circuit editors and Launchpad terminology, and the Note editor now also has an experimental LP-side `Generators Mode` with explicit `A/B`, `ResetGen`, reroll, `GRID 16` undo (`PAGE + S7` equivalent), and track-to-track retargeting behavior. The result is a fork with its own maintained website, manual, simulator tooling, fork map, and feature archive.
+- `System & Live Workflow`: Machine settings, save flow, menu wrap, display behavior, and live interaction have all been refined to feel more coherent on the instrument itself. There is constant work on reliability around generator state handling, timing defaults, memory pressure, and destructive workflows.
+- `Launchpad, Simulators & Docs`: Launchpad behavior, the Desktop Simulator, the Web Simulator, and the documentation layer have all evolved alongside the firmware itself. `LP Note Style` now defaults to `Circuit`, the current manual and LP Cheatsheet are aligned around the Circuit editors and Launchpad terminology, and LP-side `Generators Mode` now has a track-type split: full map on `Note`, plus a dedicated `Random`/`Entropy`/`Euclidean`/`Init Steps` subset on `Curve`, `Stochastic`, `Logic`, and `Arp`, with explicit `A/B`, `ResetGen`, reroll, `Undo/Redo`, and track-to-track retargeting behavior. The result is a fork with its own maintained website, manual, simulator tooling, fork map, and feature archive.
+- `Launchpad Refactor`: The high-risk `LaunchpadController` area has been structurally split into dedicated domains to reduce coupling while preserving behavior.
 
 Current validation scope:
 - Real hardware testing is still useful for `Reset Pulse` / `Reset Gate`.
@@ -69,6 +70,16 @@ After cloning, enter the performer directory:
 ```
 cd performer
 ```
+
+### STM32 Toolchain Resolution (Vinx note)
+
+For STM32 builds, the toolchain file now resolves `arm-none-eabi` tools in this order:
+
+1. `tools/gcc-arm-none-eabi/bin` inside this repository
+2. `TOOLCHAIN_ROOT` (CMake variable or environment variable, expected to point to the directory containing `arm-none-eabi-*`)
+3. system `PATH`
+
+This keeps clean builds deterministic across machines while still allowing explicit overrides.
 
 Make sure you have a recent version of CMake installed. If you are on Linux, you might also want to install a few other packages. For Debian based systems, use:
 

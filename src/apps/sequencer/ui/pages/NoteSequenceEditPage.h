@@ -40,7 +40,10 @@ public:
 
     void openLaunchpadGenerator(LaunchpadGenerator generator);
     void launchpadUndo();
-    void setLaunchpadGeneratorModeActive(bool active) { _launchpadGeneratorModeActive = active; }
+    void setLaunchpadGeneratorModeActive(bool active) {
+        _launchpadGeneratorModeActive = active;
+    }
+    bool launchpadGeneratorModeActive() const { return _launchpadGeneratorModeActive; }
 
 private:
     typedef NoteSequence::Layer Layer;

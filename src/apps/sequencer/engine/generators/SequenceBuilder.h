@@ -7,6 +7,8 @@
 #include "model/LogicSequence.h"
 #include "model/ArpSequence.h"
 
+#include "core/utils/Random.h"
+
 #include <algorithm>
 #include <bitset>
 #include <vector>
@@ -38,6 +40,7 @@ public:
     virtual void copyStep(int fromIndex, int toIndex) = 0;
 
     virtual void clearLayer(const std::bitset<CONFIG_STEP_COUNT> &selected) = 0;
+    virtual void applyEntropy(uint32_t seed, int amount, const std::bitset<CONFIG_STEP_COUNT> &selected) = 0;
 };
 
 template<typename T>
@@ -151,6 +154,37 @@ public:
                 continue;
             }
             _preview.step(i).setLayerValue(_layer, _default);
+        }
+    }
+
+    void applyEntropy(uint32_t seed, int amount, const std::bitset<CONFIG_STEP_COUNT> &selected) override {
+        const int blend = clamp(amount, 0, 100);
+        const float t = blend * 0.01f;
+
+        Random rng(seed);
+        for (int stepIndex = 0; stepIndex < int(_preview.steps().size()); ++stepIndex) {
+            const bool targetStep = selected.any() ? selected[stepIndex] : (stepIndex >= _preview.firstStep() && stepIndex <= _preview.lastStep());
+            if (!targetStep) {
+                continue;
+            }
+
+            const auto &originalStep = _original.step(stepIndex);
+            auto &previewStep = _preview.step(stepIndex);
+
+            for (int layerIndex = 0; layerIndex < int(T::Layer::Last); ++layerIndex) {
+                auto layer = static_cast<typename T::Layer>(layerIndex);
+                const auto range = T::layerRange(layer);
+                const int originalValue = originalStep.layerValue(layer);
+                const int randomValue = range.min + int(rng.nextRange(range.max - range.min + 1));
+
+                int value = int(std::round(originalValue + (randomValue - originalValue) * t));
+                if (value == originalValue && randomValue != originalValue && blend > 0) {
+                    value += randomValue > originalValue ? 1 : -1;
+                }
+
+                value = clamp(value, range.min, range.max);
+                previewStep.setLayerValue(layer, value);
+            }
         }
     }
 
@@ -307,6 +341,10 @@ public:
                 _preview.step(i).setLayerValue(_layer, defaultValue);
             }
         }
+    }
+
+    void applyEntropy(uint32_t, int, const std::bitset<CONFIG_STEP_COUNT> &) override {
+        // Entropy is not supported for Acid builder paths.
     }
 
     void resetPreview() {
@@ -531,6 +569,10 @@ public:
         for (int i = 0; i < _trackCount; ++i) {
             restoreOriginalSteps(i);
         }
+    }
+
+    void applyEntropy(uint32_t, int, const std::bitset<CONFIG_STEP_COUNT> &) override {
+        // Entropy is not supported for Chaos builder paths.
     }
 
     void resetToOriginal() { showOriginal(); }

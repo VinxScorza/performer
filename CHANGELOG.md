@@ -2,14 +2,23 @@
 
 ## Vinx Scorza fork
 
-<sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
+<sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. From `v0.4.0` onward, Vinx uses standalone semantic versioning (`v0.x.y`) while preserving the earlier `v0.3.2-vinx.*` entries as historical lineage. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
-# v0.3.2-vinx.1.5.3 (branch: `1.5.3-launchpad-refactor`, in progress)
+# v0.4.0 (branch: `1.5.3-launchpad-refactor`, in progress)
+- Versioning transition: this release drops the inherited `v0.3.2-vinx.*` naming and starts standalone Vinx semantic versioning (`v0.x.y`)
+- Memory footprint improved versus upstream baseline: static SRAM and CCRAM usage are significantly reduced compared to Mebitek 0.3.2
 - Launchpad refactor: complete the P1 structural split of Launchpad controller domains (high-risk area hardening)
+- Extend Launchpad `Generators Mode` beyond Note tracks: keep the full Note map unchanged, and add a dedicated subset on `Curve` / `Stochastic` / `Logic` / `Arp` (`GRID 1 = Random`, `GRID 3 = Entropy`, `GRID 4 = Euclidean`, `GRID 8 = Init Steps`)
+- Add the new Chaos generator mode `Entropy` for non-Note Launchpad workflows, with Chaos-style interaction (`A/B` between `ORIGINAL` and generated state, `CHAOS` trigger on action)
 - Fix generator-selector track locking end-to-end: while the machine is inside the generator selector path (level 1 and deeper), Launchpad track/scene retarget is blocked so selection stays bound to the original track
 - Fix generator-page retarget regressions by keeping Launchpad track/scene switching locked while generator pages are active
-- Fix Launchpad Generators Mode UX regressions on hardware: stabilize overlay enter/exit behavior, keep selector mapping aligned (`GRID 2 = Acid Layer`, `GRID 10 = Acid Phrase`), restore visual feedback (`GRID 16`), and keep `Init Steps` / `Undo` flows stable without stale full-step selections
-- Extend simulator regression coverage for Launchpad generator locking and selector flows, including explicit scene-switch lock checks for machine selector and generator pages
+- From `Project`, `Layout`, `Routing`, `MIDI Output`, `User Scale`, and `Clock`, make track selection (`T1..8` on machine and `TRK1..8` on Launchpad) jump directly to `Steps` on the selected track
+- Fix Launchpad Generators Mode UX regressions on hardware: stabilize overlay enter/exit behavior, keep selector mapping aligned
+- Make `Init Steps` from Launchpad `Generators Mode` (`GRID 8`) apply immediately and exit the mode to plain `Steps`
+- Add `TOP 7 + TOP 8` Launchpad undo shortcut on `Note` / `Curve` / `Logic` step-edit pages and make it a 1-level `Undo/Redo` toggle (same behavior as machine `PAGE + S7`)
+- Make Generator commit from machine controls exit Launchpad `Generators Mode` cleanly to plain `Steps`, instead of returning to the LP overlay state
+- Extend simulator regression coverage for Launchpad generator locking and selector flows, including explicit scene-switch lock checks for machine selector and generator pages and non-Note `Generators Mode` mapping/Init flows
+- Harden STM32 clean-build reproducibility by resolving the ARM toolchain in a deterministic order (`repo tools` -> `TOOLCHAIN_ROOT` -> `PATH`) and by fixing an explicit `<algorithm>` include for `ClockTimer` (`std::min`) so from-scratch builds no longer depend on cache/toolchain accidents
 
 # v0.3.2-vinx.1.5.2 (3 April 2026)
 - Swap `Acid` mode order to `Layer` then `Phrase` in the machine `Acid` selector, and mirror that same swap in Launchpad `Generators Mode` (`GRID 2 = Acid Layer`, `GRID 10 = Acid Phrase`)
@@ -77,17 +86,17 @@
 - Refine defaults and workflow around the wider line: set the screensaver default to `15m`, add `Wake Mode = required`, restore the correct `Init Layer` behavior while clarifying `Init Layer` vs `Init Steps`, and refresh the built-in simulator state and browser audio mapping
 
 # v0.3.2-vinx.1.4.6 (24 March 2026)
-- Reduce UI/display overhead by lowering the default refresh rate to `30 fps` and skipping LCD redraws when the framebuffer hash has not changed, avoiding unnecessary display traffic without adding a second framebuffer
+- Reduce UI/display overhead by lowering the default refresh rate to `30 fps` and skipping display redraws when the framebuffer hash has not changed, avoiding unnecessary display traffic without adding a second framebuffer
 - Add immediate `Scale` prelisten preview on Note and Arp sequence pages, while keeping commit on encoder press and adding `CANCEL` to `Scale` and `Root Note` editing so preview changes can be discarded safely
 - Refine defaults and cleanup around sequencing/generators: set `Slide Time` to `20%` by default where available, remove the duplicate `Euclidean` entry from non-Note generator menus, and clean dead `PatternPage` allocation code
 - Recover RAM headroom and refresh the simulator state by disabling `Task Profiler` and the `Asteroids` easter egg in active builds, then updating the bundled simulator/browser demo setup with a revised Track 8 synth voice and drum sample set
 
 # v0.3.2-vinx.1.4.5 (22 March 2026)
-- Refine generator preview rendering on the LCD: make the 16-step bank indicator thinner and framed, slim down the playback playhead, improve `Random` preview rendering, and align `Acid` `Slide` / `Phrase` note and slide lanes more cleanly
+- Refine generator preview rendering on the display: make the 16-step bank indicator thinner and framed, slim down the playback playhead, improve `Random` preview rendering, and align `Acid` `Slide` / `Phrase` note and slide lanes more cleanly
 - Make `Random` preview layer-aware on Note tracks, reusing `Acid`-style Gate / Note / Slide visuals where they fit, adding dedicated views for Length and repeat-style layers, and reorder the `F4` Note layer cycle to `Note`, `Slide`, `Note Range`, `Note Prob`, `Bypass Scale`
 
 # v0.3.2-vinx.1.4.4 (22 March 2026)
-- Redesign generator previews on the LCD: `Random` now uses a centered 64-step baseline graph, `Acid` gets dedicated Note / Gate / Slide / Phrase preview layouts, and generator pages keep the current 16-step bank visible within the full 64-step view with a playback-following playhead
+- Redesign generator previews on the display: `Random` now uses a centered 64-step baseline graph, `Acid` gets dedicated Note / Gate / Slide / Phrase preview layouts, and generator pages keep the current 16-step bank visible within the full 64-step view with a playback-following playhead
 
 # v0.3.2-vinx.1.4.3 (21 March 2026)
 - Add `Acid` as a new Note-track generator with non-destructive preview and a `Layer / Phrase` split: `Acid -> Layer` targets the active `Gate`, `Note`, or `Slide` layer, while `Acid -> Phrase` writes a coordinated `Gate + Note + Slide` phrase over the current selection or pattern length
@@ -103,7 +112,7 @@
 
 # v0.3.2-vinx.1.4 (19 March 2026)
 - Rework `Generate -> Random` around full 32-bit hexadecimal seeds, automatic seed refresh on entry and seed edits, cleaner `NEW SEED` / `INIT` / `CANCEL` / `APPLY` flow, and `F1 = A/B` compare between `ORIGINAL` and `CURRENT SEED`
-- Refine Random generator behavior and preview stability: keep `Seed` stable while editing other parameters, make `Variation` update the LCD preview correctly, and set the default `Variation` to `50%` with clearer A/B seed-slot feedback
+- Refine Random generator behavior and preview stability: keep `Seed` stable while editing other parameters, make `Variation` update the preview on the display correctly, and set the default `Variation` to `50%` with clearer A/B seed-slot feedback
 - Improve generator/page navigation by opening `Generate` on the current 16-step bank and making its LEDs and `prev` / `next` bank navigation follow that bank
 - Refine defaults and visuals across the sequencer: set `Reset CV` to `Off`, return `Dim Sequence` to `Off`, improve step visualization for gate offset / length / retrigger, and further refine retrigger alignment in step rendering
 

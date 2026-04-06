@@ -2,6 +2,19 @@ import testframework as tf
 
 class ProjectPageTest(tf.UiTest):
 
+    def test_track_select_enters_steps_from_project_like_pages(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        pages = ("project", "layout", "routing", "midiout", "userscale", "clock")
+
+        for page in pages:
+            c.selectPage(page)
+            c.press("track1").wait(20)
+            self.assertEqual(p.selectedTrackIndex, 0, f"{page}: selected track")
+            self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop, f"{page}: jump to Steps")
+
     def test_edit_name(self):
         c = self.controller
         p = self.env.sequencer.model.project

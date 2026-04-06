@@ -327,7 +327,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 void NoteSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
     static const char *overlayCells[2][6] = {
         { "RAND", "ACIDL", "VNDLZ", "EUCL", nullptr, "INITS" },
-        { nullptr, "ACIDP", "WRECK", nullptr, nullptr, "UNDO" },
+        { nullptr, "ACIDP", "WRECK", nullptr, nullptr, nullptr },
     };
 
     constexpr int columns = 6;
@@ -414,6 +414,12 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.pageModifier() && key.is(Key::Step6)) {
+        launchpadUndo();
+        event.consume();
+        return;
+    }
+
     if (key.isQuickEdit()) {
          if (key.is(Key::Step15)) {
             bool lpConnected = _engine.isLaunchpadConnected();
@@ -423,12 +429,6 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
             _inMemorySequence = _project.selectedNoteSequence();
             quickEdit(key.quickEdit());
         }
-        event.consume();
-        return;
-    }
-
-    if (key.pageModifier() && key.is(Key::Step6)) {
-        launchpadUndo();
         event.consume();
         return;
     }
@@ -1245,8 +1245,10 @@ void NoteSequenceEditPage::launchpadUndo() {
         return;
     }
 
+    NoteSequence currentSequence = _project.selectedNoteSequence();
     _project.selectedNoteSequence() = _inMemorySequence;
-    showMessage("UNDO");
+    _inMemorySequence = currentSequence;
+    showMessage("UNDO/REDO");
 }
 
 void NoteSequenceEditPage::showAcidGenerator() {
