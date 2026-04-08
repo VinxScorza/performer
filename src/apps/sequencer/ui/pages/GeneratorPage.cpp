@@ -57,6 +57,8 @@ int chaosCellFromScanIndex(int index) {
 
 constexpr int ChaosAllOnCell = 11;
 constexpr int ChaosAllOffCell = 15;
+constexpr int EntropyAllOnCell = 11;
+constexpr int EntropyAllOffCell = 15;
 
 bool chaosCellTarget(int cell, ChaosGenerator::Target &target) {
     switch (cell) {
@@ -89,6 +91,39 @@ const char *chaosCellLabel(int cell) {
 
     ChaosGenerator::Target target;
     return chaosCellTarget(cell, target) ? ChaosGenerator::targetCellLabel(target) : "";
+}
+
+bool entropyCellTarget(int cell, ChaosEntropyGenerator::Target &target) {
+    switch (cell) {
+    case 0:  target = ChaosEntropyGenerator::Target::Gate; return true;
+    case 4:  target = ChaosEntropyGenerator::Target::GateOffset; return true;
+    case 8:  target = ChaosEntropyGenerator::Target::GateProbability; return true;
+    case 12: target = ChaosEntropyGenerator::Target::Retrigger; return true;
+    case 1:  target = ChaosEntropyGenerator::Target::EventLength; return true;
+    case 5:  target = ChaosEntropyGenerator::Target::EventLengthVariationRange; return true;
+    case 9:  target = ChaosEntropyGenerator::Target::EventLengthVariationProbability; return true;
+    case 13: target = ChaosEntropyGenerator::Target::RetriggerProbability; return true;
+    case 2:  target = ChaosEntropyGenerator::Target::PrimaryValue; return true;
+    case 6:  target = ChaosEntropyGenerator::Target::PrimaryValueVariationRange; return true;
+    case 10: target = ChaosEntropyGenerator::Target::PrimaryValueVariationProbability; return true;
+    case 14: target = ChaosEntropyGenerator::Target::Register; return true;
+    case 3:  target = ChaosEntropyGenerator::Target::Motion; return true;
+    case 7:  target = ChaosEntropyGenerator::Target::LogicRepeatRules; return true;
+    default: break;
+    }
+    return false;
+}
+
+const char *entropyCellLabel(int cell) {
+    if (cell == EntropyAllOnCell) {
+        return "All On";
+    }
+    if (cell == EntropyAllOffCell) {
+        return "All Off";
+    }
+
+    ChaosEntropyGenerator::Target target;
+    return entropyCellTarget(cell, target) ? ChaosEntropyGenerator::targetCellLabel(target) : "";
 }
 
 template<typename Predicate>
@@ -445,6 +480,7 @@ void GeneratorPage::draw(Canvas &canvas) {
         drawChaosGenerator(canvas, *static_cast<const ChaosGenerator *>(_generator));
         break;
     case Generator::Mode::ChaosEntropy:
+        drawChaosEntropyGenerator(canvas, *static_cast<const ChaosEntropyGenerator *>(_generator));
         break;
     case Generator::Mode::Last:
         break;
@@ -580,6 +616,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
     if (chaosStyledGeneratorMode(_generator->mode())) {
         auto *chaos = chaosGeneratorMode(_generator->mode()) ? static_cast<ChaosGenerator *>(_generator) : nullptr;
+        auto *entropy = entropyGeneratorMode(_generator->mode()) ? static_cast<ChaosEntropyGenerator *>(_generator) : nullptr;
         auto refreshChaosView = [&] () {
             if (_chaosPreviewArmed && _generator->showingPreview()) {
                 _generator->showPreview();
@@ -636,6 +673,26 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
                     if (chaosCellTarget(_chaosCursor, target)) {
                         chaos->toggleTarget(target);
                         chaos->update();
+                        refreshChaosView();
+                        _launchpadResetState = false;
+                    }
+                }
+            } else if (entropy != nullptr) {
+                if (_chaosCursor == EntropyAllOnCell) {
+                    entropy->setAllTargets(true);
+                    entropy->update();
+                    refreshChaosView();
+                    _launchpadResetState = false;
+                } else if (_chaosCursor == EntropyAllOffCell) {
+                    entropy->setAllTargets(false);
+                    entropy->update();
+                    refreshChaosView();
+                    _launchpadResetState = false;
+                } else {
+                    ChaosEntropyGenerator::Target target;
+                    if (entropyCellTarget(_chaosCursor, target)) {
+                        entropy->toggleTarget(target);
+                        entropy->update();
                         refreshChaosView();
                         _launchpadResetState = false;
                     }
@@ -776,7 +833,7 @@ void GeneratorPage::encoder(EncoderEvent &event) {
             return;
         }
 
-        if (chaosGeneratorMode(_generator->mode()) && event.value() != 0) {
+        if (event.value() != 0) {
             constexpr int chaosCellCount = 16;
             int scanIndex = chaosScanIndexFromCell(_chaosCursor);
             scanIndex = (scanIndex + event.value()) % chaosCellCount;
@@ -1338,6 +1395,62 @@ void GeneratorPage::drawChaosGenerator(Canvas &canvas, const ChaosGenerator &gen
         drawCell(cell, chaosCellLabel(cell), generator.targetEnabled(target), cell == _chaosCursor, false);
     }
 
+}
+
+void GeneratorPage::drawChaosEntropyGenerator(Canvas &canvas, const ChaosEntropyGenerator &generator) const {
+    constexpr int columns = 4;
+    constexpr int rows = 4;
+    constexpr int gridTop = 11;
+    constexpr int gridBottom = 46;
+    constexpr int cellGap = 2;
+    const int cellWidth = (Width - (columns + 1) * cellGap) / columns;
+    const int cellHeight = (gridBottom - gridTop - (rows - 1) * cellGap) / rows;
+
+    auto drawCell = [&] (int index, const char *label, bool enabled, bool selected, bool actionCell) {
+        int row = index / columns;
+        int col = index % columns;
+        int x = cellGap + col * (cellWidth + cellGap);
+        int y = gridTop + row * (cellHeight + cellGap);
+        const auto prevBlendMode = canvas.blendMode();
+
+        if (enabled && !actionCell) {
+            canvas.setColor(selected ? Color::MediumBright : Color::Medium);
+            canvas.fillRect(x, y, cellWidth, cellHeight);
+            canvas.setColor(selected ? Color::Bright : Color::Medium);
+            canvas.drawRect(x, y, cellWidth, cellHeight);
+        } else {
+            canvas.setColor(selected ? Color::Medium : Color::Low);
+            canvas.drawRect(x, y, cellWidth, cellHeight);
+            canvas.setColor(selected ? Color::Bright : Color::MediumBright);
+        }
+
+        Font prevFont = canvas.font();
+        canvas.setFont(Font::Tiny);
+        if (enabled && !actionCell) {
+            canvas.setBlendMode(BlendMode::Sub);
+            canvas.setColor(Color::Bright);
+        }
+        canvas.drawTextCentered(x, y - 1, cellWidth, cellHeight, label);
+        canvas.setBlendMode(prevBlendMode);
+        canvas.setFont(prevFont);
+    };
+
+    for (int cell = 0; cell < columns * rows; ++cell) {
+        if (cell == EntropyAllOnCell) {
+            drawCell(cell, entropyCellLabel(cell), generator.allTargetsEnabled(), cell == _chaosCursor, true);
+            continue;
+        }
+        if (cell == EntropyAllOffCell) {
+            drawCell(cell, entropyCellLabel(cell), !generator.allTargetsEnabled(), cell == _chaosCursor, true);
+            continue;
+        }
+
+        ChaosEntropyGenerator::Target target;
+        if (!entropyCellTarget(cell, target)) {
+            continue;
+        }
+        drawCell(cell, entropyCellLabel(cell), generator.targetEnabled(target), cell == _chaosCursor, false);
+    }
 }
 
 int GeneratorPage::contextItemCount() const {

@@ -8,13 +8,13 @@
 - Versioning transition: this release drops the inherited `v0.3.2-vinx.*` naming and starts standalone Vinx semantic versioning (`v0.x.y`)
 - Memory footprint improved versus upstream baseline: static SRAM and CCRAM usage are significantly reduced compared to Mebitek 0.3.2
 - Launchpad refactor: complete the P1 structural split of Launchpad controller domains (high-risk area hardening)
-- Extend Launchpad `Generators Mode` beyond Note tracks: keep the full Note map unchanged, and add a dedicated subset on `Curve` / `Stochastic` / `Logic` / `Arp` (`GRID 1 = Random`, `GRID 3 = Entropy`, `GRID 4 = Euclidean`, `GRID 8 = Init Steps`)
-- Add the new Chaos generator mode `Entropy` for non-Note Launchpad workflows, with Chaos-style interaction (`A/B` between `ORIGINAL` and generated state, `CHAOS` trigger on action)
+- Extend Launchpad `Generators Mode` beyond Note tracks: keep the full Note map unchanged, and add a dedicated subset on `Curve` / `Stochastic` / `Logic` / `Arp` (`GRID 1 = Random`, `GRID 3 = Entropy`, `GRID 4 = Euclidean`, `GRID 16 = Init Steps`)
+- Add the new Chaos generator mode `Entropy` for non-Note Launchpad workflows, with Chaos-style interaction, dedicated target matrix, and persisted defaults in `System -> Chaos Defaults`
 - Fix generator-selector track locking end-to-end: while the machine is inside the generator selector path (level 1 and deeper), Launchpad track/scene retarget is blocked so selection stays bound to the original track
 - Fix generator-page retarget regressions by keeping Launchpad track/scene switching locked while generator pages are active
 - From `Project`, `Layout`, `Routing`, `MIDI Output`, `User Scale`, and `Clock`, make track selection (`T1..8` on machine and `TRK1..8` on Launchpad) jump directly to `Steps` on the selected track
 - Fix Launchpad Generators Mode UX regressions on hardware: stabilize overlay enter/exit behavior, keep selector mapping aligned
-- Make `Init Steps` from Launchpad `Generators Mode` (`GRID 8`) apply immediately and exit the mode to plain `Steps`
+- Make `Init Steps` from Launchpad `Generators Mode` (`GRID 16`) apply immediately and exit the mode to plain `Steps`
 - Add `TOP 7 + TOP 8` Launchpad undo shortcut on `Note` / `Curve` / `Logic` step-edit pages and make it a 1-level `Undo/Redo` toggle (same behavior as machine `PAGE + S7`)
 - Make Generator commit from machine controls exit Launchpad `Generators Mode` cleanly to plain `Steps`, instead of returning to the LP overlay state
 - Extend simulator regression coverage for Launchpad generator locking and selector flows, including explicit scene-switch lock checks for machine selector and generator pages and non-Note `Generators Mode` mapping/Init flows

@@ -88,7 +88,7 @@
             <tr>
               <td><code>TOP 7 + TOP 8</code></td>
               <td>Undo / Redo (1-level).</td>
-              <td>On Steps edit pages (<code>Note</code>, <code>Curve</code>, <code>Logic</code>) only.<br>Same action as machine <code>PAGE + S7</code>; pressing again toggles back.</td>
+              <td>On Steps edit pages (<code>Note</code>, <code>Curve</code>, <code>Logic</code>) only.<br>Same action as machine <code>PAGE + S7</code>; pressing again toggles back.<br>Hold <code>TOP 7</code> first, then press <code>TOP 8</code>.</td>
             </tr>
             <tr>
               <td><code>TOP 8 + TRK 1..8</code></td>
@@ -103,7 +103,7 @@
             <tr>
               <td><code>TOP 6 + TRK 1..8</code></td>
               <td>Toggle Track solo.</td>
-              <td>Available in Sequence and Performer only.<br>Not available in Pattern.<br>In Sequence Generators Mode this action is not available.</td>
+              <td>Available in Sequence and Performer only.<br>Not available in Pattern.<br>In Sequence Generators Mode this action is not available.<br>No dedicated SOLO scene-LED color is currently implemented; rely on behavior/state.</td>
             </tr>
             <tr>
               <td><code>TOP 1 + GRID</code></td>
@@ -113,12 +113,12 @@
             <tr>
               <td><code>TOP 1 + TOP 2..5</code></td>
               <td>Navigate Left | Right | Up | Down.</td>
-              <td>Use these arrows on the current mode Navigation map, or press a pad directly.<br>In Sequence Generators Mode, these arrows are ignored.</td>
+              <td>Use these arrows on the current mode Navigation map, or press a pad directly.<br><em>Legacy / Deprecated</em>: prefer <code>TOP 1 + GRID</code> direct navigation.<br>In Sequence Generators Mode, these arrows are ignored.</td>
             </tr>
             <tr>
               <td><code>Global visual feedback</code></td>
               <td>Color indicators in Global.</td>
-              <td><code>TRK 1..8</code> LEDs show playback, mute, and selection state.<br>Colors follow LP Style setting.</td>
+              <td><code>TRK 1..8</code> LEDs show playback, mute, and selection state.<br>No dedicated SOLO color cue is currently exposed on <code>TRK</code> LEDs.<br>Colors follow LP Style setting.</td>
             </tr>
           </tbody>
         </table>
@@ -302,7 +302,7 @@
                   <div class="grid-map-title">Note Track</div>
                   <table class="grid-map-table">
                     <tbody>
-                      <tr><td><code>1</code><br>Random</td><td><code>2</code><br>Acid Layer</td><td><code>3</code><br>Vandalize</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>8</code><br>Init Steps</td></tr>
+                      <tr><td><code>1</code><br>Random</td><td><code>2</code><br>Acid Layer</td><td><code>3</code><br>Vandalize</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>16</code><br>Init Steps</td></tr>
                       <tr><td></td><td><code>10</code><br>Acid Phrase</td><td><code>11</code><br>Wreck</td><td></td><td></td><td></td><td></td><td></td></tr>
                     </tbody>
                   </table>
@@ -311,7 +311,7 @@
                   <div class="grid-map-title">Curve | Stochastic | Logic | Arp Tracks</div>
                   <table class="grid-map-table">
                     <tbody>
-                      <tr><td><code>1</code><br>Random</td><td></td><td><code>3</code><br>Entropy</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>8</code><br>Init Steps</td></tr>
+                      <tr><td><code>1</code><br>Random</td><td></td><td><code>3</code><br>Entropy</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>16</code><br>Init Steps</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -335,8 +335,8 @@
             </tr>
             <tr>
               <td><code>TRK 1..8</code></td>
-              <td>Cancel first, then retarget track.</td>
-              <td>If the pressed track supports this mode, mode moves there with that track type map. Otherwise it exits Generators Mode and selects that track.</td>
+              <td>Retarget track.</td>
+              <td>If the pressed track supports this mode, mode moves there with that track-type map. Otherwise it exits Generators Mode and selects that track.</td>
             </tr>
           </tbody>
         </table>
@@ -531,7 +531,7 @@
               <td>Launch scene-side Pattern 1-8 on all Tracks.<br>Launch timing follows the current execute type.</td>
             </tr>
             <tr>
-              <td><code>TOP 2..3 + GRID</code><br><code>TOP 2..3 + TRK 1..8</code></td>
+              <td><code>TOP 2..3 + GRID</code><br>or<br><code>TOP 2..3 + TRK 1..8</code></td>
               <td>Latch | Sync (or Immediate) execute types.</td>
               <td>
                 <div class="grid-map">
@@ -703,7 +703,7 @@
             <tr>
               <td><code>TOP 1 + TOP 2..5</code></td>
               <td>Navigate Left | Right | Up | Down.</td>
-              <td>Used on the current Performer Navigation map.</td>
+              <td>Used on the current Performer Navigation map.<br><em>Legacy / Deprecated</em>: prefer <code>TOP 1 + GRID 25..32</code> direct map navigation.</td>
             </tr>
             <tr>
               <td><code>TOP 7 + GRID</code><br><span style="font-weight: 400; font-style: normal;">Legacy / Deprecated</span></td>

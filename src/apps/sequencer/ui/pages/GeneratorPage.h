@@ -7,6 +7,7 @@
 class Generator;
 class AcidGenerator;
 class ChaosGenerator;
+class ChaosEntropyGenerator;
 class EuclideanGenerator;
 class RandomGenerator;
 
@@ -55,6 +56,7 @@ private:
     void drawRandomGenerator(Canvas &canvas, const RandomGenerator &generator) const;
     void drawAcidGenerator(Canvas &canvas, const AcidGenerator &generator) const;
     void drawChaosGenerator(Canvas &canvas, const ChaosGenerator &generator) const;
+    void drawChaosEntropyGenerator(Canvas &canvas, const ChaosEntropyGenerator &generator) const;
     int contextItemCount() const;
     int previewStepCount() const;
     int currentStep() const;

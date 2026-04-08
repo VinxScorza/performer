@@ -67,7 +67,7 @@ void ChaosEntropyGenerator::showOriginal() {
 
 void ChaosEntropyGenerator::showPreview() {
     _builder.showOriginal();
-    _builder.applyEntropy(_params.seed, _params.amount, _selected);
+    _builder.applyEntropy(_params.seed, _params.amount, _selected, _params.targetMask);
     _builder.showPreview();
 }
 
@@ -88,4 +88,8 @@ void ChaosEntropyGenerator::randomizeSeed() {
     Random rng(entropy);
     _params.seed = rng.next();
     entropy = rng.next();
+}
+
+const char *ChaosEntropyGenerator::targetCellLabel(Target target) {
+    return entropyTargetLabel(target);
 }

@@ -224,7 +224,7 @@ LaunchpadController::LaunchpadGenerator LaunchpadController::generatorModeGrid(i
             return LaunchpadGenerator::Wreck;
         case 3:
             return LaunchpadGenerator::Euclidean;
-        case 7:
+        case 15:
             return LaunchpadGenerator::Init;
         default:
             return LaunchpadGenerator::None;
@@ -238,7 +238,7 @@ LaunchpadController::LaunchpadGenerator LaunchpadController::generatorModeGrid(i
         return LaunchpadGenerator::Entropy;
     case 3:
         return LaunchpadGenerator::Euclidean;
-    case 7:
+    case 15:
         return LaunchpadGenerator::Init;
     default:
         return LaunchpadGenerator::None;
@@ -336,13 +336,13 @@ void LaunchpadController::sequenceDrawGeneratorMode() {
         {0, 2, LaunchpadGenerator::Vandalize},
         {1, 2, LaunchpadGenerator::Wreck},
         {0, 3, LaunchpadGenerator::Euclidean},
-        {0, 7, LaunchpadGenerator::Init},
+        {1, 7, LaunchpadGenerator::Init},
     };
     const GeneratorSlot subsetSlots[] = {
         {0, 0, LaunchpadGenerator::Random},
         {0, 2, LaunchpadGenerator::Entropy},
         {0, 3, LaunchpadGenerator::Euclidean},
-        {0, 7, LaunchpadGenerator::Init},
+        {1, 7, LaunchpadGenerator::Init},
     };
 
     const auto *slots = noteLayout ? noteSlots : subsetSlots;
@@ -368,8 +368,6 @@ void LaunchpadController::sequenceDrawGeneratorMode() {
     setFunctionLed(6, colorRed());
     setFunctionLed(7, previewPage ? colorGreen() : colorGreen(1));
 
-    // GRID 16 has no action in Generators Mode.
-    setGridLed(1, 7, colorOff());
 }
 
 bool LaunchpadController::sequenceButtonGeneratorMode(const Button &button, ButtonAction action) {

@@ -4,6 +4,7 @@
 #include "ui/LedPainter.h"
 #include "ui/painters/WindowPainter.h"
 
+#include "engine/generators/ChaosEntropyGenerator.h"
 #include "engine/generators/ChaosGenerator.h"
 
 static const char *functionNames[] = { nullptr, nullptr, nullptr, nullptr, "CLOSE" };
@@ -23,6 +24,8 @@ int chaosCellFromScanIndex(int index) {
 
 constexpr int ChaosAllOnCell = 11;
 constexpr int ChaosAllOffCell = 15;
+constexpr int EntropyAllOnCell = 11;
+constexpr int EntropyAllOffCell = 15;
 
 bool chaosCellTarget(int cell, ChaosGenerator::Target &target) {
     switch (cell) {
@@ -55,6 +58,39 @@ const char *chaosCellLabel(int cell) {
 
     ChaosGenerator::Target target;
     return chaosCellTarget(cell, target) ? ChaosGenerator::targetCellLabel(target) : "";
+}
+
+bool entropyCellTarget(int cell, ChaosEntropyGenerator::Target &target) {
+    switch (cell) {
+    case 0:  target = ChaosEntropyGenerator::Target::Gate; return true;
+    case 4:  target = ChaosEntropyGenerator::Target::GateOffset; return true;
+    case 8:  target = ChaosEntropyGenerator::Target::GateProbability; return true;
+    case 12: target = ChaosEntropyGenerator::Target::Retrigger; return true;
+    case 1:  target = ChaosEntropyGenerator::Target::EventLength; return true;
+    case 5:  target = ChaosEntropyGenerator::Target::EventLengthVariationRange; return true;
+    case 9:  target = ChaosEntropyGenerator::Target::EventLengthVariationProbability; return true;
+    case 13: target = ChaosEntropyGenerator::Target::RetriggerProbability; return true;
+    case 2:  target = ChaosEntropyGenerator::Target::PrimaryValue; return true;
+    case 6:  target = ChaosEntropyGenerator::Target::PrimaryValueVariationRange; return true;
+    case 10: target = ChaosEntropyGenerator::Target::PrimaryValueVariationProbability; return true;
+    case 14: target = ChaosEntropyGenerator::Target::Register; return true;
+    case 3:  target = ChaosEntropyGenerator::Target::Motion; return true;
+    case 7:  target = ChaosEntropyGenerator::Target::LogicRepeatRules; return true;
+    default: break;
+    }
+    return false;
+}
+
+const char *entropyCellLabel(int cell) {
+    if (cell == EntropyAllOnCell) {
+        return "All On";
+    }
+    if (cell == EntropyAllOffCell) {
+        return "All Off";
+    }
+
+    ChaosEntropyGenerator::Target target;
+    return entropyCellTarget(cell, target) ? ChaosEntropyGenerator::targetCellLabel(target) : "";
 }
 }
 
@@ -112,6 +148,24 @@ void ChaosDefaultsPage::draw(Canvas &canvas) {
     };
 
     for (int cell = 0; cell < columns * rows; ++cell) {
+        if (_mode == ChaosDefaultsListModel::Mode::Entropy) {
+            if (cell == EntropyAllOnCell) {
+                drawCell(cell, entropyCellLabel(cell), allTargetsEnabled(), cell == _cursor, true);
+                continue;
+            }
+            if (cell == EntropyAllOffCell) {
+                drawCell(cell, entropyCellLabel(cell), !allTargetsEnabled(), cell == _cursor, true);
+                continue;
+            }
+
+            ChaosEntropyGenerator::Target target;
+            if (!entropyCellTarget(cell, target)) {
+                continue;
+            }
+            drawCell(cell, entropyCellLabel(cell), targetEnabled(int(target)), cell == _cursor, false);
+            continue;
+        }
+
         if (cell == ChaosAllOnCell) {
             drawCell(cell, chaosCellLabel(cell), allTargetsEnabled(), cell == _cursor, true);
             continue;
@@ -143,10 +197,17 @@ void ChaosDefaultsPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.is(Key::Encoder)) {
-        if (_cursor == ChaosAllOnCell) {
+        if ((_mode == ChaosDefaultsListModel::Mode::Entropy && _cursor == EntropyAllOnCell) ||
+            (_mode != ChaosDefaultsListModel::Mode::Entropy && _cursor == ChaosAllOnCell)) {
             setAllTargets(true);
-        } else if (_cursor == ChaosAllOffCell) {
+        } else if ((_mode == ChaosDefaultsListModel::Mode::Entropy && _cursor == EntropyAllOffCell) ||
+                   (_mode != ChaosDefaultsListModel::Mode::Entropy && _cursor == ChaosAllOffCell)) {
             setAllTargets(false);
+        } else if (_mode == ChaosDefaultsListModel::Mode::Entropy) {
+            ChaosEntropyGenerator::Target target;
+            if (entropyCellTarget(_cursor, target)) {
+                setTargetEnabled(int(target), !targetEnabled(int(target)));
+            }
         } else {
             ChaosGenerator::Target target;
             if (chaosCellTarget(_cursor, target)) {
@@ -177,11 +238,22 @@ uint16_t &ChaosDefaultsPage::targetMask() {
     if (_mode == ChaosDefaultsListModel::Mode::Sequence) {
         return _model.settings().userSettings().get<ChaosSeqLayersSetting>(SettingChaosSeqLayers)->getValue();
     }
+    if (_mode == ChaosDefaultsListModel::Mode::Entropy) {
+        return _model.settings().userSettings().get<EntropyLayersSetting>(SettingEntropyLayers)->getValue();
+    }
     return _model.settings().userSettings().get<ChaosPatLayersSetting>(SettingChaosPatLayers)->getValue();
 }
 
 const char *ChaosDefaultsPage::activeFunction() const {
-    return _mode == ChaosDefaultsListModel::Mode::Sequence ? "Seq Layers to Vandalize" : "Pat Layers to Wreck";
+    switch (_mode) {
+    case ChaosDefaultsListModel::Mode::Sequence:
+        return "Seq Layers to Vandalize";
+    case ChaosDefaultsListModel::Mode::Pattern:
+        return "Pat Layers to Wreck";
+    case ChaosDefaultsListModel::Mode::Entropy:
+        return "Entropy Layers to Unleash";
+    }
+    return "";
 }
 
 bool ChaosDefaultsPage::targetEnabled(int index) const {
@@ -198,9 +270,10 @@ void ChaosDefaultsPage::setTargetEnabled(int index, bool enabled) {
 }
 
 void ChaosDefaultsPage::setAllTargets(bool enabled) {
-    targetMask() = enabled ? DefaultChaosTargetMask : 0u;
+    targetMask() = enabled ? (_mode == ChaosDefaultsListModel::Mode::Entropy ? DefaultEntropyTargetMask : DefaultChaosTargetMask) : 0u;
 }
 
 bool ChaosDefaultsPage::allTargetsEnabled() const {
-    return const_cast<ChaosDefaultsPage *>(this)->targetMask() == DefaultChaosTargetMask;
+    const uint16_t fullMask = _mode == ChaosDefaultsListModel::Mode::Entropy ? DefaultEntropyTargetMask : DefaultChaosTargetMask;
+    return const_cast<ChaosDefaultsPage *>(this)->targetMask() == fullMask;
 }

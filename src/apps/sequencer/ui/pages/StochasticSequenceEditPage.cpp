@@ -8,7 +8,9 @@
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
+#include "engine/generators/ChaosEntropyGenerator.h"
 #include "model/Scale.h"
+#include "model/UserSettings.h"
 
 #include "os/os.h"
 
@@ -337,8 +339,8 @@ void StochasticSequenceEditPage::draw(Canvas &canvas) {
 
 void StochasticSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
     static const char *overlayCells[2][6] = {
-        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, "INITS" },
-        { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr },
+        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, nullptr },
+        { nullptr, nullptr, nullptr, nullptr, nullptr, "INITS" },
     };
 
     constexpr int columns = 6;
@@ -1116,6 +1118,11 @@ void StochasticSequenceEditPage::openLaunchpadGenerator(Generator::Mode mode) {
 
     auto *generator = Generator::execute(mode, *builder, _stepSelection.selected());
     if (generator) {
+        if (mode == Generator::Mode::ChaosEntropy) {
+            auto *entropy = static_cast<ChaosEntropyGenerator *>(generator);
+            entropy->setTargetMask(_model.settings().userSettings().get<EntropyLayersSetting>(SettingEntropyLayers)->getValue());
+            entropy->update();
+        }
         _manager.pages().generator.show(generator, &_stepSelection);
     }
 }
@@ -1150,26 +1157,31 @@ void StochasticSequenceEditPage::setSelectedStepsGate(bool gate) {
 }
 
 void StochasticSequenceEditPage::displayMessage(StochasticSequence &sequence) {
-    FixedStringBuilder<16> str;
-    if (sequence.message() != StochasticSequence::Message::None) {
+    const auto message = sequence.message();
+    if (message == StochasticSequence::Message::None) {
+        return;
+    }
 
-        switch (sequence.message()) {
-            case StochasticSequence::Message::LoopOn:
-                str("Loop On");
-                break;
-            case StochasticSequence::Message::LoopOff:
-                str("Loop Off");
-                break;
-            case StochasticSequence::Message::Cleared:
-                str("Loop cleared");
-                break;
-            case StochasticSequence::Message::ReSeed:
-                str("Reseed");
-                break;
-            default:
-                break;  
-        }
-        showMessage(str);
-        sequence.setMessage(StochasticSequence::Message::None);
-    } 
+    const char *text = nullptr;
+    switch (message) {
+    case StochasticSequence::Message::LoopOn:
+        text = "Loop On";
+        break;
+    case StochasticSequence::Message::LoopOff:
+        text = "Loop Off";
+        break;
+    case StochasticSequence::Message::Cleared:
+        text = "Loop cleared";
+        break;
+    case StochasticSequence::Message::ReSeed:
+        text = "Reseed";
+        break;
+    case StochasticSequence::Message::None:
+        break;
+    }
+
+    if (text) {
+        showMessage(text);
+    }
+    sequence.setMessage(StochasticSequence::Message::None);
 }

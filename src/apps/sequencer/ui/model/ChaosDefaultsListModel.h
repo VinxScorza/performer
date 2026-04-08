@@ -7,14 +7,22 @@ public:
     enum class Mode {
         Sequence,
         Pattern,
+        Entropy,
     };
 
     Mode rowToMode(int row) const {
-        return row == 0 ? Mode::Sequence : Mode::Pattern;
+        switch (row) {
+        case 0:
+            return Mode::Sequence;
+        case 1:
+            return Mode::Pattern;
+        default:
+            return Mode::Entropy;
+        }
     }
 
     int rows() const override {
-        return 2;
+        return 3;
     }
 
     int columns() const override {
@@ -32,6 +40,9 @@ public:
             break;
         case Mode::Pattern:
             str("Pat Layers to Wreck");
+            break;
+        case Mode::Entropy:
+            str("Entropy Layers to Unleash");
             break;
         }
     }

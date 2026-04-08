@@ -55,35 +55,34 @@
           What I'm aiming for is a solid machine for live performance, but also a crazy one for experimenting.<br>
           The goal is not simply to add more options, but to push PER|FORMER toward stronger creative generators, safer destructive workflows, better live interaction, and a more complete simulator and documentation ecosystem.
         </p>
-        <h4 class="section-callout">Chaos</h4>
+        <h4 class="section-callout">Generators &amp; Performance Workflow</h4>
         <ul>
-          <li>A deliberately rough experimental workflow built around <code>Vandalize Sequence</code>, pattern-wide <code>Wreck Pattern</code>, explicit compare, and safer destructive behavior</li>
-          <li>Machine-level <code>Chaos Defaults</code> let sequence vandalizing and pattern wrecking start from different default target masks</li>
+          <li>Full evolution of the generator ecosystem (<code>Random</code>, <code>Acid</code>, <code>Euclidean</code>, <code>Chaos</code>), now unified under a coherent preview/apply safety model and consistent playable workflow across machine and Launchpad. Includes the introduction and consolidation of <code>Acid</code> (<code>Layer</code> + <code>Phrase</code>), the expansion of <code>Chaos</code> into <code>Vandalize Sequence</code> + <code>Wreck Pattern</code>, and the addition of <code>Entropy</code> as a dedicated subset for non-Note tracks.</li>
+          <li>Unified Init semantics across <code>Init Layer</code> / <code>Init Steps</code> / <code>Init Seq</code>, with consistent selection-aware fallback.</li>
+          <li>Launchpad <code>Generators Mode</code> integrated with track-type mapping.</li>
+          <li>Launchpad UX improvements including <code>Undo/Redo</code>, <code>Circuit</code> as default with improved <code>Classic</code> compatibility, improved targeting/probability/range handling, and display wake on input.</li>
         </ul>
-        <h4 class="section-callout">Generators</h4>
+        <h4 class="section-callout">Step Editing, Timing &amp; Sequencing</h4>
         <ul>
-          <li><code>Acid</code>, <code>Random</code>, and <code>Euclidean</code> have all been pushed further, with stronger preview workflows, cleaner defaults, and more character</li>
-          <li><code>Random</code>, <code>Acid</code>, and <code>Euclidean</code> generate their first preview immediately on entry, while <code>Chaos</code> stays on the original material until <code>CHAOS</code> is pressed explicitly</li>
-          <li>Generator pages stay playable, compare states are clearer, and reset behavior is more intentional than a silent reroll</li>
-          <li><code>Init Layer</code>, <code>Init Steps</code>, and <code>Init Seq</code> are clearly separated again, with selection-aware behavior and whole-track fallback when no step selection exists</li>
-          <li>Switching between footer options inside <code>Random</code>, <code>Acid</code>, and <code>Chaos</code> no longer kicks you out of the generator page unexpectedly</li>
+          <li><code>Curve</code> track extended with <code>Gate Offset</code> and <code>Gate Length</code> layers.</li>
+          <li>Unified step selection system (shift behavior and fallback selection-or-all centralized).</li>
+          <li>Refined clock and sync handling (<code>Reset Pulse</code> and edge-safe behavior).</li>
+          <li>Improved scale capture consistency and operational limits.</li>
         </ul>
-        <h4 class="section-callout">Clock &amp; Sequencing</h4>
+        <h4 class="section-callout">Memory, Runtime &amp; Build Robustness</h4>
         <ul>
-          <li>External clock behavior, step editing, and scale handling have all been tightened for real use on hardware</li>
-          <li><code>Reset Gate</code>, <code>Reset Pulse</code>, and voltage-mode user-scale support all push the core behavior further without throwing away legacy workflows</li>
+          <li>Reduced memory footprint and improved runtime efficiency (removal of accidental <code>iostream/locale</code> pull-in on STM32, better SRAM/CCRAM usage vs Mebitek <code>0.3.2</code> baseline).</li>
+          <li>Build and simulator hardening (deterministic STM32 toolchain, <code>&lt;algorithm&gt;</code> fix on <code>ClockTimer</code>, cleanup of simulator warnings and includes).</li>
         </ul>
-        <h4 class="section-callout">System &amp; Live Workflow</h4>
+        <h4 class="section-callout">Core Engine &amp; Safety</h4>
         <ul>
-          <li>Machine settings, save flow, menu wrap, display behavior, and live interaction have all been refined to feel more coherent on the instrument itself</li>
-          <li>There is constant work on reliability around generator state handling, timing defaults, memory pressure, and destructive workflows themselves</li>
+          <li>Robustness improvements across modal paths, input redispatch, and selector handling (no key leaks, proper isolation, stable closing behavior), with end-to-end locking during generator flows across machine and Launchpad.</li>
+          <li>Generator safety guard-rails and overall UX stabilization (safe entry paths, retarget locking, consistent interaction model), supported by targeted regression tests on simulator/UI (selector lock, footer behavior, cancel leaks, non-Note mapping).</li>
         </ul>
-        <h4 class="section-callout">Launchpad, Simulators &amp; Docs</h4>
+        <h4 class="section-callout">Docs, Site &amp; Ecosystem</h4>
         <ul>
-          <li>Launchpad behavior, the Desktop Simulator, the Web Simulator, and the documentation layer have all evolved alongside the firmware itself</li>
-          <li><code>LP Note Style</code> now defaults to <code>Circuit</code>, and the manual plus LP Cheatsheet are aligned around the current Launchpad workflow</li>
-          <li>The Note editor now also has an experimental LP-side <code>Generators Mode</code>, with explicit compare, reset, reroll, <code>GRID 16</code> undo (machine <code>PAGE + S7</code> equivalent), and retargeting behavior documented in the manual and LP Cheatsheet</li>
-          <li>The result is a fork with its own maintained website, manual, simulator tooling, LP reference, fork map, and feature archive</li>
+          <li>Documentation, cheatsheet and simulator fully aligned with current firmware behavior, including expanded coverage of generator semantics, Launchpad sub-views, Entropy targeting and step visualization.</li>
+          <li>Website and feature archive updated to reflect Vinx firmware evolution and maintain a coherent ecosystem (site, manual, simulator tooling, Launchpad reference, fork map).</li>
         </ul>
         <p>
           And much more across the wider Vinx line.<br>

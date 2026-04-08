@@ -326,8 +326,8 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 
 void NoteSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
     static const char *overlayCells[2][6] = {
-        { "RAND", "ACIDL", "VNDLZ", "EUCL", nullptr, "INITS" },
-        { nullptr, "ACIDP", "WRECK", nullptr, nullptr, nullptr },
+        { "RAND", "ACIDL", "VNDLZ", "EUCL", nullptr, nullptr },
+        { nullptr, "ACIDP", "WRECK", nullptr, nullptr, "INITS" },
     };
 
     constexpr int columns = 6;

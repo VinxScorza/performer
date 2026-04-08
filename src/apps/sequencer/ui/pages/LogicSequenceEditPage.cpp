@@ -9,8 +9,10 @@
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 #include "engine/SequenceUtils.h"
+#include "engine/generators/ChaosEntropyGenerator.h"
 
 #include "model/Scale.h"
+#include "model/UserSettings.h"
 
 #include "os/os.h"
 
@@ -350,8 +352,8 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
 
 void LogicSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
     static const char *overlayCells[2][6] = {
-        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, "INITS" },
-        { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr },
+        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, nullptr },
+        { nullptr, nullptr, nullptr, nullptr, nullptr, "INITS" },
     };
 
     constexpr int columns = 6;
@@ -609,6 +611,11 @@ void LogicSequenceEditPage::openLaunchpadGenerator(Generator::Mode mode) {
 
     auto *generator = Generator::execute(mode, *builder, _stepSelection.selected());
     if (generator) {
+        if (mode == Generator::Mode::ChaosEntropy) {
+            auto *entropy = static_cast<ChaosEntropyGenerator *>(generator);
+            entropy->setTargetMask(_model.settings().userSettings().get<EntropyLayersSetting>(SettingEntropyLayers)->getValue());
+            entropy->update();
+        }
         _manager.pages().generator.show(generator, &_stepSelection);
     }
 }

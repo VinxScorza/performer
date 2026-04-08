@@ -304,7 +304,7 @@ class GeneratorRegressionTest(tf.UiTest):
             self.assertEqual(p.selectedTrackIndex, 0, f"{page}: selected track")
             self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop, f"{page}: jump to Steps")
 
-    def test_launchpad_grid16_is_neutral_in_generators_mode(self):
+    def test_launchpad_grid8_is_neutral_in_generators_mode(self):
         c = self.controller
         p = self.env.sequencer.model.project
 
@@ -320,8 +320,8 @@ class GeneratorRegressionTest(tf.UiTest):
 
         self._lp_toggle_generators_mode()
 
-        # GRID 16 (index 15) = no action in current Generators Mode.
-        self._lp_press_grid(15)
+        # GRID 8 (index 7) is now unmapped in Generators Mode.
+        self._lp_press_grid(7)
         after = self._note_signature(sequence, 16)
         self.assertEqual(after, before)
         self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
@@ -394,9 +394,9 @@ class GeneratorRegressionTest(tf.UiTest):
         self.assertFalse(self.env.sequencer.isGeneratorPageTop)
         self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
 
-        # Init Steps (GRID 8) applies immediately and exits mode.
+        # Init Steps (GRID 16) applies immediately and exits mode.
         self._lp_toggle_generators_mode()
-        self._lp_press_grid(7)
+        self._lp_press_grid(15)
         self.assertFalse(self.env.sequencer.isGeneratorPageTop)
         self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
 
@@ -447,8 +447,8 @@ class GeneratorRegressionTest(tf.UiTest):
         self._lp_toggle_generators_mode()
         self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
 
-        # GRID 8 (index 7) = Init Steps, immediate apply + exit mode.
-        self._lp_press_grid(7)
+        # GRID 16 (index 15) = Init Steps, immediate apply + exit mode.
+        self._lp_press_grid(15)
         self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
         self.assertFalse(self.env.sequencer.isGeneratorPageTop)
         self.assertFalse(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
