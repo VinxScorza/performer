@@ -1,6 +1,6 @@
 <img src="https://github.com/VinxScorza/performer/actions/workflows/ci.yml/badge.svg?branch=master" alt="Build Status">
 
-# Vinx Scorza Fork v0.4.0
+# Vinx PER|FORMER firmware v0.4.0
 
 ## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Click for FEATURES</a>
 
