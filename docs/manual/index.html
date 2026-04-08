@@ -3148,12 +3148,11 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               return [];
             }
 
-            var terms = query.trim().split(/\s+/).filter(Boolean).sort(function(a, b) { return b.length - a.length; });
+            var terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
             if (!terms.length) {
               return [];
             }
 
-            var pattern = new RegExp('(' + terms.map(escapeRegExp).join('|') + ')', 'gi');
             var blocks = [];
             var seenBlocks = new Set();
 
@@ -3167,8 +3166,10 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
                   if (!parent || /^(SCRIPT|STYLE|MARK)$/i.test(parent.nodeName)) {
                     return NodeFilter.FILTER_REJECT;
                   }
-                  pattern.lastIndex = 0;
-                  return pattern.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+                  var nodeText = node.nodeValue.toLowerCase();
+                  return terms.some(function(term) {
+                    return nodeText.indexOf(term) !== -1;
+                  }) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
                 }
               });
 
@@ -3181,7 +3182,12 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               }
             });
 
-            return blocks;
+            return blocks.filter(function(block) {
+              var blockText = (block.textContent || '').toLowerCase();
+              return terms.every(function(term) {
+                return blockText.indexOf(term) !== -1;
+              });
+            });
           }
 
           function blinkAndKeepSearchHighlight(block) {
