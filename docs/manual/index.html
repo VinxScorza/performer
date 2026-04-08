@@ -142,7 +142,7 @@
           Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
         </p>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through <code>v0.3.2-vinx.1.5.1</code>.
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through the active <code>v0.4.0</code> development line. The earlier <code>v0.3.2-vinx.*</code> naming is retained in history as lineage reference.
         </p>
         <p>
           Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.
@@ -838,6 +838,12 @@
         <p>
           Note: <em>Slide Time</em>, <em>Octave</em>, <em>Transpose</em>, <em>Rotate</em>, <em>Gate P. Bias</em>, <em>Retrig P. Bias</em>, <em>Length Bias</em> and <em>Note P. Bias</em> are routable parameters and are especially useful in live performance.
         </p>
+        <p>
+          Logic wiring is configured from <em>Note</em> tracks. Set <em>Logic Track</em> to the target logic track, then set <em>Logic Track In</em> to input <code>1</code> or <code>2</code>. On the <em>Logic</em> track page, <em>Input Track 1/2</em> are read-only mirrors of those assignments.
+        </p>
+        <p>
+          If no Note track is assigned yet, <em>Input Track 1/2</em> on the Logic track remain <code>-</code>. Also note that Note-to-Logic assignment is forward-only: a Note track can only link to Logic tracks with a higher track index.
+        </p>
         <h4>Curve Track</h4>
         <table>
           <thead>
@@ -958,6 +964,9 @@
         </table>
         <p>
           Note: <em>Slide Time</em>, <em>Octave</em>, <em>Transpose</em>, <em>Rotate</em>, <em>Gate P. Bias</em>, <em>Retrig P. Bias</em>, <em>Length Bias</em> and <em>Note P. Bias</em> are routable parameters.
+        </p>
+        <p>
+          <em>Input Track 1</em> and <em>Input Track 2</em> are intentionally not editable here. They are populated by the Note tracks that point to this Logic track via <em>Logic Track</em> and <em>Logic Track In</em>, and they show <code>-</code> until those links exist.
         </p>
         <h4>Arpeggiator Track</h4>
         <table>
@@ -1105,8 +1114,8 @@
             <tr><td style="text-align: left">Rest Prob. 2</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 2 steps.</td></tr>
             <tr><td style="text-align: left">Rest Prob. 4</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 4 steps.</td></tr>
             <tr><td style="text-align: left">Rest Prob. 8</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 8 steps.</td></tr>
-            <tr><td style="text-align: left">Seq First Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">First step of the locked loop.</td></tr>
-            <tr><td style="text-align: left">Seq Last Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Last step of the locked loop.</td></tr>
+            <tr><td style="text-align: left">Seq First Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">First step of the active stochastic playback window.</td></tr>
+            <tr><td style="text-align: left">Seq Last Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Last step of the active stochastic playback window.</td></tr>
             <tr><td style="text-align: left">L Oct. Range</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Lower octave bound used for random pitch generation.</td></tr>
             <tr><td style="text-align: left">H Oct. Range</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Upper octave bound used for random pitch generation.</td></tr>
             <tr><td style="text-align: left">Length Mod</td><td style="text-align: left">-200 - 200%</td><td style="text-align: left">Stochastic length modifier added to the step length.</td></tr>
@@ -1134,8 +1143,8 @@
             <tr><td style="text-align: left">Rest Prob. 2</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 2 steps.</td></tr>
             <tr><td style="text-align: left">Rest Prob. 4</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 4 steps.</td></tr>
             <tr><td style="text-align: left">Rest Prob. 8</td><td style="text-align: left">0 - 100%</td><td style="text-align: left">Probability that the sequence rests every 8 steps.</td></tr>
-            <tr><td style="text-align: left">Seq First Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">First step of the locked loop.</td></tr>
-            <tr><td style="text-align: left">Seq Last Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Last step of the locked loop.</td></tr>
+            <tr><td style="text-align: left">Seq First Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">First step of the active stochastic playback window.</td></tr>
+            <tr><td style="text-align: left">Seq Last Step</td><td style="text-align: left">1 - 64</td><td style="text-align: left">Last step of the active stochastic playback window.</td></tr>
             <tr><td style="text-align: left">L Oct. Range</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Lower octave bound used for random pitch generation.</td></tr>
             <tr><td style="text-align: left">H Oct. Range</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Upper octave bound used for random pitch generation.</td></tr>
             <tr><td style="text-align: left">Length Mod</td><td style="text-align: left">-200 - 200%</td><td style="text-align: left">Stochastic length modifier added to the step length.</td></tr>
@@ -1157,6 +1166,29 @@
         </p>
         <p>
           In a Logic track, if detailed view is enabled, a visual representation of the input tracks is visible for each step: a dot means input track 1 has gate on, an empty square means input track 2 has gate on, a combination of dot and empty square means both input tracks have gate on and finally the full square means logic gate is on. A visual feedback is shown when the logic gate output is on. Use <code>SHIFT</code> to show the status of the inputs instead of the sequence gates.
+        </p>
+        <h4>Step Visualization</h4>
+        <p>
+          The current Vinx line uses a denser step visualization model than older upstream builds. The goal is to keep the 16 visible pads readable in performance, while still exposing timing and behavior details without opening extra pages.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Visual Element</th>
+              <th style="text-align: left">Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">Step inner box</td><td style="text-align: left">Compact event summary. Horizontal position reflects <code>Gate Offset</code>; width reflects <code>Length</code>. Full-width still corresponds to <code>100%</code> length.</td></tr>
+            <tr><td style="text-align: left">Step number highlight</td><td style="text-align: left">Shows selected steps directly on the display. Hardware step LEDs mirror this selection state.</td></tr>
+            <tr><td style="text-align: left">Condition / Retrig / Slide cues</td><td style="text-align: left">Condition marker appears next to step index, retrigger cues are drawn inside step boxes, and slide is indicated by a tie between adjacent steps.</td></tr>
+            <tr><td style="text-align: left">16-step section framing</td><td style="text-align: left">The active section (<code>1..16</code>, <code>17..32</code>, <code>33..48</code>, <code>49..64</code>) is explicit through section navigation and per-step numbering.</td></tr>
+            <tr><td style="text-align: left">Logic input glyphs</td><td style="text-align: left">In Logic tracks, dot/square combinations show input-track gate states; logic output state is also highlighted for each step.</td></tr>
+            <tr><td style="text-align: left">Generator preview on Steps</td><td style="text-align: left">When entering LP <em>Generators Mode</em> from Sequence, Steps can show a lightweight overlay map; this is reference-only and does not change input semantics.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          This visual layer is intentionally compact: it is designed to keep edit intent, timing shift, and selection scope visible at a glance during live use.
         </p>
         <h4>Layer Selection</h4>
         <p>
@@ -1381,6 +1413,7 @@
           <li><em>Acid</em> is the character generator: it is meant to push Note-track material toward acid-like phrasing, either across a full phrase or only on the active layer.</li>
           <li><em>Euclidean</em> is the structural rhythm tool: it is the clearest choice when you want an intentional pulse distribution defined by <code>Steps</code>, <code>Beats</code>, and <code>Offset</code>.</li>
           <li><em>Chaos</em> is the rough exploratory tool: it works across multiple Note-track layers at once and is best treated as a deliberate vandalism pass rather than a harmonically careful generator.</li>
+          <li><em>Entropy</em> is the local Chaos subset used in non-Note Launchpad generator flows: same <code>ORIGINAL -&gt; CHAOS -&gt; A/B</code> logic, but scoped to the current non-Note track.</li>
           <li><em>Init Steps</em> is the step reset tool inside the generator chooser: it initializes all step layers in the current generator scope, using the current persistent selection first or the whole current track when nothing is selected.</li>
         </ul>
         <table>
@@ -1436,8 +1469,28 @@
         <p>
           On <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, pressing the encoder now commits the generator directly, mirroring the apply action without needing to reach for the footer button.
         </p>
+        <h5>Encoder Rotation Semantics</h5>
         <p>
-          While the machine is sitting inside the <em>Acid</em> or <em>Chaos</em> selector path, Launchpad track buttons no longer retarget the selection underneath it. In practice, those modal choices stay bound to the current track until you explicitly cancel or confirm them on the machine.
+          In generator pages, encoder rotation is intentionally generator-specific:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Generator page</th>
+              <th style="text-align: left">Encoder rotation behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><em>Random</em></td><td style="text-align: left">Rotates the <code>Seed</code> only. It does not randomize shaping parameters. For a full reroll behavior, use <code>NEW RAND</code> (or <code>GRID 1</code> in LP Generators Mode).</td></tr>
+            <tr><td style="text-align: left"><em>Acid Layer</em></td><td style="text-align: left">Rotates the <code>Seed</code> only. It does not randomize shaping parameters. For a full reroll behavior, use <code>NEW RAND</code> (or <code>GRID 2</code> in LP Generators Mode).</td></tr>
+            <tr><td style="text-align: left"><em>Acid Phrase</em></td><td style="text-align: left">Rotates the <code>Seed</code> only. It does not randomize shaping parameters. For a full reroll behavior, use <code>NEW RAND</code> (or <code>GRID 10</code> in LP Generators Mode).</td></tr>
+            <tr><td style="text-align: left"><em>Euclidean</em></td><td style="text-align: left">Rotation performs <code>NEW EUCL</code> reroll.</td></tr>
+            <tr><td style="text-align: left"><em>Chaos</em> (<em>Vandalize</em> / <em>Wreck</em>)</td><td style="text-align: left">Rotation navigates the target matrix. It does not trigger <code>CHAOS</code> by itself. (With <code>F2</code> held, rotation edits <code>Amount</code>.)</td></tr>
+            <tr><td style="text-align: left"><em>Entropy</em></td><td style="text-align: left">Rotation navigates the dedicated target matrix used by non-Note tracks. It does not trigger <code>CHAOS</code> by itself. (With <code>F2</code> held, rotation edits <code>Amount</code>.)</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Outside the LP <em>Generators Mode</em> mini-mode, Launchpad track/scene retarget is now locked across the machine generator path: the main <code>GEN</code> chooser, <em>Acid</em>/<em>Chaos</em> sub-selectors, and active generator pages. In practice, those choices stay bound to the current track until you explicitly cancel or confirm on the machine, preventing wrong-target apply/cancel edge cases.
         </p>
         <p>
           <code>ResetGen</code> is intentionally separated from reroll actions: <em>Random</em> resets to <code>Smooth 0</code>, <code>Bias 0</code>, <code>Range 5</code>, <code>Var 100</code>; <em>Acid</em> resets to <code>Density 50</code>, <code>Slide 10</code>, <code>Range 35</code>, <code>Var 100</code>; and <em>Euclidean</em> resets to <code>Steps 16</code>, <code>Beats 1</code>, <code>Offset 0</code>. Rerolling remains an explicit action via <code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>.
@@ -1452,10 +1505,10 @@
           A simple working habit is: enter the generator, shape the preview with the current parameters, use <code>A/B</code> to judge whether the generated result actually beats the source, then either <code>Apply</code> or back out cleanly with <code>Cancel</code>. The generators are meant to support that kind of deliberate use rather than blind destructive iteration.
         </p>
         <p>
-          Note: <em>Chaos</em> currently does not use this separate generator context menu. Its main actions stay directly on the page itself.
+          Note: <em>Chaos</em> and <em>Entropy</em> currently do not use this separate generator context menu. Their main actions stay directly on the page itself.
         </p>
         <p>
-          <em>Euclidean</em> uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code> triggers <code>NEW EUCL</code>, and <code>F3</code>, <code>F4</code> and <code>F5</code> control <code>Steps</code>, <code>Beats</code> and <code>Offset</code>. Its context menu keeps only <code>ResetGen</code>, <code>Cancel</code> and <code>Apply</code>.
+          <em>Euclidean</em> uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code> triggers <code>NEW EUCL</code>, and <code>F3</code>, <code>F4</code> and <code>F5</code> control <code>Steps</code>, <code>Beats</code> and <code>Offset</code>. Rotating the encoder with no <code>F3/F4/F5</code> held now mirrors <code>NEW EUCL</code> reroll, while holding <code>F3</code>, <code>F4</code>, or <code>F5</code> edits only the bound parameter. Its context menu keeps only <code>ResetGen</code>, <code>Cancel</code> and <code>Apply</code>.
         </p>
         <h4>Chaos</h4>
         <p>
@@ -1471,7 +1524,7 @@
           Once a Chaos preview exists, both <code>Vandalize Sequence</code> and <code>Wreck Pattern</code> show the current seed in the page footer just like the other seed-based generator flows; when you switch back to the untouched source, the footer reads <code>ORIGINAL</code>.
         </p>
         <p>
-          The generator page uses a 4x4 matrix of direct layer toggles. The available targets are <code>Gate</code>, <code>G Offset</code>, <code>G Prob</code>, <code>Retrig</code>, <code>Length</code>, <code>L Range</code>, <code>L Prob</code>, <code>R Prob</code>, <code>Note</code>, <code>N Slide</code>, <code>N Range</code>, <code>N Prob</code>, <code>N Bypass</code>, and <code>Cond</code>, plus dedicated <code>All On</code> and <code>All Off</code> cells.
+          The generator page uses a target matrix of direct layer toggles. The available targets are <code>Gate</code>, <code>G Offset</code>, <code>G Prob</code>, <code>Retrig</code>, <code>Length</code>, <code>L Range</code>, <code>L Prob</code>, <code>R Prob</code>, <code>Note</code>, <code>N Slide</code>, <code>N Range</code>, <code>N Prob</code>, <code>N Bypass</code>, and <code>Cond</code>, plus dedicated <code>All On</code> and <code>All Off</code> cells.
         </p>
         <p>
           <code>Vandalize Sequence</code> is selection-aware like the other generators: if a persistent step selection exists it is used as the target area first; otherwise the generator falls back to the current sequence <em>First Step</em> / <em>Last Step</em> range. <code>Wreck Pattern</code> keeps the same non-destructive preview model, but expands the target to all Note tracks in the current pattern. With an explicit step selection, that selection is shared across the affected Note tracks; without one, each Note track uses its own <em>First Step</em> / <em>Last Step</em> window.
@@ -1479,7 +1532,7 @@
         <h5>Quick Workflow</h5>
         <ol>
           <li>Choose whether you want to damage only the active Note sequence or the whole current pattern across Note tracks.</li>
-          <li>Set the target mask first, because the 4x4 matrix defines what kinds of data Chaos is even allowed to touch.</li>
+          <li>Set the target matrix first, because it defines what kinds of data Chaos is even allowed to touch.</li>
           <li>Adjust <code>Amount</code> before rerolling repeatedly; this is usually more important than repeatedly hitting <code>CHAOS</code> at a fixed intensity.</li>
           <li>Use <code>A/B</code> aggressively. <em>Chaos</em> is designed to be exploratory, so the compare step matters more here than with the more controlled generators.</li>
           <li>Only <code>Apply</code> when the damage is genuinely better than the source. If you are unsure, <code>Cancel</code> and come back later.</li>
@@ -1492,7 +1545,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>ENCODER</code> rotate</td><td style="text-align: left">Move through the 4x4 target matrix with wraparound.</td></tr>
+            <tr><td style="text-align: left"><code>ENCODER</code> rotate</td><td style="text-align: left">Move through the target matrix with wraparound.</td></tr>
             <tr><td style="text-align: left"><code>ENCODER</code> press</td><td style="text-align: left">Toggle the selected target, or trigger <code>All On</code> / <code>All Off</code> on the action cells.</td></tr>
             <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left"><code>A/B</code> compare between <code>ORIGINAL</code> and the current <em>Chaos</em> preview. On <code>Vandalize Sequence</code> the preview message is <code>VANDALIZED</code>; on <code>Wreck Pattern</code> it is <code>WRECKED</code>.</td></tr>
             <tr><td style="text-align: left"><code>F2</code> + encoder</td><td style="text-align: left">Adjust the global <code>Amount</code>, which controls how strongly the result departs from the original material.</td></tr>
@@ -1505,8 +1558,36 @@
           In practice, <em>Chaos</em> is not trying to be harmonically clever. It is a deliberately rough exploratory tool: a selection-aware, multi-layer macro-random pass with a single global intensity and explicit target toggles.
         </p>
         <p>
-          <code>System -&gt; Chaos Defaults</code> stores separate target masks for <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code>, each edited through the same 4x4 grid. These defaults are loaded automatically when you enter <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.
+          <code>System -&gt; Chaos Defaults</code> stores separate target matrices for <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code>, each edited through the same target matrix. These defaults are loaded automatically when you enter <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.
         </p>
+        <p>
+          The same settings area now also stores <code>Entropy Layers to Unleash</code>. Non-Note <em>Entropy</em> pages use their own target matrix. Each target can represent one or more concrete layers depending on track type:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Entropy Target</th>
+              <th style="text-align: left">What It Controls</th>
+              <th style="text-align: left">Track Types</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>Gate</code></td><td style="text-align: left"><code>Gate</code></td><td style="text-align: left">Curve, Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>G Offset</code></td><td style="text-align: left"><code>GateOffset</code></td><td style="text-align: left">Curve, Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>G Prob</code></td><td style="text-align: left"><code>GateProbability</code></td><td style="text-align: left">Curve, Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>Retrig</code></td><td style="text-align: left"><code>Retrigger</code></td><td style="text-align: left">Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>R Prob</code></td><td style="text-align: left"><code>RetriggerProbability</code></td><td style="text-align: left">Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>Ev Length</code></td><td style="text-align: left"><code>GateLength</code> on Curve, <code>Length</code> on Stochastic/Logic/Arp</td><td style="text-align: left">Curve, Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>Ev L Range</code></td><td style="text-align: left"><code>LengthVariationRange</code></td><td style="text-align: left">Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>Ev L Prob</code></td><td style="text-align: left"><code>LengthVariationProbability</code></td><td style="text-align: left">Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>Prmry Val</code></td><td style="text-align: left"><code>Shape</code> on Curve, <code>NoteLogic</code> on Logic, <code>Note</code> on Arp</td><td style="text-align: left">Curve, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>P Val Rng</code></td><td style="text-align: left"><code>ShapeVariation</code> on Curve, <code>NoteVariationRange</code> on Logic/Arp</td><td style="text-align: left">Curve, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>P Val Prob</code></td><td style="text-align: left"><code>ShapeVariationProbability</code> on Curve, <code>NoteVariationProbability</code> on Stochastic/Logic/Arp</td><td style="text-align: left">Curve, Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>Register</code></td><td style="text-align: left"><code>Min + Max</code> on Curve, <code>NoteOctave + NoteOctaveProbability</code> on Stochastic/Arp</td><td style="text-align: left">Curve, Stochastic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>Motion</code></td><td style="text-align: left"><code>Slide + Condition</code></td><td style="text-align: left">Stochastic, Logic, Arp</td></tr>
+            <tr><td style="text-align: left"><code>Logic/Rpt</code></td><td style="text-align: left"><code>StageRepeats + StageRepeatsMode</code> on Stochastic, <code>GateLogic + StageRepeats + StageRepeatsMode</code> on Logic</td><td style="text-align: left">Stochastic, Logic</td></tr>
+          </tbody>
+        </table>
         <p>
           Re-entering <code>Chaos</code>, including <code>Vandalize Sequence</code> and <code>Wreck Pattern</code>, now tears down the previous generator and builder explicitly before constructing the next one, avoiding stale-state instability on hardware.
         </p>
@@ -1566,14 +1647,14 @@
           Note: if steps are selected, <em>Random</em> applies to the selection only. On sequence pages where no steps are selected, entering <em>Random</em> first selects all available steps, so the generator effectively works on the full editable range rather than only the current pattern length.
         </p>
         <p>
-          On entry, <em>Random</em> immediately creates a preview. The footer shows <code>A/B</code> plus the editable parameters, and the LCD preview shows the full sequence with the current 16-step bank framed. On Note tracks, the preview is layer-aware and uses different visual styles for gate-like, note-like, slide-like and length-like layers so that the preview better matches the active destination layer.
+          On entry, <em>Random</em> immediately creates a preview. The footer shows <code>A/B</code> plus the editable parameters, and the preview on the display shows the full sequence with the current 16-step bank framed. On Note tracks, the preview is layer-aware and uses different visual styles for gate-like, note-like, slide-like and length-like layers so that the preview better matches the active destination layer.
         </p>
         <p>
           The easiest way to use <em>Random</em> in the Vinx fork is to treat it as a layer shaper rather than a total replacement generator: <code>Seed</code> chooses the base state, <code>Smooth</code> and <code>Bias</code> change the character of that state, <code>Range</code> limits how far it can push, and <code>Variation</code> decides how strongly the result departs from the original layer.
         </p>
         <h4>Acid</h4>
         <p>
-          <em>Acid</em> is available only on Note tracks. After selecting it, a mode selector appears with <code>Phrase</code> and, where relevant, <code>Layer</code>.
+          <em>Acid</em> is available only on Note tracks. After selecting it, a mode selector appears with <code>Layer</code> first and <code>Phrase</code> second, where relevant.
         </p>
         <table>
           <thead>
@@ -1994,7 +2075,7 @@
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
         <p>
-          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page also reports the <code>v0.3.2-vinx.1.5.1</code> version string correctly.
+          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page reports the standalone Vinx version string (<code>v0.4.0</code>) correctly.
         </p>
         <table>
           <thead>
@@ -2063,7 +2144,7 @@
             <tr><td style="text-align: left">Pattern Change</td><td style="text-align: left">Immediate, Sync</td><td style="text-align: left">Swap the default pattern launch behavior.</td></tr>
             <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style. The default is <code>Circuit</code>. This is a machine setting stored in flash when saved from <em>System</em>.</td></tr>
             <tr><td style="text-align: left">Menu Wrap</td><td style="text-align: left">Off, On</td><td style="text-align: left">Choose whether list-based menus and selector pages based on lists wrap cyclically from last to first and from first to last. The default is <code>on</code>. This does not turn ordinary inline value selectors into cyclic controls.</td></tr>
-            <tr><td style="text-align: left">Chaos Defaults</td><td style="text-align: left">open</td><td style="text-align: left">Open the dedicated <em>Chaos</em> defaults page, where <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code> are edited with the same 4x4 target grid used by the generator.</td></tr>
+            <tr><td style="text-align: left">Chaos Defaults</td><td style="text-align: left">open</td><td style="text-align: left">Open the dedicated <em>Chaos</em> defaults page, where <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code> are edited with the same target matrix used by the generator.</td></tr>
           </tbody>
         </table>
         <p>
@@ -2533,7 +2614,8 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <tbody>
             <tr><td style="text-align: left"><code>TOP 8</code></td><td style="text-align: left">SHIFT.</td></tr>
             <tr><td style="text-align: left"><code>TOP 8</code> + <code>TOP 1</code> - <code>TOP 3</code></td><td style="text-align: left">Enter Sequence, Pattern, or Performer mode.</td></tr>
-            <tr><td style="text-align: left"><code>TOP 8</code> + <code>TOP 7</code></td><td style="text-align: left">Toggle PLAY / STOP.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 8</code> + <code>TOP 7</code></td><td style="text-align: left">Toggle PLAY / STOP. Hold <code>TOP 8</code> first, then press <code>TOP 7</code>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 7</code> + <code>TOP 8</code></td><td style="text-align: left">Undo / Redo (1-level) on Steps edit pages (<code>Note</code>, <code>Curve</code>, <code>Logic</code>) only; same action as machine <code>PAGE + S7</code>. Hold <code>TOP 7</code> first, then press <code>TOP 8</code>.</td></tr>
             <tr><td style="text-align: left"><code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Select track. These buttons are also used with modifiers.</td></tr>
           </tbody>
         </table>
@@ -2556,9 +2638,12 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           </tbody>
         </table>
         <p>
-          Navigation is available in both Sequence and Pattern mode.
+          Navigation is available in Sequence, Pattern, and Performer Overview mode.
         </p>
-        <p><em>Sequence</em>, <em>Pattern</em>, and <em>Performer</em> all allow controlling track mute, solo, and fill from the Launchpad surface:</p>
+        <p>
+          <em>Legacy / Deprecated:</em> <code>TOP 1 + TOP 2..5</code> arrows are still available, but direct map selection with <code>TOP 1 + GRID</code> is the preferred workflow.
+        </p>
+        <p><em>Sequence</em> and <em>Performer</em> allow controlling track mute, solo, and fill from the Launchpad surface, while <em>Pattern</em> allows mute and fill:</p>
         <table>
           <thead>
             <tr>
@@ -2569,11 +2654,14 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <tbody>
             <tr><td style="text-align: left"><code>TOP 7</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Momentary fill for the selected track while held. Releasing <code>TRK</code> or <code>TOP 7</code> clears the fill.</td></tr>
             <tr><td style="text-align: left"><code>TOP 8</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Mute or unmute track immediately.</td></tr>
-            <tr><td style="text-align: left"><code>TOP 6</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Toggle track solo.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 6</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Toggle track solo (Sequence and Performer only; not Pattern).</td></tr>
           </tbody>
         </table>
         <p>
-          The <code>TOP 7</code> gesture is not a general global shortcut. In the current Vinx implementation it is used contextually on compatible Note editors and on Note-track rows in Performer Overview. On Note Gate pages it applies to the visible grid; on circuit-style Note pages it applies only to pads <code>1..16</code>, where it switches between the scale base note and the same note at octave <code>+5</code>.
+          Launchpad scene LEDs do not currently expose a dedicated SOLO-only color state. Solo status is therefore read from behavior/context rather than a separate fixed SOLO color cue.
+        </p>
+        <p>
+          The <code>TOP 7</code> gesture is not a general global shortcut. In the current Vinx implementation it is used contextually on compatible Note editors and on Note-track rows in Performer Overview. On Note Gate pages it applies to the visible grid; on circuit-style Note pages it applies only to pads <code>1..16</code>, where it switches between the scale base note and the same note at octave <code>+5</code>. This behavior is now considered <strong>Legacy / Deprecated</strong> and is kept for compatibility.
         </p>
         <p>
           Note: synced or latched mute launching is available from the panel <a href="#pages-performer">Performer</a> page, but not from the Launchpad surface in the current Vinx implementation.
@@ -2592,12 +2680,15 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <tbody>
             <tr><td style="text-align: left"><code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Select active track.</td></tr>
             <tr><td style="text-align: left"><code>TOP 2</code> + <code>GRID</code></td><td style="text-align: left">Select active layer.</td></tr>
-            <tr><td style="text-align: left"><code>TOP 3</code> + <code>GRID</code></td><td style="text-align: left">Select first step.</td></tr>
-            <tr><td style="text-align: left"><code>TOP 4</code> + <code>GRID</code></td><td style="text-align: left">Select last step.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 3</code> + <code>GRID</code></td><td style="text-align: left">Select first step. On Stochastic, this edits <em>Seq First Step</em> (first step index 1..64 of the active stochastic playback window).</td></tr>
+            <tr><td style="text-align: left"><code>TOP 4</code> + <code>GRID</code></td><td style="text-align: left">Select last step. On Stochastic, this edits <em>Seq Last Step</em> (last step index 1..64 of the active stochastic playback window).</td></tr>
             <tr><td style="text-align: left"><code>TOP 5</code> + <code>GRID</code></td><td style="text-align: left">Select run mode; on Arpeggiator tracks this selects arpeggiator mode instead.</td></tr>
             <tr><td style="text-align: left"><code>TOP 6</code> + <code>GRID</code></td><td style="text-align: left">Select follow mode on Note, Curve and Logic tracks; on Stochastic and Arpeggiator tracks this opens the Rest Probability editor for the editable Rest Prob 2/4/8 ranges.</td></tr>
           </tbody>
         </table>
+        <p>
+          On <em>Stochastic</em>, <em>Seq First Step</em> / <em>Seq Last Step</em> define the step-window boundaries used for playback and editing context. They are step-position limits (1..64), not note or octave limits.
+        </p>
         <p>
           The visualization on the grid depends on the selected layer. Binary layers such as <em>Gate</em> and <em>Slide</em> can be visualized directly on the 8x8 grid without the need for navigation. Other layers use navigation to various degrees in order to allow programming the steps. When editing the <em>Note</em> layer, the base note, first note per octave, is visualized to help orientation.
         </p>
@@ -2611,7 +2702,25 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           The Launchpad color language should also be read relative to <code>LP Style</code>, not as a fixed universal set of absolute colors. The controller still communicates mute, selection, playback and pattern state, but the visible palette changes with the selected Launchpad style.
         </p>
         <p>
-          On the current Vinx line, the Note editor also has an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, if the selected track is <em>Note</em>, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. In it, <code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 8</code> select <em>Random</em>, <em>Acid Phrase</em>, <em>Acid Layer</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, and <em>Init</em>. <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies. Pressing the currently selected generator pad again rerolls it in place: Random, Acid Phrase, and Acid Layer use NEW RAND; Vandalize and Wreck retrigger CHAOS; Euclidean retriggers NEW EUCL; and Init does nothing. <code>TRK 1..8</code> force a Cancel first, then move the mode to the pressed track if it is a <em>Note</em> track; otherwise they just leave the <em>Generators Mode</em> and select that track. <code>TOP 4..8</code> stay neutral when they are not doing an active <em>Generators Mode</em> action. On the machine, <code>PAGE</code>, <code>SHIFT</code>, <code>PREV</code>, and <code>NEXT</code> stay neutral too. Any other machine or LP control outside this mini-mode forces Cancel and exits <em>Generators Mode</em>. Their colors remain relative to <code>LP Style</code>: semantically, <code>TOP 5</code> distinguishes the <code>A</code> / <code>B</code> side of the compare, while <code>TOP 6</code> distinguishes reset-neutral from generated or edited state.
+          On the current Vinx line, Sequence step editors also have an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. Toggling it OFF forces <code>Cancel</code> and returns to <code>Steps</code>. <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies.
+        </p>
+        <p>
+          The generator map is track-type specific. On <em>Note</em>, <code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 16</code> select <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, and <em>Init Steps</em>. On <em>Curve</em>, <em>Stochastic</em>, <em>Logic</em>, and <em>Arp</em>, the subset map is <code>GRID 1 / 3 / 4 / 16</code> for <em>Random</em>, <em>Entropy</em>, <em>Euclidean</em>, and <em>Init Steps</em>. In this split, <em>Entropy</em> is the local Chaos-subset action for non-Note tracks.
+        </p>
+        <p>
+          Activation is intentionally asymmetric. On <em>Note</em>, <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, and <em>Euclidean</em> are single-tap flows (first press opens and immediately builds the first preview), while <em>Vandalize</em> and <em>Wreck</em> are two-tap flows because <em>Chaos</em> enters on <code>ORIGINAL</code>. On <em>Curve</em> / <em>Stochastic</em> / <em>Logic</em> / <em>Arp</em>, <em>Random</em> and <em>Euclidean</em> are single-tap, while <em>Entropy</em> is two-tap for the same reason (<code>ORIGINAL</code> first, then explicit <code>CHAOS</code> action).
+        </p>
+        <p>
+          In the LP overlay, this mode is labeled <code>ENTPY</code>. On the generator page, it keeps Chaos-style interaction: action label <code>CHAOS</code>, <code>A/B</code> between <code>ORIGINAL</code> and generated state, and <code>UNLEASHED</code> as the generated-preview popup.
+        </p>
+        <p>
+          When this mode is active and no specific generator page is open yet, <code>Steps</code> shows a lightweight reference overlay that mirrors the LP generator map layout. This overlay is informational only: it does not change control semantics or execution flow.
+        </p>
+        <p>
+          Target binding in this mini-mode is strict: operations always target the currently selected supported track context. <code>TRK 1..8</code> retarget to the pressed track when supported (<em>Note</em>, <em>Curve</em>, <em>Stochastic</em>, <em>Logic</em>, <em>Arp</em>), and exit the mode when unsupported. If a generator preview is currently open, that preview is canceled before retarget; if only the overlay is open, there is no pending preview to cancel. Pressing the selected generator pad rerolls in place: <code>NEW RAND</code> for <em>Random</em>/<em>Acid</em>, <code>CHAOS</code> for <em>Vandalize</em>/<em>Wreck</em>/<em>Entropy</em>, and <code>NEW EUCL</code> for <em>Euclidean</em>. Commit still requires explicit <code>Apply</code> (or encoder apply where available). In this mini-mode, applying from a generator page exits the mode and returns to plain <code>Steps</code>. <em>Init Steps</em> is intentionally different: in this mini-mode it applies <code>Init Steps</code> immediately on the current track and does not open a confirmation page. If track or mode context changes unexpectedly while a generator page is open, the operation fails closed (<code>GEN CANCELED</code>) instead of applying to the wrong track. Their colors remain relative to <code>LP Style</code>: semantically, <code>TOP 5</code> distinguishes the <code>A</code> / <code>B</code> side of the compare, while <code>TOP 6</code> distinguishes reset-neutral from generated or edited state.
+        </p>
+        <p>
+          In this mini-mode, <em>Init Steps</em> (<code>GRID 16</code>) applies immediately and exits the mode to plain <code>Steps</code>.
         </p>
         <h4>Pattern Mode</h4>
         <p>
@@ -2648,8 +2757,8 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>TOP 2 + 1</code></td><td style="text-align: left">Enter <em>Sequence Length</em>.</td></tr>
-            <tr><td style="text-align: left"><code>TOP 2 + 2</code></td><td style="text-align: left">Enter <em>Overview</em>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 2 + GRID 1</code></td><td style="text-align: left">Enter <em>Sequence Length</em>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 2 + GRID 2</code></td><td style="text-align: left">Enter <em>Overview</em>.</td></tr>
             <tr><td style="text-align: left"><code>TOP 6</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Toggle track solo.</td></tr>
             <tr><td style="text-align: left"><code>TOP 7</code> + <code>TRK 1</code> - <code>TRK 8</code></td><td style="text-align: left">Momentary track fill while held.</td></tr>
           </tbody>
@@ -2658,25 +2767,25 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <em>Sequence Length</em> temporarily overrides first/last step across all Note, Curve, Stochastic, and Logic tracks. Hold one pad to loop a single step, or hold two pads to define a temporary first/last range. Releasing the held pad(s) restores the original range.
         </p>
         <p>
-          In <em>Overview</em>, each row represents one track and the columns map the currently visible steps. <code>TOP 6 + GRID</code> selects per-track follow mode for Note, Curve, and Logic tracks, while pad <code>17</code> toggles Performer follow. On Note-track rows, <code>TOP 7 + GRID</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code>.
+          In <em>Overview</em>, each row represents one track and the columns map the currently visible steps. <code>TOP 6 + GRID</code> selects per-track follow mode for Note, Curve, and Logic tracks, while pad <code>17</code> toggles Performer follow. On Note-track rows, <code>TOP 7 + GRID</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code> (<strong>Legacy / Deprecated</strong>, compatibility-only).
         </p>
         <h4 id="appendix-circuit">Circuit Note Editor</h4>
         <p>The visualization on the grid follows this schema:</p>
         <ul>
           <li><code>GRID 1..16</code> edits gates for the current 16-step section.</li>
-          <li><code>GRID 25..40</code> is the note keyboard. Available notes in the current scale are highlighted; notes outside the current scale remain available through chromatic bypass-scale entry.</li>
+          <li><code>GRID 26..39</code> is the note keyboard. Available notes in the current scale are highlighted; notes outside the current scale remain available through chromatic bypass-scale entry.</li>
           <li><code>GRID 49..56</code> selects octave from <code>-4</code> to <code>+3</code>.</li>
           <li><code>GRID 57..60</code> selects one of the four 16-step banks.</li>
           <li>Pressing a pad in <code>GRID 1..16</code> toggles the corresponding gate.</li>
-          <li>Holding a valid note pad in <code>GRID 25..40</code> and then pressing a pad in <code>GRID 1..16</code> writes that note into the step and enables the gate if needed.</li>
-          <li><code>TOP 7 + 1..16</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code>.</li>
+          <li>Holding a valid note pad in <code>GRID 26..39</code> and then pressing a pad in <code>GRID 1..16</code> writes that note into the step and enables the gate if needed.</li>
+          <li><code>TOP 7 + 1..16</code> switches the pressed step between the scale base note and the same note at octave <code>+5</code> (<strong>Legacy / Deprecated</strong>, compatibility-only).</li>
         </ul>
         <h4 id="appendix-stochastic-circuit">Stochastic Circuit Note Editor</h4>
         <p>This editor is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Stochastic layer is <code>Note Prob</code>.</p>
         <ul>
           <li><code>GRID 1..16</code> edits <em>Note Variation Probability</em> for the currently selected note target. If that probability is <code>0</code>, the pads remain dark.</li>
           <li><code>GRID 17..24</code> shows the running stochastic index.</li>
-          <li><code>GRID 25..40</code> selects the note target, with scale-aware highlighting and chromatic fallback for notes outside the current scale.</li>
+          <li><code>GRID 26..40</code> selects the note target, with scale-aware highlighting and chromatic fallback for notes outside the current scale.</li>
           <li>In this editor, <code>32</code> raises the global Track octave by <code>+1</code> and <code>40</code> lowers it by <code>-1</code>.</li>
           <li><code>GRID 49..56</code> selects local octave from <code>-4</code> to <code>+3</code>.</li>
           <li><code>GRID 57..59</code> selects the stochastic shortcuts currently implemented in the fork: use loop, clear loop, and reseed.</li>
@@ -2687,7 +2796,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         <ul>
           <li><code>GRID 1..16</code> edits gate probability for the currently selected arpeggiator note target. If that probability is <code>0</code>, the pads remain dark.</li>
           <li><code>GRID 17..24</code> shows the running arpeggiator index.</li>
-          <li><code>GRID 25..40</code> selects the note target. In this editor, <code>32</code> raises the global Track octave by <code>+1</code> and <code>40</code> lowers it by <code>-1</code>.</li>
+          <li><code>GRID 26..40</code> selects the note target. In this editor, <code>32</code> raises the global Track octave by <code>+1</code> and <code>40</code> lowers it by <code>-1</code>.</li>
           <li><code>GRID 49..56</code> selects local octave from <code>-4</code> to <code>+3</code>.</li>
           <li><code>GRID 57..58</code> selects the MIDI Keyboard options currently implemented in the fork: keyboard input mode and hold mode. Hold works only when MIDI Keyboard mode is ON.</li>
           <li>When MIDI Keyboard mode is OFF, double-press on a note target toggles the note state and also adds or removes that note from the arpeggiator. When MIDI Keyboard mode is ON, no double-press action is implemented.</li>
@@ -2797,6 +2906,11 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         </p>
       </section>
         </div>
+        <aside class="manual-search-minimap-wrap">
+          <div id="manual-search-minimap" class="manual-search-minimap" hidden>
+            <div id="manual-search-minimap-viewport" class="manual-search-minimap-viewport"></div>
+          </div>
+        </aside>
       </div>
       <script src="../theme.js"></script>
       <script>
@@ -2816,8 +2930,13 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           var searchInput = document.getElementById('manual-search-input');
           var searchResults = document.getElementById('manual-search-results');
           var searchEmpty = document.getElementById('manual-search-empty');
+          var manualBody = document.querySelector('.manual-body');
+          var searchMinimap = document.getElementById('manual-search-minimap');
+          var searchMinimapViewport = document.getElementById('manual-search-minimap-viewport');
           var activeSearchId = null;
+          var currentSearchQuery = '';
           var currentSearchMatches = [];
+          var searchMinimapMarkers = [];
           if (!sidebarLinks.length) {
             return;
           }
@@ -2848,7 +2967,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
             while (node) {
               var nodeLevel = headingLevel(node);
-              if (nodeLevel && (nodeLevel <= level || (level === 2 && nodeLevel > level))) {
+              if (nodeLevel && nodeLevel <= level) {
                 break;
               }
               nodes.push(node);
@@ -2867,23 +2986,70 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               .trim();
           }
 
+          function normalizeText(value) {
+            return (value || '').replace(/\s+/g, ' ').trim();
+          }
+
+          function directSidebarAnchor(li) {
+            if (!li) {
+              return null;
+            }
+            for (var i = 0; i < li.children.length; i++) {
+              var child = li.children[i];
+              if (child.tagName === 'A' && child.getAttribute('href') && child.getAttribute('href').charAt(0) === '#') {
+                return child;
+              }
+            }
+            return null;
+          }
+
+          function sidebarLinkPath(link) {
+            var path = [normalizeText(link.textContent)];
+            var currentLi = link.parentElement && link.parentElement.tagName === 'LI' ? link.parentElement : null;
+
+            while (currentLi) {
+              var parentList = currentLi.parentElement;
+              if (!parentList) {
+                break;
+              }
+              var parentLi = parentList.parentElement && parentList.parentElement.tagName === 'LI' ? parentList.parentElement : null;
+              if (!parentLi) {
+                break;
+              }
+              var parentLink = directSidebarAnchor(parentLi);
+              if (!parentLink) {
+                break;
+              }
+              path.unshift(normalizeText(parentLink.textContent));
+              currentLi = parentLi;
+            }
+
+            return path;
+          }
+
           sidebarLinks.forEach(function(link) {
             var id = link.getAttribute('href').slice(1);
             var target = document.getElementById(id);
             if (target) {
               linkMap.set(target, link);
-              var title = link.textContent.replace(/\s+/g, ' ').trim();
+              var title = normalizeText(link.textContent);
+              var path = sidebarLinkPath(link);
+              var pathLabel = path.join(' -> ');
               var context = scopedSearchText(target);
-              searchIndex.push({
+              var entry = {
                 id: id,
                 title: title,
-                text: (title + ' ' + context).toLowerCase()
-              });
+                path: path,
+                pathLabel: pathLabel,
+                text: (title + ' ' + pathLabel + ' ' + context).toLowerCase()
+              };
+              searchIndex.push(entry);
             }
           });
 
           function clearSearchResults() {
             activeSearchId = null;
+            currentSearchQuery = '';
             currentSearchMatches = [];
             if (searchResults) {
               searchResults.innerHTML = '';
@@ -2893,16 +3059,77 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               searchEmpty.hidden = true;
             }
             clearSearchHighlights();
+            clearSearchMinimap();
           }
 
           function clearSearchHighlights() {
             Array.prototype.slice.call(document.querySelectorAll('.manual-search-hit')).forEach(function(element) {
               element.classList.remove('manual-search-hit');
             });
+            clearSearchMinimapHits();
           }
 
           function escapeRegExp(value) {
             return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          }
+
+          function clamp01(value) {
+            return Math.max(0, Math.min(1, value));
+          }
+
+          function clearSearchMinimap() {
+            if (!searchMinimap) {
+              return;
+            }
+            Array.prototype.slice.call(searchMinimap.querySelectorAll('.manual-search-minimap-marker')).forEach(function(marker) {
+              marker.remove();
+            });
+            searchMinimapMarkers = [];
+            searchMinimap.hidden = true;
+            updateSearchMinimapViewport();
+          }
+
+          function clearSearchMinimapHits() {
+            searchMinimapMarkers.forEach(function(entry) {
+              entry.element.classList.remove('is-hit');
+            });
+          }
+
+          function setSearchMinimapActiveBlock(block) {
+            searchMinimapMarkers.forEach(function(entry) {
+              entry.element.classList.toggle('is-active', !!block && entry.block === block);
+            });
+          }
+
+          function setSearchMinimapHitBlocks(blocks) {
+            var hits = new Set(blocks || []);
+            searchMinimapMarkers.forEach(function(entry) {
+              entry.element.classList.toggle('is-hit', hits.has(entry.block));
+            });
+          }
+
+          function searchMinimapBlocksForMatch(matchId) {
+            return searchMinimapMarkers
+              .filter(function(entry) { return entry.matchId === matchId; })
+              .map(function(entry) { return entry.block; });
+          }
+
+          function updateSearchMinimapViewport() {
+            if (!searchMinimap || !searchMinimapViewport || searchMinimap.hidden || !manualBody) {
+              return;
+            }
+
+            var contentTop = window.scrollY + manualBody.getBoundingClientRect().top;
+            var contentHeight = Math.max(1, manualBody.scrollHeight);
+
+            var viewStart = clamp01((window.scrollY - contentTop) / contentHeight);
+            var viewEnd = clamp01((window.scrollY + window.innerHeight - contentTop) / contentHeight);
+            if (viewEnd <= viewStart) {
+              viewEnd = Math.min(1, viewStart + 0.02);
+            }
+
+            searchMinimapViewport.style.top = (viewStart * 100) + '%';
+            searchMinimapViewport.style.height = ((viewEnd - viewStart) * 100) + '%';
           }
 
           function closestSearchHighlightBlock(node, root) {
@@ -2916,25 +3143,17 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             return root && root.matches && root.matches('p, li, td, th, pre, h3, h4, h5, h6') ? root : null;
           }
 
-          function highlightSearchTerms(target, query) {
-            if (!target || !query) {
-              return null;
+          function findMatchingBlocksInRoots(roots, query) {
+            if (!query) {
+              return [];
             }
 
-            clearSearchHighlights();
-
-            var terms = query
-              .trim()
-              .split(/\s+/)
-              .filter(Boolean)
-              .sort(function(a, b) { return b.length - a.length; });
-
+            var terms = query.trim().split(/\s+/).filter(Boolean).sort(function(a, b) { return b.length - a.length; });
             if (!terms.length) {
-              return null;
+              return [];
             }
 
             var pattern = new RegExp('(' + terms.map(escapeRegExp).join('|') + ')', 'gi');
-            var roots = scopedSearchNodes(target);
             var blocks = [];
             var seenBlocks = new Set();
 
@@ -2962,17 +3181,131 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               }
             });
 
-            blocks.forEach(function(block) {
-              block.classList.add('manual-search-hit');
-              block.addEventListener('animationend', function handleManualSearchHitEnd() {
-                block.classList.remove('manual-search-hit');
-              }, { once: true });
-            });
-
-            return blocks.length ? blocks[0] : null;
+            return blocks;
           }
 
-          function renderSearchResults(matches) {
+          function blinkAndKeepSearchHighlight(block) {
+            if (!block) {
+              return;
+            }
+            block.classList.remove('manual-search-hit');
+            void block.offsetWidth;
+            block.classList.add('manual-search-hit');
+          }
+
+          function renderSearchMinimap(matches, query) {
+            if (!searchMinimap || !manualBody) {
+              return;
+            }
+
+            var entries = [];
+            var seenBlocks = new Set();
+            clearSearchMinimap();
+
+            matches.forEach(function(match) {
+              var target = document.getElementById(match.id);
+              if (!target) {
+                return;
+              }
+              var blocks = findMatchingBlocksInRoots(scopedSearchNodes(target), query);
+              blocks.forEach(function(block) {
+                if (seenBlocks.has(block)) {
+                  return;
+                }
+                seenBlocks.add(block);
+                entries.push({
+                  block: block,
+                  matchId: match.id,
+                  pathLabel: match.pathLabel || match.title
+                });
+              });
+            });
+
+            if (!entries.length) {
+              return;
+            }
+
+            searchMinimap.hidden = false;
+
+            var contentTop = window.scrollY + manualBody.getBoundingClientRect().top;
+            var contentHeight = Math.max(1, manualBody.scrollHeight);
+
+            entries.sort(function(a, b) {
+              var topA = window.scrollY + a.block.getBoundingClientRect().top;
+              var topB = window.scrollY + b.block.getBoundingClientRect().top;
+              return topA - topB;
+            });
+
+            entries.forEach(function(entry) {
+              var block = entry.block;
+              var blockTop = window.scrollY + block.getBoundingClientRect().top - contentTop;
+              var ratio = clamp01(blockTop / contentHeight);
+              var marker = document.createElement('button');
+              marker.type = 'button';
+              marker.className = 'manual-search-minimap-marker';
+              marker.style.top = (ratio * 100) + '%';
+              marker.title = entry.pathLabel;
+              marker.setAttribute('aria-label', 'Jump to search result: ' + entry.pathLabel);
+              marker.addEventListener('click', function(event) {
+                event.preventDefault();
+                if (entry.matchId) {
+                  activeSearchId = entry.matchId;
+                  renderSearchResults(currentSearchMatches, currentSearchQuery);
+                }
+                var target = entry.matchId ? document.getElementById(entry.matchId) : null;
+                var highlightResult = (target && currentSearchQuery) ? highlightSearchTerms(target, currentSearchQuery) : null;
+                var scopedBlocks = highlightResult ? highlightResult.blocks : searchMinimapBlocksForMatch(entry.matchId);
+                clearSearchHighlights();
+                scopedBlocks.forEach(function(hitBlock) {
+                  hitBlock.classList.add('manual-search-hit');
+                });
+                blinkAndKeepSearchHighlight(block);
+                setSearchMinimapHitBlocks(scopedBlocks.length ? scopedBlocks : [block]);
+                setSearchMinimapActiveBlock(block);
+                block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (entry.matchId && window.location.hash !== '#' + entry.matchId) {
+                  history.replaceState(null, '', '#' + entry.matchId);
+                }
+              });
+              searchMinimap.appendChild(marker);
+              searchMinimapMarkers.push({
+                element: marker,
+                block: block,
+                matchId: entry.matchId
+              });
+            });
+
+            var allBlocks = entries.map(function(entry) { return entry.block; });
+            if (activeSearchId) {
+              var activeBlocks = searchMinimapBlocksForMatch(activeSearchId);
+              setSearchMinimapHitBlocks(activeBlocks.length ? activeBlocks : allBlocks);
+              setSearchMinimapActiveBlock(activeBlocks.length ? activeBlocks[0] : null);
+            } else {
+              setSearchMinimapHitBlocks(allBlocks);
+            }
+
+            updateSearchMinimapViewport();
+          }
+
+          function highlightSearchTerms(target, query) {
+            if (!target || !query) {
+              return null;
+            }
+
+            clearSearchHighlights();
+
+            var blocks = findMatchingBlocksInRoots(scopedSearchNodes(target), query);
+            blocks.forEach(function(block) {
+              block.classList.add('manual-search-hit');
+            });
+
+            return {
+              first: blocks.length ? blocks[0] : null,
+              blocks: blocks
+            };
+          }
+
+          function renderSearchResults(matches, query) {
             if (!searchResults) {
               return;
             }
@@ -2983,19 +3316,27 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               var item = document.createElement('li');
               var link = document.createElement('a');
               link.href = '#' + match.id;
-              link.textContent = match.title;
+              link.textContent = match.pathLabel || match.title;
               if (match.id === activeSearchId) {
                 link.classList.add('is-active');
               }
               link.addEventListener('click', function(event) {
                 event.preventDefault();
                 activeSearchId = match.id;
-                renderSearchResults(currentSearchMatches);
+                renderSearchResults(currentSearchMatches, currentSearchQuery);
                 var target = document.getElementById(match.id);
                 var highlightTarget = null;
-                if (searchInput && searchInput.value.trim()) {
+                var scopedBlocks = [];
+                if (currentSearchQuery) {
                   var scope = target || null;
-                  highlightTarget = highlightSearchTerms(scope, searchInput.value);
+                  var highlightResult = highlightSearchTerms(scope, currentSearchQuery);
+                  highlightTarget = highlightResult ? highlightResult.first : null;
+                  scopedBlocks = highlightResult ? highlightResult.blocks : [];
+                  if (!scopedBlocks.length) {
+                    scopedBlocks = searchMinimapBlocksForMatch(match.id);
+                  }
+                  setSearchMinimapHitBlocks(scopedBlocks);
+                  setSearchMinimapActiveBlock(highlightTarget || (scopedBlocks.length ? scopedBlocks[0] : null));
                 }
                 if (highlightTarget || target) {
                   (highlightTarget || target).scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3016,11 +3357,14 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
           if (searchInput) {
             searchInput.addEventListener('input', function() {
-              var query = searchInput.value.trim().toLowerCase();
-              if (!query) {
+              var queryText = searchInput.value.trim();
+              var query = queryText.toLowerCase();
+              if (!queryText) {
                 clearSearchResults();
                 return;
               }
+
+              currentSearchQuery = queryText;
 
               var terms = query.split(/\s+/).filter(Boolean);
               var matches = searchIndex.filter(function(entry) {
@@ -3032,9 +3376,37 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
               if (!matches.some(function(entry) { return entry.id === activeSearchId; })) {
                 activeSearchId = matches.length ? matches[0].id : null;
               }
-              renderSearchResults(matches);
+              renderSearchResults(matches, queryText);
+              renderSearchMinimap(matches, queryText);
             });
           }
+
+          sidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+              if (!currentSearchQuery) {
+                return;
+              }
+              var id = (link.getAttribute('href') || '').replace(/^#/, '');
+              if (!id || id === 'header_wrap') {
+                return;
+              }
+              var exists = currentSearchMatches.some(function(match) { return match.id === id; });
+              if (!exists) {
+                return;
+              }
+              activeSearchId = id;
+              renderSearchResults(currentSearchMatches, currentSearchQuery);
+              var target = document.getElementById(id);
+              var highlightResult = highlightSearchTerms(target, currentSearchQuery);
+              var blocks = highlightResult ? highlightResult.blocks : searchMinimapBlocksForMatch(id);
+              setSearchMinimapHitBlocks(blocks);
+              setSearchMinimapActiveBlock((highlightResult && highlightResult.first) || (blocks.length ? blocks[0] : null));
+            });
+          });
+
+          window.addEventListener('scroll', updateSearchMinimapViewport, { passive: true });
+          window.addEventListener('resize', updateSearchMinimapViewport);
+          updateSearchMinimapViewport();
 
           if (!('IntersectionObserver' in window)) {
             return;

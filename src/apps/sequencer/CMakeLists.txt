@@ -23,6 +23,7 @@ set(sources
     engine/generators/EuclideanGenerator.cpp
     engine/generators/AcidGenerator.cpp
     engine/generators/ChaosGenerator.cpp
+    engine/generators/ChaosEntropyGenerator.cpp
     engine/generators/Generator.cpp
     engine/generators/RandomGenerator.cpp
     engine/generators/Rhythm.cpp
@@ -71,6 +72,9 @@ set(sources
     ui/Screensaver.cpp
     # ui/controllers/launchpad
     ui/controllers/launchpad/LaunchpadController.cpp
+    ui/controllers/launchpad/LaunchpadControllerGeneratorsMode.cpp
+    ui/controllers/launchpad/LaunchpadControllerTrackSceneRouting.cpp
+    ui/controllers/launchpad/LaunchpadControllerTrackLeds.cpp
     ui/controllers/launchpad/LaunchpadDevice.cpp
     ui/controllers/launchpad/LaunchpadMk2Device.cpp
     ui/controllers/launchpad/LaunchpadMk3Device.cpp

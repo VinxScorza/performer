@@ -6,19 +6,27 @@
 
 This is a personal fork of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a>, itself based on the original <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht PER|FORMER firmware</a>.
 
-The Vinx Scorza line begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference. Current fork version: `0.3.2-vinx.1.5.1`.
+The Vinx Scorza line begins at `v0.3.2-vinx.1`. Everything before that point in this repository history and changelog is inherited from the Mebitek fork and kept here as upstream reference. Starting from `v0.4.0`, this fork uses standalone Vinx semantic versioning (`v0.x.y`) and no longer carries the inherited `v0.3.2-vinx.*` prefix. Historical entries remain unchanged as lineage reference.
 
-If you are looking for a more conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines. If you are interested in a more hands-on, performance-oriented evolution of PER|FORMER, you are in the right place. I am very grateful to Simon Kallweit for creating and developing the original Westlicht PER|FORMER. If you would like to support this fork and the upstream work behind it financially, you can donate here: <a href="https://vinxscorza.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Vinx Scorza</a> · <a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Mebitek</a> · <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Simon Kallweit / Westlicht</a>.
+If you are looking for a more conservative upstream baseline, you may prefer the original Westlicht or Mebitek lines. If you are interested in a more hands-on, performance-oriented evolution of PER|FORMER, you are in the right place. What I'm aiming for is a solid machine for live performance, but also a crazy one for experimenting.<br>
+I am very grateful to Simon Kallweit for creating and developing the original Westlicht PER|FORMER. If you would like to support this fork and the upstream work behind it financially, you can donate here:<br>
+<a href="https://vinxscorza.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Vinx Scorza</a> · <a href="https://mebitek.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Mebitek</a> · <a href="https://westlicht.github.io/performer/donate/" target="_blank" rel="noopener noreferrer">Donate to Simon Kallweit / Westlicht</a>.
 
-Primary documentation for this fork: <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">Vinx Scorza fork website</a> · <a href="https://vinxscorza.github.io/performer/manual/" target="_blank" rel="noopener noreferrer">Vinx Scorza user manual</a> · <a href="https://vinxscorza.github.io/performer/cheatsheet/" target="_blank" rel="noopener noreferrer">Vinx Scorza LP Cheatsheet</a> · <a href="https://vinxscorza.github.io/performer/testdrive/" target="_blank" rel="noopener noreferrer">Vinx Scorza Web Simulator</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Vinx Scorza features</a> · <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek Performer fork</a> · <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">Westlicht Performer firmware</a>
+Primary documentation for this fork: Vinx Scorza fork website, user manual, LP Cheatsheet, Web Simulator, features — <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">https://vinxscorza.github.io/performer/</a>
 
 ## Major Features
 
-- `Chaos`: A deliberately rough experimental workflow built around `Vandalize Sequence`, pattern-wide `Wreck Pattern`, explicit compare, and safer destructive behavior. Machine-level `Chaos Defaults` let sequence vandalizing and pattern wrecking start from different default target masks.
-- `Generators`: `Acid`, `Random`, and `Euclidean` have all been pushed further, with stronger preview workflows, cleaner defaults, and more character. They build their first preview immediately on entry, while `Chaos` stays on the original material until `CHAOS` is triggered explicitly. Generator pages stay playable, compare states are clearer, and reset behavior is more intentional than a silent reroll.
-- `Clock & Sequencing`: External clock behavior, step editing, and scale handling have all been tightened for real use on hardware. `Reset Gate`, `Reset Pulse`, and voltage-mode user-scale support all push the core behavior further without throwing away legacy workflows.
-- `System & Live Workflow`: Machine settings, save flow, menu wrap, LCD behavior, and live interaction have all been refined to feel more coherent on the instrument itself. There is constant work on reliability around generator state handling, timing defaults, memory pressure, and destructive workflows.
-- `Launchpad, Simulators & Docs`: Launchpad behavior, the Desktop Simulator, the Web Simulator, and the documentation layer have all evolved alongside the firmware itself. `LP Note Style` now defaults to `Circuit`, the current manual and LP Cheatsheet are aligned around the Circuit editors and Launchpad terminology, and the Note editor now also has an experimental LP-side `Generators Mode` with explicit `A/B`, `ResetGen`, reroll, and track-to-track retargeting behavior. The result is a fork with its own maintained website, manual, simulator tooling, fork map, and feature archive.
+- `Core Sequencing`: Stabilized step engines across `Note`/`Logic`/`Curve`/`Stochastic`/`Arp`, including legacy crash paths, non-zero subrange shifting, Curve `Gate Offset`/`Gate Length`, restored Curve undo, and scale/midi-capture consistency improvements. 
+- `Chaos generators`: `Chaos` evolved into `Vandalize Sequence` + `Wreck Pattern` with explicit `A/B` safety flow, selection-aware targeting, and machine-level defaults with separate masks. 
+- `Acid generators`: `Acid` is now consolidated as `Layer` + `Phrase`, with immediate preview-on-entry, dedicated visuals, tightened parameter behavior, and aligned ordering/mapping across machine and Launchpad. 
+- `Random generator`: `Random` now runs as a stable preview/apply workflow, controlled `Variation`, full `32-bit` seed handling, richer preview rendering, and footer actions that stay in-context. 
+- `Launchpad`: Launchpad is treated as a first-class layer (`LP Style` / `LP Note Style`), defaults to `Blue + Circuit`, supports `Classic` and `Circuit`, includes many regression fixes, and adds split `Generators Mode` (`Note` full map; `Curve`/`Stochastic`/`Logic`/`Arp` subset with `Entropy`), plus `Undo/Redo`, lock policies, overlay stability, and P1 controller refactor. 
+- `Clock & Sync`: External clock behavior was hardened for real hardware (`Reset Gate`, `Reset Pulse`, rising-edge-only pulse handling, `Reset CV` default `Off`) while keeping backward-compatible timing behavior. 
+- `Generator UX`: Generator families were reorganized with stronger page semantics: open on current bank, playable transport, intentional `ResetGen`, explicit `Init Layer`/`Init Steps`/`Init Seq` split, and safer commit/cancel flow. 
+- `UI & Display`: Generator and step visuals were redesigned for readability (full `64-step` context + active `16-step` bank + playhead), with clearer layer graphics and lower redraw overhead (`30 fps`, skip unchanged frames). 
+- `System & Defaults`: Settings/save flow was simplified and hardened (`System` save flow, save prompts, `Chaos Defaults` persistence, `Menu Wrap`, screensaver/wake refinement) with better memory posture versus upstream (`SRAM`/`CCRAM` reduction vs lineage firmwares). 
+- `Simulators`: Desktop and Web simulator paths were clarified; Desktop gained configurable DIN/USB MIDI routing, tracing, better Launchpad port/model handling, and firmware-aligned behavior. 
+- `Documentation`: Website, manual, cheatsheet, simulator docs, and ecosystem pages are maintained as a coherent layer aligned to current firmware behavior. 
 
 Current validation scope:
 - Real hardware testing is still useful for `Reset Pulse` / `Reset Gate`.
@@ -67,6 +75,16 @@ After cloning, enter the performer directory:
 ```
 cd performer
 ```
+
+### STM32 Toolchain Resolution (Vinx note)
+
+For STM32 builds, the toolchain file now resolves `arm-none-eabi` tools in this order:
+
+1. `tools/gcc-arm-none-eabi/bin` inside this repository
+2. `TOOLCHAIN_ROOT` (CMake variable or environment variable, expected to point to the directory containing `arm-none-eabi-*`)
+3. system `PATH`
+
+This keeps clean builds deterministic across machines while still allowing explicit overrides.
 
 Make sure you have a recent version of CMake installed. If you are on Linux, you might also want to install a few other packages. For Debian based systems, use:
 

@@ -39,6 +39,11 @@ public:
     virtual void midi(MidiEvent &event) override;
 
     void openLaunchpadGenerator(LaunchpadGenerator generator);
+    void launchpadUndo();
+    void setLaunchpadGeneratorModeActive(bool active) {
+        _launchpadGeneratorModeActive = active;
+    }
+    bool launchpadGeneratorModeActive() const { return _launchpadGeneratorModeActive; }
 
 private:
     typedef NoteSequence::Layer Layer;
@@ -71,8 +76,11 @@ private:
     void generateSequence();
     void showAcidGenerator();
     void showAcidGenerator(AcidSequenceBuilder::ApplyMode applyMode);
+    bool supportsAcidLayerMode() const;
     void showChaosGenerator();
     void showChaosGenerator(ChaosGenerator::Scope scope);
+    bool inNoteTrackContext() const;
+    void drawLaunchpadGeneratorOverlay(Canvas &canvas);
     void showProjectSavePage();
     void saveProjectToSlot(int slot);
     void destroyActiveBuilder();
@@ -103,4 +111,5 @@ private:
     ActiveBuilder _activeBuilder = ActiveBuilder::None;
 
     NoteSequence _inMemorySequence;
+    bool _launchpadGeneratorModeActive = false;
 };

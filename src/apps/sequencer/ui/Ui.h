@@ -36,6 +36,22 @@ public:
 
     void showAssert(const char *filename, int line, const char *msg);
 
+    void connectLaunchpadForTest(uint16_t vendorId = 0x1235, uint16_t productId = 0x0069);
+    void disconnectLaunchpadForTest();
+    bool launchpadControllerConnectedForTest() const;
+    bool launchpadGeneratorsModeActiveForTest() const {
+        return _pages.noteSequenceEdit.launchpadGeneratorModeActive() ||
+               _pages.curveSequenceEdit.launchpadGeneratorModeActive() ||
+               _pages.stochasticSequenceEdit.launchpadGeneratorModeActive() ||
+               _pages.logicSequenceEdit.launchpadGeneratorModeActive() ||
+               _pages.arpSequenceEdit.launchpadGeneratorModeActive();
+    }
+
+    ControllerManager::UiPageKind uiPageKind() const { return _controllerManager.uiPageKind(); }
+    bool isGeneratorPageTop() const { return _pageManager.top() == &_pages.generator; }
+    bool isNoteSequenceEditPageTop() const { return _pageManager.top() == &_pages.noteSequenceEdit; }
+    bool isModalPageTop() const { return _pageManager.top()->isModal(); }
+
 private:
     void handleKeys();
     void handleEncoder();

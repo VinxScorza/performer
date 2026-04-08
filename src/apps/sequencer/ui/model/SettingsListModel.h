@@ -66,7 +66,7 @@ public:
 private:
     bool hideSetting(BaseSetting *setting) const {
         const auto key = setting->getKey();
-        if (key == SettingChaosSeqLayers || key == SettingChaosPatLayers) {
+        if (key == SettingChaosSeqLayers || key == SettingChaosPatLayers || key == SettingEntropyLayers) {
             return true;
         }
         if (!_isLaunchpad && (key == SettingLaunchpadStyle || key == SettingLaunchpadNoteStyle)) {

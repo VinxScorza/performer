@@ -8,6 +8,7 @@
 #include "ui/LedPainter.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
+#include "ui/StepSelectionUtils.h"
 
 #include "engine/generators/AcidGenerator.h"
 #include "engine/generators/ChaosGenerator.h"
@@ -103,6 +104,12 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "STEPS", pf_repr);
 
     WindowPainter::drawActiveFunction(canvas, NoteSequence::layerName(layer()));
+    if (_launchpadGeneratorModeActive) {
+        WindowPainter::drawFooter(canvas);
+        drawLaunchpadGeneratorOverlay(canvas);
+        return;
+    }
+
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), activeFunctionKey());
 
     auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
@@ -317,6 +324,39 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 
 }
 
+void NoteSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
+    static const char *overlayCells[2][6] = {
+        { "RAND", "ACIDL", "VNDLZ", "EUCL", nullptr, nullptr },
+        { nullptr, "ACIDP", "WRECK", nullptr, nullptr, "INITS" },
+    };
+
+    constexpr int columns = 6;
+    constexpr int rows = 2;
+    constexpr int cellWidth = 41;
+    constexpr int cellHeight = 15;
+    constexpr int gridX = 0;
+    constexpr int gridY = 18;
+
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setFont(Font::Tiny);
+
+    for (int row = 0; row < rows; ++row) {
+        for (int col = 0; col < columns; ++col) {
+            int x = gridX + col * (cellWidth + 2);
+            int y = gridY + row * (cellHeight + 2);
+            const char *label = overlayCells[row][col];
+
+            canvas.setColor(label ? Color::Medium : Color::Low);
+            canvas.drawRect(x, y, cellWidth, cellHeight);
+
+            if (label) {
+                canvas.setColor(Color::Bright);
+                canvas.drawTextCentered(x, y + 4, cellWidth, 8, label);
+            }
+        }
+    }
+}
+
 void NoteSequenceEditPage::updateLeds(Leds &leds) {
     const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
     auto &sequence = _project.selectedNoteSequence();
@@ -374,6 +414,12 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.pageModifier() && key.is(Key::Step6)) {
+        launchpadUndo();
+        event.consume();
+        return;
+    }
+
     if (key.isQuickEdit()) {
          if (key.is(Key::Step15)) {
             bool lpConnected = _engine.isLaunchpadConnected();
@@ -383,13 +429,6 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
             _inMemorySequence = _project.selectedNoteSequence();
             quickEdit(key.quickEdit());
         }
-        event.consume();
-        return;
-    }
-
-    if (key.pageModifier() && key.is(Key::Step6)) {
-        // undo function
-        _project.setSelectedNoteSequence(_inMemorySequence);
         event.consume();
         return;
     }
@@ -1056,10 +1095,7 @@ bool NoteSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void NoteSequenceEditPage::initSequence() {
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
     builder->clearLayer(selected);
     builder->showPreview();
@@ -1115,10 +1151,8 @@ void NoteSequenceEditPage::generateSequence() {
     _manager.pages().generatorSelect.show(true, [this] (bool success, Generator::Mode mode) {
         if (success) {
             if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
-                auto selected = _stepSelection.selected();
-                if (!selected.any()) {
-                    selected.set();
-                }
+                _inMemorySequence = _project.selectedNoteSequence();
+                auto selected = selectedOrAllSteps(_stepSelection);
                 auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
                 Generator::execute(mode, *builder, selected);
                 builder->showPreview();
@@ -1154,7 +1188,12 @@ void NoteSequenceEditPage::generateSequence() {
 }
 
 void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) {
-    if (_stepSelection.none()) {
+    if (!inNoteTrackContext()) {
+        return;
+    }
+
+    // LP generator pages operate on all steps when no persistent selection exists.
+    if (generator != LaunchpadGenerator::Init && _stepSelection.none()) {
         _stepSelection.selectAll();
     }
 
@@ -1176,7 +1215,9 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
         showAcidGenerator(AcidSequenceBuilder::ApplyMode::Phrase);
         break;
     case LaunchpadGenerator::AcidLayer:
-        showAcidGenerator(AcidSequenceBuilder::ApplyMode::Layer);
+        // Keep LP behavior aligned with machine Acid selector semantics:
+        // Layer mode is valid only on Gate/Note/Slide, otherwise fall back to Phrase.
+        showAcidGenerator(supportsAcidLayerMode() ? AcidSequenceBuilder::ApplyMode::Layer : AcidSequenceBuilder::ApplyMode::Phrase);
         break;
     case LaunchpadGenerator::Vandalize:
         showChaosGenerator(ChaosGenerator::Scope::Sequence);
@@ -1185,8 +1226,11 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
         showChaosGenerator(ChaosGenerator::Scope::Pattern);
         break;
     case LaunchpadGenerator::Init: {
+        destroyActiveBuilder();
+        _inMemorySequence = _project.selectedNoteSequence();
+        auto selected = selectedOrAllSteps(_stepSelection);
         auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
-        Generator::execute(Generator::Mode::InitSteps, *builder, _stepSelection.selected());
+        Generator::execute(Generator::Mode::InitSteps, *builder, selected);
         builder->showPreview();
         builder->apply();
         showMessage("STEPS INITIALIZED");
@@ -1196,11 +1240,22 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
     }
 }
 
+void NoteSequenceEditPage::launchpadUndo() {
+    if (!inNoteTrackContext()) {
+        return;
+    }
+
+    NoteSequence currentSequence = _project.selectedNoteSequence();
+    _project.selectedNoteSequence() = _inMemorySequence;
+    _inMemorySequence = currentSequence;
+    showMessage("UNDO/REDO");
+}
+
 void NoteSequenceEditPage::showAcidGenerator() {
-    const bool allowLayer = layer() == Layer::Gate || layer() == Layer::Note || layer() == Layer::Slide;
+    const bool allowLayer = supportsAcidLayerMode();
 
     _manager.pages().acidModeSelect.show(allowLayer, [this] (bool success, AcidSequenceBuilder::ApplyMode applyMode) {
-        if (!success) {
+        if (!success || !inNoteTrackContext()) {
             return;
         }
 
@@ -1208,7 +1263,15 @@ void NoteSequenceEditPage::showAcidGenerator() {
     });
 }
 
+bool NoteSequenceEditPage::supportsAcidLayerMode() const {
+    return layer() == Layer::Gate || layer() == Layer::Note || layer() == Layer::Slide;
+}
+
 void NoteSequenceEditPage::showAcidGenerator(AcidSequenceBuilder::ApplyMode applyMode) {
+    if (!inNoteTrackContext()) {
+        return;
+    }
+
     destroyActiveBuilder();
     auto builder = _builderContainer.create<AcidSequenceBuilder>(
         _project.selectedNoteSequence(),
@@ -1226,7 +1289,7 @@ void NoteSequenceEditPage::showAcidGenerator(AcidSequenceBuilder::ApplyMode appl
 
 void NoteSequenceEditPage::showChaosGenerator() {
     _manager.pages().chaosScopeSelect.show([this] (bool success, ChaosGenerator::Scope scope) {
-        if (!success) {
+        if (!success || !inNoteTrackContext()) {
             return;
         }
 
@@ -1251,6 +1314,10 @@ void NoteSequenceEditPage::showChaosGenerator() {
 }
 
 void NoteSequenceEditPage::showChaosGenerator(ChaosGenerator::Scope scope) {
+    if (!inNoteTrackContext()) {
+        return;
+    }
+
     destroyActiveBuilder();
     auto builder = _builderContainer.create<ChaosSequenceBuilder>(
         _project,
@@ -1268,6 +1335,10 @@ void NoteSequenceEditPage::showChaosGenerator(ChaosGenerator::Scope scope) {
         generator->update();
         _manager.pages().generator.show(generator, &_stepSelection);
     }
+}
+
+bool NoteSequenceEditPage::inNoteTrackContext() const {
+    return _project.selectedTrack().trackMode() == Track::TrackMode::Note;
 }
 
 void NoteSequenceEditPage::destroyActiveBuilder() {

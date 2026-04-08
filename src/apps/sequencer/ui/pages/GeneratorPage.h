@@ -7,6 +7,7 @@
 class Generator;
 class AcidGenerator;
 class ChaosGenerator;
+class ChaosEntropyGenerator;
 class EuclideanGenerator;
 class RandomGenerator;
 
@@ -45,12 +46,17 @@ public:
     void showPreviewStateMessage();
     bool launchpadShowingPreview() const;
     bool launchpadResetState() const;
+    bool launchpadTrackRetargetLocked() const;
 
 private:
+    bool boundTrackContextValid() const;
+    bool ensureBoundTrackContext();
+
     void drawEuclideanGenerator(Canvas &canvas, const EuclideanGenerator &generator) const;
     void drawRandomGenerator(Canvas &canvas, const RandomGenerator &generator) const;
     void drawAcidGenerator(Canvas &canvas, const AcidGenerator &generator) const;
     void drawChaosGenerator(Canvas &canvas, const ChaosGenerator &generator) const;
+    void drawChaosEntropyGenerator(Canvas &canvas, const ChaosEntropyGenerator &generator) const;
     int contextItemCount() const;
     int previewStepCount() const;
     int currentStep() const;
@@ -65,6 +71,8 @@ private:
     bool _chaosPreviewArmed = false;
     bool _launchpadResetState = false;
     bool _applied = false;
+    int _boundTrackIndex = -1;
+    Track::TrackMode _boundTrackMode = Track::TrackMode::Note;
     char _variationMenuLabel[16] = "VAR";
     ContextMenuModel::Item _contextMenuItems[5];
 };

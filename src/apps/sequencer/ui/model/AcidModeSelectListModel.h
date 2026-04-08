@@ -12,7 +12,7 @@ public:
 
     AcidSequenceBuilder::ApplyMode rowToMode(int row) const {
         if (_allowLayer) {
-            return row == 0 ? AcidSequenceBuilder::ApplyMode::Phrase : AcidSequenceBuilder::ApplyMode::Layer;
+            return row == 0 ? AcidSequenceBuilder::ApplyMode::Layer : AcidSequenceBuilder::ApplyMode::Phrase;
         }
         return AcidSequenceBuilder::ApplyMode::Phrase;
     }

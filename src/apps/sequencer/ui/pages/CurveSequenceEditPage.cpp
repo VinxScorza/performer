@@ -3,10 +3,13 @@
 #include "Pages.h"
 
 #include "ui/LedPainter.h"
+#include "ui/StepSelectionUtils.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
+#include "engine/generators/ChaosEntropyGenerator.h"
 #include "model/Curve.h"
+#include "model/UserSettings.h"
 
 #include "core/utils/StringBuilder.h"
 #include <map>
@@ -136,6 +139,11 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "STEPS", pf_repr);
 
     WindowPainter::drawActiveFunction(canvas, CurveSequence::layerName(layer()));
+    if (_launchpadGeneratorModeActive) {
+        WindowPainter::drawFooter(canvas);
+        drawLaunchpadGeneratorOverlay(canvas);
+        return;
+    }
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), activeFunctionKey());
 
     auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
@@ -317,6 +325,39 @@ void CurveSequenceEditPage::draw(Canvas &canvas) {
     }
 }
 
+void CurveSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
+    static const char *overlayCells[2][6] = {
+        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, nullptr },
+        { nullptr, nullptr, nullptr, nullptr, nullptr, "INITS" },
+    };
+
+    constexpr int columns = 6;
+    constexpr int rows = 2;
+    constexpr int cellWidth = 41;
+    constexpr int cellHeight = 15;
+    constexpr int gridX = 0;
+    constexpr int gridY = 18;
+
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setFont(Font::Tiny);
+
+    for (int row = 0; row < rows; ++row) {
+        for (int col = 0; col < columns; ++col) {
+            int x = gridX + col * (cellWidth + 2);
+            int y = gridY + row * (cellHeight + 2);
+            const char *label = overlayCells[row][col];
+
+            canvas.setColor(label ? Color::Medium : Color::Low);
+            canvas.drawRect(x, y, cellWidth, cellHeight);
+
+            if (label) {
+                canvas.setColor(Color::Bright);
+                canvas.drawTextCentered(x, y + 4, cellWidth, 8, label);
+            }
+        }
+    }
+}
+
 void CurveSequenceEditPage::updateLeds(Leds &leds) {
     const auto &trackEngine = _engine.selectedTrackEngine().as<CurveTrackEngine>();
     const auto &sequence = _project.selectedCurveSequence();
@@ -372,6 +413,12 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.pageModifier() && key.is(Key::Step6)) {
+        launchpadUndo();
+        event.consume();
+        return;
+    }
+
     if (key.isQuickEdit()) {
         // XXX Added here, but should we move it to pageModifier structure?
         if (key.is(Key::Step15)) {
@@ -380,12 +427,6 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
             _inMemorySequence = _project.selectedCurveSequence();
             quickEdit(key.quickEdit());
         }
-        event.consume();
-        return;
-    }
-
-    if (key.pageModifier() && key.is(Key::Step6)) {
-        _project.setSelectedCurveSequence(_inMemorySequence);
         event.consume();
         return;
     }
@@ -439,6 +480,41 @@ void CurveSequenceEditPage::keyPress(KeyPressEvent &event) {
             sequence.setSecion((sequence.section() + 1) % sectionCount);
         }
         event.consume();
+    }
+}
+
+void CurveSequenceEditPage::launchpadUndo() {
+    CurveSequence currentSequence = _project.selectedCurveSequence();
+    _project.selectedCurveSequence() = _inMemorySequence;
+    _inMemorySequence = currentSequence;
+    showMessage("UNDO/REDO");
+}
+
+void CurveSequenceEditPage::openLaunchpadGenerator(Generator::Mode mode) {
+    _inMemorySequence = _project.selectedCurveSequence();
+    auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
+
+    if (mode == Generator::Mode::InitSteps || mode == Generator::Mode::InitLayer) {
+        auto selected = selectedOrAllSteps(_stepSelection);
+        Generator::execute(Generator::Mode::InitSteps, *builder, selected);
+        builder->showPreview();
+        builder->apply();
+        showMessage("STEPS INITIALIZED");
+        return;
+    }
+
+    if (_stepSelection.none()) {
+        _stepSelection.selectAll();
+    }
+
+    auto *generator = Generator::execute(mode, *builder, _stepSelection.selected());
+    if (generator) {
+        if (mode == Generator::Mode::ChaosEntropy) {
+            auto *entropy = static_cast<ChaosEntropyGenerator *>(generator);
+            entropy->setTargetMask(_model.settings().userSettings().get<EntropyLayersSetting>(SettingEntropyLayers)->getValue());
+            entropy->update();
+        }
+        _manager.pages().generator.show(generator, &_stepSelection);
     }
 }
 
@@ -763,10 +839,7 @@ bool CurveSequenceEditPage::contextActionEnabled(int index) const {
 
 void CurveSequenceEditPage::initSequence() {
     _inMemorySequence = _project.selectedCurveSequence();
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
     builder->clearLayer(selected);
     builder->showPreview();
@@ -799,10 +872,7 @@ void CurveSequenceEditPage::generateSequence() {
             auto builder = _builderContainer.create<CurveSequenceBuilder>(_project.selectedCurveSequence(), layer());
 
             if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
-                auto selected = _stepSelection.selected();
-                if (!selected.any()) {
-                    selected.set();
-                }
+                auto selected = selectedOrAllSteps(_stepSelection);
                 Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();

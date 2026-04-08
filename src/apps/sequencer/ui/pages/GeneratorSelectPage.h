@@ -25,8 +25,11 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
 
 private:
+    bool boundTrackContextValid() const;
     void closeWithResult(bool result);
 
     ResultCallback _callback;
     GeneratorSelectListModel _listModel;
+    int _boundTrackIndex = -1;
+    Track::TrackMode _boundTrackMode = Track::TrackMode::Note;
 };

@@ -90,6 +90,7 @@ private:
         AcidLayer,
         Vandalize,
         Wreck,
+        Entropy,
         Euclidean,
         Init,
     };
@@ -99,6 +100,7 @@ private:
     // Global handlers
     void globalDraw();
     bool globalButton(const Button &button, ButtonAction action);
+    bool launchpadUndoShortcut();
 
     // Sequence mode
     void sequenceEnter();
@@ -144,16 +146,28 @@ private:
     void manageCircuitKeyboard(const Button &button);
     void manageStochasticCircuitKeyboard(const Button &button);
     void manageArpCircuitKeyboard(const Button &button);
+    bool generatorModeTrackSupported(Track::TrackMode mode) const;
+    bool generatorModeTrackSupported() const;
     bool generatorModeSupported() const;
     bool generatorModeEditPage() const;
     bool generatorModePreviewPage() const;
+    bool stepEditPageGeneratorModeActive() const;
     bool generatorTrackSelectionLocked() const;
+    bool handleGeneratorModeGlobalButtons(const Button &button, ButtonAction action);
+    bool handleGeneratorModeToggleShortcut(const Button &button);
     void cancelGeneratorMode();
     LaunchpadGenerator generatorModeGrid(int gridIndex) const;
     void setGeneratorMode(bool active);
     void sequenceDrawGeneratorMode();
     bool sequenceButtonGeneratorMode(const Button &button, ButtonAction action);
     void sequenceOpenGenerator(LaunchpadGenerator generator);
+    void sequenceSceneMute(const Button &button);
+    void sequenceSceneSolo(const Button &button);
+    void sequenceSceneFill(const Button &button, bool active);
+    void sequenceSceneSelectTrack(const Button &button);
+    bool modalTrackSelectionLocked() const;
+    bool generatorTrackSelectionLockedByUiKind() const;
+    bool generatorTrackSelectionLockedByTopPage() const;
     void drawRunningKeyboardCircuit(int row, int col, const NoteSequence::Step &step, const Scale &scale, int rootNote);
     void drawRunningStochasticKeyboardCircuit(int row, int col, const StochasticSequence::Step &step, const Scale &scale, int rootNote);
     void drawRunningArpKeyboardCircuit(int row, int col, const ArpSequence::Step &step, const Scale &scale, int rootNote);
@@ -164,12 +178,19 @@ private:
     void patternExit();
     void patternDraw();
     void patternButton(const Button &button, ButtonAction action);
+    void patternSceneMute(const Button &button);
+    void patternSceneFill(const Button &button, bool active);
+    void patternSceneSelectPattern(const Button &button, PlayState::ExecuteType executeType);
 
     // Performer mode
     void performerEnter();
     void performerExit();
     void performerDraw();
     void performerButton(const Button &button, ButtonAction action);
+    void performerSceneMute(const Button &button);
+    void performerSceneSolo(const Button &button);
+    void performerSceneFill(const Button &button, bool active);
+    void performerSceneSelectTrack(const Button &button);
     void performDrawLayer();
     void performSetLayer(int row, int col);
 

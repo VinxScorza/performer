@@ -5,11 +5,14 @@
 
 #include "model/LogicSequence.h"
 #include "ui/LedPainter.h"
+#include "ui/StepSelectionUtils.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 #include "engine/SequenceUtils.h"
+#include "engine/generators/ChaosEntropyGenerator.h"
 
 #include "model/Scale.h"
+#include "model/UserSettings.h"
 
 #include "os/os.h"
 
@@ -105,6 +108,11 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "STEPS", pf_repr);
 
     WindowPainter::drawActiveFunction(canvas, LogicSequence::layerName(layer()));
+    if (_launchpadGeneratorModeActive) {
+        WindowPainter::drawFooter(canvas);
+        drawLaunchpadGeneratorOverlay(canvas);
+        return;
+    }
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), activeFunctionKey());
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<LogicTrackEngine>();
@@ -342,6 +350,39 @@ void LogicSequenceEditPage::draw(Canvas &canvas) {
 
 }
 
+void LogicSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
+    static const char *overlayCells[2][6] = {
+        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, nullptr },
+        { nullptr, nullptr, nullptr, nullptr, nullptr, "INITS" },
+    };
+
+    constexpr int columns = 6;
+    constexpr int rows = 2;
+    constexpr int cellWidth = 41;
+    constexpr int cellHeight = 15;
+    constexpr int gridX = 0;
+    constexpr int gridY = 18;
+
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setFont(Font::Tiny);
+
+    for (int row = 0; row < rows; ++row) {
+        for (int col = 0; col < columns; ++col) {
+            int x = gridX + col * (cellWidth + 2);
+            int y = gridY + row * (cellHeight + 2);
+            const char *label = overlayCells[row][col];
+
+            canvas.setColor(label ? Color::Medium : Color::Low);
+            canvas.drawRect(x, y, cellWidth, cellHeight);
+
+            if (label) {
+                canvas.setColor(Color::Bright);
+                canvas.drawTextCentered(x, y + 4, cellWidth, 8, label);
+            }
+        }
+    }
+}
+
 void LogicSequenceEditPage::updateLeds(Leds &leds) {
     const auto &trackEngine = _engine.selectedTrackEngine().as<LogicTrackEngine>();
     auto &sequence = _project.selectedLogicSequence();
@@ -401,6 +442,13 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
         return;
     }
 
+    if (key.pageModifier() && key.is(Key::Step6)) {
+        // undo function
+        launchpadUndo();
+        event.consume();
+        return;
+    }
+
     if (key.isQuickEdit()) {
          if (key.is(Key::Step15)) {
             bool lpConnected = _engine.isLaunchpadConnected();
@@ -410,13 +458,6 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
             _inMemorySequence = _project.selectedLogicSequence();
             quickEdit(key.quickEdit());
         }
-        event.consume();
-        return;
-    }
-
-    if (key.pageModifier() && key.is(Key::Step6)) {
-        // undo function
-        _project.setselectedLogicSequence(_inMemorySequence);
         event.consume();
         return;
     }
@@ -541,6 +582,41 @@ void LogicSequenceEditPage::keyPress(KeyPressEvent &event) {
             sequence.setSecion((sequence.section() + 1) % sectionCount);
         }
         event.consume();
+    }
+}
+
+void LogicSequenceEditPage::launchpadUndo() {
+    LogicSequence currentSequence = _project.selectedLogicSequence();
+    _project.selectedLogicSequence() = _inMemorySequence;
+    _inMemorySequence = currentSequence;
+    showMessage("UNDO/REDO");
+}
+
+void LogicSequenceEditPage::openLaunchpadGenerator(Generator::Mode mode) {
+    _inMemorySequence = _project.selectedLogicSequence();
+    auto builder = _builderContainer.create<LogicSequenceBuilder>(_project.selectedLogicSequence(), layer());
+
+    if (mode == Generator::Mode::InitSteps || mode == Generator::Mode::InitLayer) {
+        auto selected = selectedOrAllSteps(_stepSelection);
+        Generator::execute(Generator::Mode::InitSteps, *builder, selected);
+        builder->showPreview();
+        builder->apply();
+        showMessage("STEPS INITIALIZED");
+        return;
+    }
+
+    if (_stepSelection.none()) {
+        _stepSelection.selectAll();
+    }
+
+    auto *generator = Generator::execute(mode, *builder, _stepSelection.selected());
+    if (generator) {
+        if (mode == Generator::Mode::ChaosEntropy) {
+            auto *entropy = static_cast<ChaosEntropyGenerator *>(generator);
+            entropy->setTargetMask(_model.settings().userSettings().get<EntropyLayersSetting>(SettingEntropyLayers)->getValue());
+            entropy->update();
+        }
+        _manager.pages().generator.show(generator, &_stepSelection);
     }
 }
 
@@ -1126,10 +1202,7 @@ bool LogicSequenceEditPage::contextActionEnabled(int index) const {
 }
 
 void LogicSequenceEditPage::initSequence() {
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto builder = _builderContainer.create<LogicSequenceBuilder>(_project.selectedLogicSequence(), layer());
     builder->clearLayer(selected);
     builder->showPreview();
@@ -1187,10 +1260,7 @@ void LogicSequenceEditPage::generateSequence() {
             auto builder = _builderContainer.create<LogicSequenceBuilder>(_project.selectedLogicSequence(), layer());
 
             if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
-                auto selected = _stepSelection.selected();
-                if (!selected.any()) {
-                    selected.set();
-                }
+                auto selected = selectedOrAllSteps(_stepSelection);
                 Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();

@@ -7,6 +7,10 @@
 #include "model/LogicSequence.h"
 #include "model/ArpSequence.h"
 
+#include "EntropyTargets.h"
+
+#include "core/utils/Random.h"
+
 #include <algorithm>
 #include <bitset>
 #include <vector>
@@ -38,6 +42,7 @@ public:
     virtual void copyStep(int fromIndex, int toIndex) = 0;
 
     virtual void clearLayer(const std::bitset<CONFIG_STEP_COUNT> &selected) = 0;
+    virtual void applyEntropy(uint32_t seed, int amount, const std::bitset<CONFIG_STEP_COUNT> &selected, uint16_t targetMask) = 0;
 };
 
 template<typename T>
@@ -55,6 +60,213 @@ inline void restoreClearedStepDefaults<ArpSequence>(ArpSequence &sequence, int s
     if (stepIndex >= 0 && stepIndex < 12) {
         sequence.step(stepIndex).setNote(stepIndex);
     }
+}
+
+namespace entropy_detail {
+inline int blendValue(int originalValue, int randomValue, int minValue, int maxValue, int blend) {
+    const float t = blend * 0.01f;
+    int value = int(std::round(originalValue + (randomValue - originalValue) * t));
+    if (value == originalValue && randomValue != originalValue && blend > 0) {
+        value += randomValue > originalValue ? 1 : -1;
+    }
+    return clamp(value, minValue, maxValue);
+}
+
+template<typename Sequence>
+inline void applyLayer(typename Sequence::Layer layer, const typename Sequence::Step &originalStep, typename Sequence::Step &previewStep, Random &rng, int blend) {
+    const auto range = Sequence::layerRange(layer);
+    const int originalValue = originalStep.layerValue(layer);
+    const int randomValue = range.min + int(rng.nextRange(range.max - range.min + 1));
+    previewStep.setLayerValue(layer, blendValue(originalValue, randomValue, range.min, range.max, blend));
+}
+
+template<typename Sequence>
+inline void applyTarget(EntropyTarget target, const typename Sequence::Step &originalStep, typename Sequence::Step &previewStep, Random &rng, int blend) {
+    (void)target;
+    (void)originalStep;
+    (void)previewStep;
+    (void)rng;
+    (void)blend;
+}
+
+template<>
+inline void applyTarget<CurveSequence>(EntropyTarget target, const CurveSequence::Step &originalStep, CurveSequence::Step &previewStep, Random &rng, int blend) {
+    switch (target) {
+    case EntropyTarget::Gate:
+        applyLayer<CurveSequence>(CurveSequence::Layer::Gate, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::GateOffset:
+        applyLayer<CurveSequence>(CurveSequence::Layer::GateOffset, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::GateProbability:
+        applyLayer<CurveSequence>(CurveSequence::Layer::GateProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLength:
+        applyLayer<CurveSequence>(CurveSequence::Layer::GateLength, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValue:
+        applyLayer<CurveSequence>(CurveSequence::Layer::Shape, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValueVariationRange:
+        applyLayer<CurveSequence>(CurveSequence::Layer::ShapeVariation, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValueVariationProbability:
+        applyLayer<CurveSequence>(CurveSequence::Layer::ShapeVariationProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Register:
+        applyLayer<CurveSequence>(CurveSequence::Layer::Min, originalStep, previewStep, rng, blend);
+        applyLayer<CurveSequence>(CurveSequence::Layer::Max, originalStep, previewStep, rng, blend);
+        break;
+    default:
+        break;
+    }
+}
+
+template<>
+inline void applyTarget<StochasticSequence>(EntropyTarget target, const StochasticSequence::Step &originalStep, StochasticSequence::Step &previewStep, Random &rng, int blend) {
+    switch (target) {
+    case EntropyTarget::Gate:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::Gate, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::GateOffset:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::GateOffset, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::GateProbability:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::GateProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Retrigger:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::Retrigger, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::RetriggerProbability:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::RetriggerProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLength:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::Length, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLengthVariationRange:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::LengthVariationRange, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLengthVariationProbability:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::LengthVariationProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValueVariationProbability:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::NoteVariationProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Register:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::NoteOctave, originalStep, previewStep, rng, blend);
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::NoteOctaveProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Motion:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::Slide, originalStep, previewStep, rng, blend);
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::Condition, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::LogicRepeatRules:
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::StageRepeats, originalStep, previewStep, rng, blend);
+        applyLayer<StochasticSequence>(StochasticSequence::Layer::StageRepeatsMode, originalStep, previewStep, rng, blend);
+        break;
+    default:
+        break;
+    }
+}
+
+template<>
+inline void applyTarget<LogicSequence>(EntropyTarget target, const LogicSequence::Step &originalStep, LogicSequence::Step &previewStep, Random &rng, int blend) {
+    switch (target) {
+    case EntropyTarget::Gate:
+        applyLayer<LogicSequence>(LogicSequence::Layer::Gate, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::GateOffset:
+        applyLayer<LogicSequence>(LogicSequence::Layer::GateOffset, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::GateProbability:
+        applyLayer<LogicSequence>(LogicSequence::Layer::GateProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Retrigger:
+        applyLayer<LogicSequence>(LogicSequence::Layer::Retrigger, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::RetriggerProbability:
+        applyLayer<LogicSequence>(LogicSequence::Layer::RetriggerProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLength:
+        applyLayer<LogicSequence>(LogicSequence::Layer::Length, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLengthVariationRange:
+        applyLayer<LogicSequence>(LogicSequence::Layer::LengthVariationRange, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLengthVariationProbability:
+        applyLayer<LogicSequence>(LogicSequence::Layer::LengthVariationProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValue:
+        applyLayer<LogicSequence>(LogicSequence::Layer::NoteLogic, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValueVariationRange:
+        applyLayer<LogicSequence>(LogicSequence::Layer::NoteVariationRange, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValueVariationProbability:
+        applyLayer<LogicSequence>(LogicSequence::Layer::NoteVariationProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Motion:
+        applyLayer<LogicSequence>(LogicSequence::Layer::Slide, originalStep, previewStep, rng, blend);
+        applyLayer<LogicSequence>(LogicSequence::Layer::Condition, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::LogicRepeatRules:
+        applyLayer<LogicSequence>(LogicSequence::Layer::GateLogic, originalStep, previewStep, rng, blend);
+        applyLayer<LogicSequence>(LogicSequence::Layer::StageRepeats, originalStep, previewStep, rng, blend);
+        applyLayer<LogicSequence>(LogicSequence::Layer::StageRepeatsMode, originalStep, previewStep, rng, blend);
+        break;
+    default:
+        break;
+    }
+}
+
+template<>
+inline void applyTarget<ArpSequence>(EntropyTarget target, const ArpSequence::Step &originalStep, ArpSequence::Step &previewStep, Random &rng, int blend) {
+    switch (target) {
+    case EntropyTarget::Gate:
+        applyLayer<ArpSequence>(ArpSequence::Layer::Gate, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::GateOffset:
+        applyLayer<ArpSequence>(ArpSequence::Layer::GateOffset, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::GateProbability:
+        applyLayer<ArpSequence>(ArpSequence::Layer::GateProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Retrigger:
+        applyLayer<ArpSequence>(ArpSequence::Layer::Retrigger, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::RetriggerProbability:
+        applyLayer<ArpSequence>(ArpSequence::Layer::RetriggerProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLength:
+        applyLayer<ArpSequence>(ArpSequence::Layer::Length, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLengthVariationRange:
+        applyLayer<ArpSequence>(ArpSequence::Layer::LengthVariationRange, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::EventLengthVariationProbability:
+        applyLayer<ArpSequence>(ArpSequence::Layer::LengthVariationProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValue:
+        applyLayer<ArpSequence>(ArpSequence::Layer::Note, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValueVariationRange:
+        applyLayer<ArpSequence>(ArpSequence::Layer::NoteVariationRange, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::PrimaryValueVariationProbability:
+        applyLayer<ArpSequence>(ArpSequence::Layer::NoteVariationProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Register:
+        applyLayer<ArpSequence>(ArpSequence::Layer::NoteOctave, originalStep, previewStep, rng, blend);
+        applyLayer<ArpSequence>(ArpSequence::Layer::NoteOctaveProbability, originalStep, previewStep, rng, blend);
+        break;
+    case EntropyTarget::Motion:
+        applyLayer<ArpSequence>(ArpSequence::Layer::Slide, originalStep, previewStep, rng, blend);
+        applyLayer<ArpSequence>(ArpSequence::Layer::Condition, originalStep, previewStep, rng, blend);
+        break;
+    default:
+        break;
+    }
+}
 }
 
 template<typename T>
@@ -151,6 +363,32 @@ public:
                 continue;
             }
             _preview.step(i).setLayerValue(_layer, _default);
+        }
+    }
+
+    void applyEntropy(uint32_t seed, int amount, const std::bitset<CONFIG_STEP_COUNT> &selected, uint16_t targetMask) override {
+        if (targetMask == 0u) {
+            return;
+        }
+
+        const int blend = clamp(amount, 0, 100);
+        Random rng(seed);
+
+        for (int stepIndex = 0; stepIndex < int(_preview.steps().size()); ++stepIndex) {
+            const bool targetStep = selected.any() ? selected[stepIndex] : (stepIndex >= _preview.firstStep() && stepIndex <= _preview.lastStep());
+            if (!targetStep) {
+                continue;
+            }
+
+            const auto &originalStep = _original.step(stepIndex);
+            auto &previewStep = _preview.step(stepIndex);
+
+            for (int targetIndex = 0; targetIndex < int(EntropyTarget::Last); ++targetIndex) {
+                if (((targetMask >> targetIndex) & 0x1u) == 0u) {
+                    continue;
+                }
+                entropy_detail::applyTarget<T>(static_cast<EntropyTarget>(targetIndex), originalStep, previewStep, rng, blend);
+            }
         }
     }
 
@@ -307,6 +545,10 @@ public:
                 _preview.step(i).setLayerValue(_layer, defaultValue);
             }
         }
+    }
+
+    void applyEntropy(uint32_t, int, const std::bitset<CONFIG_STEP_COUNT> &, uint16_t) override {
+        // Entropy is not supported for Acid builder paths.
     }
 
     void resetPreview() {
@@ -531,6 +773,10 @@ public:
         for (int i = 0; i < _trackCount; ++i) {
             restoreOriginalSteps(i);
         }
+    }
+
+    void applyEntropy(uint32_t, int, const std::bitset<CONFIG_STEP_COUNT> &, uint16_t) override {
+        // Entropy is not supported for Chaos builder paths.
     }
 
     void resetToOriginal() { showOriginal(); }

@@ -72,7 +72,7 @@
           <tbody>
             <tr>
               <td><code>TOP 8 + TOP 1..3</code></td>
-              <td>Enter <code>Sequence</code> | <code>Pattern</code> | <code>Performer</code></td>
+              <td>Enter Sequence | Pattern | Performer modes.</td>
               <td>Main Launchpad modes.</td>
             </tr>
             <tr>
@@ -82,23 +82,48 @@
             </tr>
             <tr>
               <td><code>TOP 8 + TOP 7</code></td>
-              <td>Toggle <code>PLAY | STOP</code></td>
-              <td>Global transport toggle.</td>
+              <td>Toggle <code>PLAY | STOP</code>.</td>
+              <td>Global transport toggle.<br>Hold <code>TOP 8</code> first, then press <code>TOP 7</code>.</td>
             </tr>
             <tr>
-              <td><code>TRK 1..8</code></td>
-              <td>Track select.</td>
-              <td>Also used with modifiers.</td>
+              <td><code>TOP 7 + TOP 8</code></td>
+              <td>Undo / Redo (1-level).</td>
+              <td>On Steps edit pages (<code>Note</code>, <code>Curve</code>, <code>Logic</code>) only.<br>Same action as machine <code>PAGE + S7</code>; pressing again toggles back.<br>Hold <code>TOP 7</code> first, then press <code>TOP 8</code>.</td>
             </tr>
             <tr>
-              <td><code>TRK 1..8</code> LED indicators</td>
-              <td>Show Playback, Mute, and Selection state.</td>
-              <td>Colors follow LP Style setting.</td>
+              <td><code>TOP 8 + TRK 1..8</code></td>
+              <td>Toggle Track mute.</td>
+              <td>Available in Sequence, Pattern, and Performer.<br>In Sequence Generators Mode, scene buttons are remapped and this action is not available.</td>
+            </tr>
+            <tr>
+              <td><code>TOP 7 + TRK 1..8</code></td>
+              <td>Track Fill.</td>
+              <td>Momentary while held. Releasing <code>TRK</code> or <code>TOP 7</code> clears Fills.<br>In Sequence Generators Mode, scene buttons are remapped and this action is not available.</td>
+            </tr>
+            <tr>
+              <td><code>TOP 6 + TRK 1..8</code></td>
+              <td>Toggle Track solo.</td>
+              <td>Available in Sequence and Performer only.<br>Not available in Pattern.<br>In Sequence Generators Mode this action is not available.<br>No dedicated SOLO scene-LED color is currently implemented; rely on behavior/state.</td>
+            </tr>
+            <tr>
+              <td><code>TOP 1 + GRID</code></td>
+              <td>Navigation map.</td>
+              <td>Shows the current mode Navigation map.<br>Performer Overview uses <code>GRID 25..32</code> map positions.<br>In Sequence Generators Mode, GRID is reserved for generator controls.</td>
+            </tr>
+            <tr>
+              <td><code>TOP 1 + TOP 2..5</code></td>
+              <td>Navigate Left | Right | Up | Down.</td>
+              <td>Use these arrows on the current mode Navigation map, or press a pad directly.<br><em>Legacy / Deprecated</em>: prefer <code>TOP 1 + GRID</code> direct navigation.<br>In Sequence Generators Mode, these arrows are ignored.</td>
+            </tr>
+            <tr>
+              <td><code>Global visual feedback</code></td>
+              <td>Color indicators in Global.</td>
+              <td><code>TRK 1..8</code> LEDs show playback, mute, and selection state.<br>No dedicated SOLO color cue is currently exposed on <code>TRK</code> LEDs.<br>Colors follow LP Style setting.</td>
             </tr>
           </tbody>
         </table>
 
-        <h3>Sequence</h3>
+        <h3>Sequence <code>TOP 8 + TOP 1</code></h3>
         <table>
           <colgroup>
             <col style="width: 20%">
@@ -114,38 +139,18 @@
           </thead>
           <tbody>
             <tr>
+              <td><code>GRID</code></td>
+              <td>Step editing.</td>
+              <td>Rules vary with Track mode, Layer, Navigation page, and Note Style.</td>
+            </tr>
+            <tr>
               <td><code>TRK 1..8</code></td>
               <td>Track select.</td>
               <td></td>
             </tr>
             <tr>
-              <td><code>TOP 8 + TRK 1..8</code></td>
-              <td>Track mute.</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><code>TOP 6 + TRK 1..8</code></td>
-              <td>Toggle Track solo.</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><code>TOP 7 + TRK 1..8</code></td>
-              <td>Track Fill.</td>
-              <td>Releasing <code>TRK</code> or <code>TOP 7</code> clears Fills.</td>
-            </tr>
-            <tr>
-              <td><code>TOP 1 + GRID</code></td>
-              <td>Navigation map.</td>
-              <td>Shows the current Sequence Navigation map.<br><code>25</code> is the home position.<br>The highlighted pad marks the current window position.<br>Horizontal moves change which page or column <code>GRID</code> is showing.<br>Vertical moves change which value range or row band is shown, when that Layer supports it.</td>
-            </tr>
-            <tr>
-              <td><code>TOP 1 + TOP 2..5</code></td>
-              <td>Navigate Left | Right | Up | Down.</td>
-              <td>Use these arrows on the current Sequence Navigation map, or press a pad directly.</td>
-            </tr>
-            <tr>
-              <td><code>TOP 2 + GRID 1..2</code></td>
-              <td>Layer map for Note | Curve | Stochastic | Logic | Arp Tracks.</td>
+              <td><code>TOP 2 + GRID</code></td>
+              <td>Select Track Layer on Note | Curve | Stochastic | Logic | Arp Tracks.</td>
               <td>
                 <div class="grid-map">
                   <div class="grid-map-title">Note Track</div>
@@ -238,12 +243,12 @@
                     </tbody>
                   </table>
                 </div>
-                Applies to the selected Track.
+                <br>Applies to the selected track.
               </td>
             </tr>
             <tr>
               <td><code>TOP 6 + GRID</code></td>
-              <td>Follow mode on Note | Curve | Logic.<br>Rest Probability editor on Stochastic | Arp.</td>
+              <td>Set follow mode on Note | Curve | Logic Tracks.<br>Open Rest Probability editor on Stochastic | Arp Tracks.</td>
               <td>
                 <div class="grid-map">
                   <div class="grid-map-title">Note | Curve | Logic Tracks</div>
@@ -268,36 +273,76 @@
             <tr>
               <td><code>TOP 8 + TOP 4</code></td>
               <td>Toggle Generators Mode.</td>
-              <td>Note Track only. Opens <code>Steps</code> if needed.
+              <td>Track-type aware. Opens <code>Steps</code> if needed.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4>Generators Mode <code>TOP 8 + TOP 4</code></h4>
+        <p>This Sequence sub-view opens <code>Steps</code> first when needed.</p>
+        <table>
+          <colgroup>
+            <col style="width: 20%">
+            <col style="width: 36%">
+            <col style="width: 44%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Function</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>GRID</code></td>
+              <td>Select generator.<br>Press selected generator pad again to reroll current generator.</td>
+              <td>
                 <div class="grid-map">
-                  <div class="grid-map-title">Generator Pads</div>
+                  <div class="grid-map-title">Note Track</div>
                   <table class="grid-map-table">
                     <tbody>
-                      <tr><td><code>1</code><br>Random</td><td><code>2</code><br>Acid Phrase</td><td><code>3</code><br>Vandalize</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>8</code><br>Init</td></tr>
-                      <tr><td></td><td><code>10</code><br>Acid Layer</td><td><code>11</code><br>Wreck</td><td></td><td></td><td></td><td></td><td></td></tr>
+                      <tr><td><code>1</code><br>Random</td><td><code>2</code><br>Acid Layer</td><td><code>3</code><br>Vandalize</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>16</code><br>Init Steps</td></tr>
+                      <tr><td></td><td><code>10</code><br>Acid Phrase</td><td><code>11</code><br>Wreck</td><td></td><td></td><td></td><td></td><td></td></tr>
                     </tbody>
                   </table>
                 </div>
                 <div class="grid-map">
-                  <div class="grid-map-title">TOP Actions</div>
+                  <div class="grid-map-title">Curve | Stochastic | Logic | Arp Tracks</div>
+                  <table class="grid-map-table">
+                    <tbody>
+                      <tr><td><code>1</code><br>Random</td><td></td><td><code>3</code><br>Entropy</td><td><code>4</code><br>Euclidean</td><td></td><td></td><td></td><td><code>16</code><br>Init Steps</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br>Random | Acid Layer | Acid Phrase | Euclidean are single-tap (first press opens and generates immediately).<br>Vandalize | Wreck | Entropy are two-tap: first press opens on ORIGINAL, second press triggers CHAOS and creates the first preview.<br>Init Steps applies immediately and exits Generators Mode to plain Steps.
+              </td>
+            </tr>
+            <tr>
+              <td><code>TOP 5..8</code></td>
+              <td><code>A/B</code> | <code>ResetGen</code> | <code>Cancel</code> | <code>Apply</code>.</td>
+              <td>
+                <div class="grid-map">
+                  <div class="grid-map-title">Actions</div>
                   <table class="grid-map-table">
                     <tbody>
                       <tr><td><code>TOP 5</code><br>A/B</td><td><code>TOP 6</code><br>ResetGen</td><td><code>TOP 7</code><br>Cancel</td><td><code>TOP 8</code><br>Apply</td></tr>
                     </tbody>
                   </table>
                 </div>
-                Press the selected generator pad again to reroll it in place.<br>Random | Acid Phrase | Acid Layer: NEW RAND<br>Vandalize | Wreck: CHAOS<br>Euclidean: NEW EUCL<br>Init: no action<br>TRK 1..8 force a Cancel first, then move the mode to the pressed track if it is a Note track; otherwise they just leave the Generators Mode and select that track.<br>TOP 4..8 stay neutral when they are not doing an active Generators Mode action.<br>On the machine, PAGE, SHIFT, PREV, and NEXT stay neutral too.<br>Any other machine or LP control outside this mini-mode forces Cancel and exits Generators Mode.</td>
+                <br>Applying from a generator page exits Generators Mode and returns to plain Steps.
+              </td>
             </tr>
             <tr>
-              <td><code>GRID</code></td>
-              <td>Step editing.</td>
-              <td>Rules vary with Track mode, Layer, Navigation page, and Note Style.</td>
+              <td><code>TRK 1..8</code></td>
+              <td>Retarget track.</td>
+              <td>If the pressed track supports this mode, mode moves there with that track-type map. Otherwise it exits Generators Mode and selects that track.</td>
             </tr>
           </tbody>
         </table>
 
-        <h4>Sequence Sub-View: Note Circuit Keyboard</h4>
-        <p>This sub-view is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Note Layer is <code>Note</code>.</p>
+        <h4>Note Circuit Keyboard</h4>
+        <p>This Sequence sub-view is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Note Layer is <code>Note</code>.</p>
         <table>
           <colgroup>
             <col style="width: 20%">
@@ -315,12 +360,12 @@
             <tr>
               <td><code>GRID 1..16</code></td>
               <td>Edit current 16-step section.</td>
-              <td>Hold a note pad in <code>25..40</code> (Note Keyboard), then press a step pad in <code>1..16</code> to write that note and force gate on.<br>Without a held note pad in <code>25..40</code>, pressing a step pad in <code>1..16</code> toggles gate.<br>Navigation chooses which 16-step section is shown here.</td>
+              <td>Hold a note pad in <code>26..39</code> (Note Keyboard), then press a step pad in <code>1..16</code> to write that note and force gate on.<br>Without a held note pad in <code>26..39</code>, pressing a step pad in <code>1..16</code> toggles gate.<br>Navigation chooses which 16-step section is shown here.</td>
             </tr>
             <tr>
-              <td><code>GRID 25..40</code></td>
-              <td>Note Keyboard.</td>
-              <td><code>25..32</code> = semitone row.<br><code>33..40</code> = tone row.<br>If the chosen note exists in the current scale, note selection follows the scale.<br>Notes outside the current scale use a separate chromatic selection.</td>
+              <td><code>GRID 26..39</code></td>
+              <td>Note keyboard.</td>
+              <td><code>26..31</code> = semitone row.<br><code>33..39</code> = tone row.<br>Scale-aware note selection.<br>In-scale notes follow the current scale; out-of-scale notes remain directly selectable chromatically (bypass scale).</td>
             </tr>
             <tr>
               <td><code>GRID 49..56</code></td>
@@ -330,18 +375,26 @@
             <tr>
               <td><code>GRID 57..60</code></td>
               <td>Select 16-step bank.</td>
-              <td><code>57</code> = steps 1-16<br><code>58</code> = steps 17-32<br><code>59</code> = steps 33-48<br><code>60</code> = steps 49-64</td>
+              <td>
+                <div class="grid-map">
+                  <table class="grid-map-table">
+                    <tbody>
+                      <tr><td><code>57</code><br>steps 1-16</td><td><code>58</code><br>steps 17-32</td><td><code>59</code><br>steps 33-48</td><td><code>60</code><br>steps 49-64</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
             </tr>
             <tr>
-              <td><code>TOP 7 + 1..16</code></td>
+              <td><code>TOP 7 + GRID 1..16</code><br><span style="font-weight: 400; font-style: normal;">Legacy / Deprecated</span></td>
               <td>Toggle scale base note at octave 0 | octave +5.</td>
-              <td>Switches the pressed step between the scale base note at octave 0 and the same note at octave +5.</td>
+              <td>Kept for compatibility. Switches the pressed step between the scale base note at octave 0 and the same note at octave +5.</td>
             </tr>
           </tbody>
         </table>
 
-        <h4>Sequence Sub-View: Stochastic Circuit Keyboard</h4>
-        <p>This sub-view is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Stochastic Layer is <code>Note Prob</code>.</p>
+        <h4>Stochastic Circuit Keyboard</h4>
+        <p>This Sequence sub-view is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Stochastic Layer is <code>Note Prob</code>.</p>
         <table>
           <colgroup>
             <col style="width: 20%">
@@ -358,13 +411,13 @@
           <tbody>
             <tr>
               <td><code>GRID 1..16</code></td>
-              <td>Edit Note Variation Probability for the selected note target.</td>
-              <td>Press <code>1..16</code> to set the Note Variation Probability level from low to high for the note target selected in <code>25..40</code>.<br>If the selected target probability is <code>0</code>, <code>1..16</code> stays OFF.</td>
+              <td>Edit note variation probability for the selected note target.</td>
+              <td>Press a note target pad in <code>26..40</code>, then press a pad in <code>1..16</code> to set its note variation probability from low to high.<br>If the selected target probability is <code>0</code>, pads <code>1..16</code> stay OFF.</td>
             </tr>
             <tr>
-              <td><code>GRID 25..40</code></td>
+              <td><code>GRID 26..40</code></td>
               <td>Note target select.</td>
-              <td><code>25..32</code> = semitone row.<br><code>33..40</code> = tone row.<br><code>32</code> = raise global Track octave by +1.<br><code>40</code> = lower global Track octave by -1.<br>If the chosen note exists in the current scale, note selection follows the scale.<br>Notes outside the current scale use a separate chromatic selection.</td>
+              <td><code>26..31</code> = semitone row.<br><code>33..39</code> = tone row.<br><code>32</code> = raise global Track octave by +1.<br><code>40</code> = lower global Track octave by -1.<br>Scale-aware note selection.<br>In-scale notes follow the current scale; out-of-scale notes remain directly selectable chromatically (bypass scale).<br>Double-press on <code>26..40</code> toggles selected note state and stores current octave in the selected stochastic step.</td>
             </tr>
             <tr>
               <td><code>GRID 49..56</code></td>
@@ -374,18 +427,22 @@
             <tr>
               <td><code>GRID 57..59</code></td>
               <td>Stochastic options.</td>
-              <td><code>57</code> = Use Loop | <code>58</code> = Clear Loop | <code>59</code> = Reseed<br>Reseed is blocked if Use Loop is enabled or the sequence is empty.</td>
-            </tr>
-            <tr>
-              <td><code>Double-press 25..40</code></td>
-              <td>Toggle selected note state.</td>
-              <td>Toggle gate and store the current octave in the selected stochastic step.</td>
+              <td>
+                <div class="grid-map">
+                  <table class="grid-map-table">
+                    <tbody>
+                      <tr><td><code>57</code><br>Use Loop</td><td><code>58</code><br>Clear Loop</td><td><code>59</code><br>Reseed</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br>Reseed is blocked if Use Loop is enabled or the sequence is empty.
+              </td>
             </tr>
           </tbody>
         </table>
 
-        <h4>Sequence Sub-View: Arp Circuit Keyboard</h4>
-        <p>This sub-view is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Arp Layer is <code>Note</code>.</p>
+        <h4>Arp Circuit Keyboard</h4>
+        <p>This Sequence sub-view is used only when <code>LP Note Style</code> is set to <code>Circuit</code> and the selected Arp Layer is <code>Note</code>.</p>
         <table>
           <colgroup>
             <col style="width: 20%">
@@ -403,12 +460,12 @@
             <tr>
               <td><code>GRID 1..16</code></td>
               <td>Edit gate probability for the selected note target.</td>
-              <td>Press <code>1..16</code> to set the gate probability level from low to high for the note target selected in <code>25..40</code>.<br>If the selected target probability is <code>0</code>, <code>1..16</code> stays OFF.</td>
+              <td>Press a note target pad in <code>26..40</code>, then press a pad in <code>1..16</code> to set its gate probability from low to high.<br>If the selected target probability is <code>0</code>, pads <code>1..16</code> stay OFF.</td>
             </tr>
             <tr>
-              <td><code>GRID 25..40</code></td>
+              <td><code>GRID 26..40</code></td>
               <td>Note target select.</td>
-              <td><code>25..32</code> = semitone row.<br><code>33..40</code> = tone row.<br><code>32</code> = raise global Track octave by +1.<br><code>40</code> = lower global Track octave by -1.<br>Chooses a bypass-scale note target for the Arp Track.</td>
+              <td><code>26..31</code> = semitone row.<br><code>33..39</code> = tone row.<br><code>32</code> = raise global Track octave by +1.<br><code>40</code> = lower global Track octave by -1.<br>Scale-aware note selection.<br>In-scale notes follow the current scale; out-of-scale notes remain directly selectable chromatically (bypass scale).<br>When MIDI keyboard mode is ON (<code>57</code>), pressing <code>26..40</code> feeds the arpeggiator and releasing non-gated notes removes them.<br>Double-press on <code>26..40</code> toggles selected note state only when MIDI keyboard mode is OFF; when ON, double-press has no action.</td>
             </tr>
             <tr>
               <td><code>GRID 49..56</code></td>
@@ -417,22 +474,21 @@
             </tr>
             <tr>
               <td><code>GRID 57..58</code></td>
-              <td>MIDI Keyboard options.</td>
-              <td><code>57</code> = Toggle MIDI Keyboard<br><code>58</code> = Toggle Hold<br>Hold works only when MIDI Keyboard mode is ON.</td>
+              <td>MIDI keyboard options.</td>
+              <td>
+                <div class="grid-map">
+                  <table class="grid-map-table">
+                    <tbody>
+                      <tr><td><code>57</code><br>Toggle MIDI keyboard</td><td><code>58</code><br>Toggle Hold</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br>Hold works only when MIDI keyboard mode is ON.
+              </td>
             </tr>
             <tr>
-              <td><code>MIDI Keyboard mode</code></td>
-              <td>Play live notes from the Keyboard area.</td>
-              <td>Pressing <code>25..40</code> feeds the arpeggiator.<br>Releasing non-gated notes removes them.</td>
-            </tr>
-            <tr>
-              <td><code>Double-press 25..40</code></td>
-              <td>Toggle selected note state.</td>
-              <td>When MIDI Keyboard mode is OFF, double-press toggles gate and adds or removes that note in the arpeggiator.<br>When MIDI Keyboard mode is ON, no double-press action is implemented.</td>
-            </tr>
-            <tr>
-              <td><code>TOP 5 + GRID</code></td>
-              <td>Select Arpeggiator mode.</td>
+              <td><code>TOP 5 + GRID 1..10</code></td>
+              <td>Select arpeggiator mode.</td>
               <td>
                 <div class="grid-map">
                   <div class="grid-map-title">Arp Track</div>
@@ -449,7 +505,7 @@
         </table>
 
 
-        <h3>Pattern</h3>
+        <h3>Pattern <code>TOP 8 + TOP 2</code></h3>
         <table>
           <colgroup>
             <col style="width: 20%">
@@ -465,49 +521,40 @@
           </thead>
           <tbody>
             <tr>
-              <td><code>TRK 1..8</code></td>
-              <td>Select the same Pattern on all Tracks.</td>
-              <td>Launch scene-side Pattern <code>1..8</code> on all Tracks.<br>Launch timing follows the current execute type (Immediate | Sync | Latch).</td>
-            </tr>
-            <tr>
               <td><code>GRID</code></td>
               <td>Select Track Pattern.</td>
-              <td>Column: Track.<br>Row: Pattern.</td>
+              <td>Columns = Track.<br>Rows = Pattern.</td>
             </tr>
             <tr>
-              <td><code>Hold TOP 2..3</code></td>
-              <td>Latch | Sync execute types.</td>
-              <td>Default execute type is Immediate.<br>Releasing <code>TOP 2</code> commits latched requests.<br>If Pattern Change is set to Sync, <code>TOP 3</code> temporarily flips back to Immediate.</td>
+              <td><code>TRK 1..8</code></td>
+              <td>Select the same Pattern on all Tracks.</td>
+              <td>Launch scene-side Pattern 1-8 on all Tracks.<br>Launch timing follows the current execute type.</td>
             </tr>
             <tr>
-              <td><code>TOP 1 + GRID</code></td>
-              <td>Pattern Navigation.</td>
-              <td>Shows the current Pattern Navigation map.</td>
+              <td><code>TOP 2..3 + GRID</code><br>or<br><code>TOP 2..3 + TRK 1..8</code></td>
+              <td>Latch | Sync (or Immediate) execute types.</td>
+              <td>
+                <div class="grid-map">
+                  <table class="grid-map-table">
+                    <tbody>
+                      <tr><td><code>TOP 2</code><br>Latch</td><td><code>TOP 3</code><br>Sync (or Immediate)</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <br>Behavior is Hold.<br>Default execute type is Immediate.<br>Releasing <code>TOP 2</code> commits latched requests.<br>If Pattern Change is set to Sync, <code>TOP 3</code> temporarily flips back to Immediate.
+              </td>
             </tr>
             <tr>
-              <td><code>TOP 1 + TOP 2..5</code></td>
-              <td>Navigate Left | Right | Up | Down.</td>
-              <td>Used on the current Pattern Navigation map.</td>
-            </tr>
-            <tr>
-              <td><code>TOP 8 + TRK 1..8</code></td>
-              <td>Track mute.</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><code>TOP 7 + TRK 1..8</code></td>
-              <td>Track Fill.</td>
-              <td>Releasing <code>TRK</code> or <code>TOP 7</code> clears Fills.</td>
-            </tr>
-            <tr>
-              <td><code>GRID colors</code></td>
-              <td>Pattern state colors in the GRID.</td>
-              <td>Colors vary with LP Style. They distinguish edited patterns, the currently playing pattern, and requested pattern changes.</td>
+              <td><code>Pattern visual feedback</code></td>
+              <td>Color indicators in Pattern.</td>
+              <td><code>GRID</code> colors vary with LP Style.<br>They distinguish edited patterns, the currently playing pattern, and requested pattern changes.</td>
             </tr>
           </tbody>
         </table>
 
-        <h3>Performer</h3>
+        <h3>Performer <code>TOP 8 + TOP 3</code></h3>
+
+        <h4>Common Controls</h4>
         <table>
           <colgroup>
             <col style="width: 20%">
@@ -522,50 +569,33 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td><code>TOP 2 + GRID 1..2</code></td>
+              <td>Enter Sequence Length Layer | Overview Layer.</td>
+              <td>
+                <div class="grid-map">
+                  <table class="grid-map-table">
+                    <tbody>
+                      <tr><td><code>1</code><br>Sequence Length Layer</td><td><code>2</code><br>Overview Layer</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
             <tr>
               <td><code>TRK 1..8</code></td>
               <td>Track select.</td>
               <td></td>
             </tr>
             <tr>
-              <td><code>TOP 8 + TRK 1..8</code></td>
-              <td>Track mute.</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><code>TOP 6 + TRK 1..8</code></td>
-              <td>Toggle Track solo.</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><code>TOP 7 + TRK 1..8</code></td>
-              <td>Track Fill.</td>
-              <td>Momentary while held. Releasing <code>TRK</code> or <code>TOP 7</code> clears Fills.</td>
-            </tr>
-            <tr>
-              <td><code>TOP 2 + GRID</code></td>
-              <td>Select Performer Layer: Sequence Length | Overview.</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td><code>TOP 1 + GRID</code></td>
-              <td>Performer Navigation.</td>
-              <td>Used only on the Overview Layer to move the visible overview window.</td>
-            </tr>
-            <tr>
-              <td><code>TOP 1 + TOP 2..5</code></td>
-              <td>Navigate Left | Right | Up | Down.</td>
-              <td>Used on the current Performer Navigation map.</td>
-            </tr>
-            <tr>
               <td><code>TOP 3 + GRID</code></td>
               <td>Set first step on Note | Curve | Stochastic | Logic.</td>
-              <td>Applies to the selected Track.</td>
+              <td>Applies to the selected track.</td>
             </tr>
             <tr>
               <td><code>TOP 4 + GRID</code></td>
               <td>Set last step on Note | Curve | Stochastic | Logic.</td>
-              <td>Applies to the selected Track.</td>
+              <td>Applies to the selected track.</td>
             </tr>
             <tr>
               <td><code>TOP 5 + GRID</code></td>
@@ -588,7 +618,7 @@
                     </tbody>
                   </table>
                 </div>
-                Applies to the selected Track.
+                <br>Applies to the selected track.
               </td>
             </tr>
             <tr>
@@ -611,18 +641,79 @@
                     </tbody>
                   </table>
                 </div>
-                Track follow applies to the selected Track.
+                <br>Track follow applies to the selected track.
               </td>
             </tr>
+          </tbody>
+        </table>
+
+        <h4>Sequence Length Layer <code>TOP 2 + GRID 1</code></h4>
+        <table>
+          <colgroup>
+            <col style="width: 20%">
+            <col style="width: 36%">
+            <col style="width: 44%">
+          </colgroup>
+          <thead>
             <tr>
-              <td><code>Sequence Length</code></td>
+              <th></th>
+              <th>Function</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>GRID</code></td>
               <td>Temporary first/last step override across all Note | Curve | Stochastic | Logic Tracks.</td>
               <td>Hold one pad to loop that single step. Hold two pads to set a temporary first/last range. Releasing the held pad(s) restores the original range.</td>
             </tr>
+          </tbody>
+        </table>
+
+        <h4>Overview Layer <code>TOP 2 + GRID 2</code></h4>
+        <table>
+          <colgroup>
+            <col style="width: 20%">
+            <col style="width: 36%">
+            <col style="width: 44%">
+          </colgroup>
+          <thead>
             <tr>
-              <td><code>Overview</code></td>
-              <td>GRID rows select Tracks and columns map visible steps.</td>
-              <td>Toggles gates directly on Note, Stochastic (first 12 only), and Logic.<br>On Note Track rows, <code>TOP 7 + GRID</code> sets the pressed step to the scale base note or the same note at octave +5.<br>Current step, gates, and the octave +5 note use different LP Style color cues.<br>Function LEDs show the selected Track section as a bar.</td>
+              <th></th>
+              <th>Function</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>GRID</code></td>
+              <td>Rows address track lanes and columns map visible steps.</td>
+              <td>Toggles gates directly on Note, Stochastic (first 12 only), and Logic.</td>
+            </tr>
+            <tr>
+              <td><code>TRK 1..8</code></td>
+              <td>Track select.</td>
+              <td>Scene row selection for the currently selected track.</td>
+            </tr>
+            <tr>
+              <td><code>TOP 1 + GRID 25..32</code></td>
+              <td>Performer Navigation.</td>
+              <td>Moves the visible Overview window; other GRID pads are ignored in this map.</td>
+            </tr>
+            <tr>
+              <td><code>TOP 1 + TOP 2..5</code></td>
+              <td>Navigate Left | Right | Up | Down.</td>
+              <td>Used on the current Performer Navigation map.<br><em>Legacy / Deprecated</em>: prefer <code>TOP 1 + GRID 25..32</code> direct map navigation.</td>
+            </tr>
+            <tr>
+              <td><code>TOP 7 + GRID</code><br><span style="font-weight: 400; font-style: normal;">Legacy / Deprecated</span></td>
+              <td>Toggle scale base note at octave 0 | octave +5.</td>
+              <td>Kept for compatibility. On Note Track rows, switches the pressed step between the scale base note at octave 0 and the same note at octave +5.</td>
+            </tr>
+            <tr>
+              <td><code>Overview visual feedback</code></td>
+              <td>Color and bank indicators in Overview.</td>
+              <td>Current step and gates use different LP Style color cues.<br>When the legacy octave +5 toggle is used, that note has its own cue too.<br><code>TOP 1..8</code> LEDs indicate the current bank of 8 steps for the selected track.</td>
             </tr>
           </tbody>
         </table>

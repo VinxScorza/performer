@@ -4,10 +4,13 @@
 
 #include "model/ArpSequence.h"
 #include "ui/LedPainter.h"
+#include "ui/StepSelectionUtils.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
 
+#include "engine/generators/ChaosEntropyGenerator.h"
 #include "model/Scale.h"
+#include "model/UserSettings.h"
 
 #include "os/os.h"
 
@@ -95,6 +98,11 @@ void ArpSequenceEditPage::draw(Canvas &canvas) {
     WindowPainter::drawHeader(canvas, _model, _engine, "STEPS", mode_flags);
 
     WindowPainter::drawActiveFunction(canvas, ArpSequence::layerName(layer()));
+    if (_launchpadGeneratorModeActive) {
+        WindowPainter::drawFooter(canvas);
+        drawLaunchpadGeneratorOverlay(canvas);
+        return;
+    }
     WindowPainter::drawFooter(canvas, functionNames, pageKeyState(), activeFunctionKey());
 
     const auto &trackEngine = _engine.selectedTrackEngine().as<ArpTrackEngine>();
@@ -391,6 +399,39 @@ void ArpSequenceEditPage::draw(Canvas &canvas) {
 
 
 
+}
+
+void ArpSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
+    static const char *overlayCells[2][6] = {
+        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, nullptr },
+        { nullptr, nullptr, nullptr, nullptr, nullptr, "INITS" },
+    };
+
+    constexpr int columns = 6;
+    constexpr int rows = 2;
+    constexpr int cellWidth = 41;
+    constexpr int cellHeight = 15;
+    constexpr int gridX = 0;
+    constexpr int gridY = 18;
+
+    canvas.setBlendMode(BlendMode::Set);
+    canvas.setFont(Font::Tiny);
+
+    for (int row = 0; row < rows; ++row) {
+        for (int col = 0; col < columns; ++col) {
+            int x = gridX + col * (cellWidth + 2);
+            int y = gridY + row * (cellHeight + 2);
+            const char *label = overlayCells[row][col];
+
+            canvas.setColor(label ? Color::Medium : Color::Low);
+            canvas.drawRect(x, y, cellWidth, cellHeight);
+
+            if (label) {
+                canvas.setColor(Color::Bright);
+                canvas.drawTextCentered(x, y + 4, cellWidth, 8, label);
+            }
+        }
+    }
 }
 
 void ArpSequenceEditPage::updateLeds(Leds &leds) {
@@ -1042,10 +1083,7 @@ void ArpSequenceEditPage::initSequence() {
         return;
     }
 
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
     builder->clearLayer(selected);
     builder->showPreview();
@@ -1058,10 +1096,7 @@ bool ArpSequenceEditPage::initLayerToArpDefaults() {
         return false;
     }
 
-    auto selected = _stepSelection.selected();
-    if (!selected.any()) {
-        selected.set();
-    }
+    auto selected = selectedOrAllSteps(_stepSelection);
     auto &sequence = _project.selectedArpSequence();
     for (int stepIndex = 0; stepIndex < int(sequence.steps().size()); ++stepIndex) {
         const bool targetStep = selected[stepIndex];
@@ -1101,10 +1136,7 @@ void ArpSequenceEditPage::generateSequence() {
             auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
 
             if (mode == Generator::Mode::InitLayer || mode == Generator::Mode::InitSteps) {
-                auto selected = _stepSelection.selected();
-                if (!selected.any()) {
-                    selected.set();
-                }
+                auto selected = selectedOrAllSteps(_stepSelection);
                 Generator::execute(mode, *builder, selected);
                 builder->showPreview();
                 builder->apply();
@@ -1122,6 +1154,33 @@ void ArpSequenceEditPage::generateSequence() {
             }
         }
     });
+}
+
+void ArpSequenceEditPage::openLaunchpadGenerator(Generator::Mode mode) {
+    if (mode == Generator::Mode::InitSteps || mode == Generator::Mode::InitLayer) {
+        auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
+        auto selected = selectedOrAllSteps(_stepSelection);
+        Generator::execute(Generator::Mode::InitSteps, *builder, selected);
+        builder->showPreview();
+        builder->apply();
+        showMessage("STEPS INITIALIZED");
+        return;
+    }
+
+    auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
+    if (_stepSelection.none()) {
+        _stepSelection.selectAll();
+    }
+
+    auto *generator = Generator::execute(mode, *builder, _stepSelection.selected());
+    if (generator) {
+        if (mode == Generator::Mode::ChaosEntropy) {
+            auto *entropy = static_cast<ChaosEntropyGenerator *>(generator);
+            entropy->setTargetMask(_model.settings().userSettings().get<EntropyLayersSetting>(SettingEntropyLayers)->getValue());
+            entropy->update();
+        }
+        _manager.pages().generator.show(generator, &_stepSelection);
+    }
 }
 
 

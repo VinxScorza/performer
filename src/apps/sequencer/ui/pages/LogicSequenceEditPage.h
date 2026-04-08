@@ -5,6 +5,7 @@
 #include "ui/StepSelection.h"
 #include "ui/model/LogicSequenceListModel.h"
 
+#include "engine/generators/Generator.h"
 #include "engine/generators/SequenceBuilder.h"
 #include "ui/KeyPressEventTracker.h"
 
@@ -47,6 +48,12 @@ public:
     virtual void keyPress(KeyPressEvent &event) override;
     virtual void encoder(EncoderEvent &event) override;
     virtual void midi(MidiEvent &event) override;
+    void openLaunchpadGenerator(Generator::Mode mode);
+    void launchpadUndo();
+    void setLaunchpadGeneratorModeActive(bool active) {
+        _launchpadGeneratorModeActive = active;
+    }
+    bool launchpadGeneratorModeActive() const { return _launchpadGeneratorModeActive; }
 
 private:
     typedef LogicSequence::Layer Layer;
@@ -60,6 +67,7 @@ private:
 
     void updateMonitorStep();
     void drawDetail(Canvas &canvas, const LogicSequence::Step &step);
+    void drawLaunchpadGeneratorOverlay(Canvas &canvas);
 
     void contextShow(bool doubleClick = false);
     void contextAction(int index);
@@ -97,4 +105,5 @@ private:
     Container<LogicSequenceBuilder> _builderContainer;
 
     LogicSequence _inMemorySequence;
+    bool _launchpadGeneratorModeActive = false;
 };

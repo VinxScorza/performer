@@ -2,6 +2,7 @@
 
 #include "LaunchpadDevice.h"
 #include "ui/ControllerManager.h"
+#include "ui/PageManager.h"
 #include "ui/pages/NoteSequenceEditPage.h"
 #include "ui/pages/GeneratorPage.h"
 #include "ui/pages/Pages.h"
@@ -255,7 +256,10 @@ LaunchpadController::~LaunchpadController() {
 }
 
 void LaunchpadController::uiPageChanged() {
-    if (_mode == Mode::Sequence && _generatorMode && !generatorModeSupported()) {
+    if (_mode == Mode::Sequence &&
+        _generatorMode &&
+        !generatorModeSupported() &&
+        !generatorModeTrackSupported()) {
         cancelGeneratorMode();
     }
 }
@@ -307,30 +311,24 @@ void LaunchpadController::globalDraw() {
 }
 
 bool LaunchpadController::globalButton(const Button &button, ButtonAction action) {
-    if (_mode == Mode::Sequence && _generatorMode && generatorModeSupported()) {
-        if (button.is<Shift>()) {
-            if (action == ButtonAction::Down) {
-                _generatorApplyArmed = generatorModePreviewPage();
-                _generatorApplyCanceled = false;
-                return true;
-            }
-            if (action == ButtonAction::Up) {
-                if (_generatorApplyArmed && !_generatorApplyCanceled && generatorModePreviewPage()) {
-                    if (auto *pages = _manager.pages()) {
-                        pages->generator.commit();
-                        setGeneratorMode(false);
-                    }
-                }
-                _generatorApplyArmed = false;
-                _generatorApplyCanceled = false;
-                return true;
-            }
-        }
+    if (handleGeneratorModeGlobalButtons(button, action)) {
+        return true;
+    }
 
-        if (buttonState<Shift>() && button.isFunction() && button.function() == 3 && action == ButtonAction::Down) {
-            _generatorApplyCanceled = true;
-            setGeneratorMode(false);
-            return true;
+    if (action == ButtonAction::Down &&
+        button.isScene() &&
+        generatorTrackSelectionLockedByUiKind()) {
+        return true;
+    }
+
+    if (action == ButtonAction::Up) {
+        // TOP 7 + TOP 8 undo/redo shortcut:
+        // trigger on TOP 8 release while TOP 7 is still held to avoid
+        // edge cases around chord-down ordering.
+        if (button.isFunction() && button.function() == 7 && buttonState(LaunchpadDevice::FunctionRow, 6)) {
+            if (launchpadUndoShortcut()) {
+                return true;
+            }
         }
     }
 
@@ -356,19 +354,7 @@ bool LaunchpadController::globalButton(const Button &button, ButtonAction action
                 setMode(Mode::Performer);
                 break;
             case 3:
-                if (_mode == Mode::Sequence && _project.selectedTrack().trackMode() == Track::TrackMode::Note) {
-                    if (_generatorMode && generatorModeSupported()) {
-                        setGeneratorMode(false);
-                        return true;
-                    }
-
-                    if (!generatorModeSupported()) {
-                        if (auto *pages = _manager.pages()) {
-                            pages->top.setMode(TopPage::Mode::SequenceEdit);
-                        }
-                    }
-
-                    setGeneratorMode(true);
+                if (handleGeneratorModeToggleShortcut(button)) {
                     return true;
                 }
                 break;
@@ -438,6 +424,30 @@ bool LaunchpadController::globalButton(const Button &button, ButtonAction action
     return false;
 }
 
+bool LaunchpadController::launchpadUndoShortcut() {
+    auto *pages = _manager.pages();
+    auto *pageManager = _manager.pageManager();
+    if (!pages || !pageManager) {
+        return false;
+    }
+
+    auto *top = pageManager->top();
+    if (top == &pages->noteSequenceEdit) {
+        pages->noteSequenceEdit.launchpadUndo();
+        return true;
+    }
+    if (top == &pages->curveSequenceEdit) {
+        pages->curveSequenceEdit.launchpadUndo();
+        return true;
+    }
+    if (top == &pages->logicSequenceEdit) {
+        pages->logicSequenceEdit.launchpadUndo();
+        return true;
+    }
+
+    return false;
+}
+
 //----------------------------------------
 // Sequence mode
 //----------------------------------------
@@ -453,7 +463,9 @@ void LaunchpadController::sequenceExit() {
 void LaunchpadController::sequenceDraw() {
     sequenceUpdateNavigation();
 
-    if (_generatorMode && !generatorModeSupported()) {
+    if (_generatorMode &&
+        !generatorModeSupported() &&
+        !generatorModeTrackSupported()) {
         setGeneratorMode(false);
     }
 
@@ -511,9 +523,7 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
 
     if (action == ButtonAction::Down) {
         if (buttonState<Shift>()) {
-            if (button.isScene()) {
-                _project.playState().toggleMuteTrack(button.scene());
-            }
+            sequenceSceneMute(button);
         } else if (buttonState<Navigate>()) {
             navigationButtonDown(_sequence.navigation, button);
         } else if (buttonState<Layer>()) {
@@ -541,13 +551,11 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                     return;
                 }
                 sequenceSetFollowMode(button.col);
-            } else if (button.isScene()) {
-                _project.playState().toggleSoloTrack(button.scene());
+            } else {
+                sequenceSceneSolo(button);
             }
         } else if (buttonState<Fill>()) {
-            if (button.isScene()) {
-                _project.playState().fillTrack(button.scene(), true);
-            }
+            sequenceSceneFill(button, true);
         } else {
             if (button.isGrid()) {
                 if (_noteStyle == 0) {
@@ -590,18 +598,13 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                     }
                 }
                 
-            } else if (button.isScene()) {
-                if (generatorTrackSelectionLocked()) {
-                    return;
-                }
-                _project.setSelectedTrackIndex(button.scene());
+            } else {
+                sequenceSceneSelectTrack(button);
             }
         }
     } else if (action == ButtonAction::Up) {
         if (buttonState<Fill>()) {
-            if (button.isScene()) {
-                _project.playState().fillTrack(button.scene(), false);
-            }
+            sequenceSceneFill(button, false);
         }
         if (button.is<Fill>()) {
             _project.playState().fillAll(false);
@@ -716,237 +719,6 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
                 break;
             }
             }
-        }
-    }
-}
-
-bool LaunchpadController::generatorModeSupported() const {
-    return _manager.uiPageKind() == ControllerManager::UiPageKind::NoteSequenceEdit ||
-           _manager.uiPageKind() == ControllerManager::UiPageKind::Generator;
-}
-
-bool LaunchpadController::generatorModeEditPage() const {
-    return _manager.uiPageKind() == ControllerManager::UiPageKind::NoteSequenceEdit;
-}
-
-bool LaunchpadController::generatorModePreviewPage() const {
-    return _manager.uiPageKind() == ControllerManager::UiPageKind::Generator;
-}
-
-bool LaunchpadController::generatorTrackSelectionLocked() const {
-    auto *pageManager = _manager.pageManager();
-    auto *pages = _manager.pages();
-
-    if (!pageManager || !pages) {
-        return false;
-    }
-
-    auto *top = pageManager->top();
-    return top == &pages->acidModeSelect ||
-           top == &pages->chaosScopeSelect ||
-           top == &pages->wreckPatternWarning;
-}
-
-void LaunchpadController::cancelGeneratorMode() {
-    if (!_generatorMode) {
-        return;
-    }
-
-    if (generatorModePreviewPage()) {
-        if (auto *pages = _manager.pages()) {
-            pages->generator.revert();
-        }
-    }
-
-    setGeneratorMode(false);
-}
-
-LaunchpadController::LaunchpadGenerator LaunchpadController::generatorModeGrid(int gridIndex) const {
-    switch (gridIndex) {
-    case 0:
-        return LaunchpadGenerator::Random;
-    case 1:
-        return LaunchpadGenerator::AcidPhrase;
-    case 9:
-        return LaunchpadGenerator::AcidLayer;
-    case 2:
-        return LaunchpadGenerator::Vandalize;
-    case 10:
-        return LaunchpadGenerator::Wreck;
-    case 3:
-        return LaunchpadGenerator::Euclidean;
-    case 7:
-        return LaunchpadGenerator::Init;
-    default:
-        return LaunchpadGenerator::None;
-    }
-}
-
-void LaunchpadController::setGeneratorMode(bool active) {
-    _generatorMode = active;
-    _generatorApplyArmed = false;
-    _generatorApplyCanceled = false;
-}
-
-void LaunchpadController::sequenceDrawGeneratorMode() {
-    for (int row = 0; row < 8; ++row) {
-        for (int col = 0; col < 8; ++col) {
-            setGridLed(row, col, colorOff());
-        }
-    }
-
-    const struct {
-        int row;
-        int col;
-        LaunchpadGenerator generator;
-    } slots[] = {
-        { 0, 0, LaunchpadGenerator::Random },
-        { 0, 1, LaunchpadGenerator::AcidPhrase },
-        { 1, 1, LaunchpadGenerator::AcidLayer },
-        { 0, 2, LaunchpadGenerator::Vandalize },
-        { 1, 2, LaunchpadGenerator::Wreck },
-        { 0, 3, LaunchpadGenerator::Euclidean },
-        { 0, 7, LaunchpadGenerator::Init },
-    };
-
-    for (const auto &slot : slots) {
-        setGridLed(slot.row, slot.col, _selectedGenerator == slot.generator ? colorGreen() : colorYellow(1));
-    }
-
-    bool previewPage = generatorModePreviewPage();
-    bool showingPreview = false;
-    bool resetState = false;
-    if (previewPage) {
-        if (auto *pages = _manager.pages()) {
-            showingPreview = pages->generator.launchpadShowingPreview();
-            resetState = pages->generator.launchpadResetState();
-        }
-    }
-
-    setFunctionLed(3, colorYellow());
-    setFunctionLed(4, previewPage ? (showingPreview ? colorGreen() : colorYellow()) : colorYellow(1));
-    setFunctionLed(5, previewPage ? (resetState ? colorYellow() : colorRed()) : colorYellow(1));
-    setFunctionLed(6, colorRed());
-    setFunctionLed(7, previewPage ? colorGreen() : colorGreen(1));
-}
-
-bool LaunchpadController::sequenceButtonGeneratorMode(const Button &button, ButtonAction action) {
-    if (action != ButtonAction::Down) {
-        return button.isGrid() || button.isFunction() || button.isScene();
-    }
-
-    if (button.isGrid()) {
-        LaunchpadGenerator generator = generatorModeGrid(button.gridIndex());
-        if (generator != LaunchpadGenerator::None) {
-            if (generatorModePreviewPage()) {
-                if (generator == _selectedGenerator) {
-                    if (generator != LaunchpadGenerator::Init) {
-                        if (auto *pages = _manager.pages()) {
-                            pages->generator.launchpadRandomize();
-                        }
-                    }
-                } else {
-                    if (auto *pages = _manager.pages()) {
-                        pages->generator.revert();
-                    }
-                    sequenceOpenGenerator(generator);
-                }
-                return true;
-            }
-
-            if (generatorModeEditPage()) {
-                sequenceOpenGenerator(generator);
-                return true;
-            }
-        }
-        return true;
-    }
-
-    if (button.isScene()) {
-        cancelGeneratorMode();
-        _project.setSelectedTrackIndex(button.scene());
-
-        if (_project.selectedTrack().trackMode() == Track::TrackMode::Note) {
-            if (!generatorModeSupported()) {
-                if (auto *pages = _manager.pages()) {
-                    pages->top.setMode(TopPage::Mode::SequenceEdit);
-                }
-            }
-            setGeneratorMode(true);
-        }
-
-        return true;
-    }
-
-    if (!button.isFunction()) {
-        cancelGeneratorMode();
-        return false;
-    }
-
-    if ((button.function() >= 0 && button.function() <= 2) || button.function() == 3 || button.function() == 7) {
-        return true;
-    }
-
-    if (button.function() == 4) {
-        if (generatorModePreviewPage()) {
-            if (auto *pages = _manager.pages()) {
-                pages->generator.togglePreview();
-            }
-        }
-        return true;
-    }
-
-    if (button.function() == 5) {
-        if (generatorModePreviewPage()) {
-            if (auto *pages = _manager.pages()) {
-                pages->generator.init();
-            }
-        }
-        return true;
-    }
-
-    if (button.function() == 6) {
-        if (generatorModePreviewPage()) {
-            if (auto *pages = _manager.pages()) {
-                pages->generator.revert();
-            }
-        }
-        setGeneratorMode(false);
-        return true;
-    }
-
-    cancelGeneratorMode();
-    return false;
-}
-
-void LaunchpadController::sequenceOpenGenerator(LaunchpadGenerator generator) {
-    _selectedGenerator = generator;
-
-    if (auto *pages = _manager.pages()) {
-        switch (generator) {
-        case LaunchpadGenerator::Random:
-            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Random);
-            break;
-        case LaunchpadGenerator::AcidPhrase:
-            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::AcidPhrase);
-            break;
-        case LaunchpadGenerator::AcidLayer:
-            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::AcidLayer);
-            break;
-        case LaunchpadGenerator::Vandalize:
-            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Vandalize);
-            break;
-        case LaunchpadGenerator::Wreck:
-            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Wreck);
-            break;
-        case LaunchpadGenerator::Euclidean:
-            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Euclidean);
-            break;
-        case LaunchpadGenerator::Init:
-            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Init);
-            break;
-        case LaunchpadGenerator::None:
-            break;
         }
     }
 }
@@ -2122,15 +1894,11 @@ void LaunchpadController::patternButton(const Button &button, ButtonAction actio
 
     if (action == ButtonAction::Down) {
         if (buttonState<Shift>()) {
-            if (button.isScene()) {
-                _project.playState().toggleMuteTrack(button.scene());
-            }
+            patternSceneMute(button);
         } else if (buttonState<Navigate>()) {
             navigationButtonDown(_pattern.navigation, button);
         } else if (buttonState<Fill>()) {
-            if (button.isScene()) {
-                _project.playState().fillTrack(button.scene(), true);
-            }
+            patternSceneFill(button, true);
         } else {
             PlayState::ExecuteType executeType = PlayState::ExecuteType::Immediate;
             if (_patternChangeDefault==1) {
@@ -2146,10 +1914,7 @@ void LaunchpadController::patternButton(const Button &button, ButtonAction actio
                 }
             }
 
-            if (button.isScene()) {
-                int pattern = button.scene() - _pattern.navigation.row * 8;
-                playState.selectPattern(pattern, executeType);
-            }
+            patternSceneSelectPattern(button, executeType);
 
             if (button.isGrid()) {
                 int pattern = button.row - _pattern.navigation.row * 8;
@@ -2159,9 +1924,7 @@ void LaunchpadController::patternButton(const Button &button, ButtonAction actio
         }
     } else if (action == ButtonAction::Up) {
         if (buttonState<Fill>()) {
-            if (button.isScene()) {
-                playState.fillTrack(button.scene(), false);
-            }
+            patternSceneFill(button, false);
         }
         if (button.is<Fill>()) {
             playState.fillAll(false);
@@ -2369,9 +2132,7 @@ void LaunchpadController::performerButton(const Button &button, ButtonAction act
     if (action == ButtonAction::Down) {
     
         if (buttonState<Shift>()) {
-            if (button.isScene()) {
-                _project.playState().toggleMuteTrack(button.scene());
-            }
+            performerSceneMute(button);
         } else if (buttonState<Navigate>()) {
             performNavigationButtonDown(_performNavigation.navigation, button);
             
@@ -2398,13 +2159,11 @@ void LaunchpadController::performerButton(const Button &button, ButtonAction act
                 if (button.col==0 && button.row == 2) {
                     _performFollowMode = !_performFollowMode;
                 }
-            } else if (button.isScene()) {
-                _project.playState().toggleSoloTrack(button.scene());
+            } else {
+                performerSceneSolo(button);
             }
         } else if (buttonState<Fill>()) {
-            if (button.isScene()) {
-                _project.playState().fillTrack(button.scene(), true);
-            }
+            performerSceneFill(button, true);
         } else if (button.isGrid()) {
 
             if (_performSelectedLayer == 0) {
@@ -2475,14 +2234,12 @@ void LaunchpadController::performerButton(const Button &button, ButtonAction act
                         break;
                 }
             } 
-        } else if (button.isScene()) {
-            _project.setSelectedTrackIndex(button.scene());
+        } else {
+            performerSceneSelectTrack(button);
         }
     } else if (action == ButtonAction::Up) {
         if (buttonState<Fill>()) {
-            if (button.isScene()) {
-                _project.playState().fillTrack(button.scene(), false);
-            }
+            performerSceneFill(button, false);
         }
         if (button.is<Fill>()) {
             _project.playState().fillAll(false);
@@ -2590,35 +2347,6 @@ void LaunchpadController::performNavigationButtonDown(Navigation &navigation, co
 //----------------------------------------
 // Drawing
 //----------------------------------------
-
-void LaunchpadController::drawTracksGateAndSelected(const Engine &engine, int selectedTrack) {
-    for (int track = 0; track < 8; ++track) {
-        const auto &trackEngine = engine.trackEngine(track);
-        bool unmutedActivity = trackEngine.activity() && !trackEngine.mute();
-        bool mutedActivity = trackEngine.activity() && trackEngine.mute();
-        bool selected = track == selectedTrack;
-        setSceneLed(
-            track,
-            color(
-                (mutedActivity || (selected && !unmutedActivity)),
-                (unmutedActivity || (selected && !mutedActivity))
-            )
-        );
-    }
-}
-
-void LaunchpadController::drawTracksGateAndMute(const Engine &engine, const PlayState &playState) {
-    for (int track = 0; track < 8; ++track) {
-        const auto &trackEngine = engine.trackEngine(track);
-        setSceneLed(
-            track,
-            color(
-                trackEngine.mute(),
-                trackEngine.activity()
-            )
-        );
-    }
-}
 
 void LaunchpadController::drawRange(int first, int last, int selected) {
     for (int i = first; i <= last; ++i) {
@@ -3567,6 +3295,16 @@ void LaunchpadController::setSceneLed(int col, Color color) {    if (col >= 0 &&
 void LaunchpadController::dispatchButtonEvent(const Button& button, ButtonAction action) {
     if (globalButton(button, action)) {
         return;
+    }
+
+    if (action == ButtonAction::Down && button.isScene()) {
+        if (modalTrackSelectionLocked()) {
+            return;
+        }
+
+        if (generatorTrackSelectionLockedByTopPage()) {
+            return;
+        }
     }
 
     CALL_MODE_FUNCTION(_mode, Button, button, action);

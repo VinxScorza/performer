@@ -51,8 +51,13 @@ void ChaosGenerator::printParam(int index, StringBuilder &str) const {
 }
 
 void ChaosGenerator::init() {
+    const uint32_t currentSeed = _params.seed;
+    const Scope currentScope = _params.scope;
+
     _params = Params();
-    randomizeSeed();
+    _params.seed = currentSeed;
+    _params.scope = currentScope;
+
     update();
 }
 

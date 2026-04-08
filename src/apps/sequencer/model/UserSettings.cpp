@@ -43,6 +43,8 @@ void UserSettings::read(VersionedSerializedReader &reader) {
             reader.read(dynamic_cast<ChaosSeqLayersSetting *>(setting)->getValue(), 3);
         } else if (setting->getKey() == SettingChaosPatLayers) {
             reader.read(dynamic_cast<ChaosPatLayersSetting *>(setting)->getValue(), 3);
+        } else if (setting->getKey() == SettingEntropyLayers) {
+            reader.read(dynamic_cast<EntropyLayersSetting *>(setting)->getValue(), 5);
         } else if (setting->getKey() == SettingMenuWrap) {
             reader.read(dynamic_cast<MenuWrapSetting *>(setting)->getValue(), 4);
         } else {

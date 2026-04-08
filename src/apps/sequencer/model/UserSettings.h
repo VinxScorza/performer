@@ -2,6 +2,7 @@
 
 #include <core/io/VersionedSerializedWriter.h>
 #include <core/io/VersionedSerializedReader.h>
+#include "engine/generators/EntropyTargets.h"
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
@@ -17,6 +18,7 @@
 #define SettingSyncSong "syncsong"
 #define SettingChaosSeqLayers "chaosseq"
 #define SettingChaosPatLayers "chaospat"
+#define SettingEntropyLayers "entropylayers"
 #define SettingMenuWrap "menuwrap"
 
 static constexpr uint16_t DefaultChaosTargetMask = 0x3fff;
@@ -229,6 +231,17 @@ public:
     ) {}
 };
 
+class EntropyLayersSetting : public Setting<uint16_t> {
+public:
+    EntropyLayersSetting() : Setting(
+        SettingEntropyLayers,
+        "Entropy Layers",
+        { "edit" },
+        { uint16_t(DefaultEntropyTargetMask) },
+        uint16_t(DefaultEntropyTargetMask)
+    ) {}
+};
+
 class UserSettings {
 public:
     UserSettings() {
@@ -243,6 +256,7 @@ public:
 
         addSetting(new ChaosSeqLayersSetting());
         addSetting(new ChaosPatLayersSetting());
+        addSetting(new EntropyLayersSetting());
 
         addSetting(new LaunchpadStyleSetting());
         addSetting(new LaunchpadNoteStyle());

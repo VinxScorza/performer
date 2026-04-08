@@ -23,6 +23,8 @@ void GeneratorSelectPage::show(bool allowAcid, ResultCallback callback) {
     _callback = callback;
     _listModel.setAllowAcid(allowAcid);
     setSelectedRow(0);
+    _boundTrackIndex = _project.selectedTrackIndex();
+    _boundTrackMode = _project.selectedTrack().trackMode();
     ListPage::show();
 }
 
@@ -87,6 +89,7 @@ void GeneratorSelectPage::keyPress(KeyPressEvent &event) {
             event.consume();
             break;
         }
+        return;
     }
 
     if (key.is(Key::Encoder)) {
@@ -99,8 +102,14 @@ void GeneratorSelectPage::keyPress(KeyPressEvent &event) {
 }
 
 void GeneratorSelectPage::closeWithResult(bool result) {
+    bool effectiveResult = result && boundTrackContextValid();
     Page::close();
     if (_callback) {
-        _callback(result, _listModel.rowToMode(selectedRow()));
+        _callback(effectiveResult, _listModel.rowToMode(selectedRow()));
     }
+}
+
+bool GeneratorSelectPage::boundTrackContextValid() const {
+    return _project.selectedTrackIndex() == _boundTrackIndex &&
+           _project.selectedTrack().trackMode() == _boundTrackMode;
 }
