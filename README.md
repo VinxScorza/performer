@@ -31,7 +31,7 @@ Primary documentation for this fork: Vinx Scorza fork website, user manual, LP C
 Current validation scope:
 - Real hardware testing is still useful for `Reset Pulse` / `Reset Gate`.
 - Real hardware testing is still useful for `Voltage Mode` user scales in `Note`, `Arp`, and `Stochastic`. 
-  !! TO BE FIXED in ARP and STOCHASTIC !!
+<br>  !! TO BE FIXED in ARP and STOCHASTIC !!
 - Desktop Simulator USB MIDI has been validated well on `macOS / OS X` with `Launchpad Mini MK3`, but not yet across other Launchpads or operating systems.
 
 For the broader curated overview, see <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">FEATURES</a>. For the exact technical chronology, including inherited upstream history, see the repository <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG</a>.
