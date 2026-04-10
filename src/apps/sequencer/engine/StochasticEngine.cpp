@@ -25,6 +25,10 @@
 
 static Random rng;
 
+static int activePitchSlotCount(const Scale &scale) {
+    return clamp(scale.notesPerOctave(), 1, 12);
+}
+
 bool sortTaskByProbRev(const StochasticStep& lhs, const StochasticStep& rhs) {
     return lhs.probability() > rhs.probability();
 }
@@ -375,6 +379,8 @@ void StochasticEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNext
 
     auto &sequence = *_sequence;
     const auto &evalSequence = useFillSequence ? *_fillSequence : *_sequence;
+    const auto &sequenceScale = sequence.selectedScale(_model.project().scale());
+    const int pitchSlots = activePitchSlotCount(sequenceScale);
     
     int stepIndex;
 
@@ -432,7 +438,7 @@ void StochasticEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNext
 
         std::vector<StochasticStep> probability;
         int sum =0;
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < pitchSlots; i++) {
             if (sequence.step(i).gate()) {
                 int prob = sequence.step(i).noteVariationProbability() + _stochasticTrack.noteProbabilityBias();
                 if (sequence.step(i).noteVariationProbability()==0) {

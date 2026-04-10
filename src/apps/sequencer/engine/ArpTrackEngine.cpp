@@ -21,6 +21,18 @@
 
 static Random rng;
 
+static int activePitchSlotCount(const Scale &scale) {
+    return clamp(scale.notesPerOctave(), 1, 12);
+}
+
+static int wrappedPitchSlotIndex(int note, int slotCount) {
+    int index = note % slotCount;
+    if (index < 0) {
+        index += slotCount;
+    }
+    return index;
+}
+
 bool sortTaskByProbRev(const ArpStep& lhs, const ArpStep& rhs) {
     return lhs.probability() > rhs.probability();
 }
@@ -431,6 +443,7 @@ void ArpTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
 
     const auto &sequence = activeSequence();
     const auto &scale = sequence.selectedScale(_model.project().scale());
+    const int pitchSlots = activePitchSlotCount(scale);
     int octave = _arpTrack.octave();
     int transpose = _arpTrack.transpose();
     
@@ -441,8 +454,7 @@ void ArpTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
 
     if (message.isNoteOff()) {
         int note = noteFromMidiNote(message.note())  + evalTransposition(scale, octave, transpose);
-        int octave = roundDownDivide(note, scale.notesPerOctave());
-        int stepNoteCleared = note - (octave*scale.notesPerOctave());
+        int stepNoteCleared = wrappedPitchSlotIndex(note, pitchSlots);
         if (sequence.step(stepNoteCleared).gate()) {
             return;
         }
@@ -454,8 +466,7 @@ void ArpTrackEngine::monitorMidi(uint32_t tick, const MidiMessage &message) {
     if (message.isNoteOn()) {
         int note = noteFromMidiNote(message.note()) + evalTransposition(scale, octave, transpose);
         
-        int octave = roundDownDivide(note, scale.notesPerOctave());
-        int stepNoteCleared = note - (octave*scale.notesPerOctave());
+        int stepNoteCleared = wrappedPitchSlotIndex(note, pitchSlots);
         if (sequence.step(stepNoteCleared).gate()) {
             return;
         }
@@ -499,6 +510,8 @@ void ArpTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextSt
 
     const auto &sequence = activeSequence();
     const auto &evalSequence = useFillSequence ? *_fillSequence : activeSequence();
+    const auto &sequenceScale = sequence.selectedScale(_model.project().scale());
+    const int pitchSlots = activePitchSlotCount(sequenceScale);
 
     if (!_arpeggiator.hold() && !isKeyPressed()) {
         for (int i = 0; i < _noteCount; ++i) {
@@ -509,7 +522,7 @@ void ArpTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextSt
     }
 
     if (_noteCount == 0 && sequence.hasSteps()) {
-        for (int i = 0; i < 12; ++i) {
+        for (int i = 0; i < pitchSlots; ++i) {
             if (sequence.step(i).gate()) {
                 addNote(sequence.step(i).note(), i, Type::Sequencer, sequence.step(i).noteOctave());
             }
@@ -615,13 +628,16 @@ void ArpTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
     }
 
     bool stepWritten = false;
+    const auto &scale = activeSequence().selectedScale(_model.project().scale());
+    const int notesPerOctave = clamp(scale.notesPerOctave(), 1, 128);
+    const int pitchSlots = activePitchSlotCount(scale);
 
-    auto writeStep = [this, divisor, &stepWritten] (int note, int lengthTicks) {
+    auto writeStep = [this, divisor, &stepWritten, notesPerOctave, pitchSlots] (int note, int lengthTicks) {
 
         int stepNote = noteFromMidiNote(note);
-        int octave = roundDownDivide(stepNote, 12);
+        int octave = roundDownDivide(stepNote, notesPerOctave);
         
-        int stepNoteCleared = stepNote - (octave*12);
+        int stepNoteCleared = wrappedPitchSlotIndex(stepNote, pitchSlots);
         auto &step = _sequence->step(stepNoteCleared);
         int length = (lengthTicks * ArpSequence::Length::Range) / divisor;
         step.setGate(true);
