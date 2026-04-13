@@ -12,6 +12,7 @@
 
 #include "model/StochasticSequence.h"
 #include "model/Scale.h"
+#include "engine/EngineTestHooks.h"
 #include "ui/MatrixMap.h"
 #include <algorithm>
 #include <climits>
@@ -161,6 +162,12 @@ static float evalStepNote(const StochasticSequence::Step &step, int probabilityB
     }
     return scale.noteToVolts(note) + (scale.isChromatic() ? rootNote : 0) * (1.f / 12.f);
 }
+
+#if defined(PLATFORM_SIM)
+float EngineTestHooks::evalStochasticStepNoteForScale(const StochasticSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, const StochasticSequence &sequence, bool useVariation) {
+    return evalStepNote(step, probabilityBias, scale, rootNote, octave, transpose, sequence, useVariation);
+}
+#endif
 
 
 

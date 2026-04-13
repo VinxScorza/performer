@@ -11,6 +11,7 @@
 
 #include "model/ArpSequence.h"
 #include "model/Scale.h"
+#include "engine/EngineTestHooks.h"
 #include "ui/MatrixMap.h"
 #include <climits>
 #include <cstddef>
@@ -198,6 +199,12 @@ static float evalStepNote(const ArpSequence::Step &step, int probabilityBias, co
     }
     return scale.noteToVolts(note) + (scale.isChromatic() ? rootNote : 0) * (1.f / 12.f);
 }
+
+#if defined(PLATFORM_SIM)
+float EngineTestHooks::evalArpStepNoteForScale(const ArpSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, const ArpSequence &sequence, bool useVariation) {
+    return evalStepNote(step, probabilityBias, scale, rootNote, octave, transpose, sequence, useVariation);
+}
+#endif
 
 int ArpTrackEngine::getNextWeightedPitch(std::vector<ArpStep> distr, int notesPerOctave) {
         int total_weights = 0;

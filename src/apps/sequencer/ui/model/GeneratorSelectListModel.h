@@ -13,16 +13,31 @@ public:
     }
 
     Generator::Mode rowToMode(int row) const {
+        if (_allowAcid) {
+            switch (row) {
+            case 0:
+                return Generator::Mode::Random;
+            case 1:
+                return Generator::Mode::Acid;
+            case 2:
+                return Generator::Mode::Chaos;
+            case 3:
+                return Generator::Mode::Euclidean;
+            case 4:
+                return Generator::Mode::InitSteps;
+            default:
+                return Generator::Mode::Random;
+            }
+        }
+
         switch (row) {
         case 0:
             return Generator::Mode::Random;
         case 1:
-            return _allowAcid ? Generator::Mode::Acid : Generator::Mode::Euclidean;
+            return Generator::Mode::ChaosEntropy;
         case 2:
-            return _allowAcid ? Generator::Mode::Chaos : Generator::Mode::InitSteps;
+            return Generator::Mode::Euclidean;
         case 3:
-            return _allowAcid ? Generator::Mode::Euclidean : Generator::Mode::Random;
-        case 4:
             return Generator::Mode::InitSteps;
         default:
             return Generator::Mode::Random;
@@ -30,7 +45,7 @@ public:
     }
 
     virtual int rows() const override {
-        return _allowAcid ? 5 : 3;
+        return _allowAcid ? 5 : 4;
     }
 
     virtual int columns() const override {
@@ -39,6 +54,18 @@ public:
 
     virtual void cell(int row, int column, StringBuilder &str) const override {
         if (column == 0) {
+            if (_allowAcid && row == 1) {
+                str("Acid (Layer/Phrase)");
+                return;
+            }
+            if (_allowAcid && row == 2) {
+                str("Chaos (Vandalize/Wreck)");
+                return;
+            }
+            if (!_allowAcid && row == 1) {
+                str("Chaos (Entropy)");
+                return;
+            }
             str(Generator::modeName(rowToMode(row)));
         }
     }
