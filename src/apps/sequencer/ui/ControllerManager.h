@@ -2,6 +2,7 @@
 
 #include "Controller.h"
 #include "controllers/launchpad/LaunchpadController.h"
+#include "controllers/knobpad/KnobPad16Controller.h"
 
 #include "model/Model.h"
 
@@ -23,6 +24,10 @@ struct Pages;
         { 0x1235, 0x0113, ControllerInfo::Type::Launchpad },    // Novation Launchpad Mini Mk3
         { 0x1235, 0x0103, ControllerInfo::Type::Launchpad },    // Novation Launchpad X
         { 0x1235, 0x0123, ControllerInfo::Type::Launchpad },    // Novation Launchpad Pro Mk3
+        { 0x1235, 0x0065, ControllerInfo::Type::KnobPad16LaunchControlXL }, // Novation Launch Control XL
+        { 0x1235, 0x006f, ControllerInfo::Type::KnobPad16LaunchControlXL }, // Novation Launch Control XL (alternate PID)
+        { 0x1c75, 0x0038, ControllerInfo::Type::KnobPad16BeatStepPro },     // Arturia BeatStep Pro
+        { 0x1c75, 0x0280, ControllerInfo::Type::KnobPad16BeatStepPro },     // Arturia BeatStep Pro (alternate PID)
     };
 
 class ControllerManager {
@@ -76,7 +81,7 @@ private:
     Model &_model;
     Engine &_engine;
     MidiPort _port;
-    Container<LaunchpadController> _controllerContainer;
+    Container<LaunchpadController, KnobPad16Controller> _controllerContainer;
     Controller *_controller = nullptr;
     PageManager *_pageManager = nullptr;
     Pages *_pages = nullptr;

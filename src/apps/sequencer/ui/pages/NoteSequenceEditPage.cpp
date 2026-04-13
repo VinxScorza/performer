@@ -101,7 +101,8 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
     const auto pattern_follow = track.patternFollow();
     const char* pf_repr = Types::patternFollowShortRepresentation(pattern_follow);
 
-    WindowPainter::drawHeader(canvas, _model, _engine, "STEPS", pf_repr);
+    const char *headerMode = _model.knobPad16Armed() ? "16STEP EDIT" : "STEPS";
+    WindowPainter::drawHeader(canvas, _model, _engine, headerMode, pf_repr);
 
     WindowPainter::drawActiveFunction(canvas, NoteSequence::layerName(layer()));
     if (_launchpadGeneratorModeActive) {

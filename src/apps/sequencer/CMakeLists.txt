@@ -71,6 +71,7 @@ set(sources
     ui/Ui.cpp
     ui/Screensaver.cpp
     # ui/controllers/launchpad
+    ui/controllers/knobpad/KnobPad16Controller.cpp
     ui/controllers/launchpad/LaunchpadController.cpp
     ui/controllers/launchpad/LaunchpadControllerGeneratorsMode.cpp
     ui/controllers/launchpad/LaunchpadControllerTrackSceneRouting.cpp

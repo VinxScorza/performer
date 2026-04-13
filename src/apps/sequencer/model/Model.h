@@ -37,6 +37,9 @@ public:
     const ClipBoard &clipBoard() const { return _clipBoard; }
           ClipBoard &clipBoard()       { return _clipBoard; }
 
+    bool knobPad16Armed() const { return _knobPad16Armed; }
+    void setKnobPad16Armed(bool armed) { _knobPad16Armed = armed; }
+
     //----------------------------------------
     // Methods
     //----------------------------------------
@@ -49,4 +52,5 @@ private:
     Project _project;
     Settings _settings;
     ClipBoard _clipBoard;
+    bool _knobPad16Armed = false;
 };

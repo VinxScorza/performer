@@ -7,4 +7,5 @@ Model::Model() :
 void Model::init() {
     _project.clear();
     _clipBoard.clear();
+    _knobPad16Armed = false;
 }
