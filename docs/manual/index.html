@@ -149,13 +149,19 @@
           Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
         </p>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through the active <code>v0.4.0</code> development line. The earlier <code>v0.3.2-vinx.*</code> naming is retained in history as lineage reference.
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through the active <code>v0.4.1</code> development line. The earlier <code>v0.3.2-vinx.*</code> naming is retained in history as lineage reference.
         </p>
         <p>
           Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems. The experimental <code>16-step Editing Mode</code> path is maintainer-validated on <code>Launch Control XL</code>; <code>BeatStep Pro</code> still needs dedicated on-hardware validation.
         </p>
         <p>
+          In the current line, <code>Voltage Mode</code> behavior on <code>Arp</code> and <code>Stochastic</code> bypass-scale paths has been fixed so non-chromatic user scales are respected instead of being forced to semitone fallback.
+        </p>
+        <p>
           Earlier upstream documentation is still referenced where useful, but the main workflow pages and the current appendix/Launchpad material have already been rewritten and realigned for this fork.
+        </p>
+        <p>
+          Search and navigation behavior in this online manual has also been improved for clearer multi-match discovery across long sections.
         </p>
         <p>
           Images have been removed on purpose; tables, settings, and technical descriptions are being kept and cleaned up.
@@ -1454,6 +1460,9 @@
         <p>
           The Note-track generator order is <code>Random</code>, <code>Acid</code>, <code>Chaos</code>, <code>Euclidean</code>, <code>Init Steps</code>. The current firmware keeps <code>Init Layer</code> on the step-page context menu and <code>Init Steps</code> in the generator chooser distinct.
         </p>
+        <p>
+          Performer <code>GEN</code> menu labels are explicit by context: on <code>Note</code> tracks you will see <code>Acid (Layer/Phrase)</code> and <code>Chaos (Vandalize/Wreck)</code>; on non-Note tracks, <code>Chaos</code> appears as <code>Chaos (Entropy)</code>.
+        </p>
         <h4>Context Menu</h4>
         <p>
           Hold <code>SHIFT</code> + <code>PAGE</code> or double-click <code>PAGE</code> in each generator page to open the context menu and access the following functions:
@@ -1507,7 +1516,7 @@
           </tbody>
         </table>
         <p>
-          Outside the LP <em>Generators Mode</em> mini-mode, Launchpad track/scene retarget is now locked across the machine generator path: the main <code>GEN</code> chooser, <em>Acid</em>/<em>Chaos</em> sub-selectors, and active generator pages. In practice, those choices stay bound to the current track until you explicitly cancel or confirm on the machine, preventing wrong-target apply/cancel edge cases.
+          Outside the LP <em>Generators Mode</em> mini-mode, Launchpad track/scene retarget is now locked across the Performer <code>GEN</code> menu path: the main <code>GEN</code> chooser, <em>Acid</em>/<em>Chaos</em> sub-selectors, and active generator pages. In practice, those choices stay bound to the current track until you explicitly cancel or confirm on the machine, preventing wrong-target apply/cancel edge cases.
         </p>
         <p>
           <code>ResetGen</code> is intentionally separated from reroll actions: <em>Random</em> resets to <code>Smooth 0</code>, <code>Bias 0</code>, <code>Range 5</code>, <code>Var 100</code>; <em>Acid</em> resets to <code>Density 50</code>, <code>Slide 10</code>, <code>Range 35</code>, <code>Var 100</code>; and <em>Euclidean</em> resets to <code>Steps 16</code>, <code>Beats 1</code>, <code>Offset 0</code>. Rerolling remains an explicit action via <code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>.
@@ -2095,7 +2104,7 @@
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
         <p>
-          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page reports the standalone Vinx version string (<code>v0.4.0</code>) correctly.
+          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page reports the standalone Vinx version string (<code>v0.4.1</code>) correctly.
         </p>
         <table>
           <thead>
@@ -2553,7 +2562,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           The Novation Launchpad can be used as an advanced control surface for the sequencer, allowing for editing sequences and launching patterns via the 8x8 button matrix. When a Launchpad is connected to the USB port, the sequencer automatically detects the device and immediately starts using it as a control surface.
         </p>
         <p>
-          This section is now being reviewed directly against the current Vinx fork implementation. The core behaviors below have already been realigned, but Launchpad coverage may still receive another dedicated cleanup pass later.
+          This section is aligned with the current Vinx fork implementation and updated together with firmware behavior changes.
         </p>
         <p>
           In practice, the currently rewritten Launchpad workflow in this manual has been tested primarily on <code>Launchpad Mini MK3</code>. Other supported Launchpad models should still work, but broader re-validation across devices remains useful.

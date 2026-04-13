@@ -35,10 +35,10 @@
         <h2>Features</h2>
         <div class="changelog-intro">
           <p>
-            This page is the curated web summary of the Vinx Scorza line. It focuses only on the Vinx fork, starting from <code>v0.3.2-vinx.1</code> (historical naming) and moving to standalone Vinx semantic versioning from <code>v0.4.0</code>, and reorganizes the work by topic instead of strict release order so it is easier to understand what this branch actually adds.
+            This page is the curated web summary of the Vinx Scorza line. It focuses only on the Vinx fork, starting from <code>v0.3.2-vinx.1</code> (historical naming) and moving to standalone Vinx semantic versioning in the first standalone Vinx release, and reorganizes the work by topic instead of strict release order so it is easier to understand what this branch actually adds.
           </p>
           <p>
-            This documentation line is aligned through the active <code>v0.4.0</code> development line. If you want the exact chronological log, including inherited upstream history and older <code>v0.3.2-vinx.*</code> releases, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
+            This documentation line is aligned through the active <code>v0.4.1</code> development line. If you want the exact chronological log, including inherited upstream history and older <code>v0.3.2-vinx.*</code> releases, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
           </p>
         </div>
       </section>
@@ -48,14 +48,14 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              The fork began with direct sequencing fixes, and that foundation still shapes everything above it.
+              The fork started with core sequencing stability work, and this foundation still supports everything built above it.
             </p>
             <ul>
-              <li>Stabilize step shifting across <code>Note</code>, <code>Logic</code>, <code>Curve</code>, <code>Stochastic</code>, and <code>Arp</code>, including the old 64-step crash/reboot case and shifting inside non-zero subranges.</li>
-              <li>Expand <code>Curve</code> tracks with per-step <code>Gate Offset</code> and <code>Gate Length</code> layers, including edit-page, overview, Launchpad handling, and simulator bindings.</li>
-              <li>Restore undo on <code>Curve</code> editing so it matches the long-standing Note workflow.</li>
-              <li>Fix scale-selection limits so the full built-in plus user-scale set is reachable again across <code>Project</code>, <code>Note</code>, <code>Logic</code>, <code>Stochastic</code>, and <code>Arp</code>.</li>
-              <li>Make MIDI note capture follow the active scale's octave span, so voltage-mode user scales behave as proper scales instead of being forced into fixed <code>1V/oct</code> assumptions.</li>
+              <li>Step shifting was stabilized across <code>Note</code>, <code>Logic</code>, <code>Curve</code>, <code>Stochastic</code>, and <code>Arp</code>, including the legacy <code>64-step</code> crash/reboot path and shift operations inside non-zero subranges.</li>
+              <li>Step selection behavior was refined with more consistent shift handling and a shared selection-or-all fallback used across step-edit and generator paths.</li>
+              <li><code>Curve</code> tracks were extended with per-step <code>Gate Offset</code> and <code>Gate Length</code>, including edit-page support, overview rendering, Launchpad handling, and simulator bindings.</li>
+              <li>Scale-selection limits were fixed so the full built-in plus user-scale set is reachable again across <code>Project</code>, <code>Note</code>, <code>Logic</code>, <code>Stochastic</code>, and <code>Arp</code>.</li>
+              <li><code>Voltage Mode</code> handling was aligned across capture and playback paths: MIDI note capture now follows the active scale octave span, and <code>Arp</code>/<code>Stochastic</code> bypass-scale paths respect non-chromatic user scales instead of forcing semitone/<code>1V/oct</code> fallback.</li>
             </ul>
           </article>
         </div>
@@ -69,16 +69,10 @@
               <code>Chaos</code> is the boldest Vinx-specific branch so far: intentionally rough, selection-aware, destructive when needed, and built around explicit preview/apply safety.
             </p>
             <ul>
-              <li>Introduce <code>Chaos</code> as an experimental Note-track generator based on explicit preview/apply safety rather than hidden destructive behavior.</li>
-              <li>Define it as a multi-layer macro-random system driven by a global <code>Amount</code> and a dedicated <code>4×4</code> target matrix with <code>All On/Off</code> controls.</li>
-              <li>Keep <code>Chaos</code> on <code>ORIGINAL</code> at entry and require explicit <code>CHAOS</code> action before generating the first preview.</li>
-              <li>Make <code>Chaos</code> selection-aware (persistent selection first, fallback to current step window).</li>
-              <li>Extend <code>Chaos</code> into <code>CHAOS MODE</code> with <code>Vandalize Sequence</code> (local, sequence-level) and <code>Wreck Pattern</code> (pattern-wide, multi-track, more destructive).</li>
-              <li>Add full compare workflow (<code>ORIGINAL ↔ VANDALIZED/WRECKED</code>), <code>A/B</code> preview, and dedicated popups.</li>
-              <li>Add <code>Entropy</code> as the <code>Chaos</code> subset for non-Note Launchpad workflows, reusing <code>ORIGINAL → CHAOS → A/B</code> logic in a track-local context.</li>
-              <li>Add <code>System -&gt; Chaos Defaults</code> with separate masks for sequence vandalizing and pattern wrecking.</li>
-              <li>Wrap destructive operations with warnings, explicit flows, and tighter memory handling.</li>
-              <li>Improve performance and memory usage (target-step backup only, in-place regeneration, sequence-scoped storage).</li>
+              <li><code>Chaos</code> is now framed as an experimental event generator with an explicit preview/apply safety model: a selection-aware multi-layer macro-random engine driven by global <code>Amount</code> and a dedicated target-layers matrix.</li>
+              <li>The workflow expands into <code>CHAOS MODE</code> with <code>Vandalize Sequence</code> (local, sequence-level), <code>Wreck Pattern</code> (pattern-wide, multi-track, more destructive), and non-Note <code>Entropy</code>, all with consistent <code>A/B</code> preview and dedicated popups.</li>
+              <li><code>System -&gt; Chaos Defaults</code> now carries separate masks for sequence vandalizing, pattern wrecking, and non-Note entropy unleashed targets.</li>
+              <li>Performance and memory behavior were tightened through target-step backup only, in-place regeneration, and sequence-scoped storage.</li>
             </ul>
           </article>
         </div>
@@ -92,12 +86,10 @@
               <code>Acid</code> is one of the clearest Vinx-specific expansions of the generator system: more musical, more structured, and layered.
             </p>
             <ul>
-              <li>Introduce <code>Acid</code> as a new Note-track generator with non-destructive preview.</li>
-              <li>Generate the first preview immediately on entry.</li>
-              <li>Split workflow into <code>Layer</code> mode (projects behavior onto a single layer: <code>Gate</code> / <code>Note</code> / <code>Slide</code>) and <code>Phrase</code> mode (writes coordinated <code>Gate + Note + Slide</code> phrases over selection or full pattern).</li>
-              <li>Refine parameter model (density, slide behavior, deterministic target counts).</li>
-              <li>Provide dedicated visual previews instead of generic generator rendering.</li>
-              <li>Align ordering and mapping across machine and Launchpad (<code>Layer → Phrase</code>).</li>
+              <li><code>Acid</code> is now a consolidated Note-track generator with non-destructive preview and a stable <code>Layer/Phrase</code> split.</li>
+              <li><code>Layer</code> mode projects behavior onto a single layer (<code>Gate</code>, <code>Note</code>, or <code>Slide</code>), while <code>Phrase</code> mode writes coordinated <code>Gate + Note + Slide</code> material across the current selection or full pattern.</li>
+              <li>Parameter behavior was tightened (density, slide behavior, deterministic target counts) to keep outputs more intentional and repeatable.</li>
+              <li>Dedicated visual previews replaced generic generator rendering, and ordering/mapping are aligned across machine pages and Launchpad (<code>Layer → Phrase</code>).</li>
             </ul>
           </article>
         </div>
@@ -108,16 +100,13 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              <code>Random</code> evolves from a quick reroll tool into a controlled generator with identity, stability, and compare workflow.
+              <code>Random</code> evolved from a quick reroll utility into a controlled generator with identity, stability, and compare workflow.
             </p>
             <ul>
-              <li>Rework <code>Random</code> around a non-destructive preview/apply model with <code>A/B</code>, <code>Cancel</code>, <code>Apply</code>, and reroll behavior.</li>
-              <li>Generate first preview immediately on entry.</li>
-              <li>Add <code>Variation</code> for controlled deviation from the original sequence instead of always jumping to a fully unrelated result.</li>
-              <li>Move to full <code>32-bit</code> hexadecimal seeds with stable behavior during parameter edits.</li>
-              <li>Keep seed stable while editing parameters to improve intentionality.</li>
-              <li>Improve preview rendering (layer-aware on Note tracks, richer visuals).</li>
-              <li>Keep generator footer actions in context (no unexpected page exit).</li>
+              <li><code>Random</code> now runs on a non-destructive preview/apply model with <code>A/B</code>, <code>Cancel</code>, <code>Apply</code>, and reroll actions built around predictable state transitions.</li>
+              <li><code>Variation</code> was added for controlled deviation from the original sequence, so changes can stay musical instead of always jumping to unrelated material.</li>
+              <li>Seed handling moved to stable <code>32-bit</code> hexadecimal values, and seed edits remain intentional while parameter edits avoid unwanted seed drift.</li>
+              <li>Preview rendering is richer and layer-aware (especially on Note tracks), and footer actions stay in context without unexpected page exits.</li>
             </ul>
           </article>
         </div>
@@ -128,20 +117,14 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              The Vinx line treats Launchpad support as a first-class live-performance layer, not just an accessory.
+              Launchpad is treated as a first-class performance layer, with coherent defaults, safer generator flows, and stronger routing stability.
             </p>
             <ul>
-              <li>Maintain Launchpad as a core system layer (<code>LP Style</code> / <code>LP Note Style</code>).</li>
-              <li>Change the default Launchpad settings to <code>LP Style = Blue</code> and <code>LP Note Style = Circuit</code>.</li>
-              <li>Support both <code>Classic</code> and <code>Circuit</code> workflows.</li>
-              <li>Fix multiple regressions (<code>Note Style</code>, targeting, pattern drawing, fill release, probability handling).</li>
-              <li>Add and expand Launchpad <code>Generators Mode</code>: full mapping on Note tracks; subset mapping on <code>Curve</code> / <code>Stochastic</code> / <code>Logic</code> / <code>Arp</code> (<code>Random</code>, <code>Entropy</code>, <code>Euclidean</code>, <code>Init Steps</code>).</li>
-              <li>Add <code>Undo</code> and consistent <code>Apply</code>/<code>Cancel</code>/<code>Reset</code> flows.</li>
-              <li>Lock track/scene retargeting during generator selector and generator pages.</li>
-              <li>Improve overlay stability, selector alignment, and generator commit behavior.</li>
-              <li>Add direct track jump to <code>Steps</code> from system pages via Launchpad.</li>
-              <li>Wake display on Launchpad input.</li>
-              <li>Refactor Launchpad controller architecture (P1 split, routing, LED drawing, lock helpers).</li>
+              <li>Launchpad remains a core system layer (<code>LP Style</code> / <code>LP Note Style</code>), with defaults aligned to <code>Blue + Circuit</code> while preserving both <code>Classic</code> and <code>Circuit</code> workflows.</li>
+              <li>Legacy LP regressions were resolved across note-style rendering, targeting, pattern drawing, fill release, and probability handling.</li>
+              <li>LP <code>Generators Mode</code> is track-aware and interaction-consistent. <code>Note</code> tracks use the full map (<code>Random</code>, <code>Acid Layer</code>, <code>Acid Phrase</code>, <code>Vandalize</code>, <code>Wreck</code>, <code>Euclidean</code>, <code>Init Steps</code>), while <code>Curve</code>/<code>Stochastic</code>/<code>Logic</code>/<code>Arp</code> use the subset (<code>Random</code>, <code>Entropy</code>, <code>Euclidean</code>, <code>Init Steps</code>), with aligned <code>A/B</code>, <code>Apply</code>/<code>Cancel</code>/<code>Reset</code>/<code>Undo</code>, reroll behavior, and improved overlay stability, selector alignment, and generator commit behavior.</li>
+              <li>Track/scene retarget remains locked during generator selector/pages, track jump to <code>Steps</code> from system pages is supported, and LP input can wake the display.</li>
+              <li>Launchpad controller internals were refactored with the P1 structural split (routing, LED drawing, and lock helpers) to reduce coupling and regression risk.</li>
             </ul>
           </article>
         </div>
@@ -152,16 +135,12 @@
         <div class="release-stack">
           <article class="release-entry">
             <p class="release-summary">
-              16-step Editing Mode adds direct per-step tactile editing on Note tracks through 16 knobs and 16 pads.
+              16-step Editing Mode adds a dedicated external-controller workflow for direct per-step note and gate editing on Note tracks.
             </p>
             <ul>
-              <li>Provide a dedicated 16-knob/16-pad editing path for <code>Launch Control XL</code> / <code>BeatStep Pro</code> style mappings.</li>
-              <li>Map knobs to <code>Note</code> values and pads to <code>Gate</code> toggle for steps <code>1..16</code> of the current visible bank.</li>
-              <li>Use explicit armed/disarmed mode entry, force loop on the visible 16-step window while armed, and restore prior loop range on disarm.</li>
-              <li>Support longer loops by moving bank-by-bank with <code>Prev</code>/<code>Next</code> while keeping the same per-step control model.</li>
-              <li>Expose pad/function LED feedback scope while leaving knob-row LED behavior device-local.</li>
-              <li>Keep controller-concurrency rules explicit: one active external control workflow at a time.</li>
-              <li>Current maintainer-side hardware validation is on <code>Launch Control XL</code>; <code>BeatStep Pro</code> remains code-supported with validation pending on real hardware.</li>
+              <li>The mode provides a 16-knob/16-pad control path for <code>Launch Control XL</code> and <code>BeatStep Pro</code> style mappings, with knobs editing step notes and pads toggling step gates on the current visible <code>1..16</code> bank.</li>
+              <li>Entry/exit is explicit through armed/disarmed state: armed mode forces playback/edit focus to the visible 16-step window, restores the previous loop range on disarm, and keeps longer loops practical through bank-by-bank <code>Prev</code>/<code>Next</code> navigation with the same per-step editing semantics.</li>
+              <li>Current maintainer-side hardware validation is on <code>Launch Control XL</code>; <code>BeatStep Pro</code> is code-supported and mapping-ready but still pending broader real-hardware validation, and controller concurrency is intentionally constrained to one active external control workflow at a time.</li>
             </ul>
           </article>
         </div>
@@ -175,11 +154,98 @@
               Clock behavior has been adjusted with real hardware compatibility and safer external sync as priorities.
             </p>
             <ul>
-              <li>Change the default output clock pulse from <code>1ms</code> to <code>10ms</code> for broader module compatibility.</li>
-              <li>Rescale the Swing UI to a more natural <code>0-99%</code> range while preserving original engine timing for backward compatibility.</li>
-              <li>Clarify reset behavior by separating <code>Reset Gate</code> and introducing <code>Reset Pulse</code> as a distinct external clock mode.</li>
-              <li>Make <code>Reset Pulse</code> react only to the rising edge, avoiding implicit start on falling edge.</li>
-              <li>Change the default <code>Reset CV</code> behavior to <code>Off</code>, so Note tracks hold their last CV value on stop unless the project explicitly asks otherwise.</li>
+              <li>The default output clock pulse was moved from <code>1ms</code> to <code>10ms</code> for broader module compatibility.</li>
+              <li>The Swing UI was rescaled to a more natural <code>0-99%</code> range while preserving original engine timing for backward compatibility.</li>
+              <li>Reset behavior was clarified by separating <code>Reset Gate</code> and introducing <code>Reset Pulse</code> as a distinct external clock mode that reacts only to the rising edge, avoiding implicit start on falling edge.</li>
+              <li>The default <code>Reset CV</code> behavior is now <code>Off</code>, so Note tracks hold their last CV value on stop unless the project explicitly asks otherwise.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Generator UX</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              Beyond individual generators, the Vinx line made generator pages more coherent, safer, and easier to perform with in real time.
+            </p>
+            <ul>
+              <li>The generator ecosystem across track families (<code>Random</code>, <code>Euclidean</code>, <code>Acid</code> <code>Layer/Phrase</code>, <code>Chaos</code> <code>Vandalize/Wreck/Entropy</code>) now follows a more coherent preview/apply safety model shared between machine pages and Launchpad <code>Generators Mode</code>.</li>
+              <li><code>Generate</code> opens on the current <code>16-step</code> bank and keeps navigation aligned to the active context.</li>
+              <li>The <code>Euclidean</code> generator was reworked with compare behavior, preview-on-entry, reseed, direct parameter editing, and a strict <code>Beats ≤ Steps</code> constraint.</li>
+              <li><code>ResetGen</code> now restores neutral defaults instead of quietly rerolling generator state.</li>
+              <li><code>Init Layer</code>, <code>Init Steps</code>, and <code>Init Seq</code> were separated again with a consistent selection-aware fallback.</li>
+              <li>Transport remains responsive inside generator pages so the sequencer stays playable while shaping material.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>UI &amp; Display</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              UI and display work focused on readability, signal clarity during performance, and more intentional visual feedback.
+            </p>
+            <ul>
+              <li>Generator previews were redesigned around full <code>64-step</code> views with a clearly visible active <code>16-step</code> bank and a playback-following playhead.</li>
+              <li><code>Random</code> and <code>Acid</code> rendering was cleaned up with better lane alignment and clearer visual separation.</li>
+              <li>Step graphics were refined to make gate offset, length, retrigger, condition, and slide states easier to read at a glance.</li>
+              <li>UI load was reduced by lowering refresh to <code>30 fps</code> and skipping redraws when the frame is unchanged.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>System &amp; Defaults</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              System behavior and defaults were refined to make machine-level settings more coherent, safer to manage, and easier to persist.
+            </p>
+            <ul>
+              <li><code>System</code> now includes direct save and a simplified settings flow, with an explicit save prompt when leaving <code>System -&gt; Settings</code> after changes (including <code>Chaos Defaults</code>) instead of silently discarding edits.</li>
+              <li><code>Chaos Defaults</code> was returned to the normal machine-settings save path instead of being treated as a separate auto-written case.</li>
+              <li><code>Menu Wrap</code> was added as an on-by-default preference for cyclic list navigation.</li>
+              <li>Screensaver behavior, wake behavior, and the <code>System</code> landing tab were refined for more predictable daily use.</li>
+              <li>Memory footprint was improved versus the upstream baseline, with lower SRAM/CCRAM pressure compared to Mebitek <code>0.3.2</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Simulators</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              The simulator side of the fork is now a real part of the ecosystem: useful for development, useful for testing, and documented as such.
+            </p>
+            <ul>
+              <li>The simulator stack now works as two complementary tools: the browser-based <code>Web Simulator</code> for immediate access and quick checks, and the native <code>Desktop Simulator</code> for deeper MIDI/controller workflows and development work.</li>
+              <li>The <code>Desktop Simulator</code> gained configurable DIN/USB MIDI routing via CLI, starts with MIDI disabled by default, and includes built-in status/tracing support (<code>--trace-midi</code>, <code>--trace-dio</code>).</li>
+              <li>Launchpad support was improved with model inference and port mirroring to keep controller behavior more predictable in simulator sessions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h4>Documentation</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              Documentation evolves together with the firmware.
+            </p>
+            <ul>
+              <li>The manual was realigned to current Vinx firmware behavior and kept text-first with technical clarity.</li>
+              <li>Online manual search/navigation behavior was improved and aligned with the current documentation structure.</li>
+              <li>The Launchpad cheatsheet was fully reworked and synchronized with current firmware workflows.</li>
+              <li>Simulator documentation pages were refreshed, and the build guide was expanded with simulator, MIDI, Launchpad, and tracing workflows.</li>
+              <li>Ecosystem pages (<code>Forks</code>, <code>Features</code>, and related references) were kept updated as part of the wider site/docs cleanup.</li>
             </ul>
           </article>
         </div>
@@ -202,102 +268,11 @@
       </section>
 
       <section>
-        <h4>Generator UX</h4>
-        <div class="release-stack">
-          <article class="release-entry">
-            <p class="release-summary">
-              Beyond individual generators, the Vinx line refines how generator pages behave and remain playable.
-            </p>
-            <ul>
-              <li>Reorganize generator menu for clarity as the family grows.</li>
-              <li>Open <code>Generate</code> on the current <code>16-step</code> bank and keep navigation aligned.</li>
-              <li>Rework <code>Euclidean</code> generator (compare, preview-on-entry, reseed, direct parameter editing, <code>Beats ≤ Steps</code> constraint).</li>
-              <li>Make <code>ResetGen</code> restore neutral defaults instead of quietly rerolling the generator state.</li>
-              <li>Separate <code>Init Layer</code> / <code>Init Steps</code> / <code>Init Seq</code> with selection-aware fallback.</li>
-              <li>Keep transport responsive inside generator pages so the sequencer remains playable while shaping material.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h4>UI &amp; Display</h4>
-        <div class="release-stack">
-          <article class="release-entry">
-            <p class="release-summary">
-              Focus on readability, performance clarity, and meaningful visual feedback.
-            </p>
-            <ul>
-              <li>Redesign generator previews using full <code>64-step</code> views with visible active <code>16-step</code> bank and playback-following playhead.</li>
-              <li>Improve rendering for <code>Random</code> and <code>Acid</code> (aligned lanes, clearer visuals).</li>
-              <li>Refine step graphics (gate offset, length, retrigger, condition, slide clarity).</li>
-              <li>Reduce UI load: lower refresh to <code>30 fps</code> and skip redraw when unchanged.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h4>System &amp; Defaults</h4>
-        <div class="release-stack">
-          <article class="release-entry">
-            <p class="release-summary">
-              Practical workflow improvements across machine behavior and persistence.
-            </p>
-            <ul>
-              <li>Add direct save from <code>System</code> and simplify the surrounding machine-settings flow.</li>
-              <li>Prompt to save when leaving <code>System -&gt; Settings</code> after changing user settings, including <code>Chaos Defaults</code>, instead of treating those changes as silently disposable.</li>
-              <li>Return <code>Chaos Defaults</code> to the normal machine-settings save path instead of treating them as a special auto-written case.</li>
-              <li>Add <code>Menu Wrap</code> as an on-by-default preference for cyclic list navigation.</li>
-              <li>Refine screensaver, wake behavior, and <code>System</code> landing tab.</li>
-              <li>Improve memory footprint versus upstream baseline (SRAM/CCRAM reduction vs Mebitek <code>0.3.2</code>).</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h4>Simulators</h4>
-        <div class="release-stack">
-          <article class="release-entry">
-            <p class="release-summary">
-              The simulator side of the fork is now a real part of the ecosystem: useful for development, useful for testing, and documented as such.
-            </p>
-            <ul>
-              <li>Clearly distinguish the browser-based <code>Web Simulator</code> from the native <code>Desktop Simulator</code>.</li>
-              <li>Improve Desktop Simulator: configurable DIN/USB MIDI via CLI and MIDI disabled by default.</li>
-              <li>Add status indicators and tracing (<code>--trace-midi</code>, <code>--trace-dio</code>).</li>
-              <li>Improve Launchpad support (model inference, port mirroring).</li>
-              <li>Align simulator state and behavior with firmware.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h4>Documentation</h4>
-        <div class="release-stack">
-          <article class="release-entry">
-            <p class="release-summary">
-              Documentation evolves together with the firmware.
-            </p>
-            <ul>
-              <li>Realign manual to Vinx behavior (including Launchpad and generators).</li>
-              <li>Keep manual text-first while preserving technical clarity.</li>
-              <li>Update simulator documentation pages.</li>
-              <li>Maintain ecosystem pages (<code>Forks</code>, <code>Features</code>, etc.).</li>
-              <li>Expand build guide with simulator, MIDI, Launchpad, and tracing workflows.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
         <h4>Versioning</h4>
         <div class="release-stack">
           <article class="release-entry">
             <ul>
-              <li>Transition from <code>v0.3.2-vinx.*</code> lineage to standalone semantic versioning (<code>v0.x.y</code>) starting from <code>v0.4.0</code>.</li>
+              <li>Transition from <code>v0.3.2-vinx.*</code> lineage to standalone semantic versioning (<code>v0.x.y</code>) starting from the first standalone Vinx release.</li>
               <li>Previous lineage retained for documentation/reference only.</li>
             </ul>
           </article>
