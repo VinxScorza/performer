@@ -150,7 +150,10 @@ static int evalTransposition(const Scale &scale, int octave, int transpose) {
 // evaluate note voltage
 static float evalStepNote(const ArpSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, ArpSequence sequence, bool useVariation = true) {
 
-    if (step.bypassScale()) {
+    // Bypass-scale semantics are meaningful only on chromatic scales.
+    // On non-chromatic scales (for example User Scale in Voltage mode),
+    // keep evaluation on the selected scale instead of forcing semitone scale.
+    if (step.bypassScale() && scale.isChromatic()) {
         const Scale &bypassScale = Scale::get(0);
         int note = step.note() + evalTransposition(bypassScale, octave, transpose);
         int probability = clamp(step.noteOctaveProbability() + probabilityBias, -1, ArpSequence::NoteOctaveProbability::Max);

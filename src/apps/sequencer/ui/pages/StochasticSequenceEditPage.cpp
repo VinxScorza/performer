@@ -157,7 +157,7 @@ void StochasticSequenceEditPage::draw(Canvas &canvas) {
         case Layer::Gate: {
                 int rootNote = sequence.selectedRootNote(_model.project().rootNote());
                 FixedStringBuilder<8> str;
-                if (step.bypassScale()) {
+                if (step.bypassScale() && scale.isChromatic()) {
                     const Scale &bypassScale = std::ref(Scale::get(0));
                     bypassScale.noteName(str, step.note(), rootNote, Scale::Short1);
                     canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
@@ -228,7 +228,7 @@ void StochasticSequenceEditPage::draw(Canvas &canvas) {
             } else {
                 canvas.setColor(Color::Low);
             }
-            if (step.bypassScale()) {
+            if (step.bypassScale() && scale.isChromatic()) {
                 const Scale &bypassScale = std::ref(Scale::get(0));
                 bypassScale.noteName(str, step.note(), rootNote, Scale::Short1);
             
@@ -255,7 +255,7 @@ void StochasticSequenceEditPage::draw(Canvas &canvas) {
                 canvas.setColor(Color::Low);
             }
             FixedStringBuilder<8> str;
-            if (step.bypassScale()) {
+            if (step.bypassScale() && scale.isChromatic()) {
                 const Scale &bypassScale = std::ref(Scale::get(0));
                 bypassScale.noteName(str, step.note(), rootNote, Scale::Short1);
                 canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
@@ -280,7 +280,7 @@ void StochasticSequenceEditPage::draw(Canvas &canvas) {
             }
             
             FixedStringBuilder<8> str;
-            if (step.bypassScale()) {
+            if (step.bypassScale() && scale.isChromatic()) {
                 const Scale &bypassScale = std::ref(Scale::get(0));
                 bypassScale.noteName(str, step.note(), rootNote, Scale::Short1);
                 canvas.drawText(x + (stepWidth - canvas.textWidth(str) + 1) / 2, y + 27, str);
