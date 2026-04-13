@@ -148,6 +148,26 @@
       </section>
 
       <section>
+        <h4>16-step Editing Mode</h4>
+        <div class="release-stack">
+          <article class="release-entry">
+            <p class="release-summary">
+              16-step Editing Mode adds direct per-step tactile editing on Note tracks through 16 knobs and 16 pads.
+            </p>
+            <ul>
+              <li>Provide a dedicated 16-knob/16-pad editing path for <code>Launch Control XL</code> / <code>BeatStep Pro</code> style mappings.</li>
+              <li>Map knobs to <code>Note</code> values and pads to <code>Gate</code> toggle for steps <code>1..16</code> of the current visible bank.</li>
+              <li>Use explicit armed/disarmed mode entry, force loop on the visible 16-step window while armed, and restore prior loop range on disarm.</li>
+              <li>Support longer loops by moving bank-by-bank with <code>Prev</code>/<code>Next</code> while keeping the same per-step control model.</li>
+              <li>Expose pad/function LED feedback scope while leaving knob-row LED behavior device-local.</li>
+              <li>Keep controller-concurrency rules explicit: one active external control workflow at a time.</li>
+              <li>Current maintainer-side hardware validation is on <code>Launch Control XL</code>; <code>BeatStep Pro</code> remains code-supported with validation pending on real hardware.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
         <h4>Clock &amp; Sync</h4>
         <div class="release-stack">
           <article class="release-entry">

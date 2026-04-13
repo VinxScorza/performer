@@ -8,8 +8,12 @@
 - Versioning transition: this release drops the inherited `v0.3.2-vinx.*` naming and starts standalone Vinx semantic versioning (`v0.x.y`)
 - Memory footprint improved versus upstream baseline: static SRAM and CCRAM usage are significantly reduced compared to Mebitek 0.3.2
 - Launchpad refactor: complete the P1 structural split of Launchpad controller domains (high-risk area hardening)
+- Add experimental `16-step Editing Mode` (Launch Control XL + BeatStep Pro mapping profile): explicit armed/disarmed entry, forced visible 16-step loop while armed, bank navigation, and loop-range restore on exit
+- Add `16-step Editing Mode` controller feedback scope on LCXL/BSP profiles: gate-pad LEDs plus prev/next function-button feedback (knob-row LED remains device-local)
 - Extend Launchpad `Generators Mode` beyond Note tracks: keep the full Note map unchanged, and add a dedicated subset on `Curve` / `Stochastic` / `Logic` / `Arp` (`GRID 1 = Random`, `GRID 3 = Entropy`, `GRID 4 = Euclidean`, `GRID 16 = Init Steps`)
 - Add the new Chaos generator mode `Entropy` for non-Note Launchpad workflows, with Chaos-style interaction, dedicated target matrix, and persisted defaults in `System -> Chaos Defaults`
+- Set `Slide Time` default to `10%` across track families (from the previous `20%` line default)
+- Make user scales use dynamic names in all `Scale` menus; default user-scale slot names are now `INIT1`..`INIT4`
 - Fix generator-selector track locking end-to-end: while the machine is inside the generator selector path (level 1 and deeper), Launchpad track/scene retarget is blocked so selection stays bound to the original track
 - Fix generator-page retarget regressions by keeping Launchpad track/scene switching locked while generator pages are active
 - From `Project`, `Layout`, `Routing`, `MIDI Output`, `User Scale`, and `Clock`, make track selection (`T1..8` on machine and `TRK1..8` on Launchpad) jump directly to `Steps` on the selected track
