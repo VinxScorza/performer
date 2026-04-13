@@ -3,6 +3,16 @@
 
 UserScale::Array UserScale::userScales;
 
+const char *UserScale::defaultName(int index) {
+    switch (index) {
+    case 0: return "INIT1";
+    case 1: return "INIT2";
+    case 2: return "INIT3";
+    case 3: return "INIT4";
+    default: return "INIT";
+    }
+}
+
 UserScale::UserScale() :
     Scale("")
 {
@@ -10,7 +20,7 @@ UserScale::UserScale() :
 }
 
 void UserScale::clear() {
-    StringUtils::copy(_name, "INIT", sizeof(_name));
+    StringUtils::copy(_name, defaultName(-1), sizeof(_name));
     setMode(Mode::Chromatic);
     clearItems();
 }

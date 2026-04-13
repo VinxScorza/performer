@@ -40,7 +40,7 @@ void NoteTrack::clear() {
     setFillMode(FillMode::Gates);
     setFillMuted(true);
     setCvUpdateMode(CvUpdateMode::Gate);
-    setSlideTime(20);
+    setSlideTime(10);
     setOctave(0);
     setTranspose(0);
     setRotate(0);

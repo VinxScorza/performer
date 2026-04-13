@@ -176,6 +176,32 @@ make -j
           When <code>--trace-dio</code> is enabled, the terminal prints simulated <code>CLK OUT</code> and <code>RESET OUT</code>
           transitions as they happen, which is useful for checking clock pulse timing independently from the UI rendering.
         </p>
+        <h3>16-step Editing Mode (Experimental)</h3>
+        <p>
+          The firmware also exposes an experimental external-controller path for per-step editing with 16 knobs + 16 pads. Current target controllers are <code>Launch Control XL</code> and <code>BeatStep Pro</code>.
+        </p>
+        <p>
+          Entry/exit is explicit via controller-side <code>Prev + Next</code> together. Typical mappings are:
+          <code>Track Select &lt; + &gt;</code> on LCXL, and <code>Ptn 1 + Ptn 2</code> on BSP templates.
+        </p>
+        <p>
+          In armed state, the mode forces loop to the currently visible 16-step bank, lets 16 knobs edit per-step notes, and 16 pads toggle per-step gates. On disarm, previous loop range is restored.
+        </p>
+        <p>
+          Recommended common mapping profile uses MIDI channel <code>9</code>: knobs on <code>CC 13..20</code> and <code>CC 29..36</code>, pads on notes <code>41..44</code>, <code>57..60</code>, <code>73..76</code>, <code>89..92</code>, and section buttons on <code>CC 106/107</code>.
+        </p>
+        <p>
+          Scope and limits: this mode targets the currently selected <code>Note</code> track; knob note edits are active only on machine <code>Note</code> layer; pad gate toggles remain active on that track context across layers. Controller LED feedback is not implemented.
+        </p>
+        <p>
+          Architecture limit: only one external control workflow should be considered active at a time. Launchpad and 16-step Editing Mode are not intended for simultaneous concurrent control in the same session path.
+        </p>
+        <p>
+          Practical workaround: if needed, use a powered USB hub with per-port switches and keep only one controller port enabled at a time. This is not true multi-controller support.
+        </p>
+        <p>
+          See also: <a href="../manual/index.html#appendix-16-step-editing-mode">Manual - 16-step Editing Mode</a> and <a href="../manual/index.html#appendix-controller-concurrency-limits">Manual - Controller Concurrency Limits</a>.
+        </p>
       </section>
 
     </main>

@@ -80,15 +80,26 @@ const Scale &Scale::get(int index) {
 }
 
 const char *Scale::name(int index) {
+    if (index < 0 || index >= Count) {
+        return nullptr;
+    }
+
     if (index < BuiltinCount) {
         return get(index).displayName();
-    } else {
-        switch (index - BuiltinCount) {
-        case 0: return "User1";
-        case 1: return "User2";
-        case 2: return "User3";
-        case 3: return "User4";
-        }
     }
-    return nullptr;
+
+    int userIndex = index - BuiltinCount;
+    const char *userName = UserScale::userScales[userIndex].name();
+    if (userName && userName[0] != '\0') {
+        return userName;
+    }
+
+    // Backward-compatible fallback if the stored name is empty.
+    switch (userIndex) {
+    case 0: return "User1";
+    case 1: return "User2";
+    case 2: return "User3";
+    case 3: return "User4";
+    default: return "User";
+    }
 }

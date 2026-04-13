@@ -137,6 +137,7 @@ bool UserScalePage::contextActionEnabled(int index) const {
 
 void UserScalePage::initUserScale() {
     _userScale->clear();
+    _userScale->setName(UserScale::defaultName(_selectedIndex));
     showMessage("USER SCALE INITIALIZED");
 }
 

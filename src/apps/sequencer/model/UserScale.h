@@ -232,6 +232,7 @@ public:
     }
 
     static Array userScales;
+    static const char *defaultName(int index);
 
 private:
     void noteNameChromaticMode(StringBuilder &str, int note, int rootNote, Format format) const {

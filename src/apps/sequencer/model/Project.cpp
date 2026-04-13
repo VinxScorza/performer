@@ -61,8 +61,10 @@ void Project::clear() {
     _routing.clear();
     _midiOutput.clear();
 
-    for (auto &userScale : UserScale::userScales) {
+    for (size_t i = 0; i < UserScale::userScales.size(); ++i) {
+        auto &userScale = UserScale::userScales[i];
         userScale.clear();
+        userScale.setName(UserScale::defaultName(int(i)));
     }
 
     setSelectedTrackIndex(0);
@@ -152,7 +154,7 @@ void Project::clear() {
     track(6).noteTrack().setFillMode(NoteTrack::FillMode::Gates);
     track(6).noteTrack().setFillMuted(true);
     track(6).noteTrack().setCvUpdateMode(NoteTrack::CvUpdateMode::Gate);
-    track(6).noteTrack().setSlideTime(20);
+    track(6).noteTrack().setSlideTime(10);
     track(6).noteTrack().setOctave(-1);
 
     noteSequence(6, 0).setScale(4);

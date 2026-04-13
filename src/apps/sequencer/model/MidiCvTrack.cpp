@@ -37,7 +37,7 @@ void MidiCvTrack::clear() {
     setPitchBendRange(2);
     setModulationRange(Types::VoltageRange::Unipolar5V);
     setRetrigger(false);
-    setSlideTime(20);
+    setSlideTime(10);
     setTranspose(0);
     _arpeggiator.clear();
 }

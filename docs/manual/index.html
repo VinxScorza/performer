@@ -124,6 +124,13 @@
                     <li><a href="#appendix-logic-operators">Logic Operators</a></li>
                     <li><a href="#appendix-midi-program-change">MIDI Program Change</a></li>
                     <li><a href="#appendix-launchpad">Launchpad</a></li>
+                    <li><a href="#appendix-launchpad-generators-mode">Launchpad Generators Mode</a></li>
+                    <li><a href="#appendix-16-step-editing-mode">16-step Editing Mode</a></li>
+                    <li><a href="#appendix-init-semantics">Init Semantics</a></li>
+                    <li><a href="#appendix-chaos-family">Chaos Family</a></li>
+                    <li><a href="#appendix-generator-input-semantics">Generator Input Semantics</a></li>
+                    <li><a href="#appendix-safety-fail-closed">Safety / Fail-Closed</a></li>
+                    <li><a href="#appendix-controller-concurrency-limits">Controller Concurrency Limits</a></li>
                     <li><a href="#appendix-desktop-simulator">Desktop Simulator</a></li>
                     <li><a href="#appendix-usb-midi-devices">USB MIDI Devices</a></li>
                     <li><a href="#appendix-calibration-procedure">Calibration Procedure</a></li>
@@ -171,6 +178,13 @@
           <li><a href="#pages">Pages</a></li>
           <li><a href="#appendix">Appendix</a></li>
           <li><a href="#appendix-launchpad">Launchpad</a></li>
+          <li><a href="#appendix-launchpad-generators-mode">Launchpad Generators Mode</a></li>
+          <li><a href="#appendix-16-step-editing-mode">16-step Editing Mode</a></li>
+          <li><a href="#appendix-init-semantics">Init Semantics</a></li>
+          <li><a href="#appendix-chaos-family">Chaos Family</a></li>
+          <li><a href="#appendix-generator-input-semantics">Generator Input Semantics</a></li>
+          <li><a href="#appendix-safety-fail-closed">Safety / Fail-Closed</a></li>
+          <li><a href="#appendix-controller-concurrency-limits">Controller Concurrency Limits</a></li>
           <li><a href="#appendix-desktop-simulator">Desktop Simulator</a></li>
           <li><a href="#appendix-clock-input-modes">Clock Input Modes</a></li>
           <li><a href="#appendix-firmware-update">Firmware Update</a></li>
@@ -462,13 +476,13 @@
 
         <h3 id="concepts-controller">Controller</h3>
         <p>
-          In addition to the routing system, specific MIDI controllers such as the Novation Launchpad can be used to control many aspects of the sequencer. This includes editing sequences, controlling mutes, launching patterns among other things.
+          In addition to the routing system, specific MIDI controllers can be used as dedicated control surfaces for parts of the sequencer workflow. This includes sequence editing, mutes, fills, pattern launch, and dedicated external edit flows.
         </p>
         <p>
-          Note: Launchpad is currently the only supported controller but others may follow.
+          In the current Vinx line, the primary controller surface is the Novation Launchpad family, plus an experimental <em>16-step Editing Mode</em> path for 16-knob/16-pad controllers such as Launch Control XL and BeatStep Pro.
         </p>
         <p>
-          See <a href="#appendix-launchpad">Launchpad</a> for more details.
+          See <a href="#appendix-launchpad">Launchpad</a> and <a href="#appendix-16-step-editing-mode">16-step Editing Mode</a> for details.
         </p>
 
         <h3 id="concepts-file-management">File Management</h3>
@@ -2702,25 +2716,10 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           The Launchpad color language should also be read relative to <code>LP Style</code>, not as a fixed universal set of absolute colors. The controller still communicates mute, selection, playback and pattern state, but the visible palette changes with the selected Launchpad style.
         </p>
         <p>
-          On the current Vinx line, Sequence step editors also have an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. Toggling it OFF forces <code>Cancel</code> and returns to <code>Steps</code>. <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies.
+          Sequence step editors also have an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. In this mode, <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies.
         </p>
         <p>
-          The generator map is track-type specific. On <em>Note</em>, <code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 16</code> select <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, and <em>Init Steps</em>. On <em>Curve</em>, <em>Stochastic</em>, <em>Logic</em>, and <em>Arp</em>, the subset map is <code>GRID 1 / 3 / 4 / 16</code> for <em>Random</em>, <em>Entropy</em>, <em>Euclidean</em>, and <em>Init Steps</em>. In this split, <em>Entropy</em> is the local Chaos-subset action for non-Note tracks.
-        </p>
-        <p>
-          Activation is intentionally asymmetric. On <em>Note</em>, <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, and <em>Euclidean</em> are single-tap flows (first press opens and immediately builds the first preview), while <em>Vandalize</em> and <em>Wreck</em> are two-tap flows because <em>Chaos</em> enters on <code>ORIGINAL</code>. On <em>Curve</em> / <em>Stochastic</em> / <em>Logic</em> / <em>Arp</em>, <em>Random</em> and <em>Euclidean</em> are single-tap, while <em>Entropy</em> is two-tap for the same reason (<code>ORIGINAL</code> first, then explicit <code>CHAOS</code> action).
-        </p>
-        <p>
-          In the LP overlay, this mode is labeled <code>ENTPY</code>. On the generator page, it keeps Chaos-style interaction: action label <code>CHAOS</code>, <code>A/B</code> between <code>ORIGINAL</code> and generated state, and <code>UNLEASHED</code> as the generated-preview popup.
-        </p>
-        <p>
-          When this mode is active and no specific generator page is open yet, <code>Steps</code> shows a lightweight reference overlay that mirrors the LP generator map layout. This overlay is informational only: it does not change control semantics or execution flow.
-        </p>
-        <p>
-          Target binding in this mini-mode is strict: operations always target the currently selected supported track context. <code>TRK 1..8</code> retarget to the pressed track when supported (<em>Note</em>, <em>Curve</em>, <em>Stochastic</em>, <em>Logic</em>, <em>Arp</em>), and exit the mode when unsupported. If a generator preview is currently open, that preview is canceled before retarget; if only the overlay is open, there is no pending preview to cancel. Pressing the selected generator pad rerolls in place: <code>NEW RAND</code> for <em>Random</em>/<em>Acid</em>, <code>CHAOS</code> for <em>Vandalize</em>/<em>Wreck</em>/<em>Entropy</em>, and <code>NEW EUCL</code> for <em>Euclidean</em>. Commit still requires explicit <code>Apply</code> (or encoder apply where available). In this mini-mode, applying from a generator page exits the mode and returns to plain <code>Steps</code>. <em>Init Steps</em> is intentionally different: in this mini-mode it applies <code>Init Steps</code> immediately on the current track and does not open a confirmation page. If track or mode context changes unexpectedly while a generator page is open, the operation fails closed (<code>GEN CANCELED</code>) instead of applying to the wrong track. Their colors remain relative to <code>LP Style</code>: semantically, <code>TOP 5</code> distinguishes the <code>A</code> / <code>B</code> side of the compare, while <code>TOP 6</code> distinguishes reset-neutral from generated or edited state.
-        </p>
-        <p>
-          In this mini-mode, <em>Init Steps</em> (<code>GRID 16</code>) applies immediately and exits the mode to plain <code>Steps</code>.
+          For the full map split (<em>Note</em> vs non-<em>Note</em>), activation semantics (single-tap vs two-tap), reroll behavior, immediate <code>Init Steps</code> behavior, retarget rules, and fail-closed behavior, see <a href="#appendix-launchpad-generators-mode">Launchpad Generators Mode</a> and <a href="#appendix-safety-fail-closed">Safety / Fail-Closed</a> in the appendix.
         </p>
         <h4>Pattern Mode</h4>
         <p>
@@ -2802,6 +2801,184 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <li>When MIDI Keyboard mode is OFF, double-press on a note target toggles the note state and also adds or removes that note from the arpeggiator. When MIDI Keyboard mode is ON, no double-press action is implemented.</li>
         </ul>
 
+        <h3 id="appendix-launchpad-generators-mode">Launchpad Generators Mode</h3>
+        <p>
+          This experimental mini-mode is available in LP <em>Sequence</em> mode and is toggled with <code>TOP 8 + TOP 4</code>. Entering can force the machine view to <code>Steps</code>; exiting forces <code>Cancel</code> and returns to plain <code>Steps</code>.
+        </p>
+        <p>
+          When active and no generator page is currently open, the <code>Steps</code> page shows a lightweight reference overlay. The overlay is informational only and does not change control semantics.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Control</th>
+              <th style="text-align: left">Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>TOP 5</code></td><td style="text-align: left"><code>A/B</code> compare.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 6</code></td><td style="text-align: left"><code>ResetGen</code>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 7</code></td><td style="text-align: left"><code>Cancel</code>.</td></tr>
+            <tr><td style="text-align: left"><code>TOP 8</code></td><td style="text-align: left"><code>Apply</code>.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The generator map is track-type specific:
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Track type</th>
+              <th style="text-align: left">Grid map</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><em>Note</em></td><td style="text-align: left"><code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 16</code> = <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, <em>Init Steps</em></td></tr>
+            <tr><td style="text-align: left"><em>Curve</em>, <em>Stochastic</em>, <em>Logic</em>, <em>Arp</em></td><td style="text-align: left"><code>GRID 1 / 3 / 4 / 16</code> = <em>Random</em>, <em>Entropy</em>, <em>Euclidean</em>, <em>Init Steps</em></td></tr>
+          </tbody>
+        </table>
+        <p>
+          Activation is intentionally asymmetric: <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, and <em>Euclidean</em> are single-tap; <em>Vandalize</em>, <em>Wreck</em>, and <em>Entropy</em> are two-tap because they enter on <code>ORIGINAL</code> and require explicit <code>CHAOS</code> action for first preview.
+        </p>
+        <p>
+          Pressing the selected generator pad rerolls in place: <code>NEW RAND</code> on <em>Random</em>/<em>Acid</em>, <code>CHAOS</code> on <em>Vandalize</em>/<em>Wreck</em>/<em>Entropy</em>, <code>NEW EUCL</code> on <em>Euclidean</em>. In this split, <em>Entropy</em> uses the same <code>ORIGINAL -&gt; CHAOS -&gt; A/B</code> logic as Chaos but stays track-local on non-Note tracks.
+        </p>
+        <p>
+          <em>Init Steps</em> on <code>GRID 16</code> is immediate: it applies at once to the current track scope and exits the mini-mode to plain <code>Steps</code>.
+        </p>
+
+        <h3 id="appendix-16-step-editing-mode">16-step Editing Mode</h3>
+        <p>
+          This is an experimental external-controller workflow for per-step editing with 16 knobs plus 16 pads. It is currently intended for <em>Launch Control XL</em> and <em>BeatStep Pro</em> style mappings, and remains field-test status.
+        </p>
+        <p>
+          Current validation by the maintainer has been done on <em>Launch Control XL</em>. <em>BeatStep Pro</em> support is implemented with documented mapping but is considered community-validated.
+        </p>
+        <p>
+          Entry/exit is explicit through controller-side <code>Prev + Next</code> together. On <em>Launch Control XL</em> this is <code>Track Select &lt; + &gt;</code>. In common <em>BeatStep Pro</em> templates it is <code>Ptn 1 + Ptn 2</code>.
+        </p>
+        <p>
+          When armed, the mode forces loop to the currently visible 16-step bank and accepts knob/pad edits. When disarmed, it restores the previous loop range.
+        </p>
+        <p>
+          The target is always the currently selected <em>Note</em> track. Knobs are active only while the machine layer is <code>Note</code>; pads for gate toggle remain active on that same track context across layers.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Input</th>
+              <th style="text-align: left">Behavior</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left">16 knobs</td><td style="text-align: left">Edit note value per visible step (step 1..16 of current bank), with immediate pickup, quantized to current scale and clamped to a two-octave equivalent range (<code>-1V..+1V</code>, equivalent to <code>-12..+12</code> semitones in standard 1V/oct interpretation).</td></tr>
+            <tr><td style="text-align: left">16 pads</td><td style="text-align: left">Toggle gate on/off on those same 16 visible steps.</td></tr>
+            <tr><td style="text-align: left"><code>Prev</code> / <code>Next</code></td><td style="text-align: left">Move 16-step bank window.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Root note is applied in the normal output path; the controller mapping itself does not hardcode a root offset.
+        </p>
+        <p>
+          Mapping reference (common LCXL Factory #1 and BSP template profile) uses MIDI channel <code>9</code>: knobs on <code>CC 13..20</code> and <code>CC 29..36</code>; pads on notes <code>41..44</code>, <code>57..60</code>, <code>73..76</code>, <code>89..92</code>; section buttons on <code>CC 106/107</code>.
+        </p>
+        <p>
+          Messages outside that mapping are ignored by this mode.
+        </p>
+        <p>
+          Current implementation has no controller LED-feedback loop for this mode, and LED feedback is not planned for now.
+        </p>
+
+        <h3 id="appendix-init-semantics">Init Semantics</h3>
+        <p>
+          The firmware keeps three distinct reset actions. They are intentionally separate and should not be treated as aliases.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Action</th>
+              <th style="text-align: left">Where</th>
+              <th style="text-align: left">Scope</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>Init Layer</code></td><td style="text-align: left"><code>Steps</code> context menu</td><td style="text-align: left">Only active layer. Uses persistent step selection first; if empty, falls back to whole current track layer.</td></tr>
+            <tr><td style="text-align: left"><code>Init Steps</code></td><td style="text-align: left"><code>GEN</code> chooser and LP Generators Mode</td><td style="text-align: left">All step layers of current track scope. Uses persistent step selection first; if empty, falls back to whole current track.</td></tr>
+            <tr><td style="text-align: left"><code>Init Seq</code></td><td style="text-align: left"><code>SEQ</code> page context menu</td><td style="text-align: left">Whole sequence for the current track.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          On LP Generators Mode specifically, <code>Init Steps</code> is immediate and exits the mode, while <code>Init Layer</code> remains a machine-side step-context action.
+        </p>
+
+        <h3 id="appendix-chaos-family">Chaos Family</h3>
+        <p>
+          In the Vinx line, <em>Chaos</em> is not a single page but a family of related destructive-preview workflows with explicit compare and explicit commit.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Mode</th>
+              <th style="text-align: left">Scope</th>
+              <th style="text-align: left">Flow</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><em>Vandalize Sequence</em></td><td style="text-align: left">Current Note sequence</td><td style="text-align: left"><code>ORIGINAL -&gt; CHAOS -&gt; A/B -&gt; Cancel/Apply</code></td></tr>
+            <tr><td style="text-align: left"><em>Wreck Pattern</em></td><td style="text-align: left">Pattern-wide across Note tracks</td><td style="text-align: left"><code>ORIGINAL -&gt; CHAOS -&gt; A/B -&gt; Cancel/Apply</code></td></tr>
+            <tr><td style="text-align: left"><em>Entropy</em></td><td style="text-align: left">Current non-Note track in LP mini-mode</td><td style="text-align: left"><code>ORIGINAL -&gt; CHAOS -&gt; A/B -&gt; Cancel/Apply</code></td></tr>
+          </tbody>
+        </table>
+        <p>
+          Machine defaults for Chaos are stored in <code>System -&gt; Chaos Defaults</code> with dedicated target matrices per family branch. Entropy uses its own persisted defaults and target composition for non-Note track data.
+        </p>
+
+        <h3 id="appendix-generator-input-semantics">Generator Input Semantics</h3>
+        <p>
+          Encoder rotation is generator-specific by design. This is intentional and not a UI inconsistency.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Generator page</th>
+              <th style="text-align: left">Encoder rotation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><em>Random</em></td><td style="text-align: left">Seed change only.</td></tr>
+            <tr><td style="text-align: left"><em>Acid Layer</em> / <em>Acid Phrase</em></td><td style="text-align: left">Seed change only.</td></tr>
+            <tr><td style="text-align: left"><em>Euclidean</em></td><td style="text-align: left"><code>NEW EUCL</code> reroll.</td></tr>
+            <tr><td style="text-align: left"><em>Vandalize</em> / <em>Wreck</em></td><td style="text-align: left">Target-matrix navigation; with <code>F2</code> held, edits <code>Amount</code>.</td></tr>
+            <tr><td style="text-align: left"><em>Entropy</em></td><td style="text-align: left">Target-matrix navigation; with <code>F2</code> held, edits <code>Amount</code>.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Apply semantics are also explicit: on <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, encoder press mirrors apply; Chaos-family pages keep apply on their page actions.
+        </p>
+
+        <h3 id="appendix-safety-fail-closed">Safety / Fail-Closed</h3>
+        <p>
+          Generator and selector paths are hardened to avoid wrong-target commits when context changes during interaction.
+        </p>
+        <ul>
+          <li>While machine generator selector paths are active, LP track/scene retarget is locked.</li>
+          <li>Inside LP Generators Mode, retarget is allowed only on supported track types and cancels active preview before retarget.</li>
+          <li>If context becomes invalid during an open generator preview, operation fails closed as <code>GEN CANCELED</code> instead of applying to the wrong target.</li>
+          <li><code>Init Steps</code> from LP mini-mode is immediate by design and exits to plain <code>Steps</code>, reducing ambiguous pending state.</li>
+          <li>Modal close/redispatch behavior is hardened so selector closes do not leak the same key event into the underlying page.</li>
+        </ul>
+
+        <h3 id="appendix-controller-concurrency-limits">Controller Concurrency Limits</h3>
+        <p>
+          The current architecture uses one active external controller context at a time. In practice this means LP control-surface and 16-step Editing Mode are not designed for simultaneous concurrent ownership in the same UI path.
+        </p>
+        <p>
+          If your setup includes multiple USB MIDI devices, keep this as the operational rule: use one external control workflow as primary at a time, and treat switching as an explicit mode change.
+        </p>
+        <p>
+          Practical workaround: a powered USB hub with per-port switches can be used to enable only one controller at a time (for example Launchpad or LCXL/BSP). This is a hardware-side convenience workaround, not true simultaneous multi-controller support.
+        </p>
+
         <h3 id="appendix-desktop-simulator">Desktop Simulator</h3>
         <p>
           The Vinx fork is maintained with two simulator contexts: the browser-based <em>Web Simulator</em> published on the site, and the native local <em>Desktop Simulator</em> built from the repository. Only the <em>Desktop Simulator</em> is intended for real MIDI and Launchpad integration.
@@ -2830,11 +3007,13 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <tbody>
             <tr><td style="text-align: left">AKAI</td><td style="text-align: left">APC Mini</td></tr>
             <tr><td style="text-align: left">Arturia</td><td style="text-align: left">MiniBrute, MiniLab MK2, Keystep</td></tr>
+            <tr><td style="text-align: left">Arturia</td><td style="text-align: left">BeatStep Pro (experimental for 16-step Editing Mode; template-based workflow)</td></tr>
             <tr><td style="text-align: left">CME</td><td style="text-align: left">XKEY37</td></tr>
             <tr><td style="text-align: left">Keith McMillen</td><td style="text-align: left">QuNexus</td></tr>
             <tr><td style="text-align: left">Korg</td><td style="text-align: left">microKey 2, R3</td></tr>
             <tr><td style="text-align: left">Moog</td><td style="text-align: left">Minitaur</td></tr>
             <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchkey Mini</td></tr>
+            <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launch Control XL (experimental for 16-step Editing Mode; best-validated external controller in this path)</td></tr>
             <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchpad Mini MK1/MK2/MK3, Launchpad S, Launchpad Mk2, Launchpad Pro, Launchpad Pro MK3, Launchpad X</td></tr>
             <tr><td style="text-align: left">Yamaha</td><td style="text-align: left">Modx7</td></tr>
           </tbody>
