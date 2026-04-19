@@ -5,17 +5,19 @@
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. From the first standalone Vinx release onward, Vinx uses standalone semantic versioning (`v0.x.y`) while preserving the earlier `v0.3.2-vinx.*` entries as historical lineage. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
 # v0.4.1 (in progress)
-- Versioning transition: this release drops the inherited `v0.3.2-vinx.*` naming and starts standalone Vinx semantic versioning (`v0.x.y`)
-- Memory footprint improved versus upstream baseline: static SRAM and CCRAM usage are significantly reduced compared to Mebitek 0.3.2
-- Launchpad refactor: complete the P1 structural split of Launchpad controller domains (high-risk area hardening)
-- Add experimental `16-step Editing Mode` (Launch Control XL + BeatStep Pro mapping profile): explicit armed/disarmed entry, forced visible 16-step loop while armed, bank navigation, and loop-range restore on exit
-- Add `16-step Editing Mode` controller feedback scope on LCXL/BSP profiles: gate-pad LEDs plus prev/next function-button feedback (knob-row LED remains device-local)
+- Add experimental `16-step Editing Mode` (`Launch Control XL` + `BeatStep Pro` profile) with explicit armed/disarmed entry, forced visible 16-step loop while armed, bank navigation and loop-range restore on exit, plus controller feedback on `LCXL/BSP` (gate-pad LEDs and prev/next function-button feedback; knob-row LED behavior remains device-local)
 - Fix Performer `GEN` menu flow/labels by track type: on `Note` use explicit `Acid (Layer/Phrase)` and `Chaos (Vandalize/Wreck)` labels; on non-Note tracks expose `Chaos (Entropy)` (`ChaosEntropy` mode)
 - Fix `Voltage Mode` behavior on `Arp` and `Stochastic` tracks so non-chromatic user scales are respected in bypass-scale paths instead of forcing semitone/chromatic fallback
 - Extend Launchpad `Generators Mode` beyond Note tracks: keep the full Note map (`GRID 1/2/10/3/11/4/8/16` = `Random`, `Acid Layer`, `Acid Phrase`, `Vandalize`, `Wreck`, `Euclidean`, `Init Layer`, `Init Steps`) and add the dedicated non-Note subset on `Curve` / `Stochastic` / `Logic` / `Arp` (`GRID 1/3/4/8/16` = `Random`, `Entropy`, `Euclidean`, `Init Layer`, `Init Steps`)
-- Add the new Chaos generator mode `Entropy` for non-Note Launchpad workflows, with Chaos-style interaction, dedicated target matrix, and persisted defaults in `System -> Chaos Defaults`
 - Set `Slide Time` default to `10%` across track families (from the previous `20%` line default)
 - Make user scales use dynamic names in all `Scale` menus; default user-scale slot names are now `INIT1`..`INIT4`
+
+# v0.4.0
+- Versioning transition: this release drops the inherited `v0.3.2-vinx.*` naming and starts standalone Vinx semantic versioning (`v0.x.y`)
+- Memory footprint improved versus upstream baseline: static SRAM and CCRAM usage are significantly reduced compared to Mebitek 0.3.2
+- Launchpad refactor: complete the P1 structural split of Launchpad controller domains (high-risk area hardening)
+- Extend Launchpad `Generators Mode` beyond Note tracks: keep the full Note map unchanged, and add a dedicated subset on `Curve` / `Stochastic` / `Logic` / `Arp` (`GRID 1 = Random`, `GRID 3 = Entropy`, `GRID 4 = Euclidean`, `GRID 16 = Init Steps`)
+- Add the new Chaos generator mode `Entropy` for non-Note Launchpad workflows, with Chaos-style interaction, dedicated target matrix, and persisted defaults in `System -> Chaos Defaults`
 - Fix generator-selector track locking end-to-end: while the machine is inside the generator selector path (level 1 and deeper), Launchpad track/scene retarget is blocked so selection stays bound to the original track
 - Fix generator-page retarget regressions by keeping Launchpad track/scene switching locked while generator pages are active
 - From `Project`, `Layout`, `Routing`, `MIDI Output`, `User Scale`, and `Clock`, make track selection (`T1..8` on machine and `TRK1..8` on Launchpad) jump directly to `Steps` on the selected track
