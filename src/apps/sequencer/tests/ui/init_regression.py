@@ -172,7 +172,7 @@ class InitRegressionTest(tf.UiTest):
         self.assertEqual(sequence.steps[selected_index].note, before_notes[selected_index])
 
         # Init Steps from GEN chooser with selection: full reset on selected step, with chromatic note default.
-        self._run_init_steps_from_generator_select(2)  # Non-note chooser: row 2 = Init Steps
+        self._run_init_steps_from_generator_select(3)  # Non-note chooser: row 3 = Init Steps
         self.assertFalse(sequence.steps[selected_index].gate)
         self.assertEqual(sequence.steps[selected_index].note, selected_index)
 
@@ -183,7 +183,7 @@ class InitRegressionTest(tf.UiTest):
             sequence.steps[idx].note = 40 + idx
             sequence.steps[idx].noteVariationProbability = 9
 
-        self._run_init_steps_from_generator_select(2)
+        self._run_init_steps_from_generator_select(3)
         for idx in range(4):
             self.assertFalse(sequence.steps[idx].gate)
             self.assertEqual(sequence.steps[idx].note, idx)
@@ -230,7 +230,7 @@ class InitRegressionTest(tf.UiTest):
         self.assertEqual(sequence.steps[selected_index].length, before_lengths[selected_index])
 
         # Init Steps with selection: full reset on selected step, chromatic default preserved.
-        self._run_init_steps_from_generator_select(2)
+        self._run_init_steps_from_generator_select(3)
         self.assertFalse(sequence.steps[selected_index].gate)
         self.assertEqual(sequence.steps[selected_index].note, selected_index)
 
@@ -241,7 +241,7 @@ class InitRegressionTest(tf.UiTest):
             sequence.steps[idx].note = 50 + idx
             sequence.steps[idx].length = 9
 
-        self._run_init_steps_from_generator_select(2)
+        self._run_init_steps_from_generator_select(3)
         for idx in range(4):
             self.assertFalse(sequence.steps[idx].gate)
             self.assertEqual(sequence.steps[idx].note, idx)

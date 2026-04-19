@@ -74,6 +74,12 @@ class GeneratorRegressionTest(tf.UiTest):
         self._lp_function_up(7)
         self.controller.wait(30)
 
+    def _set_single_persistent_selection(self, step_button):
+        c = self.controller
+        c.down("shift").wait(10)
+        c.press(step_button).wait(10)
+        c.up("shift").wait(10)
+
     def _note_signature(self, sequence, count=16):
         return tuple(
             (sequence.steps[i].gate, sequence.steps[i].length, sequence.steps[i].note)
@@ -304,7 +310,7 @@ class GeneratorRegressionTest(tf.UiTest):
             self.assertEqual(p.selectedTrackIndex, 0, f"{page}: selected track")
             self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop, f"{page}: jump to Steps")
 
-    def test_launchpad_grid8_is_neutral_in_generators_mode(self):
+    def test_launchpad_grid8_runs_init_layer_in_generators_mode(self):
         c = self.controller
         p = self.env.sequencer.model.project
 
@@ -314,16 +320,20 @@ class GeneratorRegressionTest(tf.UiTest):
         self._lp_connect()
 
         sequence = p.selectedNoteSequence
-        sequence.steps[0].gate = False
+        for idx in range(4):
+            sequence.steps[idx].gate = True
         p.selectedNoteSequenceLayer = sequence.Layer.Gate
-        before = self._note_signature(sequence, 16)
+        self._set_single_persistent_selection("step1")
 
         self._lp_toggle_generators_mode()
 
-        # GRID 8 (index 7) is now unmapped in Generators Mode.
+        # GRID 8 (index 7) = Init Layer (selection-aware), mode stays active.
         self._lp_press_grid(7)
-        after = self._note_signature(sequence, 16)
-        self.assertEqual(after, before)
+        self.assertFalse(self.env.sequencer.isGeneratorPageTop)
+        self.assertFalse(sequence.steps[0].gate)
+        self.assertTrue(sequence.steps[1].gate)
+        self.assertTrue(sequence.steps[2].gate)
+        self.assertTrue(sequence.steps[3].gate)
         self.assertTrue(self.env.sequencer.launchpadGeneratorsModeActiveForTest)
 
     def test_launchpad_non_note_generators_mode_entropy_subset(self):
