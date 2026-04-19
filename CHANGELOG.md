@@ -4,7 +4,7 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. From the first standalone Vinx release onward, Vinx uses standalone semantic versioning (`v0.x.y`) while preserving the earlier `v0.3.2-vinx.*` entries as historical lineage. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
-# v0.4.1 (in progress)
+# v0.4.1 (19 April 2026)
 - Add experimental `16-step Editing Mode` (`Launch Control XL` + `BeatStep Pro` profile) with explicit armed/disarmed entry, forced visible 16-step loop while armed, bank navigation and loop-range restore on exit, plus controller feedback on `LCXL/BSP` (gate-pad LEDs and prev/next function-button feedback; knob-row LED behavior remains device-local)
 - Fix Performer `GEN` menu flow/labels by track type: on `Note` use explicit `Acid (Layer/Phrase)` and `Chaos (Vandalize/Wreck)` labels; on non-Note tracks expose `Chaos (Entropy)` (`ChaosEntropy` mode)
 - Fix `Voltage Mode` behavior on `Arp` and `Stochastic` tracks so non-chromatic user scales are respected in bypass-scale paths instead of forcing semitone/chromatic fallback
