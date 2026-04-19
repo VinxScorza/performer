@@ -70,7 +70,7 @@
     applyTheme(window.localStorage.getItem(storageKey) || "");
     updateButtons();
 
-    stickyButtons = Array.from(document.querySelectorAll(".site-theme-toggle, .sticky-action-button")).map((button) => ({
+    stickyButtons = Array.from(document.querySelectorAll(".site-theme-toggle, .sticky-action-button, .site-nav")).map((button) => ({
       button,
       triggerTop: 0,
     }));

@@ -229,6 +229,26 @@ pre code {
   text-transform: uppercase;
 }
 
+.site-nav.is-sticky {
+  position: fixed;
+  top: 10px;
+  left: max(16px, calc((100vw - min(1260px, calc(100vw - 32px))) / 2));
+  right: max(16px, calc((100vw - min(1260px, calc(100vw - 32px))) / 2));
+  z-index: 35;
+  margin: 0;
+  padding: 8px 12px;
+  padding-right: 138px;
+  border: 1px solid rgba(203, 178, 111, 0.22);
+  border-radius: 10px;
+  background: rgba(37, 37, 37, 0.92);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(4px);
+}
+
+:root[data-theme="invert"] .site-nav.is-sticky {
+  background: rgba(246, 240, 223, 0.95);
+}
+
 .site-nav a {
   color: var(--nav-text);
 }
