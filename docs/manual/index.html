@@ -152,7 +152,7 @@
           This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through the active <code>v0.4.1</code> development line. The earlier <code>v0.3.2-vinx.*</code> naming is retained in history as lineage reference.
         </p>
         <p>
-          Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems. The experimental <code>16-step Editing Mode</code> path is maintainer-validated on <code>Launch Control XL</code>; <code>BeatStep Pro</code> still needs dedicated on-hardware validation.
+          Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems. The experimental <code>16-step Editing Mode</code> path is maintainer-validated on <code>Launch Control XL</code>; <code>BeatStep Pro</code> still needs dedicated on-hardware validation. BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.
         </p>
         <p>
           In the current line, <code>Voltage Mode</code> behavior on <code>Arp</code> and <code>Stochastic</code> bypass-scale paths has been fixed so non-chromatic user scales are respected instead of being forced to semitone fallback.
@@ -485,10 +485,10 @@
           In addition to the routing system, specific MIDI controllers can be used as dedicated control surfaces for parts of the sequencer workflow. This includes sequence editing, mutes, fills, pattern launch, and dedicated external edit flows.
         </p>
         <p>
-          In the current Vinx line there are two distinct external controller workflows: the Novation Launchpad family, and an experimental <em>16-step Editing Mode</em> path for 16-knob/16-pad controllers such as Launch Control XL and BeatStep Pro.
+          In the current Vinx line there are two distinct external controller workflows: the Novation Launchpad family, and an experimental <em>16-step Editing Mode</em> path for 16-knob/16-pad controllers such as Launch Control XL and BeatStep Pro. BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.
         </p>
         <p>
-          <em>16-step Editing Mode</em> is focused on direct per-step editing on Note tracks: knobs drive note values and pads toggle gates on the visible 16-step bank, with bank navigation for longer loops.
+          <em>16-step Editing Mode</em> is focused on direct per-step editing on Note tracks: knobs drive note values and pads toggle gates on the visible 16-step bank, with bank navigation for longer loops. BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.
         </p>
         <p>
           See <a href="#appendix-launchpad">Launchpad</a> and <a href="#appendix-16-step-editing-mode">16-step Editing Mode</a> for details.
@@ -2998,7 +2998,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
         <h3 id="appendix-controller-concurrency-limits">Controller Concurrency Limits</h3>
         <p>
-          The current architecture uses one active external controller context at a time. In practice this means Launchpad workflow and 16-step Editing Mode are separate and are not designed for simultaneous concurrent ownership in the same UI path.
+          The current architecture uses one active external controller context at a time. In practice this means Launchpad workflow and 16-step Editing Mode are separate and are not designed for simultaneous concurrent ownership in the same UI path. BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.
         </p>
         <p>
           If your setup includes multiple USB MIDI devices, keep this as the operational rule: use one external control workflow as primary at a time, and treat switching as an explicit mode change.
@@ -3038,13 +3038,13 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <tbody>
             <tr><td style="text-align: left">AKAI</td><td style="text-align: left">APC Mini</td></tr>
             <tr><td style="text-align: left">Arturia</td><td style="text-align: left">MiniBrute, MiniLab MK2, Keystep</td></tr>
-            <tr><td style="text-align: left">Arturia</td><td style="text-align: left">BeatStep Pro (experimental for 16-step Editing Mode; template-based workflow; on-hardware validation still pending)</td></tr>
+            <tr><td style="text-align: left">Arturia</td><td style="text-align: left">BeatStep Pro (experimental for 16-step Editing Mode; template-based workflow; on-hardware validation still pending; template download: <code>PERFORMERstep16_BSP.beatsteppro</code>)</td></tr>
             <tr><td style="text-align: left">CME</td><td style="text-align: left">XKEY37</td></tr>
             <tr><td style="text-align: left">Keith McMillen</td><td style="text-align: left">QuNexus</td></tr>
             <tr><td style="text-align: left">Korg</td><td style="text-align: left">microKey 2, R3</td></tr>
             <tr><td style="text-align: left">Moog</td><td style="text-align: left">Minitaur</td></tr>
             <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchkey Mini</td></tr>
-            <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launch Control XL (experimental for 16-step Editing Mode; best-validated external controller in this path)</td></tr>
+            <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launch Control XL (experimental for 16-step Editing Mode; best-validated external controller in this path; use <code>Factory Preset #1</code>)</td></tr>
             <tr><td style="text-align: left">Novation</td><td style="text-align: left">Launchpad Mini MK1/MK2/MK3, Launchpad S, Launchpad Mk2, Launchpad Pro, Launchpad Pro MK3, Launchpad X</td></tr>
             <tr><td style="text-align: left">Yamaha</td><td style="text-align: left">Modx7</td></tr>
           </tbody>
