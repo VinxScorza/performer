@@ -327,7 +327,7 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
 
 void NoteSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
     static const char *overlayCells[2][6] = {
-        { "RAND", "ACIDL", "VNDLZ", "EUCL", nullptr, nullptr },
+        { "RAND", "ACIDL", "VNDLZ", "EUCL", nullptr, "INITL" },
         { nullptr, "ACIDP", "WRECK", nullptr, nullptr, "INITS" },
     };
 
@@ -1194,7 +1194,9 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
     }
 
     // LP generator pages operate on all steps when no persistent selection exists.
-    if (generator != LaunchpadGenerator::Init && _stepSelection.none()) {
+    if (generator != LaunchpadGenerator::InitLayer &&
+        generator != LaunchpadGenerator::InitSteps &&
+        _stepSelection.none()) {
         _stepSelection.selectAll();
     }
 
@@ -1226,15 +1228,17 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
     case LaunchpadGenerator::Wreck:
         showChaosGenerator(ChaosGenerator::Scope::Pattern);
         break;
-    case LaunchpadGenerator::Init: {
+    case LaunchpadGenerator::InitLayer:
+    case LaunchpadGenerator::InitSteps: {
         destroyActiveBuilder();
         _inMemorySequence = _project.selectedNoteSequence();
         auto selected = selectedOrAllSteps(_stepSelection);
         auto builder = _builderContainer.create<NoteSequenceBuilder>(_project.selectedNoteSequence(), layer());
-        Generator::execute(Generator::Mode::InitSteps, *builder, selected);
+        const bool initLayer = generator == LaunchpadGenerator::InitLayer;
+        Generator::execute(initLayer ? Generator::Mode::InitLayer : Generator::Mode::InitSteps, *builder, selected);
         builder->showPreview();
         builder->apply();
-        showMessage("STEPS INITIALIZED");
+        showMessage(initLayer ? "LAYER INITIALIZED" : "STEPS INITIALIZED");
         _builderContainer.destroy(builder);
         break;
     }

@@ -403,7 +403,7 @@ void ArpSequenceEditPage::draw(Canvas &canvas) {
 
 void ArpSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
     static const char *overlayCells[2][6] = {
-        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, nullptr },
+        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, "INITL" },
         { nullptr, nullptr, nullptr, nullptr, nullptr, "INITS" },
     };
 
@@ -1157,13 +1157,18 @@ void ArpSequenceEditPage::generateSequence() {
 }
 
 void ArpSequenceEditPage::openLaunchpadGenerator(Generator::Mode mode) {
+    if (mode == Generator::Mode::InitLayer && initLayerToArpDefaults()) {
+        showMessage("LAYER INITIALIZED");
+        return;
+    }
+
     if (mode == Generator::Mode::InitSteps || mode == Generator::Mode::InitLayer) {
         auto builder = _builderContainer.create<ArpSequenceBuilder>(_project.selectedArpSequence(), layer());
         auto selected = selectedOrAllSteps(_stepSelection);
-        Generator::execute(Generator::Mode::InitSteps, *builder, selected);
+        Generator::execute(mode, *builder, selected);
         builder->showPreview();
         builder->apply();
-        showMessage("STEPS INITIALIZED");
+        showMessage(mode == Generator::Mode::InitLayer ? "LAYER INITIALIZED" : "STEPS INITIALIZED");
         return;
     }
 

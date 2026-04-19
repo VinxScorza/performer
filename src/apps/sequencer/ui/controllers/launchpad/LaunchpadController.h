@@ -92,7 +92,8 @@ private:
         Wreck,
         Entropy,
         Euclidean,
-        Init,
+        InitLayer,
+        InitSteps,
     };
 
     void setMode(Mode mode);

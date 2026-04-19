@@ -339,7 +339,7 @@ void StochasticSequenceEditPage::draw(Canvas &canvas) {
 
 void StochasticSequenceEditPage::drawLaunchpadGeneratorOverlay(Canvas &canvas) {
     static const char *overlayCells[2][6] = {
-        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, nullptr },
+        { "RAND", nullptr, "ENTPY", "EUCL", nullptr, "INITL" },
         { nullptr, nullptr, nullptr, nullptr, nullptr, "INITS" },
     };
 
@@ -1105,10 +1105,10 @@ void StochasticSequenceEditPage::openLaunchpadGenerator(Generator::Mode mode) {
 
     if (mode == Generator::Mode::InitSteps || mode == Generator::Mode::InitLayer) {
         auto selected = selectedOrAllSteps(_stepSelection);
-        Generator::execute(Generator::Mode::InitSteps, *builder, selected);
+        Generator::execute(mode, *builder, selected);
         builder->showPreview();
         builder->apply();
-        showMessage("STEPS INITIALIZED");
+        showMessage(mode == Generator::Mode::InitLayer ? "LAYER INITIALIZED" : "STEPS INITIALIZED");
         return;
     }
 

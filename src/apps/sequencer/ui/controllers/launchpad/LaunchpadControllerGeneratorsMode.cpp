@@ -224,8 +224,10 @@ LaunchpadController::LaunchpadGenerator LaunchpadController::generatorModeGrid(i
             return LaunchpadGenerator::Wreck;
         case 3:
             return LaunchpadGenerator::Euclidean;
+        case 7:
+            return LaunchpadGenerator::InitLayer;
         case 15:
-            return LaunchpadGenerator::Init;
+            return LaunchpadGenerator::InitSteps;
         default:
             return LaunchpadGenerator::None;
         }
@@ -238,8 +240,10 @@ LaunchpadController::LaunchpadGenerator LaunchpadController::generatorModeGrid(i
         return LaunchpadGenerator::Entropy;
     case 3:
         return LaunchpadGenerator::Euclidean;
+    case 7:
+        return LaunchpadGenerator::InitLayer;
     case 15:
-        return LaunchpadGenerator::Init;
+        return LaunchpadGenerator::InitSteps;
     default:
         return LaunchpadGenerator::None;
     }
@@ -270,7 +274,8 @@ void LaunchpadController::setGeneratorMode(bool active) {
                 case LaunchpadGenerator::Vandalize:
                 case LaunchpadGenerator::Wreck:
                 case LaunchpadGenerator::Euclidean:
-                case LaunchpadGenerator::Init:
+                case LaunchpadGenerator::InitLayer:
+                case LaunchpadGenerator::InitSteps:
                     return true;
                 default:
                     return false;
@@ -281,7 +286,8 @@ void LaunchpadController::setGeneratorMode(bool active) {
             case LaunchpadGenerator::Random:
             case LaunchpadGenerator::Entropy:
             case LaunchpadGenerator::Euclidean:
-            case LaunchpadGenerator::Init:
+            case LaunchpadGenerator::InitLayer:
+            case LaunchpadGenerator::InitSteps:
                 return true;
             default:
                 return false;
@@ -336,13 +342,15 @@ void LaunchpadController::sequenceDrawGeneratorMode() {
         {0, 2, LaunchpadGenerator::Vandalize},
         {1, 2, LaunchpadGenerator::Wreck},
         {0, 3, LaunchpadGenerator::Euclidean},
-        {1, 7, LaunchpadGenerator::Init},
+        {0, 7, LaunchpadGenerator::InitLayer},
+        {1, 7, LaunchpadGenerator::InitSteps},
     };
     const GeneratorSlot subsetSlots[] = {
         {0, 0, LaunchpadGenerator::Random},
         {0, 2, LaunchpadGenerator::Entropy},
         {0, 3, LaunchpadGenerator::Euclidean},
-        {1, 7, LaunchpadGenerator::Init},
+        {0, 7, LaunchpadGenerator::InitLayer},
+        {1, 7, LaunchpadGenerator::InitSteps},
     };
 
     const auto *slots = noteLayout ? noteSlots : subsetSlots;
@@ -380,7 +388,8 @@ bool LaunchpadController::sequenceButtonGeneratorMode(const Button &button, Butt
         if (generator != LaunchpadGenerator::None) {
             if (generatorModePreviewPage()) {
                 if (generator == _selectedGenerator) {
-                    if (generator != LaunchpadGenerator::Init) {
+                    if (generator != LaunchpadGenerator::InitLayer &&
+                        generator != LaunchpadGenerator::InitSteps) {
                         if (auto *pages = _manager.pages()) {
                             pages->generator.launchpadRandomize();
                         }
@@ -390,7 +399,7 @@ bool LaunchpadController::sequenceButtonGeneratorMode(const Button &button, Butt
                         pages->generator.revert();
                     }
                     sequenceOpenGenerator(generator);
-                    if (generator == LaunchpadGenerator::Init) {
+                    if (generator == LaunchpadGenerator::InitSteps) {
                         setGeneratorMode(false);
                     }
                 }
@@ -399,7 +408,7 @@ bool LaunchpadController::sequenceButtonGeneratorMode(const Button &button, Butt
 
             if (generatorModeEditPage()) {
                 sequenceOpenGenerator(generator);
-                if (generator == LaunchpadGenerator::Init) {
+                if (generator == LaunchpadGenerator::InitSteps) {
                     setGeneratorMode(false);
                 }
                 return true;
@@ -482,7 +491,10 @@ void LaunchpadController::sequenceOpenGenerator(LaunchpadGenerator generator) {
                 case LaunchpadGenerator::Euclidean:
                     pages->curveSequenceEdit.openLaunchpadGenerator(Generator::Mode::Euclidean);
                     break;
-                case LaunchpadGenerator::Init:
+                case LaunchpadGenerator::InitLayer:
+                    pages->curveSequenceEdit.openLaunchpadGenerator(Generator::Mode::InitLayer);
+                    break;
+                case LaunchpadGenerator::InitSteps:
                     pages->curveSequenceEdit.openLaunchpadGenerator(Generator::Mode::InitSteps);
                     break;
                 default:
@@ -500,7 +512,10 @@ void LaunchpadController::sequenceOpenGenerator(LaunchpadGenerator generator) {
                 case LaunchpadGenerator::Euclidean:
                     pages->stochasticSequenceEdit.openLaunchpadGenerator(Generator::Mode::Euclidean);
                     break;
-                case LaunchpadGenerator::Init:
+                case LaunchpadGenerator::InitLayer:
+                    pages->stochasticSequenceEdit.openLaunchpadGenerator(Generator::Mode::InitLayer);
+                    break;
+                case LaunchpadGenerator::InitSteps:
                     pages->stochasticSequenceEdit.openLaunchpadGenerator(Generator::Mode::InitSteps);
                     break;
                 default:
@@ -518,7 +533,10 @@ void LaunchpadController::sequenceOpenGenerator(LaunchpadGenerator generator) {
                 case LaunchpadGenerator::Euclidean:
                     pages->logicSequenceEdit.openLaunchpadGenerator(Generator::Mode::Euclidean);
                     break;
-                case LaunchpadGenerator::Init:
+                case LaunchpadGenerator::InitLayer:
+                    pages->logicSequenceEdit.openLaunchpadGenerator(Generator::Mode::InitLayer);
+                    break;
+                case LaunchpadGenerator::InitSteps:
                     pages->logicSequenceEdit.openLaunchpadGenerator(Generator::Mode::InitSteps);
                     break;
                 default:
@@ -536,7 +554,10 @@ void LaunchpadController::sequenceOpenGenerator(LaunchpadGenerator generator) {
                 case LaunchpadGenerator::Euclidean:
                     pages->arpSequenceEdit.openLaunchpadGenerator(Generator::Mode::Euclidean);
                     break;
-                case LaunchpadGenerator::Init:
+                case LaunchpadGenerator::InitLayer:
+                    pages->arpSequenceEdit.openLaunchpadGenerator(Generator::Mode::InitLayer);
+                    break;
+                case LaunchpadGenerator::InitSteps:
                     pages->arpSequenceEdit.openLaunchpadGenerator(Generator::Mode::InitSteps);
                     break;
                 default:
@@ -569,8 +590,11 @@ void LaunchpadController::sequenceOpenGenerator(LaunchpadGenerator generator) {
         case LaunchpadGenerator::Euclidean:
             pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Euclidean);
             break;
-        case LaunchpadGenerator::Init:
-            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::Init);
+        case LaunchpadGenerator::InitLayer:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::InitLayer);
+            break;
+        case LaunchpadGenerator::InitSteps:
+            pages->noteSequenceEdit.openLaunchpadGenerator(NoteSequenceEditPage::LaunchpadGenerator::InitSteps);
             break;
         case LaunchpadGenerator::None:
             break;

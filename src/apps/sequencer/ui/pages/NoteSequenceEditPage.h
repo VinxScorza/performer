@@ -21,7 +21,8 @@ public:
         Vandalize,
         Wreck,
         Euclidean,
-        Init,
+        InitLayer,
+        InitSteps,
     };
 
     NoteSequenceEditPage(PageManager &manager, PageContext &context);
