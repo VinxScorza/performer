@@ -2734,7 +2734,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           Sequence step editors also have an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. In this mode, <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies.
         </p>
         <p>
-          For the full map split (<em>Note</em> vs non-<em>Note</em>), activation semantics (single-tap vs two-tap), reroll behavior, immediate <code>Init Steps</code> behavior, retarget rules, and fail-closed behavior, see <a href="#appendix-launchpad-generators-mode">Launchpad Generators Mode</a> and <a href="#appendix-safety-fail-closed">Safety / Fail-Closed</a> in the appendix.
+          For the full map split (<em>Note</em> vs non-<em>Note</em>), activation semantics (single-tap vs two-tap), reroll behavior, immediate <code>Init Layer</code>/<code>Init Steps</code> behavior, retarget rules, and fail-closed behavior, see <a href="#appendix-launchpad-generators-mode">Launchpad Generators Mode</a> and <a href="#appendix-safety-fail-closed">Safety / Fail-Closed</a> in the appendix.
         </p>
         <h4>Pattern Mode</h4>
         <p>
@@ -2848,8 +2848,8 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><em>Note</em></td><td style="text-align: left"><code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 16</code> = <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, <em>Init Steps</em></td></tr>
-            <tr><td style="text-align: left"><em>Curve</em>, <em>Stochastic</em>, <em>Logic</em>, <em>Arp</em></td><td style="text-align: left"><code>GRID 1 / 3 / 4 / 16</code> = <em>Random</em>, <em>Entropy</em>, <em>Euclidean</em>, <em>Init Steps</em></td></tr>
+            <tr><td style="text-align: left"><em>Note</em></td><td style="text-align: left"><code>GRID 1 / 2 / 10 / 3 / 11 / 4 / 8 / 16</code> = <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, <em>Vandalize</em>, <em>Wreck</em>, <em>Euclidean</em>, <em>Init Layer</em>, <em>Init Steps</em></td></tr>
+            <tr><td style="text-align: left"><em>Curve</em>, <em>Stochastic</em>, <em>Logic</em>, <em>Arp</em></td><td style="text-align: left"><code>GRID 1 / 3 / 4 / 8 / 16</code> = <em>Random</em>, <em>Entropy</em>, <em>Euclidean</em>, <em>Init Layer</em>, <em>Init Steps</em></td></tr>
           </tbody>
         </table>
         <p>
@@ -2859,12 +2859,15 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           Pressing the selected generator pad rerolls in place: <code>NEW RAND</code> on <em>Random</em>/<em>Acid</em>, <code>CHAOS</code> on <em>Vandalize</em>/<em>Wreck</em>/<em>Entropy</em>, <code>NEW EUCL</code> on <em>Euclidean</em>. In this split, <em>Entropy</em> uses the same <code>ORIGINAL -&gt; CHAOS -&gt; A/B</code> logic as Chaos but stays track-local on non-Note tracks.
         </p>
         <p>
-          <em>Init Steps</em> on <code>GRID 16</code> is immediate: it applies at once to the current track scope and exits the mini-mode to plain <code>Steps</code>.
+          <em>Init Layer</em> on <code>GRID 8</code> is immediate: it applies at once to the active layer scope and keeps the mini-mode active. <em>Init Steps</em> on <code>GRID 16</code> is immediate: it applies at once to all step layers in current track scope and exits the mini-mode to plain <code>Steps</code>.
         </p>
 
         <h3 id="appendix-16-step-editing-mode">16-step Editing Mode</h3>
         <p>
           This is an experimental external-controller workflow for per-step editing with 16 knobs plus 16 pads. It is currently intended for <em>Launch Control XL</em> and <em>BeatStep Pro</em> style mappings, and remains field-test status.
+        </p>
+        <p>
+          On <em>Launch Control XL</em>, this mode is defined against <code>Factory Preset #1</code> (default map). Use that preset explicitly before entering the mode.
         </p>
         <p>
           Operational intent: use the 16 knobs to edit <code>Note</code> values and the 16 pads to toggle <code>Gate</code> states on the currently visible bank (<code>steps 1..16</code> in the current section).
@@ -2907,7 +2910,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           Messages outside that mapping are ignored by this mode.
         </p>
         <p>
-          Current LED scope: pad/function feedback is available for this mode on both LCXL and BSP profiles, while dedicated knob-row LED rendering is not driven by firmware and remains device-local.
+          Current LED scope is gate-focused: step gate states are reflected on controller pads (and mode/section function buttons have feedback), while note-value edits from knobs have no dedicated LED rendering. Dedicated knob-row LED behavior is not driven by firmware and remains device-local.
         </p>
 
         <h3 id="appendix-init-semantics">Init Semantics</h3>
@@ -2923,13 +2926,13 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>Init Layer</code></td><td style="text-align: left"><code>Steps</code> context menu</td><td style="text-align: left">Only active layer. Uses persistent step selection first; if empty, falls back to whole current track layer.</td></tr>
+            <tr><td style="text-align: left"><code>Init Layer</code></td><td style="text-align: left"><code>Steps</code> context menu and LP Generators Mode (<code>GRID 8</code>)</td><td style="text-align: left">Only active layer. Uses persistent step selection first; if empty, falls back to whole current track layer.</td></tr>
             <tr><td style="text-align: left"><code>Init Steps</code></td><td style="text-align: left"><code>GEN</code> chooser and LP Generators Mode</td><td style="text-align: left">All step layers of current track scope. Uses persistent step selection first; if empty, falls back to whole current track.</td></tr>
             <tr><td style="text-align: left"><code>Init Seq</code></td><td style="text-align: left"><code>SEQ</code> page context menu</td><td style="text-align: left">Whole sequence for the current track.</td></tr>
           </tbody>
         </table>
         <p>
-          On LP Generators Mode specifically, <code>Init Steps</code> is immediate and exits the mode, while <code>Init Layer</code> remains a machine-side step-context action.
+          On LP Generators Mode specifically, both actions are immediate: <code>Init Layer</code> (<code>GRID 8</code>) applies and stays in mode, while <code>Init Steps</code> (<code>GRID 16</code>) applies and exits to plain <code>Steps</code>.
         </p>
 
         <h3 id="appendix-chaos-family">Chaos Family</h3>
@@ -2985,7 +2988,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           <li>While machine generator selector paths are active, LP track/scene retarget is locked.</li>
           <li>Inside LP Generators Mode, retarget is allowed only on supported track types and cancels active preview before retarget.</li>
           <li>If context becomes invalid during an open generator preview, operation fails closed as <code>GEN CANCELED</code> instead of applying to the wrong target.</li>
-          <li><code>Init Steps</code> from LP mini-mode is immediate by design and exits to plain <code>Steps</code>, reducing ambiguous pending state.</li>
+          <li>LP mini-mode init actions are immediate by design: <code>Init Layer</code> (<code>GRID 8</code>) applies on active layer and stays in mode, while <code>Init Steps</code> (<code>GRID 16</code>) applies on all step layers and exits to plain <code>Steps</code>.</li>
           <li>Modal close/redispatch behavior is hardened so selector closes do not leak the same key event into the underlying page.</li>
         </ul>
 
@@ -2997,7 +3000,10 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           If your setup includes multiple USB MIDI devices, keep this as the operational rule: use one external control workflow as primary at a time, and treat switching as an explicit mode change.
         </p>
         <p>
-          Practical workaround: a powered USB hub with per-port switches can be used to enable only one controller at a time (for example Launchpad or LCXL/BSP). This is a hardware-side convenience workaround, not true simultaneous multi-controller support.
+          Architecture limit: the current firmware supports exactly one external USB controller at a time, and that controller must be connected directly to the module USB host port.
+        </p>
+        <p>
+          USB hubs, including externally powered hubs, are not supported. The current firmware architecture does not implement hub-based multi-device handling on top of the STM32 USB Host stack, so devices connected through a hub are not enumerated by the firmware and cannot establish a usable controller connection.
         </p>
 
         <h3 id="appendix-desktop-simulator">Desktop Simulator</h3>

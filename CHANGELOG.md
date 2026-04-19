@@ -12,7 +12,7 @@
 - Add `16-step Editing Mode` controller feedback scope on LCXL/BSP profiles: gate-pad LEDs plus prev/next function-button feedback (knob-row LED remains device-local)
 - Fix Performer `GEN` menu flow/labels by track type: on `Note` use explicit `Acid (Layer/Phrase)` and `Chaos (Vandalize/Wreck)` labels; on non-Note tracks expose `Chaos (Entropy)` (`ChaosEntropy` mode)
 - Fix `Voltage Mode` behavior on `Arp` and `Stochastic` tracks so non-chromatic user scales are respected in bypass-scale paths instead of forcing semitone/chromatic fallback
-- Extend Launchpad `Generators Mode` beyond Note tracks: keep the full Note map unchanged, and add a dedicated subset on `Curve` / `Stochastic` / `Logic` / `Arp` (`GRID 1 = Random`, `GRID 3 = Entropy`, `GRID 4 = Euclidean`, `GRID 16 = Init Steps`)
+- Extend Launchpad `Generators Mode` beyond Note tracks: keep the full Note map (`GRID 1/2/10/3/11/4/8/16` = `Random`, `Acid Layer`, `Acid Phrase`, `Vandalize`, `Wreck`, `Euclidean`, `Init Layer`, `Init Steps`) and add the dedicated non-Note subset on `Curve` / `Stochastic` / `Logic` / `Arp` (`GRID 1/3/4/8/16` = `Random`, `Entropy`, `Euclidean`, `Init Layer`, `Init Steps`)
 - Add the new Chaos generator mode `Entropy` for non-Note Launchpad workflows, with Chaos-style interaction, dedicated target matrix, and persisted defaults in `System -> Chaos Defaults`
 - Set `Slide Time` default to `10%` across track families (from the previous `20%` line default)
 - Make user scales use dynamic names in all `Scale` menus; default user-scale slot names are now `INIT1`..`INIT4`

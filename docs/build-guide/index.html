@@ -199,11 +199,25 @@ make -j
           Armed mode forces loop to the visible 16-step window and enables knob/pad edits; disarming restores the previous loop range.
         </p>
         <p>
-          Current limitation: this mode does not yet drive dedicated LED feedback on the external controller itself (BeatStep Pro / Launch Control XL).
-          Operational feedback is provided by the PERFORMER display and panel step LEDs.
+          Target scope is the currently selected <code>Note</code> track: knob note editing is active only when the machine layer is <code>Note</code>, while pad gate toggle remains active on that same track across layers.
+        </p>
+        <p>
+          Current LED scope: firmware feedback is gate-focused. Step gate states are reflected on controller pads (and mode/section function buttons have feedback), while note-value edits from knobs have no dedicated LED rendering; knob-row LED behavior remains device-local.
         </p>
         <p>
           Knob note editing works in a range equivalent to two octaves (<code>-1V..+1V</code>) quantized to the current scale; the current root is applied in the output path.
+        </p>
+        <p>
+          Architecture limit: only one external control workflow should be considered active at a time. Launchpad and 16-step Editing Mode are not intended for simultaneous concurrent control in the same session path.
+        </p>
+        <p>
+          Architecture limit: the current firmware supports exactly one external USB controller at a time, and that controller must be connected directly to the module USB host port.
+        </p>
+        <p>
+          USB hubs, including externally powered hubs, are not supported. The current firmware architecture does not implement hub-based multi-device handling on top of the STM32 USB Host stack, so devices connected through a hub are not enumerated by the firmware and cannot establish a usable controller connection.
+        </p>
+        <p>
+          See also: <a href="../manual/index.html#appendix-16-step-editing-mode">Manual - 16-step Editing Mode</a> and <a href="../manual/index.html#appendix-controller-concurrency-limits">Manual - Controller Concurrency Limits</a>.
         </p>
       </section>
 
