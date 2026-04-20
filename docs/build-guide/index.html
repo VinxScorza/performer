@@ -195,6 +195,9 @@ make -j
           and <code>CC 106/107</code> (<code>on BSP: Ptn 1 / Ptn 2; on LCXL: Track Select &lt; / &gt;</code>) to prev/next section.
         </p>
         <p>
+          Controller compatibility for this path is map-driven (not brand-driven): explicit USB VID/PID support is optional if a controller emits that same MIDI map on channel <code>9</code>. If a device cannot emit this map, it requires a dedicated firmware profile.
+        </p>
+        <p>
           In firmware, <code>Prev + Next</code> (controller-side, <code>on BSP: Ptn 1 + Ptn 2; on LCXL: Track Select &lt; + &gt;</code>) together toggle <code>16-step Editing Mode</code> armed state. BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.
           Armed mode forces loop to the visible 16-step window and enables knob/pad edits; disarming restores the previous loop range.
         </p>

@@ -2908,6 +2908,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           Root note is applied in the normal output path; the controller mapping itself does not hardcode a root offset.
         </p>
         <p>
+          Compatibility is map-driven (not brand-driven): explicit USB VID/PID support is optional for this path if a controller can emit the same map on MIDI channel <code>9</code>. If it cannot, a dedicated firmware profile is required.
+        </p>
+        <p>
           Mapping reference (common LCXL Factory #1 and BSP template profile) uses MIDI channel <code>9</code>: knobs on <code>CC 13..20</code> and <code>CC 29..36</code>; pads on notes <code>41..44</code>, <code>57..60</code>, <code>73..76</code>, <code>89..92</code>; section buttons on <code>CC 106/107</code>.
         </p>
         <p>
