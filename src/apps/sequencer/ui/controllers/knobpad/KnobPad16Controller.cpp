@@ -344,16 +344,19 @@ void KnobPad16Controller::syncFeedback(bool force) {
 
     auto &sequence = _model.project().selectedNoteSequence();
     const int firstStep = sequence.section() * 16;
+    const int playheadSlot = visiblePlayheadSlot(sequence);
 
     for (int slot = 0; slot < 16; ++slot) {
         const int stepIndex = firstStep + slot;
         if (stepIndex < 0 || stepIndex >= CONFIG_STEP_COUNT) {
-            sendPadLed(slot, false, force);
+            sendPadLed(slot, 0, force);
             continue;
         }
 
         const auto &step = sequence.step(stepIndex);
-        sendPadLed(slot, step.gate(), force);
+        const bool isPlayhead = slot == playheadSlot;
+        const int value = isPlayhead ? int(_profileMapping.padPlayheadValue) : (step.gate() ? int(_profileMapping.padOnValue) : 0);
+        sendPadLed(slot, value, force);
     }
 
     sendSectionLed(true, !_prevPressed, force);
@@ -366,13 +369,29 @@ void KnobPad16Controller::clearFeedback() {
     }
 
     for (int slot = 0; slot < 16; ++slot) {
-        sendPadLed(slot, false, false);
+        sendPadLed(slot, 0, false);
     }
     sendSectionLed(true, false, false);
     sendSectionLed(false, false, false);
 }
 
-void KnobPad16Controller::sendPadLed(int slot, bool on, bool force) {
+int KnobPad16Controller::visiblePlayheadSlot(const NoteSequence &sequence) const {
+    const auto &trackEngine = _engine.selectedTrackEngine().as<NoteTrackEngine>();
+    if (!trackEngine.isActiveSequence(sequence)) {
+        return -1;
+    }
+
+    const int currentStep = trackEngine.currentStep();
+    const int firstStep = sequence.section() * 16;
+    const int lastStep = firstStep + 15;
+    if (currentStep < firstStep || currentStep > lastStep) {
+        return -1;
+    }
+
+    return currentStep - firstStep;
+}
+
+void KnobPad16Controller::sendPadLed(int slot, int value, bool force) {
     if (slot < 0 || slot >= 16 || !supportsPadFunctionFeedback()) {
         return;
     }
@@ -383,7 +402,7 @@ void KnobPad16Controller::sendPadLed(int slot, bool on, bool force) {
         73, 74, 75, 76,
         89, 90, 91, 92,
     };
-    const int value = on ? int(_profileMapping.padOnValue) : 0;
+    value = clamp(value, 0, 127);
     if (!force && _padLedCache[slot] == value) {
         return;
     }
@@ -526,6 +545,7 @@ KnobPad16Controller::ProfileMapping KnobPad16Controller::buildProfileMapping(Pro
         mapping.nextSectionCc = 107;
         mapping.channel = 8; // MIDI channel 9 (0-based index)
         mapping.padOnValue = 63; // amber-like ON
+        mapping.padPlayheadValue = 15; // red-like playhead
         return mapping;
     case Profile::BeatStepPro:
         // BSP template aligned to LCXL Factory #1 map:
@@ -536,6 +556,7 @@ KnobPad16Controller::ProfileMapping KnobPad16Controller::buildProfileMapping(Pro
         mapping.nextSectionCc = 107;
         mapping.channel = 8; // keep same logical channel as LCXL template
         mapping.padOnValue = 127; // stronger ON level for BSP pads
+        mapping.padPlayheadValue = 15; // fallback distinct level for playhead
         return mapping;
     }
 

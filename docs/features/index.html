@@ -38,7 +38,7 @@
             This page is the curated web summary of the Vinx Scorza line. It reorganizes the work by topic instead of strict release order so it is easier to understand what this branch actually adds.
           </p>
           <p>
-            This documentation line is aligned through the active <code>v0.4.1</code> development line. If you want the exact chronological log, including inherited upstream history and older <code>v0.3.2-vinx.*</code> releases, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
+            This documentation line is aligned through the active <code>v0.4.2</code> development line. If you want the exact chronological log, including inherited upstream history and older <code>v0.3.2-vinx.*</code> releases, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
           </p>
         </div>
       </section>
@@ -55,7 +55,7 @@
               <li>Step selection behavior was refined with more consistent shift handling and a shared selection-or-all fallback used across step-edit and generator paths.</li>
               <li><code>Curve</code> tracks were extended with per-step <code>Gate Offset</code> and <code>Gate Length</code>, including edit-page support, overview rendering, Launchpad handling, and simulator bindings.</li>
               <li>Scale-selection limits were fixed so the full built-in plus user-scale set is reachable again across <code>Project</code>, <code>Note</code>, <code>Logic</code>, <code>Stochastic</code>, and <code>Arp</code>.</li>
-              <li><code>Voltage Mode</code> handling was aligned across capture and playback paths: MIDI note capture now follows the active scale octave span, and <code>Arp</code>/<code>Stochastic</code> bypass-scale paths respect non-chromatic user scales instead of forcing semitone/<code>1V/oct</code> fallback.</li>
+              <li><code>Voltage Mode</code> handling was aligned across capture and playback paths: MIDI note capture now follows the active scale octave span, and <code>Arp</code>/<code>Stochastic</code> bypass/transposition paths respect non-chromatic user scales with correct <code>1.2V</code>-octave wrapping instead of semitone/<code>1V/oct</code> fallback.</li>
             </ul>
           </article>
         </div>
@@ -103,8 +103,7 @@
               <code>Random</code> evolved from a quick reroll utility into a controlled generator with identity, stability, and compare workflow.
             </p>
             <ul>
-              <li><code>Random</code> now runs on a non-destructive preview/apply model with <code>A/B</code>, <code>Cancel</code>, <code>Apply</code>, and reroll actions built around predictable state transitions.</li>
-              <li><code>Variation</code> was added for controlled deviation from the original sequence, so changes can stay musical instead of always jumping to unrelated material.</li>
+              <li><code>Random</code> now runs on a non-destructive preview/apply model with <code>A/B</code>, <code>Cancel</code>, <code>Apply</code>, and reroll actions built around predictable state transitions; <code>Variation</code> follows the same per-step keep/replace semantics used in <code>Acid</code>.</li>
               <li>Seed handling moved to stable <code>32-bit</code> hexadecimal values, and seed edits remain intentional while parameter edits avoid unwanted seed drift.</li>
               <li>Preview rendering is richer and layer-aware (especially on Note tracks), and footer actions stay in context without unexpected page exits.</li>
             </ul>
@@ -175,8 +174,10 @@
             </p>
             <ul>
               <li>The generator ecosystem across track families (<code>Random</code>, <code>Euclidean</code>, <code>Acid</code> <code>Layer/Phrase</code>, <code>Chaos</code> <code>Vandalize/Wreck/Entropy</code>) now follows a more coherent preview/apply safety model shared between machine pages and Launchpad <code>Generators Mode</code>.</li>
+              <li>All generators now enter on <code>ORIGINAL</code>; first preview is created only on explicit reroll.</li>
               <li><code>Generate</code> opens on the current <code>16-step</code> bank and keeps navigation aligned to the active context.</li>
-              <li>The <code>Euclidean</code> generator was reworked with compare behavior, preview-on-entry, reseed, direct parameter editing, and a strict <code>Beats ≤ Steps</code> constraint.</li>
+              <li>The <code>Euclidean</code> generator was reworked with compare behavior, explicit reroll, direct parameter editing, and a strict <code>Beats ≤ Steps</code> constraint.</li>
+              <li>Footer and context action layouts were rewritten and normalized across generator pages for faster, less error-prone operation in performance use.</li>
               <li><code>ResetGen</code> now restores neutral defaults instead of quietly rerolling generator state.</li>
               <li><code>Init Layer</code>, <code>Init Steps</code>, and <code>Init Seq</code> were separated again with a consistent selection-aware fallback.</li>
               <li>Transport remains responsive inside generator pages so the sequencer stays playable while shaping material.</li>

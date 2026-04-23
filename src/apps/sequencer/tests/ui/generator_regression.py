@@ -92,6 +92,15 @@ class GeneratorRegressionTest(tf.UiTest):
             for i in range(count)
         )
 
+    def _set_generator_param_percent(self, function_button, value):
+        c = self.controller
+        c.down(function_button).wait(10)
+        for _ in range(140):
+            c.left()
+        for _ in range(value):
+            c.right()
+        c.up(function_button).wait(10)
+
     def _assert_scene_switch_locked_in_generator_page(self, generator_index):
         c = self.controller
         p = self.env.sequencer.model.project
@@ -147,6 +156,135 @@ class GeneratorRegressionTest(tf.UiTest):
         self.assertTrue(self.env.sequencer.isGeneratorPageTop)
         c.press("f4").wait(20)  # Cancel
         self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
+
+    def test_seeded_generators_enter_on_original_and_generate_on_first_reroll(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        p.selectedNoteSequenceLayer = p.selectedNoteSequence.Layer.Note
+        sequence = p.selectedNoteSequence
+
+        def reset_note_baseline():
+            for idx in range(16):
+                step = sequence.steps[idx]
+                step.gate = (idx % 2) == 0
+                step.length = 6
+                step.note = 24 + (idx % 8)
+                step.slide = False
+
+        def reset_gate_baseline():
+            for idx in range(16):
+                step = sequence.steps[idx]
+                step.gate = False
+
+        # Random: enter on ORIGINAL -> immediate apply is no-op.
+        reset_note_baseline()
+        before = self._note_signature(sequence, 16)
+        self._open_generator_page(0)  # Random
+        c.encoder().wait(30)          # Apply without reroll
+        self.assertEqual(self._note_signature(sequence, 16), before)
+
+        # Random: first reroll creates first preview and applies changes.
+        reset_note_baseline()
+        before = self._note_signature(sequence, 16)
+        self._open_generator_page(0)
+        c.right().wait(20)            # Encoder reroll (seed)
+        c.encoder().wait(30)          # Apply
+        self.assertNotEqual(self._note_signature(sequence, 16), before)
+
+        # Acid: enter on ORIGINAL -> immediate apply is no-op.
+        reset_note_baseline()
+        before = self._note_signature(sequence, 16)
+        p.selectedNoteSequenceLayer = p.selectedNoteSequence.Layer.Note
+        self._open_generator_page(1)  # Acid
+        c.encoder().wait(30)          # Apply without reroll
+        self.assertEqual(self._note_signature(sequence, 16), before)
+
+        # Acid: first reroll creates first preview and applies changes.
+        reset_note_baseline()
+        before = self._note_signature(sequence, 16)
+        p.selectedNoteSequenceLayer = p.selectedNoteSequence.Layer.Note
+        self._open_generator_page(1)
+        c.right().wait(20)            # Encoder reroll (seed)
+        c.encoder().wait(30)          # Apply
+        self.assertNotEqual(self._note_signature(sequence, 16), before)
+
+        # Euclidean: enter on ORIGINAL -> immediate apply is no-op.
+        reset_gate_baseline()
+        before = self._note_signature(sequence, 16)
+        self._open_generator_page(3)  # Euclidean
+        c.encoder().wait(30)          # Apply without reroll
+        self.assertEqual(self._note_signature(sequence, 16), before)
+
+        # Euclidean: first reroll creates first preview and applies changes.
+        reset_gate_baseline()
+        before = self._note_signature(sequence, 16)
+        self._open_generator_page(3)
+        c.right().wait(20)            # Encoder reroll (NEW EUCL path)
+        c.encoder().wait(30)          # Apply
+        self.assertNotEqual(self._note_signature(sequence, 16), before)
+
+    def test_random_variation_uses_probabilistic_keep_original_semantics(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        p.selectedNoteSequenceLayer = p.selectedNoteSequence.Layer.Note
+
+        sequence = p.selectedNoteSequence
+
+        def reset_baseline():
+            for idx in range(16):
+                step = sequence.steps[idx]
+                step.gate = True
+                step.length = 6
+                step.note = 30 + (idx % 8)
+                step.slide = False
+
+        def changed_steps(before, after):
+            return sum(1 for idx in range(16) if before[idx] != after[idx])
+
+        # 0% keeps original material.
+        reset_baseline()
+        before = self._note_signature(sequence, 16)
+        self._open_generator_page(0)  # Random
+        self._set_generator_param_percent("f2", 0)  # Var
+        c.right().wait(20)  # first reroll
+        c.encoder().wait(30)  # Apply
+        after_zero = self._note_signature(sequence, 16)
+        self.assertEqual(after_zero, before)
+
+        # 100% applies generated material.
+        reset_baseline()
+        before = self._note_signature(sequence, 16)
+        self._open_generator_page(0)  # Random
+        self._set_generator_param_percent("f2", 100)  # Var
+        c.right().wait(20)  # first reroll
+        c.encoder().wait(30)  # Apply
+        after_full = self._note_signature(sequence, 16)
+        changed_full = changed_steps(before, after_full)
+        self.assertGreater(changed_full, 0)
+
+        # 50% is probabilistic: across multiple runs it should preserve more
+        # original steps than a full 100% application.
+        min_changed_half = 16
+        for _ in range(6):
+            reset_baseline()
+            before = self._note_signature(sequence, 16)
+            self._open_generator_page(0)  # Random
+            self._set_generator_param_percent("f2", 50)  # Var
+            c.right().wait(20)  # first reroll
+            c.encoder().wait(30)  # Apply
+            after_half = self._note_signature(sequence, 16)
+            changed_half = changed_steps(before, after_half)
+            min_changed_half = min(min_changed_half, changed_half)
+
+        self.assertLess(min_changed_half, changed_full)
 
     def test_generator_and_selector_cancel_do_not_leak_to_underlying_page(self):
         c = self.controller
@@ -562,6 +700,8 @@ class GeneratorRegressionTest(tf.UiTest):
             c.right().wait(2)
         c.up("f2").wait(20)
 
+        # Entry starts on ORIGINAL; first reroll is required to build preview.
+        self._lp_press_grid(1)
         self.assertTrue(any(sequence.steps[i].gate for i in range(16)))
         c.press("f4").wait(20)  # Cancel
 

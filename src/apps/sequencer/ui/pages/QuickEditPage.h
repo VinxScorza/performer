@@ -10,6 +10,7 @@ public:
 
     using BasePage::show;
     void show(ListModel &listModel, int row);
+    void showCompact(ListModel &listModel, int row, int slot);
 
     virtual void enter() override;
     virtual void exit() override;
@@ -27,4 +28,6 @@ public:
 private:
     ListModel *_listModel;
     int _row;
+    bool _compact = false;
+    int _compactSlot = 0;
 };

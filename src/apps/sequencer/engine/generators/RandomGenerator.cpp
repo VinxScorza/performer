@@ -113,7 +113,7 @@ void RandomGenerator::update() {
 
     int bias = (_params.bias * 255) / 10;
     int scale = _params.scale;
-    float variation = _params.variation * 0.01f;
+    int variation = _params.variation;
 
     for (int i = 0; i < size; ++i) {
         if (_selected[i]) {
@@ -125,12 +125,18 @@ void RandomGenerator::update() {
     }
 
     for (size_t i = 0; i < _pattern.size(); ++i) {
-        if (_selected[i]) {
-            float original = _builder.originalValue(i);
-            float generated = _pattern[i] * (1.f / 255.f);
-            float blended = original + (generated - original) * variation;
-            _builder.setValue(i, blended);
+        if (!_selected[i]) {
+            continue;
         }
+
+        const float original = _builder.originalValue(i);
+        if (variation < 100 && rng.nextRange(100) >= uint32_t(variation)) {
+            _builder.setValue(i, original);
+            continue;
+        }
+
+        const float generated = _pattern[i] * (1.f / 255.f);
+        _builder.setValue(i, generated);
     }
 }
 

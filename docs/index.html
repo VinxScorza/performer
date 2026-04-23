@@ -44,7 +44,7 @@
         <p>
           I'm kind of losing my mind over this fork... consider <a href="donate/index.html">DONATING</a> if you find it useful.<br>
           If you notice any bug or weird behavior, please <a href="https://github.com/VinxScorza/performer/issues" target="_blank" rel="noopener noreferrer">report it</a>. This fork moves fast, and I really need the feedback.<br>
-          Documentation note: the <a href="manual/index.html">User Manual</a> and <a href="cheatsheet/index.html">LP Cheatsheet</a> are aligned through the current <code>v0.4.1</code> development line (former <code>v0.3.2-vinx.*</code> naming kept as historical reference), including the appendix, Launchpad material, and current simulator notes.
+          Documentation note: the <a href="manual/index.html">User Manual</a> and <a href="cheatsheet/index.html">LP Cheatsheet</a> are aligned through the current <code>v0.4.2</code> development line (former <code>v0.3.2-vinx.*</code> naming kept as historical reference), including the appendix, Launchpad material, and current simulator notes.
         </p>
       </section>
 
@@ -58,6 +58,7 @@
         <h4 class="section-callout">Generators &amp; Performance Workflow</h4>
         <ul>
           <li>Full evolution of the generator ecosystem (<code>Random</code>, <code>Acid</code>, <code>Euclidean</code>, <code>Chaos</code>), now unified under a coherent preview/apply safety model and consistent playable workflow across machine and Launchpad. Includes the introduction and consolidation of <code>Acid</code> (<code>Layer</code> + <code>Phrase</code>), the expansion of <code>Chaos</code> into <code>Vandalize Sequence</code> + <code>Wreck Pattern</code>, and the addition of <code>Entropy</code> as a dedicated subset for non-Note tracks.</li>
+          <li>Generator interaction is now more explicit and uniform: all generator pages enter on <code>ORIGINAL</code>, first preview requires explicit reroll, and footer/context action layouts were rewritten for a more consistent workflow.</li>
           <li>Unified Init semantics across <code>Init Layer</code> / <code>Init Steps</code> / <code>Init Seq</code>, with consistent selection-aware fallback.</li>
           <li>Launchpad <code>Generators Mode</code> integrated with track-type mapping, including immediate <code>Init Layer</code> and <code>Init Steps</code> actions.</li>
           <li>Launchpad UX improvements including <code>1-level Undo/Redo</code>, <code>Circuit</code> as default with improved <code>Classic</code> compatibility, improved targeting/probability/range handling, display wake on input, and a near-complete refactoring of the Launchpad controller codebase.</li>

@@ -122,7 +122,14 @@ bool ChaosGenerator::blendRandomBool(bool originalValue, Random &rng) const {
 }
 
 int ChaosGenerator::blendRandomValue(NoteSequence::Layer layer, int originalValue, Random &rng) const {
-    const auto range = NoteSequence::layerRange(layer);
+    auto range = NoteSequence::layerRange(layer);
+
+    // Keep Chaos note-domain mutations within +/- 2 octaves.
+    if (layer == NoteSequence::Layer::Note || layer == NoteSequence::Layer::NoteVariationRange) {
+        range.min = std::max(range.min, -24);
+        range.max = std::min(range.max, 24);
+    }
+
     const int randomValue = range.min + int(rng.nextRange(range.max - range.min + 1));
     const float t = _params.amount * 0.01f;
 

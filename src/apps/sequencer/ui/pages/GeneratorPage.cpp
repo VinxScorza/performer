@@ -3,6 +3,7 @@
 #include "Pages.h"
 #include "ui/painters/WindowPainter.h"
 #include "ui/LedPainter.h"
+#include "ui/model/ListModel.h"
 
 #include "engine/generators/AcidGenerator.h"
 #include "engine/generators/ChaosEntropyGenerator.h"
@@ -12,6 +13,7 @@
 #include "engine/generators/RandomGenerator.h"
 
 #include <cstdio>
+#include <functional>
 #include <limits>
 
 enum class ContextAction {
@@ -200,6 +202,52 @@ static bool acidLayerGenerator(const Generator *generator) {
     return generator->mode() == Generator::Mode::Acid && generator->paramCount() < 5;
 }
 
+class GeneratorContextQuickEditModel : public ListModel {
+public:
+    void configure(Generator *generator, int paramIndex, const char *label, const std::function<void()> &onEdited) {
+        _generator = generator;
+        _paramIndex = paramIndex;
+        _label = label;
+        _onEdited = onEdited;
+    }
+
+    int rows() const override { return 1; }
+    int columns() const override { return 2; }
+
+    void cell(int row, int column, StringBuilder &str) const override {
+        if (row != 0 || !_generator) {
+            return;
+        }
+
+        if (column == 0) {
+            str("%s", _label);
+        } else if (column == 1) {
+            _generator->printParam(_paramIndex, str);
+        }
+    }
+
+    void edit(int row, int column, int value, bool shift) override {
+        if (row != 0 || column != 1 || !_generator) {
+            return;
+        }
+
+        _generator->editParam(_paramIndex, value, shift);
+        if (_onEdited) {
+            _onEdited();
+        }
+    }
+
+    void setSelectedScale(int, bool) override {}
+
+private:
+    Generator *_generator = nullptr;
+    int _paramIndex = -1;
+    const char *_label = "";
+    std::function<void()> _onEdited;
+};
+
+GeneratorContextQuickEditModel gGeneratorContextQuickEditModel;
+
 void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> *stepSelection) {
     _generator = generator;
     _stepSelection = stepSelection;
@@ -229,7 +277,7 @@ void GeneratorPage::enter() {
     _valueRange.first = 0;
     _valueRange.second = 7;
     _chaosCursor = 0;
-    _chaosPreviewArmed = false;
+    _previewArmed = false;
     _launchpadResetState = false;
 
     switch (_project.selectedTrack().trackMode()) {
@@ -261,10 +309,11 @@ void GeneratorPage::enter() {
         return;
     }
 
-    _generator->randomizeParams();
-    _generator->update();
-    _generator->showPreview();
-    _launchpadResetState = false;
+    // Enter seed-driven and Euclidean generators in ORIGINAL state.
+    // First preview is intentionally created only on explicit reroll action.
+    _generator->revert();
+    _generator->showOriginal();
+    _launchpadResetState = true;
 }
 
 void GeneratorPage::exit() {
@@ -351,6 +400,32 @@ void GeneratorPage::draw(Canvas &canvas) {
         functionNames[2] = nullptr;
         functionNames[3] = "CANCEL";
         functionNames[4] = "APPLY";
+    } else if (_generator->mode() == Generator::Mode::Random) {
+        functionNames[0] = "A/B";
+        functionNames[1] = "VAR";
+        functionNames[2] = "RANGE";
+        functionNames[3] = "BIAS";
+        functionNames[4] = "NEW RAND";
+    } else if (_generator->mode() == Generator::Mode::Acid) {
+        if (acidLayerGenerator(_generator)) {
+            functionNames[0] = "A/B";
+            functionNames[1] = "VAR";
+            functionNames[2] = _generator->paramName(1);
+            functionNames[3] = nullptr;
+            functionNames[4] = "NEW RAND";
+        } else {
+            functionNames[0] = "A/B";
+            functionNames[1] = "VAR";
+            functionNames[2] = "RANGE";
+            functionNames[3] = "SLIDE";
+            functionNames[4] = "NEW RAND";
+        }
+    } else if (euclideanGeneratorMode(_generator->mode())) {
+        functionNames[0] = "A/B";
+        functionNames[1] = "OFFSET";
+        functionNames[2] = "STEPS";
+        functionNames[3] = "BEATS";
+        functionNames[4] = "NEW EUCL";
     } else if (seedDrivenGenerator(_generator->mode())) {
         functionNames[0] = "A/B";
         for (int i = 1; i < 5; ++i) {
@@ -359,12 +434,6 @@ void GeneratorPage::draw(Canvas &canvas) {
         if (acidLayerGenerator(_generator)) {
             functionNames[4] = "NEW RAND";
         }
-    } else if (euclideanGeneratorMode(_generator->mode())) {
-        functionNames[0] = "A/B";
-        functionNames[1] = "NEW EUCL";
-        functionNames[2] = _generator->paramName(0);
-        functionNames[3] = _generator->paramName(1);
-        functionNames[4] = _generator->paramName(2);
     } else {
         for (int i = 0; i < 5; ++i) {
             functionNames[i] = i < _generator->paramCount() ? _generator->paramName(i) : nullptr;
@@ -448,17 +517,45 @@ void GeneratorPage::draw(Canvas &canvas) {
         canvas.setColor(Color::Bright);
         canvas.setFont(prevFont);
     } else {
-        if (euclideanGeneratorMode(_generator->mode())) {
-            drawValue(0, _generator->showingPreview() ? "CURRENT" : "ORIGINAL");
-        }
-        for (int i = 0; i < _generator->paramCount(); ++i) {
+        auto drawParamValue = [&] (int footerIndex, int paramIndex) {
+            if (paramIndex < 0 || paramIndex >= _generator->paramCount()) {
+                return;
+            }
+
             FixedStringBuilder<16> str;
-            if (seedDrivenGenerator(_generator->mode()) && i == 0 && !_generator->showingPreview()) {
+            if (seedDrivenGenerator(_generator->mode()) && paramIndex == 0 && !_generator->showingPreview()) {
                 str("ORIGINAL");
             } else {
-                _generator->printParam(i, str);
+                _generator->printParam(paramIndex, str);
             }
-            drawValue(euclideanGeneratorMode(_generator->mode()) ? i + 2 : i, str);
+            drawValue(footerIndex, str);
+        };
+
+        if (_generator->mode() == Generator::Mode::Random) {
+            drawParamValue(0, 0); // Seed / ORIGINAL
+            drawParamValue(1, 4); // Var
+            drawParamValue(2, 3); // Range
+            drawParamValue(3, 2); // Bias
+        } else if (_generator->mode() == Generator::Mode::Acid) {
+            if (acidLayerGenerator(_generator)) {
+                drawParamValue(0, 0); // Seed / ORIGINAL
+                drawParamValue(1, 2); // Var
+                drawParamValue(2, 1); // layer main param
+            } else {
+                drawParamValue(0, 0); // Seed / ORIGINAL
+                drawParamValue(1, 4); // Var
+                drawParamValue(2, 3); // Range
+                drawParamValue(3, 2); // Slide
+            }
+        } else if (euclideanGeneratorMode(_generator->mode())) {
+            drawValue(0, _generator->showingPreview() ? "CURRENT" : "ORIGINAL");
+            drawParamValue(1, 2); // Offset
+            drawParamValue(2, 0); // Steps
+            drawParamValue(3, 1); // Beats
+        } else {
+            for (int i = 0; i < _generator->paramCount(); ++i) {
+                drawParamValue(i, i);
+            }
         }
     }
 
@@ -618,7 +715,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         auto *chaos = chaosGeneratorMode(_generator->mode()) ? static_cast<ChaosGenerator *>(_generator) : nullptr;
         auto *entropy = entropyGeneratorMode(_generator->mode()) ? static_cast<ChaosEntropyGenerator *>(_generator) : nullptr;
         auto refreshChaosView = [&] () {
-            if (_chaosPreviewArmed && _generator->showingPreview()) {
+            if (_previewArmed && _generator->showingPreview()) {
                 _generator->showPreview();
             }
         };
@@ -632,7 +729,7 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
             case 2:
                 {
                 bool wasShowingPreview = _generator->showingPreview();
-                _chaosPreviewArmed = true;
+                _previewArmed = true;
                 _generator->editParam(0, 1, false);
                 _generator->update();
                 _generator->showPreview();
@@ -704,34 +801,50 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
     }
 
+    auto triggerGeneratorReroll = [&] () {
+        if (abPreviewGenerator(_generator->mode())) {
+            _previewArmed = true;
+        }
+
+        switch (_generator->mode()) {
+        case Generator::Mode::Random: {
+            auto *random = static_cast<RandomGenerator *>(_generator);
+            random->randomizeContextParams();
+            random->update();
+            break;
+        }
+        case Generator::Mode::Acid: {
+            auto *acid = static_cast<AcidGenerator *>(_generator);
+            acid->randomizeContextParams();
+            acid->update();
+            break;
+        }
+        case Generator::Mode::Euclidean:
+            _generator->randomizeParams();
+            _generator->update();
+            break;
+        default:
+            return;
+        }
+
+        _generator->showPreview();
+        _launchpadResetState = false;
+    };
+
     if ((seedDrivenGenerator(_generator->mode()) || euclideanGeneratorMode(_generator->mode())) && key.isEncoder()) {
         commit();
         event.consume();
         return;
     }
 
-    if (seedDrivenGenerator(_generator->mode()) && key.isFunction() && key.function() == 0) {
-        togglePreview();
-        event.consume();
-        return;
-    }
-
-    if (acidLayerGenerator(_generator) && key.isFunction() && key.function() == 4) {
-        contextAction(int(ContextAction::RandomizeSeed));
-        event.consume();
-        return;
-    }
-
-    if (euclideanGeneratorMode(_generator->mode()) && key.isFunction()) {
+    if ((seedDrivenGenerator(_generator->mode()) || euclideanGeneratorMode(_generator->mode())) && key.isFunction()) {
         switch (key.function()) {
         case 0:
             togglePreview();
             event.consume();
             return;
-        case 1:
-            _generator->randomizeParams();
-            _generator->update();
-            _generator->showPreview();
+        case 4:
+            triggerGeneratorReroll();
             event.consume();
             return;
         default:
@@ -739,9 +852,16 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         }
     }
 
+    if (acidLayerGenerator(_generator) && key.isFunction() && key.function() == 3) {
+        event.consume();
+        return;
+    }
+
     if (key.isStep() && key.shiftModifier()) {
         _generator->update();
-        _generator->showPreview();
+        if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
+            _generator->showPreview();
+        }
         event.consume();
         return;
     }
@@ -750,7 +870,9 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
         if (_stepSelection->none()) {
             _stepSelection->selectAll();
             _generator->update();
-            _generator->showPreview();
+            if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
+                _generator->showPreview();
+            }
         } else {
             _stepSelection->clear();
             _generator->update();
@@ -780,15 +902,20 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
             return key.function() >= 0 && key.function() <= 4;
         }
 
-        if (seedDrivenGenerator(_generator->mode())) {
-            return key.function() == 0 ||
-                   (key.function() > 0 && key.function() < _generator->paramCount()) ||
-                   (acidLayerGenerator(_generator) && key.function() == 4);
+        if (_generator->mode() == Generator::Mode::Random) {
+            return key.function() >= 0 && key.function() <= 4;
+        }
+
+        if (_generator->mode() == Generator::Mode::Acid) {
+            if (acidLayerGenerator(_generator)) {
+                return key.function() == 0 || key.function() == 1 || key.function() == 2 ||
+                       key.function() == 3 || key.function() == 4;
+            }
+            return key.function() >= 0 && key.function() <= 4;
         }
 
         if (euclideanGeneratorMode(_generator->mode())) {
-            return key.function() == 0 || key.function() == 1 ||
-                   key.function() == 2 || key.function() == 3 || key.function() == 4;
+            return key.function() >= 0 && key.function() <= 4;
         }
 
         return false;
@@ -847,10 +974,49 @@ void GeneratorPage::encoder(EncoderEvent &event) {
 
     bool changed = false;
     bool functionKeyHeld = false;
+    bool rerollTriggered = false;
 
-    for (int i = 0; i < _generator->paramCount(); ++i) {
-        int functionIndex = euclideanGeneratorMode(_generator->mode()) ? i + 2 : i;
-        if (pageKeyState()[Key::F0 + functionIndex]) {
+    auto paramIndexForFunction = [&] (int functionIndex) -> int {
+        if (_generator->mode() == Generator::Mode::Random) {
+            switch (functionIndex) {
+            case 1: return 4; // Var
+            case 2: return 3; // Range
+            case 3: return 2; // Bias
+            default: return -1;
+            }
+        }
+
+        if (_generator->mode() == Generator::Mode::Acid) {
+            if (acidLayerGenerator(_generator)) {
+                switch (functionIndex) {
+                case 1: return 2; // Var
+                case 2: return 1; // Dens/Range/Slide depending on layer
+                default: return -1;
+                }
+            }
+
+            switch (functionIndex) {
+            case 1: return 4; // Var
+            case 2: return 3; // Range
+            case 3: return 2; // Slide
+            default: return -1;
+            }
+        }
+
+        if (euclideanGeneratorMode(_generator->mode())) {
+            switch (functionIndex) {
+            case 1: return 2; // Offset
+            case 2: return 0; // Steps
+            case 3: return 1; // Beats
+            default: return -1;
+            }
+        }
+
+        return -1;
+    };
+
+    for (int functionIndex = 0; functionIndex < 5; ++functionIndex) {
+        if (paramIndexForFunction(functionIndex) >= 0 && pageKeyState()[Key::F0 + functionIndex]) {
             functionKeyHeld = true;
             break;
         }
@@ -869,6 +1035,7 @@ void GeneratorPage::encoder(EncoderEvent &event) {
                 break;
             }
             changed = true;
+            rerollTriggered = true;
         }
     }
 
@@ -876,21 +1043,27 @@ void GeneratorPage::encoder(EncoderEvent &event) {
         if (event.value() != 0) {
             _generator->randomizeParams();
             changed = true;
+            rerollTriggered = true;
         }
     }
 
-    for (int i = 0; i < _generator->paramCount(); ++i) {
-        int functionIndex = euclideanGeneratorMode(_generator->mode()) ? i + 2 : i;
-        if (pageKeyState()[Key::F0 + functionIndex]) {
-            _generator->editParam(i, event.value(), event.pressed());
+    for (int functionIndex = 0; functionIndex < 5; ++functionIndex) {
+        int paramIndex = paramIndexForFunction(functionIndex);
+        if (paramIndex >= 0 && pageKeyState()[Key::F0 + functionIndex]) {
+            _generator->editParam(paramIndex, event.value(), event.pressed());
             changed = true;
         }
     }
 
     if (changed) {
+        if (rerollTriggered && abPreviewGenerator(_generator->mode())) {
+            _previewArmed = true;
+        }
         _launchpadResetState = false;
         _generator->update();
-        if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
+        if (rerollTriggered && abPreviewGenerator(_generator->mode())) {
+            _generator->showPreview();
+        } else if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
             _generator->showPreview();
         }
     }
@@ -1466,12 +1639,33 @@ int GeneratorPage::contextItemCount() const {
 }
 
 void GeneratorPage::contextShow(bool doubleClick) {
-    if (euclideanGeneratorMode(_generator->mode())) {
+    if (_generator->mode() == Generator::Mode::Random) {
+        const auto *random = static_cast<const RandomGenerator *>(_generator);
+        std::snprintf(_contextMenuAuxLabel, sizeof(_contextMenuAuxLabel), "SMOOTH %d", random->smooth());
         _contextMenuItems[0] = { "" };
-        _contextMenuItems[1] = { "RESETGEN" };
-        _contextMenuItems[2] = { "CANCEL" };
-        _contextMenuItems[3] = { "APPLY" };
-        _contextMenuItems[4] = { "" };
+        _contextMenuItems[1] = { _contextMenuAuxLabel };
+        _contextMenuItems[2] = { "RESETGEN" };
+        _contextMenuItems[3] = { "CANCEL" };
+        _contextMenuItems[4] = { "APPLY" };
+    } else if (_generator->mode() == Generator::Mode::Acid) {
+        const auto *acid = static_cast<const AcidGenerator *>(_generator);
+        if (acidLayerGenerator(_generator)) {
+            _contextMenuItems[0] = { "" };
+            _contextMenuItems[1] = { "" };
+        } else {
+            std::snprintf(_contextMenuAuxLabel, sizeof(_contextMenuAuxLabel), "DENS %d%%", acid->density());
+            _contextMenuItems[0] = { "" };
+            _contextMenuItems[1] = { _contextMenuAuxLabel };
+        }
+        _contextMenuItems[2] = { "RESETGEN" };
+        _contextMenuItems[3] = { "CANCEL" };
+        _contextMenuItems[4] = { "APPLY" };
+    } else if (euclideanGeneratorMode(_generator->mode())) {
+        _contextMenuItems[0] = { "" };
+        _contextMenuItems[1] = { "" };
+        _contextMenuItems[2] = { "RESETGEN" };
+        _contextMenuItems[3] = { "CANCEL" };
+        _contextMenuItems[4] = { "APPLY" };
     } else {
         switch (_generator->mode()) {
         case Generator::Mode::Random:
@@ -1518,35 +1712,38 @@ void GeneratorPage::contextAction(int index) {
         return;
     }
 
+    if (_generator->mode() == Generator::Mode::Random || _generator->mode() == Generator::Mode::Acid || euclideanGeneratorMode(_generator->mode())) {
+        if (index == 1) {
+            if (_generator->mode() == Generator::Mode::Random) {
+                gGeneratorContextQuickEditModel.configure(_generator, 1, "SMOOTH", [&] {
+                    _launchpadResetState = false;
+                    _generator->update();
+                    if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
+                        _generator->showPreview();
+                    }
+                });
+                _manager.pages().quickEdit.showCompact(gGeneratorContextQuickEditModel, 0, 1);
+            } else if (_generator->mode() == Generator::Mode::Acid && !acidLayerGenerator(_generator)) {
+                gGeneratorContextQuickEditModel.configure(_generator, 1, "DENS", [&] {
+                    _launchpadResetState = false;
+                    _generator->update();
+                    if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
+                        _generator->showPreview();
+                    }
+                });
+                _manager.pages().quickEdit.showCompact(gGeneratorContextQuickEditModel, 0, 1);
+            }
+        } else if (index == 2) {
+            init();
+        } else if (index == 3) {
+            revert();
+        } else if (index == 4) {
+            commit();
+        }
+        return;
+    }
+
     switch (ContextAction(index)) {
-    case ContextAction::RandomizeSeed:
-        switch (_generator->mode()) {
-        case Generator::Mode::Random: {
-            auto *random = static_cast<RandomGenerator *>(_generator);
-            random->randomizeContextParams();
-            random->update();
-            _generator->showPreview();
-            _launchpadResetState = false;
-            break;
-        }
-        case Generator::Mode::Acid: {
-            auto *acid = static_cast<AcidGenerator *>(_generator);
-            acid->randomizeContextParams();
-            acid->update();
-            _generator->showPreview();
-            _launchpadResetState = false;
-            break;
-        }
-        case Generator::Mode::Euclidean:
-            _generator->randomizeParams();
-            _generator->update();
-            _generator->showPreview();
-            _launchpadResetState = false;
-            break;
-        default:
-            break;
-        }
-        break;
     case ContextAction::Init:
         init();
         break;
@@ -1556,6 +1753,7 @@ void GeneratorPage::contextAction(int index) {
     case ContextAction::Commit:
         commit();
         break;
+    case ContextAction::RandomizeSeed:
     case ContextAction::VariationInfo:
     case ContextAction::Last:
         break;
@@ -1566,11 +1764,22 @@ bool GeneratorPage::contextActionEnabled(int index) const {
     if (index >= contextItemCount()) {
         return false;
     }
-    if (euclideanGeneratorMode(_generator->mode())) {
-        return ContextAction(index) == ContextAction::Init ||
-               ContextAction(index) == ContextAction::Revert ||
-               ContextAction(index) == ContextAction::Commit;
+
+    if (_generator->mode() == Generator::Mode::Random || _generator->mode() == Generator::Mode::Acid || euclideanGeneratorMode(_generator->mode())) {
+        if (index >= 2 && index <= 4) {
+            return true;
+        }
+        if (index == 1) {
+            if (_generator->mode() == Generator::Mode::Random) {
+                return true;
+            }
+            if (_generator->mode() == Generator::Mode::Acid && !acidLayerGenerator(_generator)) {
+                return true;
+            }
+        }
+        return false;
     }
+
     return ContextAction(index) != ContextAction::VariationInfo;
 }
 
@@ -1596,6 +1805,28 @@ void GeneratorPage::revert() {
 
 void GeneratorPage::commit() {
     if (!ensureBoundTrackContext()) {
+        return;
+    }
+
+    if (abPreviewGenerator(_generator->mode()) && !_previewArmed && !_generator->showingPreview()) {
+        _applied = true;
+        auto &pages = _manager.pages();
+        if (pages.noteSequenceEdit.launchpadGeneratorModeActive()) {
+            pages.noteSequenceEdit.setLaunchpadGeneratorModeActive(false);
+        }
+        if (pages.curveSequenceEdit.launchpadGeneratorModeActive()) {
+            pages.curveSequenceEdit.setLaunchpadGeneratorModeActive(false);
+        }
+        if (pages.stochasticSequenceEdit.launchpadGeneratorModeActive()) {
+            pages.stochasticSequenceEdit.setLaunchpadGeneratorModeActive(false);
+        }
+        if (pages.logicSequenceEdit.launchpadGeneratorModeActive()) {
+            pages.logicSequenceEdit.setLaunchpadGeneratorModeActive(false);
+        }
+        if (pages.arpSequenceEdit.launchpadGeneratorModeActive()) {
+            pages.arpSequenceEdit.setLaunchpadGeneratorModeActive(false);
+        }
+        close();
         return;
     }
 
@@ -1626,7 +1857,7 @@ void GeneratorPage::togglePreview() {
         return;
     }
 
-    if (chaosStyledGeneratorMode(_generator->mode()) && !_chaosPreviewArmed && !_generator->showingPreview()) {
+    if (abPreviewGenerator(_generator->mode()) && !_previewArmed && !_generator->showingPreview()) {
         return;
     }
 
@@ -1646,7 +1877,7 @@ void GeneratorPage::launchpadRandomize() {
 
     if (chaosStyledGeneratorMode(_generator->mode())) {
         bool wasShowingPreview = _generator->showingPreview();
-        _chaosPreviewArmed = true;
+        _previewArmed = true;
         _generator->editParam(0, 1, false);
         _generator->update();
         _generator->showPreview();
@@ -1657,7 +1888,33 @@ void GeneratorPage::launchpadRandomize() {
         return;
     }
 
-    contextAction(int(ContextAction::RandomizeSeed));
+    if (abPreviewGenerator(_generator->mode())) {
+        _previewArmed = true;
+    }
+
+    switch (_generator->mode()) {
+    case Generator::Mode::Random: {
+        auto *random = static_cast<RandomGenerator *>(_generator);
+        random->randomizeContextParams();
+        random->update();
+        break;
+    }
+    case Generator::Mode::Acid: {
+        auto *acid = static_cast<AcidGenerator *>(_generator);
+        acid->randomizeContextParams();
+        acid->update();
+        break;
+    }
+    case Generator::Mode::Euclidean:
+        _generator->randomizeParams();
+        _generator->update();
+        break;
+    default:
+        return;
+    }
+
+    _generator->showPreview();
+    _launchpadResetState = false;
 }
 
 void GeneratorPage::showPreviewStateMessage() {

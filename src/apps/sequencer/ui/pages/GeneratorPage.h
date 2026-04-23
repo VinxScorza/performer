@@ -68,11 +68,12 @@ private:
     StepSelection<CONFIG_STEP_COUNT> *_stepSelection;
     int _section = 0;
     int _chaosCursor = 0;
-    bool _chaosPreviewArmed = false;
+    bool _previewArmed = false;
     bool _launchpadResetState = false;
     bool _applied = false;
     int _boundTrackIndex = -1;
     Track::TrackMode _boundTrackMode = Track::TrackMode::Note;
+    char _contextMenuAuxLabel[16] = "";
     char _variationMenuLabel[16] = "VAR";
     ContextMenuModel::Item _contextMenuItems[5];
 };

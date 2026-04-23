@@ -45,6 +45,15 @@ bool almostEqual(float a, float b, float eps = 0.0001f) {
 } // namespace
 
 UNIT_TEST("VoltageModeRegression") {
+    CASE("Built-in Voltage scale uses 1.2V octave span with 0.1V steps") {
+        const int voltageScaleIndex = findScaleIndexByName("Voltage");
+        expectTrue(voltageScaleIndex >= 0);
+
+        const auto &scale = Scale::get(voltageScaleIndex);
+        expectTrue(scale.notesPerOctave() == 12);
+        expectTrue(almostEqual(scale.noteToVolts(0), 0.f));
+        expectTrue(almostEqual(scale.noteToVolts(scale.notesPerOctave()), 1.2f));
+    }
 
     CASE("Arp bypass does not force semitone scale on non-chromatic user voltage scale") {
         Project project;
@@ -162,5 +171,57 @@ UNIT_TEST("VoltageModeRegression") {
 
         expectTrue(almostEqual(actual, expectedBypass));
         expectTrue(!almostEqual(actual, expectedSelectedScale));
+    }
+
+    CASE("Arp octave transposition on built-in Voltage advances by 1.2V") {
+        Project project;
+        project.clear();
+        project.setSelectedTrackIndex(0);
+        project.setSelectedPatternIndex(0);
+        project.setTrackMode(0, Track::TrackMode::Arp);
+
+        const int voltageScaleIndex = findScaleIndexByName("Voltage");
+        expectTrue(voltageScaleIndex >= 0);
+
+        auto &sequence = project.selectedArpSequence();
+        sequence.setScale(voltageScaleIndex);
+        sequence.setRootNote(0);
+
+        auto &step = sequence.step(0);
+        step.clear();
+        step.setNote(0);
+        step.setBypassScale(false);
+        step.setNoteOctaveProbability(0);
+        step.setNoteVariationProbability(0);
+
+        const auto &scale = sequence.selectedScale(project.scale());
+        float actual = EngineTestHooks::evalArpStepNoteForScale(step, 0, scale, 0, 1, 0, sequence, false);
+        expectTrue(almostEqual(actual, 1.2f));
+    }
+
+    CASE("Stochastic octave transposition on built-in Voltage advances by 1.2V") {
+        Project project;
+        project.clear();
+        project.setSelectedTrackIndex(0);
+        project.setSelectedPatternIndex(0);
+        project.setTrackMode(0, Track::TrackMode::Stochastic);
+
+        const int voltageScaleIndex = findScaleIndexByName("Voltage");
+        expectTrue(voltageScaleIndex >= 0);
+
+        auto &sequence = project.selectedStochasticSequence();
+        sequence.setScale(voltageScaleIndex);
+        sequence.setRootNote(0);
+
+        auto &step = sequence.step(0);
+        step.clear();
+        step.setNote(0);
+        step.setBypassScale(false);
+        step.setNoteOctaveProbability(0);
+        step.setNoteVariationProbability(0);
+
+        const auto &scale = sequence.selectedScale(project.scale());
+        float actual = EngineTestHooks::evalStochasticStepNoteForScale(step, 0, scale, 0, 1, 0, sequence, false);
+        expectTrue(almostEqual(actual, 1.2f));
     }
 }

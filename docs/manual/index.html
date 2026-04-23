@@ -149,13 +149,13 @@
           Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
         </p>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through the active <code>v0.4.1</code> development line. The earlier <code>v0.3.2-vinx.*</code> naming is retained in history as lineage reference.
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through the active <code>v0.4.2</code> development line. The earlier <code>v0.3.2-vinx.*</code> naming is retained in history as lineage reference.
         </p>
         <p>
           Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems. The experimental <code>16-step Editing Mode</code> path is maintainer-validated on <code>Launch Control XL</code>; <code>BeatStep Pro</code> still needs dedicated on-hardware validation. BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.
         </p>
         <p>
-          In the current line, <code>Voltage Mode</code> behavior on <code>Arp</code> and <code>Stochastic</code> bypass-scale paths has been fixed so non-chromatic user scales are respected instead of being forced to semitone fallback.
+          In the current line, <code>Voltage Mode</code> behavior on <code>Arp</code> and <code>Stochastic</code> bypass/transposition paths has been fixed so non-chromatic user scales are respected with correct octave wrapping on the intended <code>1.2V</code> octave span.
         </p>
         <p>
           Earlier upstream documentation is still referenced where useful, but the main workflow pages and the current appendix/Launchpad material have already been rewritten and realigned for this fork.
@@ -1419,7 +1419,7 @@
           You can access generators in each sequence layer to generate their values through the context menu with <code>SHIFT</code> + <code>PAGE</code>.
         </p>
         <p>
-          In the Vinx fork, generator work is explicitly preview-oriented. Most generators create a non-destructive preview immediately on entry, and the page opens on the current 16-step bank while still showing the full 64-step sequence overview where applicable. <em>Chaos</em> is the exception: it enters on <code>ORIGINAL</code> and waits for an explicit <code>CHAOS</code> press before revealing the first generated result or enabling <code>A/B</code> compare.
+          In the Vinx fork, generator work is explicitly preview-oriented, but preview arming is now explicit: all generators enter on <code>ORIGINAL</code>, and the first generated result appears only after an intentional reroll action (<code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>). The page still opens on the current 16-step bank while keeping full sequence context where applicable.
         </p>
         <p>
           The general workflow is: open the generator, adjust parameters against the live preview, use <code>A/B</code> to compare preview and original material, then use <code>Cancel</code> to discard or <code>Apply</code> to write the result into the sequence.
@@ -1465,26 +1465,25 @@
         </p>
         <h4>Context Menu</h4>
         <p>
-          Hold <code>SHIFT</code> + <code>PAGE</code> or double-click <code>PAGE</code> in each generator page to open the context menu and access the following functions:
+          Hold <code>SHIFT</code> + <code>PAGE</code> or double-click <code>PAGE</code> in a generator page to open its context menu. The menu now follows a more uniform layout by generator family:
         </p>
         <table>
           <thead>
             <tr>
-              <th style="text-align: left">Button</th>
-              <th style="text-align: left">Function</th>
-              <th style="text-align: left">Description</th>
+              <th style="text-align: left">Generator</th>
+              <th style="text-align: left">Context layout</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">NEW RAND</td><td style="text-align: left">Pick a new random configuration for the current generator context. In <em>Random</em> this refreshes seed, smooth and range while keeping bias centered. In <em>Acid -&gt; Layer</em> it refreshes seed plus the layer-relevant main parameter without changing variation.</td></tr>
-            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">ResetGen</td><td style="text-align: left">Restore the generator shaping parameters to their defined defaults and rebuild the preview, without forcing a new reroll state.</td></tr>
-            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Cancel</td><td style="text-align: left">Discard the preview and return to the original sequence data.</td></tr>
-            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Apply</td><td style="text-align: left">Commit the preview to the selected sequence layer.</td></tr>
-            <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Var</td><td style="text-align: left">Displays the current variation amount in seed-driven generators. In <em>Acid -&gt; Layer</em>, <code>F5</code> is also mirrored as a direct <code>NEW RAND</code> shortcut on the main generator page.</td></tr>
+            <tr><td style="text-align: left"><em>Random</em></td><td style="text-align: left"><code>F1</code> empty, <code>F2</code> <code>SMOOTH</code> quick edit, <code>F3</code> <code>ResetGen</code>, <code>F4</code> <code>Cancel</code>, <code>F5</code> <code>Apply</code>.</td></tr>
+            <tr><td style="text-align: left"><em>Acid Layer</em></td><td style="text-align: left"><code>F1</code> empty, <code>F2</code> empty, <code>F3</code> <code>ResetGen</code>, <code>F4</code> <code>Cancel</code>, <code>F5</code> <code>Apply</code>.</td></tr>
+            <tr><td style="text-align: left"><em>Acid Phrase</em></td><td style="text-align: left"><code>F1</code> empty, <code>F2</code> <code>DENS</code> quick edit, <code>F3</code> <code>ResetGen</code>, <code>F4</code> <code>Cancel</code>, <code>F5</code> <code>Apply</code>.</td></tr>
+            <tr><td style="text-align: left"><em>Euclidean</em></td><td style="text-align: left"><code>F1</code> empty, <code>F2</code> empty, <code>F3</code> <code>ResetGen</code>, <code>F4</code> <code>Cancel</code>, <code>F5</code> <code>Apply</code>.</td></tr>
+            <tr><td style="text-align: left"><em>Chaos / Entropy</em></td><td style="text-align: left">No separate context menu; actions stay directly on the generator page footer.</td></tr>
           </tbody>
         </table>
         <p>
-          <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em> build their first generated preview immediately on entry. <em>Chaos</em> is different: it enters on <strong>ORIGINAL</strong> and waits for an explicit <code>CHAOS</code> press before producing the first destructive preview.
+          All generators now enter on <strong>ORIGINAL</strong>. The first generated preview is created only after an explicit reroll action.
         </p>
         <p>
           On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material. Parameter edits keep updating the hidden preview in the background, while explicit reroll actions such as <code>NEW RAND</code> reveal the new preview immediately.
@@ -1534,7 +1533,7 @@
           Note: <em>Chaos</em> and <em>Entropy</em> currently do not use this separate generator context menu. Their main actions stay directly on the page itself.
         </p>
         <p>
-          <em>Euclidean</em> uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code> triggers <code>NEW EUCL</code>, and <code>F3</code>, <code>F4</code> and <code>F5</code> control <code>Steps</code>, <code>Beats</code> and <code>Offset</code>. Rotating the encoder with no <code>F3/F4/F5</code> held now mirrors <code>NEW EUCL</code> reroll, while holding <code>F3</code>, <code>F4</code>, or <code>F5</code> edits only the bound parameter. Its context menu keeps only <code>ResetGen</code>, <code>Cancel</code> and <code>Apply</code>.
+          <em>Euclidean</em> uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code>/<code>F3</code>/<code>F4</code> edit <code>Offset</code>/<code>Steps</code>/<code>Beats</code>, and <code>F5</code> triggers <code>NEW EUCL</code>. Rotating the encoder with no <code>F2/F3/F4</code> held mirrors <code>NEW EUCL</code> reroll; holding <code>F2</code>, <code>F3</code>, or <code>F4</code> edits only the bound parameter. Its context menu keeps only <code>ResetGen</code>, <code>Cancel</code> and <code>Apply</code>.
         </p>
         <h4>Chaos</h4>
         <p>
@@ -1551,6 +1550,9 @@
         </p>
         <p>
           The generator page uses a target matrix of direct layer toggles. The available targets are <code>Gate</code>, <code>G Offset</code>, <code>G Prob</code>, <code>Retrig</code>, <code>Length</code>, <code>L Range</code>, <code>L Prob</code>, <code>R Prob</code>, <code>Note</code>, <code>N Slide</code>, <code>N Range</code>, <code>N Prob</code>, <code>N Bypass</code>, and <code>Cond</code>, plus dedicated <code>All On</code> and <code>All Off</code> cells.
+        </p>
+        <p>
+          For <code>Note</code> and <code>N Range</code> targets, generated note-domain values are intentionally constrained to <code>-24..+24</code> semitones (two octaves down/up) to keep Chaos results inside a deliberate 4-octave window.
         </p>
         <p>
           <code>Vandalize Sequence</code> is selection-aware like the other generators: if a persistent step selection exists it is used as the target area first; otherwise the generator falls back to the current sequence <em>First Step</em> / <em>Last Step</em> range. <code>Wreck Pattern</code> keeps the same non-destructive preview model, but expands the target to all Note tracks in the current pattern. With an explicit step selection, that selection is shared across the affected Note tracks; without one, each Note track uses its own <em>First Step</em> / <em>Last Step</em> window.
@@ -1580,6 +1582,12 @@
             <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left"><code>Apply</code> the current preview to the sequence.</td></tr>
           </tbody>
         </table>
+        <p>
+          <strong>Variation vs Amount:</strong> these controls are intentionally not identical. <code>Variation</code> (used by <em>Random</em> and <em>Acid</em>) is a per-step keep/replace control against the original material. <code>Amount</code> (used by <em>Chaos</em> and <em>Entropy</em>) is a global intensity control applied to enabled targets in the target matrix.
+        </p>
+        <p>
+          Practical rule: <code>Variation</code> is used where you want to decide <em>how many steps stay original</em>; <code>Amount</code> is used when you want to decide <em>how hard Chaos/Entropy pushes enabled targets</em>.
+        </p>
         <p>
           In practice, <em>Chaos</em> is not trying to be harmonically clever. It is a deliberately rough exploratory tool: a selection-aware, multi-layer macro-random pass with a single global intensity and explicit target toggles.
         </p>
@@ -1646,7 +1654,7 @@
           </tbody>
         </table>
         <p>
-          Euclidean uses <code>NEW RAND</code> wording in the context menu, but unlike the seed-driven generators it simply randomizes <em>Steps</em>, <em>Beats</em> and <em>Offset</em>.
+          Euclidean keeps context actions focused on <code>ResetGen</code>, <code>Cancel</code>, and <code>Apply</code>; rerolling is explicit from the main page via <code>NEW EUCL</code> or encoder rotation (with no parameter key held).
         </p>
         <p>
           In the Vinx line, <em>Euclidean</em> behaves much more like the other modern generators than it did in older upstream documentation: it supports <code>A/B</code> comparison directly on the main page, keeps <code>Beats &lt;= Steps</code> enforced even while randomizing, and is best used as a deliberate rhythm-construction tool rather than as a blind randomizer.
@@ -1666,14 +1674,14 @@
             <tr><td style="text-align: left">Smooth</td><td style="text-align: left">0 - 10</td><td style="text-align: left">Sets how smoothly each step changes in front of the next one.</td></tr>
             <tr><td style="text-align: left">Bias</td><td style="text-align: left">-10 - 10</td><td style="text-align: left">Offsets the generated value distribution. In the Vinx fork it always enters centered at <code>0</code>.</td></tr>
             <tr><td style="text-align: left">Range</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Scales the generated distribution. In the current UI this is shown as a percentage rather than the old <em>Scale</em> name.</td></tr>
-            <tr><td style="text-align: left">Variation</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Blends between the original data and the generated result. In the footer this parameter is abbreviated as <code>Var</code>. The current Vinx default on entry is <code>100%</code>.</td></tr>
+            <tr><td style="text-align: left">Variation</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Per-step keep ratio against the original material. <code>0%</code> keeps original values, <code>100%</code> applies generated values, and intermediate values keep or replace each step probabilistically. In the footer this parameter is abbreviated as <code>Var</code>. The current Vinx default on entry is <code>100%</code>.</td></tr>
           </tbody>
         </table>
         <p>
           Note: if steps are selected, <em>Random</em> applies to the selection only. On sequence pages where no steps are selected, entering <em>Random</em> first selects all available steps, so the generator effectively works on the full editable range rather than only the current pattern length.
         </p>
         <p>
-          On entry, <em>Random</em> immediately creates a preview. The footer shows <code>A/B</code> plus the editable parameters, and the preview on the display shows the full sequence with the current 16-step bank framed. On Note tracks, the preview is layer-aware and uses different visual styles for gate-like, note-like, slide-like and length-like layers so that the preview better matches the active destination layer.
+          All generators now enter on <code>ORIGINAL</code>; the first generated preview appears only after an explicit reroll action. After preview is armed, the footer shows <code>A/B</code> plus the editable parameters, and the display shows the full sequence with the current 16-step bank framed. On Note tracks, preview rendering remains layer-aware so visual cues match the active destination layer.
         </p>
         <p>
           The easiest way to use <em>Random</em> in the Vinx fork is to treat it as a layer shaper rather than a total replacement generator: <code>Seed</code> chooses the base state, <code>Smooth</code> and <code>Bias</code> change the character of that state, <code>Range</code> limits how far it can push, and <code>Variation</code> decides how strongly the result departs from the original layer.
@@ -1708,7 +1716,7 @@
             <tr><td style="text-align: left">Dens</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Target gate density across the selected area or current pattern length.</td></tr>
             <tr><td style="text-align: left">Slide</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Target amount of slide transitions, constrained by the transitions that actually exist.</td></tr>
             <tr><td style="text-align: left">Range</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Controls overall melodic span and how large the step-to-step note jumps may become.</td></tr>
-            <tr><td style="text-align: left">Var</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Controls how strongly the generated result departs from the original material. The UI label is abbreviated as <code>Var</code>; default on entry is <code>100%</code>.</td></tr>
+            <tr><td style="text-align: left">Var</td><td style="text-align: left">0% - 100%</td><td style="text-align: left">Per-step keep ratio against the original material. <code>0%</code> keeps original values, <code>100%</code> applies generated values, and intermediate values keep or replace steps probabilistically. The UI label is abbreviated as <code>Var</code>; default on entry is <code>100%</code>.</td></tr>
           </tbody>
         </table>
         <p>
@@ -2104,7 +2112,7 @@
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
         <p>
-          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page reports the standalone Vinx version string (<code>v0.4.1</code>) correctly.
+          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page reports the standalone Vinx version string (<code>v0.4.2</code>) correctly.
         </p>
         <table>
           <thead>
@@ -2431,7 +2439,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             <tr><td style="text-align: left">19-tet</td><td style="text-align: left">0.000, 0.053, 0.105, 0.158, 0.210, 0.263, 0.316, 0.368, 0.421, 0.474, 0.526, 0.579, 0.632, 0.684, 0.737, 0.790, 0.842, 0.895, 0.947</td></tr>
             <tr><td style="text-align: left">22-tet</td><td style="text-align: left">0.000, 0.046, 0.091, 0.136, 0.182, 0.227, 0.273, 0.318, 0.364, 0.409, 0.454, 0.500, 0.546, 0.591, 0.636, 0.682, 0.727, 0.773, 0.818, 0.864, 0.909, 0.954</td></tr>
             <tr><td style="text-align: left">24-tet</td><td style="text-align: left">0.000, 0.042, 0.083, 0.125, 0.167, 0.208, 0.250, 0.292, 0.333, 0.375, 0.417, 0.458, 0.500, 0.542, 0.583, 0.625, 0.667, 0.708, 0.750, 0.792, 0.833, 0.875, 0.917, 0.958</td></tr>
-            <tr><td style="text-align: left">Voltage</td><td style="text-align: left">0.000, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900</td></tr>
+            <tr><td style="text-align: left">Voltage</td><td style="text-align: left">0.000, 0.100, 0.200, 0.300, 0.400, 0.500, 0.600, 0.700, 0.800, 0.900, 1.000, 1.100</td></tr>
           </tbody>
         </table>
 
@@ -2734,7 +2742,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           Sequence step editors also have an experimental Launchpad <em>Generators Mode</em>. In LP <em>Sequence</em> mode, <code>TOP 8 + TOP 4</code> jumps to <code>Steps</code> when needed and toggles this mode. In this mode, <code>TOP 5</code> performs <code>A/B</code>, <code>TOP 6</code> performs <code>ResetGen</code>, <code>TOP 7</code> cancels, and <code>TOP 8</code> applies.
         </p>
         <p>
-          For the full map split (<em>Note</em> vs non-<em>Note</em>), activation semantics (single-tap vs two-tap), reroll behavior, immediate <code>Init Layer</code>/<code>Init Steps</code> behavior, retarget rules, and fail-closed behavior, see <a href="#appendix-launchpad-generators-mode">Launchpad Generators Mode</a> and <a href="#appendix-safety-fail-closed">Safety / Fail-Closed</a> in the appendix.
+          For the full map split (<em>Note</em> vs non-<em>Note</em>), activation semantics, reroll behavior, immediate <code>Init Layer</code>/<code>Init Steps</code> behavior, retarget rules, and fail-closed behavior, see <a href="#appendix-launchpad-generators-mode">Launchpad Generators Mode</a> and <a href="#appendix-safety-fail-closed">Safety / Fail-Closed</a> in the appendix.
         </p>
         <h4>Pattern Mode</h4>
         <p>
@@ -2853,7 +2861,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           </tbody>
         </table>
         <p>
-          Activation is intentionally asymmetric: <em>Random</em>, <em>Acid Layer</em>, <em>Acid Phrase</em>, and <em>Euclidean</em> are single-tap; <em>Vandalize</em>, <em>Wreck</em>, and <em>Entropy</em> are two-tap because they enter on <code>ORIGINAL</code> and require explicit <code>CHAOS</code> action for first preview.
+          Activation is now consistent: all generator pads enter on <code>ORIGINAL</code> at first press, and a second action on the selected generator triggers first preview generation.
         </p>
         <p>
           Pressing the selected generator pad rerolls in place: <code>NEW RAND</code> on <em>Random</em>/<em>Acid</em>, <code>CHAOS</code> on <em>Vandalize</em>/<em>Wreck</em>/<em>Entropy</em>, <code>NEW EUCL</code> on <em>Euclidean</em>. In this split, <em>Entropy</em> uses the same <code>ORIGINAL -&gt; CHAOS -&gt; A/B</code> logic as Chaos but stays track-local on non-Note tracks.

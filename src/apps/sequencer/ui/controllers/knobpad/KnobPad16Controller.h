@@ -3,6 +3,7 @@
 #include "ui/Controller.h"
 
 #include "Config.h"
+#include "engine/NoteTrackEngine.h"
 #include "model/NoteSequence.h"
 
 #include <array>
@@ -49,6 +50,7 @@ private:
         int nextSectionCc = -1;
         int channel = -1;
         uint8_t padOnValue = 63;
+        uint8_t padPlayheadValue = 15;
     };
 
     struct LoopSnapshot {
@@ -84,7 +86,8 @@ private:
     bool supportsPadFunctionFeedback() const;
     void syncFeedback(bool force = false);
     void clearFeedback();
-    void sendPadLed(int slot, bool on, bool force = false);
+    int visiblePlayheadSlot(const NoteSequence &sequence) const;
+    void sendPadLed(int slot, int value, bool force = false);
     void sendSectionLed(bool prev, bool on, bool force = false);
 
     ProfileMapping buildProfileMapping(Profile profile) const;

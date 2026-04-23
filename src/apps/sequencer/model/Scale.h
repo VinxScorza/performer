@@ -172,9 +172,10 @@ private:
 
 class VoltScale : public Scale {
 public:
-    VoltScale(const char *name, float interval) :
+    VoltScale(const char *name, float interval, float octaveSpanVolts = 1.2f) :
         Scale(name),
-        _interval(interval)
+        _interval(interval),
+        _octaveSpanVolts(octaveSpanVolts)
     {
     }
 
@@ -217,9 +218,10 @@ public:
     }
 
     int notesPerOctave() const override {
-        return std::max(1, int(std::round(1.f / _interval)));
+        return std::max(1, int(std::round(_octaveSpanVolts / _interval)));
     }
 
 private:
     float _interval;
+    float _octaveSpanVolts;
 };

@@ -4,6 +4,13 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. From the first standalone Vinx release onward, Vinx uses standalone semantic versioning (`v0.x.y`) while preserving the earlier `v0.3.2-vinx.*` entries as historical lineage. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
+# v0.4.2
+- Align `Random` `Variation` semantics with `Acid`: `Variation` now behaves as a per-step keep/replace control against the original material in both generators
+- Clamp `Chaos` `Note` and `Note Range` generation to a `-24..+24` semitone window (4 octaves total)
+- Make all generators enter on `ORIGINAL`; the first generated preview now requires an explicit reroll action
+- Rework generator footer/context layouts for a more uniform workflow across `Random`, `Acid Layer`, `Acid Phrase`, `Euclidean`, and `Chaos`
+- Fix `Voltage Mode` octave behavior on `Arp` and `Stochastic` so octave wrapping follows the intended `1.2V` octave span (`0.1V` semitone grid)
+
 # v0.4.1
 - Add experimental `16-step Editing Mode` (`Launch Control XL` + `BeatStep Pro` profile) with explicit armed/disarmed entry, forced visible 16-step loop while armed, bank navigation and loop-range restore on exit, plus controller feedback on `LCXL/BSP` (gate-pad LEDs and prev/next function-button feedback; knob-row LED behavior remains device-local). Compatibility is map-driven: any controller can work if it sends the expected MIDI map on channel `9`
 - Fix Performer `GEN` menu flow/labels by track type: on `Note` use explicit `Acid (Layer/Phrase)` and `Chaos (Vandalize/Wreck)` labels; on non-Note tracks expose `Chaos (Entropy)` (`ChaosEntropy` mode)
