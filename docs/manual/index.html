@@ -54,6 +54,7 @@
                 <li><a href="#introduction">Introduction</a>
                   <ul>
                     <li><a href="#introduction-overview">Overview</a></li>
+                    <li><a href="#introduction-shortcuts">Shortcuts and Key Combinations</a></li>
                   </ul>
                 </li>
                 <li><a href="#concepts">Concepts</a>
@@ -173,12 +174,21 @@
       </section>
 
       <section>
+        <h3 id="manual-video">Video Walkthrough</h3>
+        <p>
+          Quick walkthrough video for the current Vinx workflow:
+          <a href="https://youtu.be/I4UkWtV7u3E" target="_blank" rel="noopener noreferrer">watch on YouTube</a>.
+        </p>
+      </section>
+
+      <section>
         <h3 id="manual-toc">Table of Contents</h3>
         <p>
           Use this compact outline for the main structure. For detailed navigation, use the sidebar and search.
         </p>
         <ul>
           <li><a href="#introduction">Introduction</a></li>
+          <li><a href="#introduction-shortcuts">Shortcuts and Key Combinations</a></li>
           <li><a href="#concepts">Concepts</a></li>
           <li><a href="#ui">User Interface</a></li>
           <li><a href="#pages">Pages</a></li>
@@ -207,13 +217,24 @@
         </p>
         <h3 id="introduction-upstream-differences">If You Come from Westlicht or Mebitek</h3>
         <p>
-          The Vinx line keeps the overall PER|FORMER workflow intact, but it is no longer just a conservative maintenance fork. The largest differences from older upstream lines are concentrated around four areas: generator workflow, clock/reset behavior, machine settings, and the simulator/Launchpad ecosystem.
+          The Vinx line keeps the overall PER|FORMER workflow intact, but it is no longer just a conservative maintenance fork. The main differences versus older upstream lines are now concentrated in generator semantics, external-controller workflows, scale/voltage behavior, and the documentation/simulator ecosystem.
         </p>
         <ul>
-          <li>Generators are more explicit and safer: <em>Random</em>, <em>Acid</em>, <em>Euclidean</em>, and <em>Chaos</em> all lean on preview, compare, cancel, and apply instead of silent destructive edits.</li>
-          <li>Clock input behavior has been extended with <code>Reset Gate</code> and <code>Reset Pulse</code>, so external reset handling can be chosen more deliberately depending on the incoming signal.</li>
-          <li>Some settings that are easy to assume project-local are actually machine settings in the Vinx line, including Launchpad behavior, <code>Menu Wrap</code>, and <code>Chaos Defaults</code>.</li>
-          <li>The Vinx fork is maintained together with a broader support layer: manual, feature history, Web Simulator, Desktop Simulator, and tested Launchpad workflows.</li>
+          <li>Generator workflow is explicitly preview/apply-oriented: <em>Random</em>, <em>Acid</em>, <em>Euclidean</em>, and the <em>Chaos</em> family use compare/cancel/apply paths instead of silent destructive edits; in the current line generators enter on <code>ORIGINAL</code> and create preview only after explicit reroll.</li>
+          <li>The generator family has diverged further: <em>Acid</em> is split into <em>Layer</em>/<em>Phrase</em>, <em>Chaos</em> into <em>Vandalize</em>/<em>Wreck</em>, and non-Note tracks use <em>Entropy</em> as the local Chaos subset.</li>
+          <li><code>Voltage Mode</code> handling is hardened beyond legacy behavior: user-scale octave semantics are respected across <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>, including corrected <code>1.2V</code>-span octave wrapping on Arp/Stochastic paths.</li>
+          <li>External control is broader than upstream Launchpad-only workflows: Launchpad integration is much deeper, and the experimental <code>16-step Editing Mode</code> adds direct <code>16 knobs + 16 pads</code> per-step control on Note tracks.</li>
+          <li>The fork is now maintained as a standalone Vinx line (<code>v0.x.y</code>) with aligned manual, LP cheatsheet, Web/Desktop simulator pages, and a tracked feature/release history.</li>
+        </ul>
+        <h3 id="introduction-shortcuts">Shortcuts and Key Combinations</h3>
+        <p>
+          In this manual, shortcut references are shown explicitly whenever they are relevant to the workflow being described.
+        </p>
+        <ul>
+          <li><strong>Machine shortcuts</strong> are written with panel key names, for example <code>PAGE + SHIFT + F5</code>, <code>PAGE + S7</code>, or <code>SHIFT + step</code>.</li>
+          <li><strong>Launchpad shortcuts</strong> use the local LP naming convention: <code>TOP</code>, <code>TRK</code>, and <code>GRID</code> (for example <code>TOP 8 + TOP 4</code>).</li>
+          <li>When a function has both machine and Launchpad access paths, both are listed where useful; when only one side is available, it is stated directly.</li>
+          <li>Canonical examples in the current line: open machine <code>GEN</code> with <code>PAGE + SHIFT + F5</code>; toggle LP Generators Mode with <code>TOP 8 + TOP 4</code>; undo/redo on supported step pages with machine <code>PAGE + S7</code> or LP <code>TOP 7 + TOP 8</code>.</li>
         </ul>
       </section>
 
@@ -1318,7 +1339,7 @@
           <li>When editing a note sequence, double pressing <code>S1</code> to <code>S16</code> can be used to toggle the step gate no matter what layer is edited, other than Gate or Slide.</li>
           <li>When editing any other layer on a sequence of a Note track, holding one or multiple step buttons and pressing the <code>ENCODER</code> enables or disables the gate values. This is handy for example when editing note values.</li>
           <li>When editing any layer on a sequence of a Note track, select with <code>SHIFT</code> + step the first step, then again <code>SHIFT</code> + step, also switching page with <code>NEXT</code> or <code>PREV</code>, for the last step. Clicking <code>SHIFT</code> + <code>F3</code> ties all steps in the range: full step length except the last step, same note value to all steps.</li>
-          <li>When editing the Note layer, notes can be entered by holding a step and pressing keys on an external MIDI keyboard.</li>
+          <li>When editing the Note layer, notes can be entered with <code>hold S1..S16 + play MIDI key</code> on an external keyboard.</li>
           <li>When editing the Note or Note Range layer on a sequence with a chromatic scale, holding <code>SHIFT</code> and rotating the <code>ENCODER</code> moves notes up and down by octaves.</li>
           <li>When editing layers on a sequence of a Curve track, pressing and rotating the <code>ENCODER</code> adjusts the values in smaller steps.</li>
           <li>When editing the Min or Max layer on a sequence of a Curve track, pressing <code>SHIFT</code> or the <code>ENCODER</code> while rotating adjusts the value in smaller steps.</li>
@@ -1492,7 +1513,7 @@
           The footer controls on <em>Random</em>, <em>Acid</em>, and <em>Chaos</em> are treated as in-context generator actions: switching between those footer options no longer drops you out of the generator page unexpectedly.
         </p>
         <p>
-          On <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, pressing the encoder now commits the generator directly, mirroring the apply action without needing to reach for the footer button.
+          On <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, <code>ENCODER press</code> now commits the generator directly, mirroring <code>F5 Apply</code> without needing to reach for the footer button.
         </p>
         <h5>Encoder Rotation Semantics</h5>
         <p>
@@ -1757,7 +1778,7 @@
           Pattern chaining is a quick way to create songs on the fly. Hold <code>F1</code> and press <code>S1</code> - <code>S16</code> to append patterns as slots. Repeatedly pressing the same pattern increases the bar count of the last slot instead of creating a new one.
         </p>
         <p>
-          Pattern chains can also be created from the <a href="#pages-pattern">Pattern</a> page by holding one pattern and pressing another to define the chain range.
+          Pattern chains can also be created from the <a href="#pages-pattern">Pattern</a> page with <code>hold pattern + press pattern</code> to define the chain range.
         </p>
         <p>
           Note: when creating a pattern chain, song playback is activated immediately and the sequencer clock is started if not already running.
@@ -1909,7 +1930,7 @@
         </p>
         <h4>Tempo</h4>
         <p>
-          Turning the encoder changes the project tempo. Pressing the encoder returns to the last tempo value set on the <a href="#pages-project">Project</a> page.
+          <code>ENCODER turn</code> changes project tempo. <code>ENCODER press</code> returns to the last tempo value set on the <a href="#pages-project">Project</a> page.
         </p>
         <h4>Mutes and Solos</h4>
         <p>
@@ -2733,7 +2754,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           In the current fork, <em>LP Note Style</em> can be set to <em>Classic</em> or <em>Circuit</em>. <em>Circuit</em> is the current default and the main Launchpad workflow of the fork: it enables the dedicated note overlays on the Note track note layer, on the Stochastic <em>Note Prob</em> editor, and on the Arpeggiator <em>Note</em> layer. <em>Classic</em> remains available as the compatible non-overlay form, keeping those editors in their normal layer/navigation view.
         </p>
         <p>
-          Double-press behavior is not global across all Launchpad editing. In the current Vinx implementation it is used on the Stochastic and Arpeggiator Circuit note editors, where it toggles the selected note state and writes the current octave context back into the step. On the Arpeggiator Circuit note editor this gesture also adds or removes the note from the arpeggiator when MIDI Keyboard mode is OFF.
+          Double-press behavior is not global across all Launchpad editing. In the current Vinx implementation it is used on the Stochastic and Arpeggiator Circuit note editors (<code>double-press GRID 26..40</code>), where it toggles the selected note state and writes the current octave context back into the step. On the Arpeggiator Circuit note editor this gesture also adds or removes the note from the arpeggiator when MIDI Keyboard mode is OFF.
         </p>
         <p>
           The Launchpad color language should also be read relative to <code>LP Style</code>, not as a fixed universal set of absolute colors. The controller still communicates mute, selection, playback and pattern state, but the visible palette changes with the selected Launchpad style.
