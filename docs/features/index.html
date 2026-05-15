@@ -143,7 +143,6 @@
             </p>
             <ul>
               <li>The mode provides a dedicated <code>16 knobs + 16 pads + 2 function buttons</code> control path for <code>Launch Control XL</code> and <code>BeatStep Pro</code>: knobs edit step notes and pads toggle step gates on the current visible <code>1..16</code> bank.</li>
-              <li>BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.</li>
               <li>Compatibility is map-driven: any controller can be used if it transmits the map on MIDI channel <code>9</code> (<code>CC 13..20 + 29..36</code> for knobs, notes <code>41/42/43/44/57/58/59/60/73/74/75/76/89/90/91/92</code> for gate toggles, <code>CC 106/107</code> for <code>Prev/Next</code>, <code>Prev+Next</code> for arm/disarm).</li>
               <li>Entry/exit is explicit through armed/disarmed state via controller-side <code>Prev + Next</code> together (<code>LCXL: Track Select &lt; + &gt;</code>, <code>BSP: Ptn 1 + Ptn 2</code>): armed mode forces playback/edit focus to the visible 16-step window, restores the previous loop range on disarm, and keeps longer loops practical through bank-by-bank <code>Prev</code>/<code>Next</code> navigation with the same per-step editing semantics.</li>
               <li>Target scope is the currently selected <code>Note</code> track: knobs are active only when machine layer is <code>Note</code>, while pad gate toggles stay active on that same track across layers.</li>
@@ -220,6 +219,7 @@
               <li><code>System</code> now includes direct save and a simplified settings flow, with an explicit save prompt when leaving <code>System -&gt; Settings</code> after changes (including <code>Chaos Defaults</code>) instead of silently discarding edits.</li>
               <li><code>Chaos Defaults</code> was returned to the normal machine-settings save path instead of being treated as a separate auto-written case.</li>
               <li>Project file-task flow (<code>Load</code>/<code>Save</code>/<code>Save As</code>) was hardened by serializing requests and delivering results on UI thread, reducing race-prone overlap paths; UI now exposes busy-state feedback while operations are active. This is a strong partial hardening, not yet a full architectural closure.</li>
+              <li>SD boot tolerance was hardened for slower cards by extending init tolerance and feeding watchdog during long SD bring-up waits, while keeping runtime watchdog behavior strict during normal operation.</li>
               <li><code>Menu Wrap</code> was added as an on-by-default preference for cyclic list navigation.</li>
               <li>Screensaver behavior, wake behavior, and the <code>System</code> landing tab were refined for more predictable daily use.</li>
               <li>Memory footprint was improved versus the upstream baseline, with lower SRAM/CCRAM pressure compared to Mebitek <code>0.3.2</code>.</li>
