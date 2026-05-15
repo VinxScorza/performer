@@ -1,6 +1,7 @@
 #include "SdCard.h"
 
 #include "SystemConfig.h"
+#include "System.h"
 
 #include "os/os.h"
 
@@ -222,8 +223,10 @@ bool SdCard::initCard() {
     const uint32_t OCR_CCS = 0x40000000;
 
     bool acmd41_success = false;
-    uint32_t timeout = os::ticks() + os::time::ms(2000);
+    uint32_t timeout = os::ticks() + os::time::ms(4000);
     while (os::ticks() < timeout) {
+        // Keep the watchdog alive while waiting for slower cards to exit busy state.
+        System::resetWatchdog();
         result = sendAppCommand(41, 0x100000 | (hcs ? OCR_HCS : 0));
         uint32_t response = SDIO_RESP1;
         if (result == CRCFail && (response & OCR_BUSY) != 0) {

@@ -64,6 +64,7 @@ private:
         FillMode,
         FillMuted,
         CvUpdateMode,
+        GateOutputMode,
         SlideTime,
         Octave,
         Transpose,
@@ -82,6 +83,7 @@ private:
         case FillMode:  return "Fill Mode";
         case FillMuted: return "Fill Muted";
         case CvUpdateMode:  return "CV Update Mode";
+        case GateOutputMode: return "Gate Out Mode";
         case SlideTime: return "Slide Time";
         case Octave:    return "Octave";
         case Transpose: return "Transpose";
@@ -115,6 +117,9 @@ private:
             break;
         case CvUpdateMode:
             _track->printCvUpdateMode(str);
+            break;
+        case GateOutputMode:
+            _track->printGateOutputMode(str);
             break;
         case SlideTime:
             _track->printSlideTime(str);
@@ -161,6 +166,9 @@ private:
             break;
         case CvUpdateMode:
             _track->editCvUpdateMode(value, shift);
+            break;
+        case GateOutputMode:
+            _track->editGateOutputMode(value, shift);
             break;
         case SlideTime:
             _track->editSlideTime(value, shift);

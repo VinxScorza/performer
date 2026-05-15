@@ -8,6 +8,7 @@
 #include "core/utils/StringBuilder.h"
 
 #include "model/Model.h"
+#include "model/FileManager.h"
 
 Ui::Ui(Model &model, Engine &engine, Lcd &lcd, ButtonLedMatrix &blm, Encoder &encoder, Settings &settings) :
         _model(model),
@@ -91,6 +92,8 @@ void Ui::init() {
 }
 
 void Ui::update() {
+    FileManager::processTaskResult();
+
     handleKeys();
     handleEncoder();
     handleMidi();

@@ -34,6 +34,11 @@ public:
 
 private:
     void formatName(int row, StringBuilder &str) const {
+        if (FileManager::busy()) {
+            str("%d: (busy)", row + 1);
+            return;
+        }
+
         FileManager::SlotInfo info;
         FileManager::slotInfo(_type, row, info);
         str("%d: %s", row + 1, info.used ? info.name : "(empty)");

@@ -201,6 +201,7 @@ void NoteSequence::Step::clear() {
     setCondition(Types::Condition::Off);
     setStageRepeats(0);
     setStageRepeatsMode(Types::StageRepeatMode::Each);
+    setTieForward(false);
 }
 
 void NoteSequence::Step::write(VersionedSerializedWriter &writer) const {

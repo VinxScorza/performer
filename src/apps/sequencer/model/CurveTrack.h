@@ -108,6 +108,21 @@ public:
         str(muteModeName(muteMode()));
     }
 
+    // gateOutputMode
+
+    Types::GateOutputMode gateOutputMode() const { return _gateOutputMode; }
+    void setGateOutputMode(Types::GateOutputMode gateOutputMode) {
+        _gateOutputMode = ModelUtils::clampedEnum(gateOutputMode);
+    }
+
+    void editGateOutputMode(int value, bool shift) {
+        setGateOutputMode(ModelUtils::adjustedEnum(gateOutputMode(), value));
+    }
+
+    void printGateOutputMode(StringBuilder &str) const {
+        str(Types::gateOutputModeName(gateOutputMode()));
+    }
+
     // slideTime
 
     int slideTime() const { return _slideTime.get(isRouted(Routing::Target::SlideTime)); }
@@ -295,6 +310,7 @@ private:
     Types::PlayMode _playMode;
     FillMode _fillMode;
     MuteMode _muteMode;
+    Types::GateOutputMode _gateOutputMode;
     Routable<uint8_t> _slideTime;
     Routable<int16_t> _offset;
     Routable<int8_t> _rotate;

@@ -286,6 +286,87 @@ class GeneratorRegressionTest(tf.UiTest):
 
         self.assertLess(min_changed_half, changed_full)
 
+    def test_chaos_target_edit_invalidates_preview_and_apply_requires_explicit_chaos(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        p.selectedNoteSequenceLayer = p.selectedNoteSequence.Layer.Note
+        sequence = p.selectedNoteSequence
+
+        for idx in range(16):
+            step = sequence.steps[idx]
+            step.gate = True
+            step.length = 6
+            step.note = 24 + (idx % 8)
+            step.slide = False
+
+        before = self._note_signature(sequence, 16)
+        self._open_generator_page(2)  # Chaos
+
+        # Ensure we are actually on a generated preview before editing targets.
+        preview = before
+        for _ in range(4):
+            c.press("f3").wait(30)  # CHAOS -> preview
+            preview = self._note_signature(sequence, 16)
+            if preview != before:
+                break
+        self.assertNotEqual(preview, before)
+
+        c.down("shift").wait(10)
+        c.press("step1").wait(10)  # selection edit -> invalidate preview
+        c.up("shift").wait(10)
+        # New behavior: edits invalidate APPLY eligibility but keep current preview visible.
+        self.assertEqual(self._note_signature(sequence, 16), preview)
+
+        c.press("f5").wait(20)  # Apply should be blocked until explicit CHAOS
+        self.assertTrue(self.env.sequencer.isGeneratorPageTop)
+        self.assertEqual(self._note_signature(sequence, 16), preview)
+
+        c.press("f3").wait(20)  # explicit CHAOS
+        c.press("f5").wait(30)  # Apply
+        self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
+        self.assertNotEqual(self._note_signature(sequence, 16), before)
+
+    def test_chaos_preview_stays_visible_after_edit_and_cancel_restores_entry_state(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        p.selectedNoteSequenceLayer = p.selectedNoteSequence.Layer.Note
+        sequence = p.selectedNoteSequence
+
+        for idx in range(16):
+            step = sequence.steps[idx]
+            step.gate = True
+            step.length = 8
+            step.note = 30 + (idx % 6)
+            step.slide = False
+
+        before = self._note_signature(sequence, 16)
+        self._open_generator_page(2)  # Chaos
+
+        preview = before
+        for _ in range(4):
+            c.press("f3").wait(30)  # first explicit preview
+            preview = self._note_signature(sequence, 16)
+            if preview != before:
+                break
+        self.assertNotEqual(preview, before)
+
+        c.down("shift").wait(10)
+        c.press("step1").wait(10)  # selection edit while preview active
+        c.up("shift").wait(10)
+        self.assertEqual(self._note_signature(sequence, 16), preview)
+
+        c.press("f4").wait(30)  # Cancel
+        self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop)
+        self.assertEqual(self._note_signature(sequence, 16), before)
+
     def test_generator_and_selector_cancel_do_not_leak_to_underlying_page(self):
         c = self.controller
         p = self.env.sequencer.model.project
@@ -693,12 +774,13 @@ class GeneratorRegressionTest(tf.UiTest):
         self._lp_press_grid(1)  # GRID 2 = Acid Layer
         self.assertTrue(self.env.sequencer.isGeneratorPageTop)
 
-        # Force Density to 100% (F2 + encoder) so fallback-to-Phrase is deterministic:
+        # Force Density to 100% (F3 + encoder in Acid Layer footer) so
+        # fallback-to-Phrase is deterministic:
         # Phrase mode must create gates; unsupported Layer mode would keep all gates OFF.
-        c.down("f2").wait(10)
+        c.down("f3").wait(10)
         for _ in range(120):
             c.right().wait(2)
-        c.up("f2").wait(20)
+        c.up("f3").wait(20)
 
         # Entry starts on ORIGINAL; first reroll is required to build preview.
         self._lp_press_grid(1)

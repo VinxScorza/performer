@@ -40,6 +40,7 @@ void NoteTrack::clear() {
     setFillMode(FillMode::Gates);
     setFillMuted(true);
     setCvUpdateMode(CvUpdateMode::Gate);
+    setGateOutputMode(Types::GateOutputMode::Gate);
     setSlideTime(10);
     setOctave(0);
     setTranspose(0);
@@ -61,6 +62,7 @@ void NoteTrack::write(VersionedSerializedWriter &writer) const {
     writer.write(_fillMode);
     writer.write(_fillMuted);
     writer.write(_cvUpdateMode);
+    writer.write(_gateOutputMode);
     writer.write(_slideTime.base);
     writer.write(_octave.base);
     writer.write(_transpose.base);
@@ -84,6 +86,7 @@ void NoteTrack::read(VersionedSerializedReader &reader) {
     reader.read(_fillMode);
     reader.read(_fillMuted, ProjectVersion::Version26);
     reader.read(_cvUpdateMode, ProjectVersion::Version4);
+    reader.read(_gateOutputMode, ProjectVersion::Version40);
     reader.read(_slideTime.base);
     reader.read(_octave.base);
     reader.read(_transpose.base);

@@ -157,10 +157,22 @@ void NoteSequenceEditPage::draw(Canvas &canvas) {
         canvas.setColor(stepIndex == currentStep ? Color::Bright : Color::Medium);
         canvas.drawRect(x + 2, y + 2, stepWidth - 4, stepWidth - 4);
         if (step.gate()) {
-            canvas.setColor(SequencePainter::dimSequenceColor(
+            const Color gateBodyColor = SequencePainter::dimSequenceColor(
                 _context.model.settings().userSettings().get<DimSequenceSetting>(SettingDimSequence)->getValue()
-            ));
+            );
+            canvas.setColor(gateBodyColor);
             SequencePainter::drawGateBody(canvas, x, y, stepWidth, step.gateOffset(), NoteSequence::GateOffset::Max, step.length(), NoteSequence::Length::Range, step.retrigger(), NoteSequence::Retrigger::Range, step.slide());
+            if (step.tieForward()) {
+                canvas.setColor(gateBodyColor);
+                const int stepBoxTop = y + 2;
+                const int stepBoxSize = stepWidth - 4;
+                const int tieX = x + stepWidth - 3;
+                const int tieWidth = 6;
+                const int tieTopY = stepBoxTop + 1;
+                const int tieBottomY = stepBoxTop + stepBoxSize - 2;
+                const int tieHeight = tieBottomY - tieTopY + 1;
+                canvas.fillRect(tieX, tieTopY, tieWidth, tieHeight);
+            }
         }
 
         // record step
@@ -467,7 +479,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
                 } else {
                     stepIndex = i+8;
                 }
-                sequence.step(stepIndex).setNote(scale.notesPerOctave()*v);
+                setTieGroupNote(sequence, stepIndex, scale.notesPerOctave() * v);
                 event.consume();
                 return;
                 
@@ -484,6 +496,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         case Layer::Gate:
             _inMemorySequence = _project.selectedNoteSequence();
             sequence.step(stepIndex).toggleGate();
+            normalizeTieLinks(sequence);
             event.consume();
             break;
         default:
@@ -498,6 +511,7 @@ void NoteSequenceEditPage::keyPress(KeyPressEvent &event) {
         if (layer() != Layer::Gate) {
             _inMemorySequence = _project.selectedNoteSequence();
             sequence.step(stepIndex).toggleGate();
+            normalizeTieLinks(sequence);
             event.consume();
         }
     }
@@ -631,6 +645,7 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
         _showDetailTicks = os::ticks();
     }
 
+    std::bitset<CONFIG_STEP_COUNT> tieEdited;
     for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
         if (_stepSelection[stepIndex]) {
             auto &step = sequence.step(stepIndex);
@@ -661,7 +676,19 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
                 step.setLengthVariationProbability(step.lengthVariationProbability() + event.value());
                 break;
             case Layer::Note:
-                step.setNote(step.note() + event.value() * ((shift && scale.isChromatic()) ? scale.notesPerOctave() : 1));
+                if (tieEdited[stepIndex]) {
+                    break;
+                }
+                {
+                    int noteDelta = event.value() * ((shift && scale.isChromatic()) ? scale.notesPerOctave() : 1);
+                    int head = tieGroupHead(sequence, int(stepIndex));
+                    int note = sequence.step(head).note() + noteDelta;
+                    setTieGroupNote(sequence, int(stepIndex), note);
+                    int tail = tieGroupTail(sequence, head);
+                    for (int i = head; i <= tail; ++i) {
+                        tieEdited.set(size_t(i));
+                    }
+                }
                 updateMonitorStep();
                 break;
             case Layer::NoteVariationRange:
@@ -696,6 +723,8 @@ void NoteSequenceEditPage::encoder(EncoderEvent &event) {
         }
     }
 
+    normalizeTieLinks(sequence);
+
     event.consume();
 }
 
@@ -713,14 +742,23 @@ void NoteSequenceEditPage::midi(MidiEvent &event) {
             float volts = (message.note() - 60) * (1.f / 12.f);
             int note = scale.noteFromVolts(volts);
 
+            std::bitset<CONFIG_STEP_COUNT> tieEdited;
             for (size_t stepIndex = 0; stepIndex < sequence.steps().size(); ++stepIndex) {
                 if (_stepSelection[stepIndex]) {
                     auto &step = sequence.step(stepIndex);
-                    step.setNote(note);
+                    if (!tieEdited[stepIndex]) {
+                        int head = tieGroupHead(sequence, int(stepIndex));
+                        setTieGroupNote(sequence, int(stepIndex), note);
+                        int tail = tieGroupTail(sequence, head);
+                        for (int i = head; i <= tail; ++i) {
+                            tieEdited.set(size_t(i));
+                        }
+                    }
                     step.setGate(true);
                 }
             }
 
+            normalizeTieLinks(sequence);
             trackEngine.setMonitorStep(_stepSelection.first());
             updateMonitorStep();
         }
@@ -1119,6 +1157,54 @@ void NoteSequenceEditPage::duplicateSequence() {
     showMessage("STEPS DUPLICATED");
 }
 
+int NoteSequenceEditPage::tieGroupHead(const NoteSequence &sequence, int stepIndex) const {
+    int head = clamp(stepIndex, 0, CONFIG_STEP_COUNT - 1);
+    while (head > 0) {
+        const auto &prev = sequence.step(head - 1);
+        if (!(prev.tieForward() && prev.gate() && prev.length() == NoteSequence::Length::Max)) {
+            break;
+        }
+        --head;
+    }
+    return head;
+}
+
+int NoteSequenceEditPage::tieGroupTail(const NoteSequence &sequence, int headIndex) const {
+    int tail = clamp(headIndex, 0, CONFIG_STEP_COUNT - 1);
+    while (tail < CONFIG_STEP_COUNT - 1) {
+        const auto &step = sequence.step(tail);
+        const auto &next = sequence.step(tail + 1);
+        if (!(step.tieForward() && step.gate() && step.length() == NoteSequence::Length::Max && next.gate())) {
+            break;
+        }
+        ++tail;
+    }
+    return tail;
+}
+
+void NoteSequenceEditPage::setTieGroupNote(NoteSequence &sequence, int anchorStepIndex, int note) {
+    int head = tieGroupHead(sequence, anchorStepIndex);
+    int tail = tieGroupTail(sequence, head);
+    for (int i = head; i <= tail; ++i) {
+        sequence.step(i).setNote(note);
+    }
+}
+
+void NoteSequenceEditPage::normalizeTieLinks(NoteSequence &sequence) {
+    for (int i = 0; i < CONFIG_STEP_COUNT - 1; ++i) {
+        auto &step = sequence.step(i);
+        const auto &next = sequence.step(i + 1);
+        bool validTie = step.tieForward() &&
+                        step.gate() &&
+                        step.length() == NoteSequence::Length::Max &&
+                        next.gate();
+        if (!validTie) {
+            step.setTieForward(false);
+        }
+    }
+    sequence.step(CONFIG_STEP_COUNT - 1).setTieForward(false);
+}
+
 
 void NoteSequenceEditPage::tieNotes() {
 
@@ -1137,14 +1223,24 @@ void NoteSequenceEditPage::tieNotes() {
             }
         }
 
-        for (int i = first; i <= last; i++) {
-            sequence.step(i).setGate(true);
-            if (i != last) {
-                sequence.step(i).setLength(NoteSequence::Length::Max);
-                showMessage("NOTES TIED");
-            }
-            sequence.step(i).setNote(sequence.step(first).note());
+        if (first > 0) {
+            sequence.step(first - 1).setTieForward(false);
         }
+
+        int headNote = sequence.step(first).note();
+        for (int i = first; i <= last; i++) {
+            auto &step = sequence.step(i);
+            step.setGate(true);
+            step.setNote(headNote);
+            if (i < last) {
+                step.setLength(NoteSequence::Length::Max);
+                step.setTieForward(true);
+            } else {
+                step.setTieForward(false);
+            }
+        }
+        normalizeTieLinks(sequence);
+        showMessage("NOTES TIED");
     }
 }
 
@@ -1196,6 +1292,7 @@ void NoteSequenceEditPage::openLaunchpadGenerator(LaunchpadGenerator generator) 
     // LP generator pages operate on all steps when no persistent selection exists.
     if (generator != LaunchpadGenerator::InitLayer &&
         generator != LaunchpadGenerator::InitSteps &&
+        generator != LaunchpadGenerator::Wreck &&
         _stepSelection.none()) {
         _stepSelection.selectAll();
     }
@@ -1337,6 +1434,8 @@ void NoteSequenceEditPage::showChaosGenerator(ChaosGenerator::Scope scope) {
         chaos->setTargetMask(scope == ChaosGenerator::Scope::Pattern
             ? _model.settings().userSettings().get<ChaosPatLayersSetting>(SettingChaosPatLayers)->getValue()
             : _model.settings().userSettings().get<ChaosSeqLayersSetting>(SettingChaosSeqLayers)->getValue());
+        chaos->setPivotNote(_model.settings().userSettings().get<ChaosPivotNoteSetting>(SettingChaosPivotNote)->getValue());
+        chaos->setSpan(_model.settings().userSettings().get<ChaosSpanSetting>(SettingChaosSpan)->getValue());
         generator->update();
         _manager.pages().generator.show(generator, &_stepSelection);
     }

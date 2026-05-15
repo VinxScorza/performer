@@ -44,7 +44,7 @@
         <p>
           I'm kind of losing my mind over this fork... consider <a href="donate/index.html">DONATING</a> if you find it useful.<br>
           If you notice any bug or weird behavior, please <a href="https://github.com/VinxScorza/performer/issues" target="_blank" rel="noopener noreferrer">report it</a>. This fork moves fast, and I really need the feedback.<br>
-          Documentation note: the <a href="manual/index.html">User Manual</a> and <a href="cheatsheet/index.html">LP Cheatsheet</a> are aligned through the current <code>v0.4.2</code> development line (former <code>v0.3.2-vinx.*</code> naming kept as historical reference), including the appendix, Launchpad material, and current simulator notes.
+          Documentation note: the <a href="manual/index.html">User Manual</a> and <a href="cheatsheet/index.html">LP Cheatsheet</a> are aligned through the current <code>v0.4.3</code> development line (former <code>v0.3.2-vinx.*</code> naming kept as historical reference), including the appendix, Launchpad material, and current simulator notes.
         </p>
       </section>
 
@@ -59,6 +59,7 @@
         <ul>
           <li>Full evolution of the generator ecosystem (<code>Random</code>, <code>Acid</code>, <code>Euclidean</code>, <code>Chaos</code>), now unified under a coherent preview/apply safety model and consistent playable workflow across machine and Launchpad. Includes the introduction and consolidation of <code>Acid</code> (<code>Layer</code> + <code>Phrase</code>), the expansion of <code>Chaos</code> into <code>Vandalize Sequence</code> + <code>Wreck Pattern</code>, and the addition of <code>Entropy</code> as a dedicated subset for non-Note tracks.</li>
           <li>Generator interaction is now more explicit and uniform: all generator pages enter on <code>ORIGINAL</code>, first preview requires explicit reroll, and footer/context action layouts were rewritten for a more consistent workflow.</li>
+          <li><code>Chaos</code>/<code>Entropy</code> now follows strict explicit reroll flow (no implicit auto-reroll on target/selection/amount edits), with in-page <code>Pivot</code>/<code>Span</code> controls for register steering.</li>
           <li>Unified Init semantics across <code>Init Layer</code> / <code>Init Steps</code> / <code>Init Seq</code>, with consistent selection-aware fallback.</li>
           <li>Launchpad <code>Generators Mode</code> integrated with track-type mapping, including immediate <code>Init Layer</code> and <code>Init Steps</code> actions.</li>
           <li>Launchpad UX improvements including <code>1-level Undo/Redo</code>, <code>Circuit</code> as default with improved <code>Classic</code> compatibility, improved targeting/probability/range handling, display wake on input, and a near-complete refactoring of the Launchpad controller codebase.</li>
@@ -68,8 +69,11 @@
           <li>Experimental <code>16-step Editing Mode</code> for <code>Launch Control XL</code> / <code>BeatStep Pro</code>: direct per-step workflow with <code>16 knobs + 16 pads</code>, explicit arm/disarm entry, forced visible 16-step loop while armed, bank navigation, and loop restore on exit. BeatStep Pro template: <a href="doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>; on Launch Control XL use <code>Factory Preset #1</code>. Compatibility is map-driven: any controller can work if it sends the expected MIDI map on channel <code>9</code>.</li>
           <li><code>Curve</code> track extended with <code>Gate Offset</code> and <code>Gate Length</code> layers.</li>
           <li>Unified step selection system (shift behavior and fallback selection-or-all centralized).</li>
+          <li>Quick Access range editing is now bank-aware for step windows: in <code>PAGE</code>-hold overlays, <code>PREV/NEXT</code> moves 16-step banks and <code>S1..S16</code> selects inside the active bank.</li>
+          <li>Note tie editing is now chain-aware: tied notes behave as one editable pitch group, with clearer tie rendering on step view.</li>
           <li>Refined clock and sync handling (<code>Reset Pulse</code> and edge-safe behavior).</li>
-          <li>Improved scale capture consistency and operational limits.</li>
+          <li>Track-level gate output shaping is now available via <code>Gate Out Mode</code> (<code>Gate</code>/<code>Trigger</code>) with global trigger-length control in System settings.</li>
+          <li>Improved scale capture consistency and operational limits, including octave-preserving Project-scale remap behavior on the Note-track <code>Scale = Default</code> path.</li>
         </ul>
         <h4 class="section-callout">Memory, Runtime &amp; Build Robustness</h4>
         <ul>
@@ -80,6 +84,7 @@
         <ul>
           <li>Robustness improvements across modal paths, input redispatch, and selector handling (no key leaks, proper isolation, stable closing behavior), with end-to-end locking during generator flows across machine and Launchpad.</li>
           <li>Generator safety guard-rails and overall UX stabilization (safe entry paths, retarget locking, consistent interaction model), supported by targeted regression tests on simulator/UI (selector lock, footer behavior, cancel leaks, non-Note mapping).</li>
+          <li>Project file-operation hardening now serializes <code>Load</code>/<code>Save</code>/<code>Save As</code> task flow and delivers results on UI thread; SD boot path is also hardened for slower cards without relaxing runtime watchdog strictness. This is a strong partial hardening, not yet full architectural closure.</li>
         </ul>
         <h4 class="section-callout">Docs, Site &amp; Ecosystem</h4>
         <ul>

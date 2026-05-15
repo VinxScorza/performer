@@ -3,6 +3,7 @@
 #include <core/io/VersionedSerializedWriter.h>
 #include <core/io/VersionedSerializedReader.h>
 #include "engine/generators/EntropyTargets.h"
+#include "core/math/Math.h"
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
@@ -16,12 +17,19 @@
 #define SettingPatternChange "patternchg"
 #define SettingLaunchpadNoteStyle "lpnote"
 #define SettingSyncSong "syncsong"
+#define SettingTriggerLength "triggerlength"
 #define SettingChaosSeqLayers "chaosseq"
 #define SettingChaosPatLayers "chaospat"
 #define SettingEntropyLayers "entropylayers"
+#define SettingChaosPivotNote "chaospivot"
+#define SettingChaosSpan "chaosspan"
 #define SettingMenuWrap "menuwrap"
 
 static constexpr uint16_t DefaultChaosTargetMask = 0x3fff;
+static constexpr int ChaosPivotNoteMin = -64;
+static constexpr int ChaosPivotNoteMax = 63;
+static constexpr int DefaultChaosPivotNote = 0;
+static constexpr int DefaultChaosSpan = 48;
 
 class BaseSetting {
 public:
@@ -209,6 +217,17 @@ public:
     ) {}
 };
 
+class TriggerLengthSetting : public Setting<int> {
+public:
+    TriggerLengthSetting() : Setting(
+        SettingTriggerLength,
+        "Trigger Length",
+        {"1ms", "2ms", "3ms", "4ms", "5ms", "6ms", "7ms", "8ms", "9ms", "10ms", "11ms", "12ms", "13ms", "14ms", "15ms"},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
+        4
+    ) {}
+};
+
 class ChaosSeqLayersSetting : public Setting<uint16_t> {
 public:
     ChaosSeqLayersSetting() : Setting(
@@ -242,6 +261,36 @@ public:
     ) {}
 };
 
+class ChaosPivotNoteSetting : public Setting<int> {
+public:
+    ChaosPivotNoteSetting() : Setting(
+        SettingChaosPivotNote,
+        "Chaos Pivot Note",
+        {"edit"},
+        {DefaultChaosPivotNote},
+        DefaultChaosPivotNote
+    ) {}
+
+    void setValue(int value) override {
+        getValue() = clamp(value, ChaosPivotNoteMin, ChaosPivotNoteMax);
+    }
+
+    void shiftValue(int shift) override {
+        getValue() = clamp(getValue() + shift, ChaosPivotNoteMin, ChaosPivotNoteMax);
+    }
+};
+
+class ChaosSpanSetting : public Setting<int> {
+public:
+    ChaosSpanSetting() : Setting(
+        SettingChaosSpan,
+        "Chaos Span",
+        {"12", "24", "36", "48"},
+        {12, 24, 36, 48},
+        DefaultChaosSpan
+    ) {}
+};
+
 class UserSettings {
 public:
     UserSettings() {
@@ -253,10 +302,13 @@ public:
         addSetting(new PatternChange());
         
         addSetting(new SyncSong());
+        addSetting(new TriggerLengthSetting());
 
         addSetting(new ChaosSeqLayersSetting());
         addSetting(new ChaosPatLayersSetting());
         addSetting(new EntropyLayersSetting());
+        addSetting(new ChaosPivotNoteSetting());
+        addSetting(new ChaosSpanSetting());
 
         addSetting(new LaunchpadStyleSetting());
         addSetting(new LaunchpadNoteStyle());

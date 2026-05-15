@@ -116,6 +116,9 @@ enum ProjectVersion {
     // add pattern follow
     Version39 = 39,
 
+    // add per-track gate output mode (Gate/Trigger)
+    Version40 = 40,
+
 
     // automatically derive latest version
     Last,

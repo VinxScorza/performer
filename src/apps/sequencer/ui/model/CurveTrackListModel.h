@@ -57,6 +57,7 @@ private:
         PlayMode,
         FillMode,
         MuteMode,
+        GateOutputMode,
         SlideTime,
         Offset,
         Rotate,
@@ -75,6 +76,7 @@ private:
         case PlayMode:              return "Play Mode";
         case FillMode:              return "Fill Mode";
         case MuteMode:              return "Mute Mode";
+        case GateOutputMode:        return "Gate Out Mode";
         case SlideTime:             return "Slide Time";
         case Offset:                return "Offset";
         case Rotate:                return "Rotate";
@@ -106,6 +108,9 @@ private:
             break;
         case MuteMode:
             _track->printMuteMode(str);
+            break;
+        case GateOutputMode:
+            _track->printGateOutputMode(str);
             break;
         case SlideTime:
             _track->printSlideTime(str);
@@ -151,6 +156,9 @@ private:
             break;
         case MuteMode:
             _track->editMuteMode(value, shift);
+            break;
+        case GateOutputMode:
+            _track->editGateOutputMode(value, shift);
             break;
         case SlideTime:
             _track->editSlideTime(value, shift);

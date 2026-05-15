@@ -38,7 +38,7 @@
             This page is the curated web summary of the Vinx Scorza line. It reorganizes the work by topic instead of strict release order so it is easier to understand what this branch actually adds.
           </p>
           <p>
-            This documentation line is aligned through the active <code>v0.4.2</code> development line. If you want the exact chronological log, including inherited upstream history and older <code>v0.3.2-vinx.*</code> releases, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
+            This documentation line is aligned through the active <code>v0.4.3</code> development line. If you want the exact chronological log, including inherited upstream history and older <code>v0.3.2-vinx.*</code> releases, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
           </p>
         </div>
       </section>
@@ -53,9 +53,12 @@
             <ul>
               <li>Step shifting was stabilized across <code>Note</code>, <code>Logic</code>, <code>Curve</code>, <code>Stochastic</code>, and <code>Arp</code>, including the legacy <code>64-step</code> crash/reboot path and shift operations inside non-zero subranges.</li>
               <li>Step selection behavior was refined with more consistent shift handling and a shared selection-or-all fallback used across step-edit and generator paths.</li>
+              <li>Quick Access step-range editing is now bank-aware: in <code>PAGE</code>-hold overlays for <code>First/Last</code> and <code>Seq First/Seq Last</code>, <code>PREV/NEXT</code> moves 16-step banks and <code>S1..S16</code> selects inside the active bank.</li>
               <li><code>Curve</code> tracks were extended with per-step <code>Gate Offset</code> and <code>Gate Length</code>, including edit-page support, overview rendering, Launchpad handling, and simulator bindings.</li>
+              <li>Note tie editing became chain-aware: tied steps now keep persistent linkage and share note edits as one pitch group (encoder, MIDI note input, and shortcut note input paths), with clearer tie rendering.</li>
               <li>Scale-selection limits were fixed so the full built-in plus user-scale set is reachable again across <code>Project</code>, <code>Note</code>, <code>Logic</code>, <code>Stochastic</code>, and <code>Arp</code>.</li>
-              <li><code>Voltage Mode</code> handling was aligned across capture and playback paths: MIDI note capture now follows the active scale octave span, and <code>Arp</code>/<code>Stochastic</code> bypass/transposition paths respect non-chromatic user scales with correct <code>1.2V</code>-octave wrapping instead of semitone/<code>1V/oct</code> fallback.</li>
+              <li><code>Voltage Mode</code> is now coherent across <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>: octave wrapping follows the intended <code>1.2V</code> span and non-chromatic user scales are preserved on the covered paths instead of forcing semitone/<code>1V/oct</code> fallback.</li>
+              <li>Project-scale quantization remap now preserves octave register on Note tracks (Project <code>Scale</code> path with sequence <code>Scale = Default</code>), avoiding octave-collapse when changing Project scale.</li>
             </ul>
           </article>
         </div>
@@ -71,7 +74,9 @@
             <ul>
               <li><code>Chaos</code> is now framed as an experimental event generator with an explicit preview/apply safety model: a selection-aware multi-layer macro-random engine driven by global <code>Amount</code> and a dedicated target-layers matrix.</li>
               <li>The workflow expands into <code>CHAOS MODE</code> with <code>Vandalize Sequence</code> (local, sequence-level), <code>Wreck Pattern</code> (pattern-wide, multi-track, more destructive), and non-Note <code>Entropy</code>, all with consistent <code>A/B</code> preview and dedicated popups.</li>
+              <li><code>Chaos</code> preview flow is now stricter and deterministic: target/selection/amount edits no longer auto-reroll, <code>CHAOS</code> press stays the only reroll trigger, and <code>APPLY</code> is blocked while no valid preview exists.</li>
               <li><code>System -&gt; Chaos Defaults</code> now carries separate masks for sequence vandalizing, pattern wrecking, and non-Note entropy unleashed targets.</li>
+              <li><code>Pivot</code> and octave-quantized <code>Span</code> controls were added for Chaos register control, replacing the old fixed note-window assumption with a user-steerable mutation window.</li>
               <li>Performance and memory behavior were tightened through target-step backup only, in-place regeneration, and sequence-scoped storage.</li>
             </ul>
           </article>
@@ -160,6 +165,7 @@
               <li>The Swing UI was rescaled to a more natural <code>0-99%</code> range while preserving original engine timing for backward compatibility.</li>
               <li>Reset behavior was clarified by separating <code>Reset Gate</code> and introducing <code>Reset Pulse</code> as a distinct external clock mode that reacts only to the rising edge, avoiding implicit start on falling edge.</li>
               <li>The default <code>Reset CV</code> behavior is now <code>Off</code>, so Note tracks hold their last CV value on stop unless the project explicitly asks otherwise.</li>
+              <li>Track-level gate output behavior can now be switched between <code>Gate</code> and <code>Trigger</code> on Note/Curve/Stochastic/Logic/Arp tracks, with global <code>Trigger Length</code> in <code>System -&gt; User Settings</code>; this is per-track behavior, not per-step trigger editing.</li>
             </ul>
           </article>
         </div>
@@ -213,6 +219,7 @@
             <ul>
               <li><code>System</code> now includes direct save and a simplified settings flow, with an explicit save prompt when leaving <code>System -&gt; Settings</code> after changes (including <code>Chaos Defaults</code>) instead of silently discarding edits.</li>
               <li><code>Chaos Defaults</code> was returned to the normal machine-settings save path instead of being treated as a separate auto-written case.</li>
+              <li>Project file-task flow (<code>Load</code>/<code>Save</code>/<code>Save As</code>) was hardened by serializing requests and delivering results on UI thread, reducing race-prone overlap paths; UI now exposes busy-state feedback while operations are active. This is a strong partial hardening, not yet a full architectural closure.</li>
               <li><code>Menu Wrap</code> was added as an on-by-default preference for cyclic list navigation.</li>
               <li>Screensaver behavior, wake behavior, and the <code>System</code> landing tab were refined for more predictable daily use.</li>
               <li>Memory footprint was improved versus the upstream baseline, with lower SRAM/CCRAM pressure compared to Mebitek <code>0.3.2</code>.</li>

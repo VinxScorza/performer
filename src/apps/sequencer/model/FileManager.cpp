@@ -8,6 +8,7 @@
 #include "core/fs/FileReader.h"
 
 #include "os/os.h"
+#include "os/LockGuard.h"
 
 #include <algorithm>
 
@@ -21,7 +22,12 @@ uint32_t FileManager::_cachedSlotInfoTicket = 0;
 
 FileManager::TaskExecuteCallback FileManager::_taskExecuteCallback;
 FileManager::TaskResultCallback FileManager::_taskResultCallback;
+FileManager::TaskResultCallback FileManager::_taskResultCallbackPending;
+fs::Error FileManager::_taskResultPendingValue = fs::OK;
 volatile uint32_t FileManager::_taskPending;
+volatile uint32_t FileManager::_taskExecuting;
+volatile uint32_t FileManager::_taskResultPending;
+static os::Mutex fileTaskMutex;
 
 struct FileTypeInfo {
     const char *dir;
@@ -47,7 +53,11 @@ void FileManager::init() {
     _nextVolumeStateCheckTicks = 0;
     _taskExecuteCallback = nullptr;
     _taskResultCallback = nullptr;
+    _taskResultCallbackPending = nullptr;
+    _taskResultPendingValue = fs::OK;
     _taskPending = 0;
+    _taskExecuting = 0;
+    _taskResultPending = 0;
 }
 
 bool FileManager::volumeAvailable() {
@@ -465,6 +475,12 @@ void FileManager::slotInfo(FileType type, int slot, SlotInfo &info) {
         return;
     }
 
+    if (busy()) {
+        info.used = false;
+        info.name[0] = '\0';
+        return;
+    }
+
     info.used = false;
 
     FixedStringBuilder<32> path;
@@ -484,15 +500,32 @@ void FileManager::slotInfo(FileType type, int slot, SlotInfo &info) {
 }
 
 bool FileManager::slotUsed(FileType type, int slot) {
+    if (busy()) {
+        return false;
+    }
+
     SlotInfo info;
     slotInfo(type, slot, info);
     return info.used;
 }
 
 void FileManager::task(TaskExecuteCallback executeCallback, TaskResultCallback resultCallback) {
-    _taskExecuteCallback = executeCallback;
-    _taskResultCallback = resultCallback;
-    _taskPending = 1;
+    bool reject = false;
+    {
+        os::LockGuard lock(fileTaskMutex);
+        if (_taskPending || _taskExecuting || _taskResultPending) {
+            // Reject overlapping tasks deterministically instead of replacing callbacks.
+            reject = true;
+        } else {
+            _taskExecuteCallback = executeCallback;
+            _taskResultCallback = resultCallback;
+            _taskPending = 1;
+        }
+    }
+
+    if (reject && resultCallback) {
+        resultCallback(fs::INVALID_PARAMETER);
+    }
 }
 
 void FileManager::processTask() {
@@ -515,11 +548,54 @@ void FileManager::processTask() {
         _volumeState = newVolumeState;
     }
 
-    if (_taskPending) {
-        fs::Error result = _taskExecuteCallback();
-        _taskPending = 0;
-        _taskResultCallback(result);
+    TaskExecuteCallback executeCallback;
+    TaskResultCallback resultCallback;
+
+    {
+        os::LockGuard lock(fileTaskMutex);
+        if (_taskPending) {
+            executeCallback = _taskExecuteCallback;
+            resultCallback = _taskResultCallback;
+            _taskExecuteCallback = nullptr;
+            _taskResultCallback = nullptr;
+            _taskPending = 0;
+            _taskExecuting = 1;
+        }
     }
+
+    if (executeCallback) {
+        fs::Error result = executeCallback();
+        os::LockGuard lock(fileTaskMutex);
+        _taskExecuting = 0;
+        _taskResultPendingValue = result;
+        _taskResultCallbackPending = resultCallback;
+        _taskResultPending = 1;
+    }
+}
+
+void FileManager::processTaskResult() {
+    TaskResultCallback resultCallback;
+    fs::Error result = fs::OK;
+
+    {
+        os::LockGuard lock(fileTaskMutex);
+        if (!_taskResultPending) {
+            return;
+        }
+        resultCallback = _taskResultCallbackPending;
+        result = _taskResultPendingValue;
+        _taskResultCallbackPending = nullptr;
+        _taskResultPending = 0;
+    }
+
+    if (resultCallback) {
+        resultCallback(result);
+    }
+}
+
+bool FileManager::busy() {
+    os::LockGuard lock(fileTaskMutex);
+    return _taskPending || _taskExecuting || _taskResultPending;
 }
 
 

@@ -148,39 +148,26 @@ public:
         }
 
         if (aScale.isChromatic() && pScale.isChromatic()) {
-
-            for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {    
-                    auto &t = track(trackIndex);
-                    switch (t.trackMode()) {
-                        case Track::TrackMode::Note: {
-                            for (auto &seq : t.noteTrack().sequences()) {
-                                if (seq.scale()==-1) {
-                                    for (int i = 0; i < 64; ++i) {
-                                        auto pStep = seq.step(i);
-
-                                        int rN = pScale.noteIndex(pStep.note(), rootNote());
-                                        if (rN > 0) {
-                                            if (aScale.isNotePresent(rN)) {
-                                                int pNoteIndex = aScale.getNoteIndex(rN);
-                                                seq.step(i).setNote(pNoteIndex);
-                                            } else {
-                                                // search nearest note
-                                                while (!aScale.isNotePresent(rN)) {
-                                                    rN--;
-                                                }
-                                                int pNoteIndex = aScale.getNoteIndex(rN);
-                                                seq.step(i).setNote(pNoteIndex);
-                                            }
-                                        }
-                                    }
-                                }
+            for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+                auto &t = track(trackIndex);
+                switch (t.trackMode()) {
+                case Track::TrackMode::Note: {
+                    for (auto &seq : t.noteTrack().sequences()) {
+                        if (seq.scale() == -1) {
+                            for (int i = 0; i < 64; ++i) {
+                                auto &step = seq.step(i);
+                                float volts = pScale.noteToVolts(step.note());
+                                int remapped = NoteSequence::Note::clamp(aScale.noteFromVolts(volts));
+                                step.setNote(remapped);
                             }
-                            break;
                         }
-                        default:
-                            break;
-                    }                    
+                    }
+                    break;
                 }
+                default:
+                    break;
+                }
+            }
         }
         
     }

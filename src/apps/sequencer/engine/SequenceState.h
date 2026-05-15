@@ -33,6 +33,4 @@ private:
     int8_t _direction;
     uint32_t _iteration;
     uint32_t _nextIteration;
-
-    bool _forNetStep = false;
 };

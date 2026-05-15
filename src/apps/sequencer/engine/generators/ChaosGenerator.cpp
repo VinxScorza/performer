@@ -4,6 +4,15 @@
 
 #include <ctime>
 
+namespace {
+int clampChaosSpan(int span) {
+    if (span <= 18) return 12;
+    if (span <= 30) return 24;
+    if (span <= 42) return 36;
+    return 48;
+}
+}
+
 ChaosGenerator::ChaosGenerator(SequenceBuilder &builder, Params &params, std::bitset<CONFIG_STEP_COUNT> &/*selected*/) :
     Generator(builder),
     _params(params),
@@ -50,13 +59,21 @@ void ChaosGenerator::printParam(int index, StringBuilder &str) const {
     }
 }
 
+void ChaosGenerator::setSpan(int span) {
+    _params.span = uint8_t(clampChaosSpan(span));
+}
+
 void ChaosGenerator::init() {
     const uint32_t currentSeed = _params.seed;
     const Scope currentScope = _params.scope;
+    const int currentPivotNote = _params.pivotNote;
+    const int currentSpan = _params.span;
 
     _params = Params();
     _params.seed = currentSeed;
     _params.scope = currentScope;
+    _params.pivotNote = int8_t(currentPivotNote);
+    setSpan(currentSpan);
 
     update();
 }
@@ -124,10 +141,11 @@ bool ChaosGenerator::blendRandomBool(bool originalValue, Random &rng) const {
 int ChaosGenerator::blendRandomValue(NoteSequence::Layer layer, int originalValue, Random &rng) const {
     auto range = NoteSequence::layerRange(layer);
 
-    // Keep Chaos note-domain mutations within +/- 2 octaves.
+    // Keep Chaos note-domain mutations inside the configured pivot/span window.
     if (layer == NoteSequence::Layer::Note || layer == NoteSequence::Layer::NoteVariationRange) {
-        range.min = std::max(range.min, -24);
-        range.max = std::min(range.max, 24);
+        const int halfSpan = _params.span / 2;
+        range.min = std::max(range.min, int(_params.pivotNote) - halfSpan);
+        range.max = std::min(range.max, int(_params.pivotNote) + halfSpan);
     }
 
     const int randomValue = range.min + int(rng.nextRange(range.max - range.min + 1));

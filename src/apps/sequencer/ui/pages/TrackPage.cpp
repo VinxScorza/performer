@@ -123,7 +123,7 @@ void TrackPage::keyPress(KeyPressEvent &event) {
     return;
 }
 
-if (key.is(Key::Encoder) && selectedRow() == 14) {
+if (key.is(Key::Encoder) && selectedRow() == 15) {
 
     if (_project.selectedTrack().trackMode() == Track::TrackMode::Note) {
         std::vector<int> availableLogicTracks;
@@ -139,7 +139,7 @@ if (key.is(Key::Encoder) && selectedRow() == 14) {
     }
 }
 
-if (key.is(Key::Encoder) && selectedRow() == 15) {
+if (key.is(Key::Encoder) && selectedRow() == 16) {
     
 
         if (_project.selectedTrack().trackMode() == Track::TrackMode::Note) {

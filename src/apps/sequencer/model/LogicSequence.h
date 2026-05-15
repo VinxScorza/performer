@@ -354,27 +354,12 @@ public:
         const auto &pScale = Scale::get(previousScaleIndex);
         const auto &aScale = Scale::get(newScaleIndex);
 
-        if (aScale.isChromatic() && pScale.isChromatic() > 0) {
+        if (aScale.isChromatic() && pScale.isChromatic()) {
             for (int i = 0; i < 64; ++i) {
-
-                auto pStep = _steps[i];
-
-                int rN = pScale.noteIndex(pStep.note(), selectedRootNote(0));
-                if (rN > 0) {
-                    if (aScale.isNotePresent(rN)) {
-                        int pNoteIndex = aScale.getNoteIndex(rN);
-                        step(i).setNote(pNoteIndex);
-                    } else {
-                        // search nearest note
-                        while (!aScale.isNotePresent(rN)) {
-                            rN--;
-                        }
-                        int pNoteIndex = aScale.getNoteIndex(rN);
-                        step(i).setNote(pNoteIndex);
-                    }
-                }
-
-
+                auto &s = step(i);
+                float volts = pScale.noteToVolts(s.note());
+                int remapped = Note::clamp(aScale.noteFromVolts(volts));
+                s.setNote(remapped);
             }
         }
 

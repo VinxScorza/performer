@@ -40,6 +40,8 @@ public:
         uint8_t amount = 100;
         uint16_t targetMask = (1u << int(Target::Last)) - 1u;
         Scope scope = Scope::Sequence;
+        int8_t pivotNote = 0;
+        uint8_t span = 48;
     };
 
     ChaosGenerator(SequenceBuilder &builder, Params &params, std::bitset<CONFIG_STEP_COUNT> &selected);
@@ -67,6 +69,12 @@ public:
     Scope scope() const { return _params.scope; }
     void setScope(Scope scope) { _params.scope = scope; }
     bool patternScope() const { return _params.scope == Scope::Pattern; }
+
+    int pivotNote() const { return _params.pivotNote; }
+    void setPivotNote(int pivotNote) { _params.pivotNote = int8_t(clamp(pivotNote, -64, 63)); }
+
+    int span() const { return _params.span; }
+    void setSpan(int span);
 
     bool targetEnabled(Target target) const {
         return (_params.targetMask >> int(target)) & 0x1;

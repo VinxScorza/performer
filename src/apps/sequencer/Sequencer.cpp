@@ -151,6 +151,7 @@ static void assert_handler(const char *filename, int line, const char *msg) {
 int main(void) {
     System::init();
     System::startWatchdog(500);
+    System::resetWatchdog();
     Console::init();
     HighResolutionTimer::init();
 
@@ -159,24 +160,40 @@ int main(void) {
     dbg_set_assert_handler(&assert_handler);
 
     profiler.init();
+    System::resetWatchdog();
 
     shiftRegister.init();
+    System::resetWatchdog();
     clockTimer.init();
+    System::resetWatchdog();
     blm.init();
+    System::resetWatchdog();
     encoder.init();
+    System::resetWatchdog();
     lcd.init();
+    System::resetWatchdog();
     adc.init();
+    System::resetWatchdog();
     dac.init();
+    System::resetWatchdog();
     dio.init();
+    System::resetWatchdog();
     gateOutput.init();
+    System::resetWatchdog();
     midi.init();
+    System::resetWatchdog();
     usbMidi.init();
+    System::resetWatchdog();
     usbh.init();
+    System::resetWatchdog();
     usbh.powerOn();
+    System::resetWatchdog();
     sdCard.init();
+    System::resetWatchdog();
 
     model.init();
     model.settings().readFromFlash();
+    System::resetWatchdog();
 
     engine.init();
     ui.init();

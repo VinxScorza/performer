@@ -10,6 +10,30 @@
 #include "ui/ControllerManager.h"
 
 #include "os/os.h"
+
+namespace {
+
+Types::GateOutputMode trackGateOutputMode(const Track &track) {
+    switch (track.trackMode()) {
+    case Track::TrackMode::Note:
+        return track.noteTrack().gateOutputMode();
+    case Track::TrackMode::Curve:
+        return track.curveTrack().gateOutputMode();
+    case Track::TrackMode::Stochastic:
+        return track.stochasticTrack().gateOutputMode();
+    case Track::TrackMode::Logic:
+        return track.logicTrack().gateOutputMode();
+    case Track::TrackMode::Arp:
+        return track.arpTrack().gateOutputMode();
+    case Track::TrackMode::MidiCv:
+    case Track::TrackMode::Last:
+        break;
+    }
+    return Types::GateOutputMode::Gate;
+}
+
+}
+
 Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi) :
     _model(model),
     _project(model.project()),
@@ -24,6 +48,9 @@ Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &di
     _routingEngine(*this, model)
 {
     _cvOutputOverrideValues.fill(0.f);
+    _triggerPulseUntilTicks.fill(0);
+    _triggerPrevSourceTrack.fill(-1);
+    _triggerPrevSourceGate.fill(0);
     _trackEngines.fill(nullptr);
 
     _usbMidi.setConnectHandler([this] (uint16_t vendorId, uint16_t productId) { usbMidiConnect(vendorId, productId); });
@@ -489,6 +516,8 @@ void Engine::updateTrackSetups() {
 void Engine::updateTrackOutputs() {
     const auto &gateOutputTracks = _project.gateOutputTracks();
     const auto &cvOutputTracks = _project.cvOutputTracks();
+    const uint32_t nowTicks = os::ticks();
+    const int triggerLengthMs = _model.settings().userSettings().get<TriggerLengthSetting>(SettingTriggerLength)->getValue();
 
     int trackGateIndex[CONFIG_TRACK_COUNT];
     int trackCvIndex[CONFIG_TRACK_COUNT];
@@ -501,7 +530,32 @@ void Engine::updateTrackOutputs() {
     for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
         int gateOutputTrack = gateOutputTracks[trackIndex];
         if (!_gateOutputOverride) {
-            _gateOutput.setGate(trackIndex, _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++));
+            const bool sourceGate = _trackEngines[gateOutputTrack]->gateOutput(trackGateIndex[gateOutputTrack]++);
+            const auto mode = trackGateOutputMode(_project.track(gateOutputTrack));
+
+            bool outputGate = sourceGate;
+            if (mode == Types::GateOutputMode::Trigger) {
+                if (_triggerPrevSourceTrack[trackIndex] != gateOutputTrack) {
+                    _triggerPrevSourceTrack[trackIndex] = gateOutputTrack;
+                    _triggerPrevSourceGate[trackIndex] = sourceGate;
+                    _triggerPulseUntilTicks[trackIndex] = 0;
+                }
+
+                const bool risingEdge = sourceGate && !_triggerPrevSourceGate[trackIndex];
+                _triggerPrevSourceGate[trackIndex] = sourceGate;
+
+                if (risingEdge) {
+                    _triggerPulseUntilTicks[trackIndex] = nowTicks + os::time::ms(triggerLengthMs);
+                }
+
+                outputGate = int32_t(_triggerPulseUntilTicks[trackIndex] - nowTicks) > 0;
+            } else {
+                _triggerPrevSourceTrack[trackIndex] = gateOutputTrack;
+                _triggerPrevSourceGate[trackIndex] = sourceGate;
+                _triggerPulseUntilTicks[trackIndex] = 0;
+            }
+
+            _gateOutput.setGate(trackIndex, outputGate);
         }
         int cvOutputTrack = cvOutputTracks[trackIndex];
         if (!_cvOutputOverride) {

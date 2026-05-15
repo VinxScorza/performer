@@ -45,10 +45,20 @@ void UserSettings::read(VersionedSerializedReader &reader) {
             reader.read(dynamic_cast<ChaosPatLayersSetting *>(setting)->getValue(), 3);
         } else if (setting->getKey() == SettingEntropyLayers) {
             reader.read(dynamic_cast<EntropyLayersSetting *>(setting)->getValue(), 5);
+        } else if (setting->getKey() == SettingTriggerLength) {
+            reader.read(dynamic_cast<TriggerLengthSetting *>(setting)->getValue(), 8);
+        } else if (setting->getKey() == SettingChaosPivotNote) {
+            reader.read(dynamic_cast<ChaosPivotNoteSetting *>(setting)->getValue(), 6);
+        } else if (setting->getKey() == SettingChaosSpan) {
+            reader.read(dynamic_cast<ChaosSpanSetting *>(setting)->getValue(), 6);
         } else if (setting->getKey() == SettingMenuWrap) {
             reader.read(dynamic_cast<MenuWrapSetting *>(setting)->getValue(), 4);
         } else {
             setting->read(reader);
         }
     }
+
+    // Removed legacy "Chaos Cumul" setting in settings data version 9.
+    // Consume the old trailing byte to keep hash-compatible reads for v7-v8 data.
+    reader.skip<uint8_t>(7, 9);
 }

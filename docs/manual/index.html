@@ -150,10 +150,10 @@
           Vinx Scorza fork while preserving the technical detail needed to use the module confidently.
         </p>
         <p>
-          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through the active <code>v0.4.2</code> development line. The earlier <code>v0.3.2-vinx.*</code> naming is retained in history as lineage reference.
+          This manual is being actively adapted for the Vinx Scorza fork and is currently aligned through the active <code>v0.4.3</code> development line. The earlier <code>v0.3.2-vinx.*</code> naming is retained in history as lineage reference.
         </p>
         <p>
-          Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for <code>Voltage Mode</code> user scales in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>; Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems. The experimental <code>16-step Editing Mode</code> path is maintainer-validated on <code>Launch Control XL</code>; <code>BeatStep Pro</code> still needs dedicated on-hardware validation. BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.
+          Current validation scope: real hardware testing is still useful for <code>Reset Pulse</code> / <code>Reset Gate</code> and for broader <code>Voltage Mode</code> user-scale coverage in <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code> (especially uncommon scales with <code>notesPerOctave &gt; 12</code> on Arp/Stochastic paths); Desktop Simulator USB MIDI is validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems. The experimental <code>16-step Editing Mode</code> path is maintainer-validated on <code>Launch Control XL</code>; <code>BeatStep Pro</code> still needs dedicated on-hardware validation. BeatStep Pro template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>. On Launch Control XL, use <code>Factory Preset #1</code>.
         </p>
         <p>
           In the current line, <code>Voltage Mode</code> behavior on <code>Arp</code> and <code>Stochastic</code> bypass/transposition paths has been fixed so non-chromatic user scales are respected with correct octave wrapping on the intended <code>1.2V</code> octave span.
@@ -223,6 +223,9 @@
           <li>Generator workflow is explicitly preview/apply-oriented: <em>Random</em>, <em>Acid</em>, <em>Euclidean</em>, and the <em>Chaos</em> family use compare/cancel/apply paths instead of silent destructive edits; in the current line generators enter on <code>ORIGINAL</code> and create preview only after explicit reroll.</li>
           <li>The generator family has diverged further: <em>Acid</em> is split into <em>Layer</em>/<em>Phrase</em>, <em>Chaos</em> into <em>Vandalize</em>/<em>Wreck</em>, and non-Note tracks use <em>Entropy</em> as the local Chaos subset.</li>
           <li><code>Voltage Mode</code> handling is hardened beyond legacy behavior: user-scale octave semantics are respected across <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>, including corrected <code>1.2V</code>-span octave wrapping on Arp/Stochastic paths.</li>
+          <li>Step-edit ergonomics expanded: quick-access <code>First/Last</code> fields now support <code>16-step</code> bank paging with <code>PREV/NEXT</code>, and Note ties are now chain-aware for unified tied-note pitch edits.</li>
+          <li>Track outputs gained explicit gate shaping via per-track <code>Gate Out Mode</code> (<code>Gate</code>/<code>Trigger</code>) with global trigger-length control in System settings.</li>
+          <li>Project file operations (<code>Load</code>/<code>Save</code>/<code>Save As</code>) were hardened against overlap races by serialized task flow and UI-thread result delivery.</li>
           <li>External control is broader than upstream Launchpad-only workflows: Launchpad integration is much deeper, and the experimental <code>16-step Editing Mode</code> adds direct <code>16 knobs + 16 pads</code> per-step control on Note tracks.</li>
           <li>The fork is now maintained as a standalone Vinx line (<code>v0.x.y</code>) with aligned manual, LP cheatsheet, Web/Desktop simulator pages, and a tracked feature/release history.</li>
         </ul>
@@ -236,6 +239,32 @@
           <li>When a function has both machine and Launchpad access paths, both are listed where useful; when only one side is available, it is stated directly.</li>
           <li>Canonical examples in the current line: open machine <code>GEN</code> with <code>PAGE + SHIFT + F5</code>; toggle LP Generators Mode with <code>TOP 8 + TOP 4</code>; undo/redo on supported step pages with machine <code>PAGE + S7</code> or LP <code>TOP 7 + TOP 8</code>.</li>
         </ul>
+        <h4>Machine Shortcut Reference</h4>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Shortcut</th>
+              <th style="text-align: left">Scope</th>
+              <th style="text-align: left">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="text-align: left"><code>SHIFT + PAGE</code> (or double-click <code>PAGE</code>)</td><td style="text-align: left">Current page</td><td style="text-align: left">Open page context menu.</td></tr>
+            <tr><td style="text-align: left"><code>PAGE + PLAY</code></td><td style="text-align: left">Global</td><td style="text-align: left">Toggle record mode.</td></tr>
+            <tr><td style="text-align: left"><code>SHIFT + PLAY</code></td><td style="text-align: left">Global</td><td style="text-align: left">Pause/continue or restart clock depending on Clock page <code>Shift Mode</code>.</td></tr>
+            <tr><td style="text-align: left"><code>PAGE</code> + page key</td><td style="text-align: left">Global</td><td style="text-align: left">Jump directly to target page (Clock, Pattern, Performer, Project, Layout, Routing, MIDI Output, User Scale, Steps, Sequence, Track, Song, Monitor, System, Overview).</td></tr>
+            <tr><td style="text-align: left">Double-click <code>F1..F5</code></td><td style="text-align: left">Where supported</td><td style="text-align: left">Quick page access: Project, Layout, Routing, MIDI Output, User Scale.</td></tr>
+            <tr><td style="text-align: left"><code>PAGE + SHIFT + F5</code></td><td style="text-align: left">Steps editors</td><td style="text-align: left">Open machine <code>GEN</code> selector.</td></tr>
+            <tr><td style="text-align: left"><code>PAGE + S7</code></td><td style="text-align: left">Step editors</td><td style="text-align: left"><code>Undo/Redo</code> (1-level) on <code>Note</code>/<code>Curve</code>/<code>Logic</code>; on <code>Stochastic</code> it toggles loop behavior.</td></tr>
+            <tr><td style="text-align: left"><code>SHIFT + step</code>, then <code>SHIFT + step</code></td><td style="text-align: left">Step editors</td><td style="text-align: left">Create step-range selection (also across banks via <code>PREV/NEXT</code>).</td></tr>
+            <tr><td style="text-align: left"><code>SHIFT + F3</code> after range selection</td><td style="text-align: left">Note step editor</td><td style="text-align: left">Tie selected step range.</td></tr>
+            <tr><td style="text-align: left">Hold step + <code>F1..F5</code></td><td style="text-align: left">Note step editor</td><td style="text-align: left">Set octave quickly (1V..5V) for that step.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">System (Calibration / User Settings)</td><td style="text-align: left">Direct save to flash.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Some machine combinations are context-dependent by design: for example <code>PAGE + S7</code> is <code>Undo/Redo</code> on <code>Note</code>/<code>Curve</code>/<code>Logic</code> step pages, but performs loop-related behavior on <code>Stochastic</code>. This split is historical lineage behavior, not a recent Vinx regression.
+        </p>
       </section>
 
       <section>
@@ -725,7 +754,7 @@
       <section>
         <h2 id="pages">Pages</h2>
         <p>
-          This chapter summarizes the main operating pages of the sequencer and is being progressively aligned with the current fork.
+          This chapter summarizes the main operating pages of the sequencer and is aligned with the current <code>v0.4.3</code> Vinx behavior.
         </p>
 
         <h3 id="pages-project">Project</h3>
@@ -790,6 +819,12 @@
             <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Route</td><td style="text-align: left">Show or create a route for the currently selected parameter, when routable.</td></tr>
           </tbody>
         </table>
+        <p>
+          File operations in this page are now guarded against overlap: while a <code>Load</code>/<code>Save</code>/<code>Save As</code> task is running, the slot list can show a temporary <code>(busy)</code> placeholder and concurrent requests are rejected instead of overlapping in undefined order. This hardening is meant to reduce intermittent reboot-risk paths during SD operations.
+        </p>
+        <p>
+          This is intentionally documented as a strong partial hardening, not yet a full architectural thread-safety closure across every legacy file-operation path.
+        </p>
 
         <h3 id="pages-layout">Layout</h3>
         <p>
@@ -831,6 +866,9 @@
         </p>
         <p>
           In Note, Logic and Arpeggiator related modes this includes parameters such as play mode, fill mode, slide time, octave, transpose, rotate and multiple performance-oriented probability biases. In Curve mode it additionally includes voltage behavior such as offset and min/max handling. In MIDI/CV mode it becomes a converter and arpeggiator setup page with voice count, note priority, ranges and modulation behavior.
+        </p>
+        <p>
+          In the current Vinx line, Note/Curve/Stochastic/Logic/Arp tracks also expose <code>Gate Out Mode</code> (<code>Gate</code> or <code>Trigger</code>). This is a per-track output mode, not per-step trigger editing. In <code>Trigger</code> mode, gate output is converted at output stage to fixed pulses on rising edges; internal sequencing semantics (step length, retrig, ratchet) stay unchanged.
         </p>
         <p>
           The track context menu provides initialization, copy, paste and route creation for routable parameters.
@@ -1420,7 +1458,7 @@
           </tbody>
         </table>
         <p>
-          While holding the <code>PAGE</code> button, the selected sequence parameter can be adjusted by rotating the <code>ENCODER</code> or by pressing <code>S1</code> to <code>S16</code> to select the most common values. Releasing <code>PAGE</code> returns to the normal state of the Steps page.
+          While holding the <code>PAGE</code> button, the selected sequence parameter can be adjusted by rotating the <code>ENCODER</code> or by pressing <code>S1</code> to <code>S16</code> to select the most common values. For <em>First Step</em>, <em>Last Step</em>, <em>Seq First Step</em>, and <em>Seq Last Step</em>, <code>PREV</code>/<code>NEXT</code> moves between 16-step banks (1-16, 17-32, 33-48, 49-64), then <code>S1</code>..<code>S16</code> selects inside the active bank. Releasing <code>PAGE</code> returns to the normal state of the Steps page.
         </p>
         <p>
           Note: When quick access is active, the step LEDs indicate the range of values that can be selected in green as well as the current selection in red.
@@ -1443,7 +1481,7 @@
           In the Vinx fork, generator work is explicitly preview-oriented, but preview arming is now explicit: all generators enter on <code>ORIGINAL</code>, and the first generated result appears only after an intentional reroll action (<code>NEW RAND</code>, <code>NEW EUCL</code>, or <code>CHAOS</code>). The page still opens on the current 16-step bank while keeping full sequence context where applicable.
         </p>
         <p>
-          The general workflow is: open the generator, adjust parameters against the live preview, use <code>A/B</code> to compare preview and original material, then use <code>Cancel</code> to discard or <code>Apply</code> to write the result into the sequence.
+          The general workflow is: open the generator, shape parameters, use <code>A/B</code> to compare preview and original material, then use <code>Cancel</code> to discard or <code>Apply</code> to write the result into the sequence. On <em>Chaos</em>/<em>Entropy</em>, parameter edits do not auto-reroll: press <code>CHAOS</code> explicitly to build the next valid preview before applying.
         </p>
         <p>
           The Vinx line also adds an experimental Note-track generator called <em>Chaos</em>. It keeps the same non-destructive safety model as the other generators, but deliberately uses a rougher multi-layer random workflow.
@@ -1500,20 +1538,20 @@
             <tr><td style="text-align: left"><em>Acid Layer</em></td><td style="text-align: left"><code>F1</code> empty, <code>F2</code> empty, <code>F3</code> <code>ResetGen</code>, <code>F4</code> <code>Cancel</code>, <code>F5</code> <code>Apply</code>.</td></tr>
             <tr><td style="text-align: left"><em>Acid Phrase</em></td><td style="text-align: left"><code>F1</code> empty, <code>F2</code> <code>DENS</code> quick edit, <code>F3</code> <code>ResetGen</code>, <code>F4</code> <code>Cancel</code>, <code>F5</code> <code>Apply</code>.</td></tr>
             <tr><td style="text-align: left"><em>Euclidean</em></td><td style="text-align: left"><code>F1</code> empty, <code>F2</code> empty, <code>F3</code> <code>ResetGen</code>, <code>F4</code> <code>Cancel</code>, <code>F5</code> <code>Apply</code>.</td></tr>
-            <tr><td style="text-align: left"><em>Chaos / Entropy</em></td><td style="text-align: left">No separate context menu; actions stay directly on the generator page footer.</td></tr>
+            <tr><td style="text-align: left"><em>Chaos / Entropy</em></td><td style="text-align: left"><code>F1</code> <code>PIVOT</code>, <code>F2</code> <code>SPAN</code>, <code>F3</code> <code>ResetGen</code>, <code>F4</code> <code>Cancel</code>, <code>F5</code> <code>Apply</code>.</td></tr>
           </tbody>
         </table>
         <p>
           All generators now enter on <strong>ORIGINAL</strong>. The first generated preview is created only after an explicit reroll action.
         </p>
         <p>
-          On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material. Parameter edits keep updating the hidden preview in the background, while explicit reroll actions such as <code>NEW RAND</code> reveal the new preview immediately.
+          On seed-driven generators, <code>F1</code> on the page itself toggles <code>A/B</code> between the original sequence and the generated preview. While the original is shown, the seed field reads <strong>ORIGINAL</strong>, making it easy to compare the generated result with the untouched source material. On <em>Random</em>/<em>Acid</em>/<em>Euclidean</em>, parameter edits keep updating preview continuously; on <em>Chaos</em>/<em>Entropy</em>, target/selection/amount edits no longer auto-reroll and require explicit <code>CHAOS</code> press for the next valid preview.
         </p>
         <p>
           The footer controls on <em>Random</em>, <em>Acid</em>, and <em>Chaos</em> are treated as in-context generator actions: switching between those footer options no longer drops you out of the generator page unexpectedly.
         </p>
         <p>
-          On <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, <code>ENCODER press</code> now commits the generator directly, mirroring <code>F5 Apply</code> without needing to reach for the footer button.
+          On <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, <code>ENCODER press</code> now commits the generator directly, mirroring <code>Apply</code> from the context menu (where <code>F5</code> is <code>Apply</code>) without needing to open that menu.
         </p>
         <h5>Encoder Rotation Semantics</h5>
         <p>
@@ -1551,7 +1589,7 @@
           A simple working habit is: enter the generator, shape the preview with the current parameters, use <code>A/B</code> to judge whether the generated result actually beats the source, then either <code>Apply</code> or back out cleanly with <code>Cancel</code>. The generators are meant to support that kind of deliberate use rather than blind destructive iteration.
         </p>
         <p>
-          Note: <em>Chaos</em> and <em>Entropy</em> currently do not use this separate generator context menu. Their main actions stay directly on the page itself.
+          Note: in the current Vinx line, <em>Chaos</em> and <em>Entropy</em> use their own dedicated context actions (<code>PIVOT</code>, <code>SPAN</code>, <code>ResetGen</code>, <code>Cancel</code>, <code>Apply</code>) and keep reroll explicit on <code>CHAOS</code>.
         </p>
         <p>
           <em>Euclidean</em> uses the same compare logic on its main page: <code>F1</code> toggles <code>A/B</code>, <code>F2</code>/<code>F3</code>/<code>F4</code> edit <code>Offset</code>/<code>Steps</code>/<code>Beats</code>, and <code>F5</code> triggers <code>NEW EUCL</code>. Rotating the encoder with no <code>F2/F3/F4</code> held mirrors <code>NEW EUCL</code> reroll; holding <code>F2</code>, <code>F3</code>, or <code>F4</code> edits only the bound parameter. Its context menu keeps only <code>ResetGen</code>, <code>Cancel</code> and <code>Apply</code>.
@@ -1573,7 +1611,7 @@
           The generator page uses a target matrix of direct layer toggles. The available targets are <code>Gate</code>, <code>G Offset</code>, <code>G Prob</code>, <code>Retrig</code>, <code>Length</code>, <code>L Range</code>, <code>L Prob</code>, <code>R Prob</code>, <code>Note</code>, <code>N Slide</code>, <code>N Range</code>, <code>N Prob</code>, <code>N Bypass</code>, and <code>Cond</code>, plus dedicated <code>All On</code> and <code>All Off</code> cells.
         </p>
         <p>
-          For <code>Note</code> and <code>N Range</code> targets, generated note-domain values are intentionally constrained to <code>-24..+24</code> semitones (two octaves down/up) to keep Chaos results inside a deliberate 4-octave window.
+          For <code>Note</code> and <code>N Range</code> targets, generated note-domain values now follow the active <code>Pivot</code>/<code>Span</code> window (span quantized by octave steps up to the configured maximum) instead of a single fixed hardcoded range.
         </p>
         <p>
           <code>Vandalize Sequence</code> is selection-aware like the other generators: if a persistent step selection exists it is used as the target area first; otherwise the generator falls back to the current sequence <em>First Step</em> / <em>Last Step</em> range. <code>Wreck Pattern</code> keeps the same non-destructive preview model, but expands the target to all Note tracks in the current pattern. With an explicit step selection, that selection is shared across the affected Note tracks; without one, each Note track uses its own <em>First Step</em> / <em>Last Step</em> window.
@@ -1607,16 +1645,22 @@
           <strong>Variation vs Amount:</strong> these controls are intentionally not identical. <code>Variation</code> (used by <em>Random</em> and <em>Acid</em>) is a per-step keep/replace control against the original material. <code>Amount</code> (used by <em>Chaos</em> and <em>Entropy</em>) is a global intensity control applied to enabled targets in the target matrix.
         </p>
         <p>
+          In the current strict flow, changing <code>target</code>/<code>selection</code>/<code>amount</code> does not auto-reroll Chaos. A new valid preview requires explicit <code>CHAOS</code> press; <code>APPLY</code> remains blocked until then. The page no longer auto-jumps back to <code>ORIGINAL</code> when those parameters change.
+        </p>
+        <p>
+          Chaos context actions also expose register controls: <code>F1 = PIVOT</code>, <code>F2 = SPAN</code>, <code>F3 = ResetGen</code>, <code>F4 = Cancel</code>, <code>F5 = Apply</code>. <code>Pivot</code>/<code>Span</code> are persisted and reused on next entry.
+        </p>
+        <p>
           Practical rule: <code>Variation</code> is used where you want to decide <em>how many steps stay original</em>; <code>Amount</code> is used when you want to decide <em>how hard Chaos/Entropy pushes enabled targets</em>.
         </p>
         <p>
           In practice, <em>Chaos</em> is not trying to be harmonically clever. It is a deliberately rough exploratory tool: a selection-aware, multi-layer macro-random pass with a single global intensity and explicit target toggles.
         </p>
         <p>
-          <code>System -&gt; Chaos Defaults</code> stores separate target matrices for <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code>, each edited through the same target matrix. These defaults are loaded automatically when you enter <code>Vandalize Sequence</code> or <code>Wreck Pattern</code>.
+          <code>System -&gt; Chaos Defaults</code> stores separate target matrices for <code>Seq Layers to Vandalize</code>, <code>Pat Layers to Wreck</code>, and <code>EntropyLayerToUnleash</code>. These defaults are loaded automatically when you enter <code>Vandalize Sequence</code>, <code>Wreck Pattern</code>, or non-Note <em>Entropy</em>.
         </p>
         <p>
-          The same settings area now also stores <code>Entropy Layers to Unleash</code>. Non-Note <em>Entropy</em> pages use their own target matrix. Each target can represent one or more concrete layers depending on track type:
+          The same settings area now also stores <code>EntropyLayerToUnleash</code>. Non-Note <em>Entropy</em> pages use their own target matrix. Each target can represent one or more concrete layers depending on track type:
         </p>
         <table>
           <thead>
@@ -2051,6 +2095,9 @@
         <p>
           MIDI note capture on Note, Stochastic and Arpeggiator tracks follows the octave span of the active scale, so voltage-mode user scales are interpreted according to their own octave range instead of assuming fixed <code>1V/oct</code>. This is intended to make arbitrary voltage tables usable beyond plain Note sequencing as well, although additional real-hardware validation is still useful for these workflows.
         </p>
+        <p>
+          Known limit: some Arp/Stochastic paths still rely on a 12-slot-per-octave data model, so user scales with <code>notesPerOctave &gt; 12</code> are not yet fully represented in every path.
+        </p>
         <h4>Context Menu</h4>
         <table>
           <thead>
@@ -2133,7 +2180,7 @@
           The <em>System</em> page groups calibration, settings save/restore, SD utilities, firmware update entry and user settings such as display brightness, screensaver and Launchpad behavior.
         </p>
         <p>
-          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page reports the standalone Vinx version string (<code>v0.4.2</code>) correctly.
+          Entering <em>System</em> now lands on the <em>Settings</em> tab by default instead of <em>Calibration</em>. The startup page reports the standalone Vinx version string (<code>v0.4.3</code>) correctly.
         </p>
         <table>
           <thead>
@@ -2202,7 +2249,8 @@
             <tr><td style="text-align: left">Pattern Change</td><td style="text-align: left">Immediate, Sync</td><td style="text-align: left">Swap the default pattern launch behavior.</td></tr>
             <tr><td style="text-align: left">LP Note Style</td><td style="text-align: left">Classic, Circuit</td><td style="text-align: left">Select the Launchpad note editor style. The default is <code>Circuit</code>. This is a machine setting stored in flash when saved from <em>System</em>.</td></tr>
             <tr><td style="text-align: left">Menu Wrap</td><td style="text-align: left">Off, On</td><td style="text-align: left">Choose whether list-based menus and selector pages based on lists wrap cyclically from last to first and from first to last. The default is <code>on</code>. This does not turn ordinary inline value selectors into cyclic controls.</td></tr>
-            <tr><td style="text-align: left">Chaos Defaults</td><td style="text-align: left">open</td><td style="text-align: left">Open the dedicated <em>Chaos</em> defaults page, where <code>Seq Layers to Vandalize</code> and <code>Pat Layers to Wreck</code> are edited with the same target matrix used by the generator.</td></tr>
+            <tr><td style="text-align: left">Trigger Length</td><td style="text-align: left">1 - 15 ms</td><td style="text-align: left">Global pulse length used when a track is set to <code>Gate Out Mode = Trigger</code>. Default is <code>4 ms</code>.</td></tr>
+            <tr><td style="text-align: left">Chaos Defaults</td><td style="text-align: left">open</td><td style="text-align: left">Open the dedicated <em>Chaos</em> defaults page, where <code>Seq Layers to Vandalize</code>, <code>Pat Layers to Wreck</code>, and <code>EntropyLayerToUnleash</code> are edited with the same target-matrix workflow used by the generator family.</td></tr>
           </tbody>
         </table>
         <p>
@@ -2216,7 +2264,7 @@
           This distinction matters a lot in practice. Track parameters, sequence data, user scales, and per-track follow behavior belong to the current project. By contrast, entries under <em>System -&gt; User Settings</em> are machine-level values stored in flash, so they survive reboot once saved.
         </p>
         <p>
-          This means settings such as <code>LP Style</code>, <code>LP Note Style</code>, <code>Menu Wrap</code>, screensaver behavior, and <code>Chaos Defaults</code> should be thought of as part of the instrument configuration itself, not as part of a single song or project file.
+          This means settings such as <code>LP Style</code>, <code>LP Note Style</code>, <code>Menu Wrap</code>, <code>Trigger Length</code>, screensaver behavior, and <code>Chaos Defaults</code> should be thought of as part of the instrument configuration itself, not as part of a single song or project file.
         </p>
       </section>
 
@@ -3013,7 +3061,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           </tbody>
         </table>
         <p>
-          Apply semantics are also explicit: on <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, encoder press mirrors apply; Chaos-family pages keep apply on their page actions.
+          Apply semantics are also explicit: on <em>Random</em>, <em>Acid</em>, and <em>Euclidean</em>, encoder press mirrors context-menu <code>Apply</code>; Chaos-family pages keep apply on their page actions.
         </p>
 
         <h3 id="appendix-safety-fail-closed">Safety / Fail-Closed</h3>
@@ -3142,6 +3190,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         </p>
         <p>
           After the firmware is written to flash memory, it is verified again to ensure it was written correctly. If verification fails, the firmware is erased from flash memory. In that state the sequencer will always boot back into the bootloader, allowing a different firmware image to be loaded.
+        </p>
+        <p>
+          SD boot robustness note (current Vinx line): startup tolerances for slower cards were increased (longer SD-init wait window and watchdog feed during long init waits), which reduces loading-screen reboot loops on borderline media while keeping runtime watchdog behavior strict.
         </p>
         <p>
           For release history and fork-specific changes, see the <a href="../features/index.html">Features</a> page.

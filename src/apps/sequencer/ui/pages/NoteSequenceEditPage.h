@@ -74,6 +74,10 @@ private:
     void pasteSequence();
     void duplicateSequence();
     void tieNotes();
+    int tieGroupHead(const NoteSequence &sequence, int stepIndex) const;
+    int tieGroupTail(const NoteSequence &sequence, int headIndex) const;
+    void setTieGroupNote(NoteSequence &sequence, int anchorStepIndex, int note);
+    void normalizeTieLinks(NoteSequence &sequence);
     void generateSequence();
     void showAcidGenerator();
     void showAcidGenerator(AcidSequenceBuilder::ApplyMode applyMode);

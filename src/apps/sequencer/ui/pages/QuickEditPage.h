@@ -26,8 +26,13 @@ public:
     virtual void encoder(EncoderEvent &event) override;
 
 private:
+    bool indexedPagingEnabled() const;
+    int indexedPageCount() const;
+    void syncIndexedPageToCurrent();
+
     ListModel *_listModel;
     int _row;
     bool _compact = false;
     int _compactSlot = 0;
+    int _indexedPage = 0;
 };

@@ -42,6 +42,8 @@ public:
     void revert();
     void commit();
     void togglePreview();
+    void invalidateChaosPreview(bool fromEdit = false);
+    void triggerChaosPreview();
     void launchpadRandomize();
     void showPreviewStateMessage();
     bool launchpadShowingPreview() const;

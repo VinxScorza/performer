@@ -79,6 +79,16 @@ public:
         }
     }
 
+    virtual bool indexedSupportsPaging(int row) const override {
+        switch (Item(row)) {
+        case FirstStep:
+        case LastStep:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     virtual Routing::Target routingTarget(int row) const override {
         switch (Item(row)) {
         case Divisor:
@@ -234,7 +244,7 @@ private:
             break;
         case FirstStep:
         case LastStep:
-            return 16;
+            return CONFIG_STEP_COUNT;
         case RunMode:
             return int(Types::RunMode::Last);
         case Divisor:

@@ -664,6 +664,7 @@ public:
             for (uint8_t stepIndex : backup.targetSteps) {
                 backup.originalSteps.push_back(sequence.step(stepIndex));
             }
+            backup.entrySteps = backup.originalSteps;
             if (trackIndex == _selectedTrackIndex) {
                 _selectedTrackSlot = slot;
             }
@@ -685,7 +686,8 @@ public:
 
     void revert() override {
         for (int i = 0; i < _trackCount; ++i) {
-            restoreOriginalSteps(i);
+            restoreEntrySteps(i);
+            _tracks[i].originalSteps = _tracks[i].entrySteps;
         }
         _showingPreview = false;
     }
@@ -811,6 +813,7 @@ private:
     struct TrackBackup {
         std::vector<uint8_t> targetSteps;
         std::vector<NoteSequence::Step> originalSteps;
+        std::vector<NoteSequence::Step> entrySteps;
     };
 
     void restoreOriginalSteps(int trackSlot) {
@@ -826,6 +829,14 @@ private:
         auto &backup = _tracks[trackSlot];
         for (size_t i = 0; i < backup.targetSteps.size(); ++i) {
             backup.originalSteps[i] = sequence.step(backup.targetSteps[i]);
+        }
+    }
+
+    void restoreEntrySteps(int trackSlot) {
+        auto &sequence = _project.noteSequence(_trackIndices[trackSlot], _patternIndex);
+        const auto &backup = _tracks[trackSlot];
+        for (size_t i = 0; i < backup.targetSteps.size(); ++i) {
+            sequence.step(backup.targetSteps[i]) = backup.entrySteps[i];
         }
     }
 

@@ -65,6 +65,7 @@ public:
 
     static void slotInfo(FileType type, int slot, SlotInfo &info);
     static bool slotUsed(FileType type, int slot);
+    static bool busy();
 
     // File tasks
 
@@ -73,6 +74,7 @@ public:
 
     static void task(TaskExecuteCallback executeCallback, TaskResultCallback resultCallback);
     static void processTask();
+    static void processTaskResult();
 
 private:
     static fs::Error writeFile(FileType type, int slot, std::function<fs::Error(const char *)> write);
@@ -111,5 +113,9 @@ private:
 
     static TaskExecuteCallback _taskExecuteCallback;
     static TaskResultCallback _taskResultCallback;
+    static TaskResultCallback _taskResultCallbackPending;
+    static fs::Error _taskResultPendingValue;
     static volatile uint32_t _taskPending;
+    static volatile uint32_t _taskExecuting;
+    static volatile uint32_t _taskResultPending;
 };

@@ -34,6 +34,7 @@ void CurveTrack::clear() {
     setPlayMode(Types::PlayMode::Aligned);
     setFillMode(FillMode::None);
     setMuteMode(MuteMode::LastValue);
+    setGateOutputMode(Types::GateOutputMode::Gate);
     setSlideTime(10);
     setOffset(0);
     setRotate(0);
@@ -54,6 +55,7 @@ void CurveTrack::write(VersionedSerializedWriter &writer) const {
     writer.write(_playMode);
     writer.write(_fillMode);
     writer.write(_muteMode);
+    writer.write(_gateOutputMode);
     writer.write(_slideTime.base);
     writer.write(_offset.base);
     writer.write(_rotate.base);
@@ -71,6 +73,7 @@ void CurveTrack::read(VersionedSerializedReader &reader) {
     reader.read(_playMode);
     reader.read(_fillMode);
     reader.read(_muteMode, ProjectVersion::Version22);
+    reader.read(_gateOutputMode, ProjectVersion::Version40);
     reader.read(_slideTime.base, ProjectVersion::Version8);
     reader.read(_offset.base, ProjectVersion::Version28);
     reader.read(_rotate.base);

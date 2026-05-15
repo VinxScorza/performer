@@ -273,6 +273,9 @@ private:
     // gate output overrides
     bool _gateOutputOverride = false;
     uint8_t _gateOutputOverrideValue = 0;
+    std::array<uint32_t, CONFIG_CHANNEL_COUNT> _triggerPulseUntilTicks;
+    std::array<int8_t, CONFIG_CHANNEL_COUNT> _triggerPrevSourceTrack;
+    std::array<uint8_t, CONFIG_CHANNEL_COUNT> _triggerPrevSourceGate;
 
     // cv output overrides
     bool _cvOutputOverride = false;

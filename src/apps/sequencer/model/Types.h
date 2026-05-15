@@ -142,6 +142,23 @@ public:
         return nullptr;
     }
 
+    // GateOutputMode
+
+    enum class GateOutputMode : uint8_t {
+        Gate,
+        Trigger,
+        Last
+    };
+
+    static const char *gateOutputModeName(GateOutputMode mode) {
+        switch (mode) {
+        case GateOutputMode::Gate:      return "Gate";
+        case GateOutputMode::Trigger:   return "Trigger";
+        case GateOutputMode::Last:      break;
+        }
+        return nullptr;
+    }
+
     // RunMode
 
     enum class RunMode : uint8_t {

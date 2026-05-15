@@ -298,6 +298,11 @@ bool Project::read(VersionedSerializedReader &reader) {
 
     bool success = reader.checkHash();
     if (success) {
+        // Harden loaded state from legacy/corrupted projects before notifying observers.
+        _selectedTrackIndex = clamp(_selectedTrackIndex, 0, CONFIG_TRACK_COUNT - 1);
+        _selectedPatternIndex = clamp(_selectedPatternIndex, 0, CONFIG_PATTERN_COUNT - 1);
+        setSelectedTrackIndex(_selectedTrackIndex);
+        setSelectedPatternIndex(_selectedPatternIndex);
         _observable.notify(ProjectRead);
     } else {
         clear();

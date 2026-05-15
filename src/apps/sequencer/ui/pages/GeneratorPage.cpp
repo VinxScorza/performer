@@ -248,6 +248,50 @@ private:
 
 GeneratorContextQuickEditModel gGeneratorContextQuickEditModel;
 
+class GeneratorContextSettingEditModel : public ListModel {
+public:
+    void configure(
+        const char *label,
+        const std::function<void(StringBuilder &)> &printValue,
+        const std::function<void(int, bool)> &onEdit
+    ) {
+        _label = label;
+        _printValue = printValue;
+        _onEdit = onEdit;
+    }
+
+    int rows() const override { return 1; }
+    int columns() const override { return 2; }
+
+    void cell(int row, int column, StringBuilder &str) const override {
+        if (row != 0) {
+            return;
+        }
+
+        if (column == 0) {
+            str("%s", _label);
+        } else if (column == 1 && _printValue) {
+            _printValue(str);
+        }
+    }
+
+    void edit(int row, int column, int value, bool shift) override {
+        if (row != 0 || column != 1 || !_onEdit) {
+            return;
+        }
+        _onEdit(value, shift);
+    }
+
+    void setSelectedScale(int, bool) override {}
+
+private:
+    const char *_label = "";
+    std::function<void(StringBuilder &)> _printValue;
+    std::function<void(int, bool)> _onEdit;
+};
+
+GeneratorContextSettingEditModel gGeneratorContextSettingEditModel;
+
 void GeneratorPage::show(Generator *generator, StepSelection<CONFIG_STEP_COUNT> *stepSelection) {
     _generator = generator;
     _stepSelection = stepSelection;
@@ -676,10 +720,6 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isContextMenu()) {
-        if (chaosStyledGeneratorMode(_generator->mode())) {
-            event.consume();
-            return;
-        }
         contextShow();
         event.consume();
         return;
@@ -687,10 +727,6 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
 
 
     if (key.pageModifier() && event.count() == 2) {
-        if (chaosStyledGeneratorMode(_generator->mode())) {
-            event.consume();
-            return;
-        }
         contextShow(true);
         event.consume();
         return;
@@ -714,11 +750,6 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
     if (chaosStyledGeneratorMode(_generator->mode())) {
         auto *chaos = chaosGeneratorMode(_generator->mode()) ? static_cast<ChaosGenerator *>(_generator) : nullptr;
         auto *entropy = entropyGeneratorMode(_generator->mode()) ? static_cast<ChaosEntropyGenerator *>(_generator) : nullptr;
-        auto refreshChaosView = [&] () {
-            if (_previewArmed && _generator->showingPreview()) {
-                _generator->showPreview();
-            }
-        };
 
         if (key.isFunction()) {
             switch (key.function()) {
@@ -727,19 +758,9 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
                 event.consume();
                 return;
             case 2:
-                {
-                bool wasShowingPreview = _generator->showingPreview();
-                _previewArmed = true;
-                _generator->editParam(0, 1, false);
-                _generator->update();
-                _generator->showPreview();
-                _launchpadResetState = false;
-                if (!wasShowingPreview) {
-                    showPreviewStateMessage();
-                }
+                triggerChaosPreview();
                 event.consume();
                 return;
-                }
             case 3:
                 revert();
                 event.consume();
@@ -757,41 +778,29 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
             if (chaos != nullptr) {
                 if (_chaosCursor == ChaosAllOnCell) {
                     chaos->setAllTargets(true);
-                    chaos->update();
-                    refreshChaosView();
-                    _launchpadResetState = false;
+                    invalidateChaosPreview(true);
                 } else if (_chaosCursor == ChaosAllOffCell) {
                     chaos->setAllTargets(false);
-                    chaos->update();
-                    refreshChaosView();
-                    _launchpadResetState = false;
+                    invalidateChaosPreview(true);
                 } else {
                     ChaosGenerator::Target target;
                     if (chaosCellTarget(_chaosCursor, target)) {
                         chaos->toggleTarget(target);
-                        chaos->update();
-                        refreshChaosView();
-                        _launchpadResetState = false;
+                        invalidateChaosPreview(true);
                     }
                 }
             } else if (entropy != nullptr) {
                 if (_chaosCursor == EntropyAllOnCell) {
                     entropy->setAllTargets(true);
-                    entropy->update();
-                    refreshChaosView();
-                    _launchpadResetState = false;
+                    invalidateChaosPreview(true);
                 } else if (_chaosCursor == EntropyAllOffCell) {
                     entropy->setAllTargets(false);
-                    entropy->update();
-                    refreshChaosView();
-                    _launchpadResetState = false;
+                    invalidateChaosPreview(true);
                 } else {
                     ChaosEntropyGenerator::Target target;
                     if (entropyCellTarget(_chaosCursor, target)) {
                         entropy->toggleTarget(target);
-                        entropy->update();
-                        refreshChaosView();
-                        _launchpadResetState = false;
+                        invalidateChaosPreview(true);
                     }
                 }
             }
@@ -858,9 +867,13 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isStep() && key.shiftModifier()) {
-        _generator->update();
-        if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
-            _generator->showPreview();
+        if (chaosStyledGeneratorMode(_generator->mode())) {
+            invalidateChaosPreview(true);
+        } else {
+            _generator->update();
+            if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
+                _generator->showPreview();
+            }
         }
         event.consume();
         return;
@@ -869,14 +882,22 @@ void GeneratorPage::keyPress(KeyPressEvent &event) {
     if (key.isShift() && event.count() == 2) {
         if (_stepSelection->none()) {
             _stepSelection->selectAll();
-            _generator->update();
-            if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
-                _generator->showPreview();
+            if (chaosStyledGeneratorMode(_generator->mode())) {
+                invalidateChaosPreview(true);
+            } else {
+                _generator->update();
+                if (!abPreviewGenerator(_generator->mode()) || _generator->showingPreview()) {
+                    _generator->showPreview();
+                }
             }
         } else {
             _stepSelection->clear();
-            _generator->update();
-            _generator->revert();
+            if (chaosStyledGeneratorMode(_generator->mode())) {
+                invalidateChaosPreview(true);
+            } else {
+                _generator->update();
+                _generator->revert();
+            }
         }
         
         event.consume();
@@ -950,12 +971,8 @@ void GeneratorPage::encoder(EncoderEvent &event) {
     if (chaosStyledGeneratorMode(_generator->mode())) {
         if (pageKeyState()[Key::F1]) {
             _generator->editParam(1, event.value(), event.pressed());
-            _generator->update();
-            if (_generator->showingPreview()) {
-                _generator->showPreview();
-            }
             if (event.value() != 0) {
-                _launchpadResetState = false;
+                invalidateChaosPreview(true);
             }
             return;
         }
@@ -1628,9 +1645,12 @@ void GeneratorPage::drawChaosEntropyGenerator(Canvas &canvas, const ChaosEntropy
 
 int GeneratorPage::contextItemCount() const {
     switch (_generator->mode()) {
+    case Generator::Mode::Chaos:
+        return 5;
+    case Generator::Mode::ChaosEntropy:
+        return 4;
     case Generator::Mode::Random:
     case Generator::Mode::Acid:
-        return int(ContextAction::Last);
     case Generator::Mode::Euclidean:
         return int(ContextAction::Last);
     default:
@@ -1639,7 +1659,18 @@ int GeneratorPage::contextItemCount() const {
 }
 
 void GeneratorPage::contextShow(bool doubleClick) {
-    if (_generator->mode() == Generator::Mode::Random) {
+    if (chaosGeneratorMode(_generator->mode())) {
+        _contextMenuItems[0] = { "PIVOT" };
+        _contextMenuItems[1] = { "SPAN" };
+        _contextMenuItems[2] = { "RESETGEN" };
+        _contextMenuItems[3] = { "CANCEL" };
+        _contextMenuItems[4] = { "APPLY" };
+    } else if (entropyGeneratorMode(_generator->mode())) {
+        _contextMenuItems[0] = { "" };
+        _contextMenuItems[1] = { "RESETGEN" };
+        _contextMenuItems[2] = { "CANCEL" };
+        _contextMenuItems[3] = { "APPLY" };
+    } else if (_generator->mode() == Generator::Mode::Random) {
         const auto *random = static_cast<const RandomGenerator *>(_generator);
         std::snprintf(_contextMenuAuxLabel, sizeof(_contextMenuAuxLabel), "SMOOTH %d", random->smooth());
         _contextMenuItems[0] = { "" };
@@ -1712,6 +1743,83 @@ void GeneratorPage::contextAction(int index) {
         return;
     }
 
+    if (chaosStyledGeneratorMode(_generator->mode())) {
+        if (chaosGeneratorMode(_generator->mode()) && index == 0) {
+            auto *chaos = static_cast<ChaosGenerator *>(_generator);
+            auto *pivotSetting = _model.settings().userSettings().get<ChaosPivotNoteSetting>(SettingChaosPivotNote);
+            gGeneratorContextSettingEditModel.configure("PIVOT",
+                [pivotSetting] (StringBuilder &str) {
+                    str("%d", pivotSetting->getValue());
+                },
+                [this, chaos, pivotSetting] (int value, bool shift) {
+                    (void)shift;
+                    if (value == 0) {
+                        return;
+                    }
+                    pivotSetting->shiftValue(value);
+                    chaos->setPivotNote(pivotSetting->getValue());
+                    _launchpadResetState = false;
+                    invalidateChaosPreview(true);
+                }
+            );
+            _manager.pages().quickEdit.showCompact(gGeneratorContextSettingEditModel, 0, 1);
+            return;
+        }
+
+        if (chaosGeneratorMode(_generator->mode()) && index == 1) {
+            auto *chaos = static_cast<ChaosGenerator *>(_generator);
+            auto *spanSetting = _model.settings().userSettings().get<ChaosSpanSetting>(SettingChaosSpan);
+            gGeneratorContextSettingEditModel.configure("SPAN",
+                [spanSetting] (StringBuilder &str) {
+                    str("%d", spanSetting->getValue());
+                },
+                [this, chaos, spanSetting] (int value, bool shift) {
+                    (void)shift;
+                    if (value == 0) {
+                        return;
+                    }
+                    spanSetting->shiftValue(value);
+                    chaos->setSpan(spanSetting->getValue());
+                    _launchpadResetState = false;
+                    invalidateChaosPreview(true);
+                }
+            );
+            _manager.pages().quickEdit.showCompact(gGeneratorContextSettingEditModel, 0, 1);
+            return;
+        }
+
+        if (chaosGeneratorMode(_generator->mode())) {
+            switch (index) {
+            case 2:
+                init();
+                break;
+            case 3:
+                revert();
+                break;
+            case 4:
+                commit();
+                break;
+            default:
+                break;
+            }
+        } else {
+            switch (index) {
+            case 1:
+                init();
+                break;
+            case 2:
+                revert();
+                break;
+            case 3:
+                commit();
+                break;
+            default:
+                break;
+            }
+        }
+        return;
+    }
+
     if (_generator->mode() == Generator::Mode::Random || _generator->mode() == Generator::Mode::Acid || euclideanGeneratorMode(_generator->mode())) {
         if (index == 1) {
             if (_generator->mode() == Generator::Mode::Random) {
@@ -1765,6 +1873,13 @@ bool GeneratorPage::contextActionEnabled(int index) const {
         return false;
     }
 
+    if (chaosStyledGeneratorMode(_generator->mode())) {
+        if (chaosGeneratorMode(_generator->mode())) {
+            return true;
+        }
+        return index >= 1 && index <= 3;
+    }
+
     if (_generator->mode() == Generator::Mode::Random || _generator->mode() == Generator::Mode::Acid || euclideanGeneratorMode(_generator->mode())) {
         if (index >= 2 && index <= 4) {
             return true;
@@ -1790,6 +1905,12 @@ void GeneratorPage::init() {
 
     _stepSelection->clear();
     _generator->init();
+    if (chaosStyledGeneratorMode(_generator->mode())) {
+        _previewArmed = false;
+        _generator->showOriginal();
+        _launchpadResetState = true;
+        return;
+    }
     if (_generator->showingPreview()) {
         _generator->showPreview();
     }
@@ -1805,6 +1926,11 @@ void GeneratorPage::revert() {
 
 void GeneratorPage::commit() {
     if (!ensureBoundTrackContext()) {
+        return;
+    }
+
+    if (chaosStyledGeneratorMode(_generator->mode()) && (!_previewArmed || !_generator->showingPreview())) {
+        showMessage("PRESS CHAOS");
         return;
     }
 
@@ -1870,21 +1996,44 @@ void GeneratorPage::togglePreview() {
     }
 }
 
+void GeneratorPage::invalidateChaosPreview(bool fromEdit) {
+    if (!chaosStyledGeneratorMode(_generator->mode())) {
+        return;
+    }
+    (void)fromEdit;
+
+    // Keep current visual state (do not force ORIGINAL), but require an explicit
+    // CHAOS press to regenerate a valid preview after parameter/target edits.
+    _previewArmed = false;
+    _launchpadResetState = true;
+}
+
+void GeneratorPage::triggerChaosPreview() {
+    if (!ensureBoundTrackContext()) {
+        return;
+    }
+    if (!chaosStyledGeneratorMode(_generator->mode())) {
+        return;
+    }
+
+    const bool wasShowingPreview = _generator->showingPreview();
+    _previewArmed = true;
+    _generator->editParam(0, 1, false);
+    _generator->update();
+    _generator->showPreview();
+    _launchpadResetState = false;
+    if (!wasShowingPreview) {
+        showPreviewStateMessage();
+    }
+}
+
 void GeneratorPage::launchpadRandomize() {
     if (!ensureBoundTrackContext()) {
         return;
     }
 
     if (chaosStyledGeneratorMode(_generator->mode())) {
-        bool wasShowingPreview = _generator->showingPreview();
-        _previewArmed = true;
-        _generator->editParam(0, 1, false);
-        _generator->update();
-        _generator->showPreview();
-        _launchpadResetState = false;
-        if (!wasShowingPreview) {
-            showPreviewStateMessage();
-        }
+        triggerChaosPreview();
         return;
     }
 

@@ -14,6 +14,7 @@ public:
     virtual int indexedCount(int row) const { return 0; }
     virtual int indexed(int row) const { return -1; }
     virtual void setIndexed(int row, int index) {}
+    virtual bool indexedSupportsPaging(int row) const { return false; }
 
     virtual void setSelectedScale(int defaultScale, bool force= false) = 0;
 };

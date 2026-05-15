@@ -4,6 +4,17 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. From the first standalone Vinx release onward, Vinx uses standalone semantic versioning (`v0.x.y`) while preserving the earlier `v0.3.2-vinx.*` entries as historical lineage. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
+# v0.4.3
+- Rework `Chaos` / `Entropy` interaction safety: editing `target` / `selection` / `amount` no longer auto-regenerates preview; reroll stays explicit on `CHAOS` (`F3`) and `APPLY` is blocked in `ORIGINAL` state (`PRESS CHAOS`)
+- Add persistent `Chaos` register controls in context: `Pivot` / `Span` are now available during `Chaos` editing and retained across sessions
+- Add per-track `Gate Out Mode` (`Gate` / `Trigger`) on `Note` / `Curve` / `Stochastic` / `Logic` / `Arp`, plus global `Trigger Length` in `System -> User Settings` (per-track behavior, not per-step)
+- Harden project file operations (`Load` / `Save` / `Save As`) by serializing file tasks, rejecting overlapping requests deterministically, and dispatching task results on UI thread; add busy-state feedback in slot lists during active file operations (strong partial hardening, not full architectural closure)
+- Add quick-access bank paging for step-range fields: while holding `PAGE`, `PREV` / `NEXT` now moves `16-step` banks (`1-16`, `17-32`, `33-48`, `49-64`) for `First Step` / `Last Step` and `Seq First Step` / `Seq Last Step`
+- Make Note tie editing chain-aware: persistent tie-chain state, note propagation across tied steps (encoder, MIDI note input, shortcut note input), and clearer tie rendering in step view
+- Fix Project-level scale remap octave collapse: changing Project `Scale` now preserves octave register on Note tracks using `Scale = Default` (`noteToVolts -> noteFromVolts` remap path), with dedicated regression coverage
+- Improve SD boot robustness on slower cards: increase SD init tolerance (`ACMD41` timeout), feed watchdog during long init waits, and keep runtime watchdog strict for normal recovery behavior
+- Clarify context-dependent shortcut behavior in docs and reference tables: machine `PAGE + S7` is `Undo/Redo` on `Note` / `Curve` / `Logic` step pages, and loop toggle on `Stochastic`
+
 # v0.4.2
 - Align `Random` `Variation` semantics with `Acid`: `Variation` now behaves as a per-step keep/replace control against the original material in both generators
 - Clamp `Chaos` `Note` and `Note Range` generation to a `-24..+24` semitone window (4 octaves total)
