@@ -27,11 +27,40 @@
 static Random rng;
 
 static int activePitchSlotCount(const Scale &scale) {
+    if (scale.isChromatic()) {
+        return 12;
+    }
     return clamp(scale.notesPerOctave(), 1, 12);
 }
 
 static bool useLegacySemitoneBypass(const Scale &scale, bool forceScaleTransposition) {
     return !forceScaleTransposition && &scale == &Scale::get(0);
+}
+
+static int legacyChromaticPitchSlot(int note) {
+    int octave = roundDownDivide(note, 12);
+    return note - octave * 12;
+}
+
+static bool useLegacyChromaticPitchSlot(const StochasticSequence::Step &step, const Scale &scale, bool forceScaleTransposition) {
+    return step.bypassScale() && scale.isChromatic() && !useLegacySemitoneBypass(scale, forceScaleTransposition);
+}
+
+static bool isPitchSlotActive(const StochasticSequence::Step &step, int slotIndex, const Scale &scale, bool forceScaleTransposition) {
+    if (useLegacyChromaticPitchSlot(step, scale, forceScaleTransposition)) {
+        return scale.isNotePresent(legacyChromaticPitchSlot(step.note()));
+    }
+    return slotIndex < clamp(scale.notesPerOctave(), 1, 12);
+}
+
+static int legacyChromaticPitchSlotToScaleNote(const Scale &scale, int note) {
+    int octave = roundDownDivide(note, 12);
+    int slot = note - octave * 12;
+    int noteIndex = scale.getNoteIndex(slot);
+    if (noteIndex < 0) {
+        noteIndex = 0;
+    }
+    return octave * scale.notesPerOctave() + noteIndex;
 }
 
 bool sortTaskByProbRev(const StochasticStep& lhs, const StochasticStep& rhs) {
@@ -158,7 +187,10 @@ static float evalStepNote(const StochasticSequence::Step &step, int probabilityB
         }
         return bypassScale.noteToVolts(note) + (bypassScale.isChromatic() ? rootNote : 0) * (1.f / 12.f);
     }
-    int note = step.note() + evalTransposition(scale, octave, transpose);
+    int note = useLegacyChromaticPitchSlot(step, scale, forceScaleTransposition)
+        ? legacyChromaticPitchSlotToScaleNote(scale, step.note())
+        : step.note();
+    note += evalTransposition(scale, octave, transpose);
     int probability = clamp(step.noteOctaveProbability() + probabilityBias, -1, StochasticSequence::NoteOctaveProbability::Max);
     if (useVariation && int(rng.nextRange(StochasticSequence::NoteOctaveProbability::Range)) <= probability && probability != 0) {
         int oct = step.noteOctave() + sequence.lowOctaveRange() + ( std::rand() % ( sequence.highOctaveRange() - sequence.lowOctaveRange() + 1 ) );
@@ -170,6 +202,10 @@ static float evalStepNote(const StochasticSequence::Step &step, int probabilityB
 #if defined(PLATFORM_SIM)
 float EngineTestHooks::evalStochasticStepNoteForScale(const StochasticSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, const StochasticSequence &sequence, bool useVariation, bool forceScaleTransposition) {
     return evalStepNote(step, probabilityBias, scale, rootNote, octave, transpose, sequence, useVariation, forceScaleTransposition);
+}
+
+bool EngineTestHooks::stochasticPitchSlotActiveForScale(const StochasticSequence::Step &step, int slotIndex, const Scale &scale, bool forceScaleTransposition) {
+    return isPitchSlotActive(step, slotIndex, scale, forceScaleTransposition);
 }
 #endif
 
@@ -215,7 +251,7 @@ TrackEngine::TickResult StochasticEngine::tick(uint32_t tick) {
             triggerStep(tick, linkData->divisor);
         }
     } else {
-        uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+        uint32_t divisor = _trackState.playbackDivisor(sequence.divisor()) * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
         uint32_t resetDivisor = sequence.resetMeasure() * _engine.measureDivisor();
         uint32_t relativeTick = resetDivisor == 0 ? tick : tick % resetDivisor;
 
@@ -455,7 +491,9 @@ void StochasticEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNext
         std::vector<StochasticStep> probability;
         int sum =0;
         for (int i = 0; i < pitchSlots; i++) {
-            if (sequence.step(i).gate()) {
+            if (!isPitchSlotActive(sequence.step(i), i, sequenceScale, forceScaleTransposition)) {
+                probability.insert(probability.end(), StochasticStep(i, 0));
+            } else if (sequence.step(i).gate()) {
                 int prob = sequence.step(i).noteVariationProbability() + _stochasticTrack.noteProbabilityBias();
                 if (sequence.step(i).noteVariationProbability()==0) {
                     prob = 0;
@@ -684,7 +722,7 @@ int StochasticEngine::noteFromMidiNote(uint8_t midiNote) const {
     float volts = (int(midiNote) - 60) * semitoneVolts;
 
     if (scale.isChromatic()) {
-        volts -= rootNote * semitoneVolts;
+        return int(midiNote) - 60 - rootNote;
     } else {
         // Non-chromatic scales ignore root-note transposition here, matching the existing behavior.
     }

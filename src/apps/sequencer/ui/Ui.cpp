@@ -197,8 +197,12 @@ void Ui::handleEncoder() {
         switch (event) {
             case Encoder::Left:
             case Encoder::Right: {
-                EncoderEvent encoderEvent(event == Encoder::Left ? -1 : 1, _pageKeyState[Key::Encoder]);
+                const int value = event == Encoder::Left ? -1 : 1;
+                EncoderEvent encoderEvent(value, _pageKeyState[Key::Encoder]);
                 _screensaver.consumeEncoder(encoderEvent);
+                if (_controllerManager.editPerformanceFillDivisor(value)) {
+                    break;
+                }
                 _pageManager.dispatchEvent(encoderEvent);
                 break;
             }

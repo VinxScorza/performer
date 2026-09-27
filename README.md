@@ -1,6 +1,6 @@
 <img src="https://github.com/VinxScorza/performer/actions/workflows/ci.yml/badge.svg?branch=master" alt="Build Status">
 
-# Vinx PER|FORMER firmware v0.4.5
+# Vinx PER|FORMER firmware v0.4.6-beta.1
 
 ## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Click for FEATURES</a>
 
@@ -9,6 +9,21 @@ This firmware is a personal fork of the <a href="https://github.com/mebitek/perf
 
 Website, downloads, manual, web simulator, Launchpad cheatsheet, feature overview, and donation page:
 <a href="https://vinxscorza.github.io/performer/" target="_blank" rel="noopener noreferrer">https://vinxscorza.github.io/performer/</a>
+
+`v0.4.6-beta.1` is the current beta line. The firmware itself identifies as `0.4.6`; `v0.4.5` remains the current stable release.
+
+> **Important project compatibility warning:** `v0.4.6-beta.1` can open projects saved by `v0.4.4` and `v0.4.5`, but saving them upgrades the file to `Version41`. Firmware `v0.4.5` and earlier cannot reopen that upgraded file. Back up the SD card, or keep a separate copy of every project, before opening and saving it with the beta.
+
+## v0.4.6 Beta Highlights
+
+- Project files now use `Version41` to store optional MIDI input filters for Notes, CC, Program Change, Pitch Bend, and Aftertouch. Existing `Version40` projects load with all filters enabled. New Note On messages can be filtered while Note Off remains accepted to release notes that were already active. Custom Program Change mapping is not part of this beta.
+- Selected-step Copy/Paste/Duplicate behavior is safer and consistent across Note, Curve, Stochastic, Logic, and Arp editors, with explicit destination selection and guarded duplication.
+- Double-clicking `T1..T8` opens the selected track's Steps editor where the active page does not reserve track buttons for another action.
+- Fill playback division can be changed temporarily with the encoder from the panel or Launchpad Fill workflow without changing the saved sequence divisor. This applies to independent tracks; linked tracks continue to inherit timing and divisor from their source track.
+- Divisor routing now uses valid musical divisions for Min/Max and routed modulation, and Stochastic/Arp scale-slot handling is corrected for non-chromatic scales and project reloads.
+- The Vagrant build path now installs compatible CMake/Python tooling, stops on provisioning errors, and verifies the CMake installer checksum.
+
+Desktop, WebAssembly, STM32, browser-load, UI, and C++ checks have passed for this beta. The dedicated real-hardware smoke test is still pending; use the [focused v0.4.5 → v0.4.6-beta.1 checklist](doc/DELTA_0.4.5_TO_0.4.6-beta.1.md), or the [full direct v0.4.4 → v0.4.6-beta.1 smoke test](doc/SMOKE_TEST_0.4.6.md).
 
 ## Major Features
 
@@ -108,6 +123,8 @@ The simulator is great when developing new features. It allows for a faster deve
 ### Setup on Windows
 
 Currently, there is no native support for compiling the firmware on Windows. As a workaround, there is a Vagrantfile to allow setting up a Vagrant virtual machine running Linux for compiling the application.
+
+The Vinx Vagrant provisioning installs CMake `3.26.4` and Python 3 dependencies, verifies the official CMake installer SHA-256 checksum, and stops immediately if a provisioning command fails. A clean VM build has been validated through generation of `UPDATE.DAT`. If the host is short on memory, prefer `make -j2` or `make -j1` instead of unrestricted `make -j`.
 
 First you have to clone this repository (make sure to add the `--recursive` option to also clone all the submodules):
 

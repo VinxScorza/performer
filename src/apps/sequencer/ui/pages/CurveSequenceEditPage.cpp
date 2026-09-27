@@ -9,6 +9,7 @@
 
 #include "engine/generators/ChaosEntropyGenerator.h"
 #include "model/Curve.h"
+#include "model/ModelUtils.h"
 #include "model/UserSettings.h"
 
 #include "core/utils/StringBuilder.h"
@@ -848,11 +849,19 @@ void CurveSequenceEditPage::initSequence() {
 }
 
 void CurveSequenceEditPage::copySequence() {
+    const bool copiedSelection = _stepSelection.any();
     _model.clipBoard().copyCurveSequenceSteps(_project.selectedCurveSequence(), _stepSelection.selected());
+    if (copiedSelection) {
+        _stepSelection.clear();
+    }
     showMessage("STEPS COPIED");
 }
 
 void CurveSequenceEditPage::pasteSequence() {
+    if (_model.clipBoard().pasteCurveSequenceStepsRequiresDestination(_stepSelection.selected())) {
+        showMessage("SELECT DEST");
+        return;
+    }
     _inMemorySequence = _project.selectedCurveSequence();
     _model.clipBoard().pasteCurveSequenceSteps(_project.selectedCurveSequence(), _stepSelection.selected());
     showMessage("STEPS PASTED");
@@ -860,7 +869,17 @@ void CurveSequenceEditPage::pasteSequence() {
 
 void CurveSequenceEditPage::duplicateSequence() {
     _inMemorySequence = _project.selectedCurveSequence();
-    _project.selectedCurveSequence().duplicateSteps();
+    auto &sequence = _project.selectedCurveSequence();
+    if (_stepSelection.any()) {
+        auto duplicated = ModelUtils::duplicateSelectedSequenceSteps(sequence, _stepSelection.selected());
+        if (duplicated.none()) {
+            showMessage("NO ROOM");
+            return;
+        }
+        _stepSelection.setPersisted(duplicated);
+    } else {
+        sequence.duplicateSteps();
+    }
     showMessage("STEPS DUPLICATED");
 }
 

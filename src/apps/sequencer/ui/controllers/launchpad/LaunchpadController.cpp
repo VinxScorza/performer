@@ -608,6 +608,7 @@ void LaunchpadController::sequenceButton(const Button &button, ButtonAction acti
         }
         if (button.is<Fill>()) {
             _project.playState().fillAll(false);
+            _manager.clearPerformanceFillDivisorEditTracks();
         }
         if (button.isGrid()) {
             switch (_project.selectedTrack().trackMode()) {
@@ -1928,6 +1929,7 @@ void LaunchpadController::patternButton(const Button &button, ButtonAction actio
         }
         if (button.is<Fill>()) {
             playState.fillAll(false);
+            _manager.clearPerformanceFillDivisorEditTracks();
         } else if (button.is<Latch>()) {
             playState.commitLatchedRequests();
         }
@@ -2243,6 +2245,7 @@ void LaunchpadController::performerButton(const Button &button, ButtonAction act
         }
         if (button.is<Fill>()) {
             _project.playState().fillAll(false);
+            _manager.clearPerformanceFillDivisorEditTracks();
         }
         if (button.isGrid() && (!buttonState<FirstStep>() && !buttonState<LastStep>())) {
             if (_performButton.firstStepButton.row != -1 && !buttonState(_performButton.firstStepButton.row, _performButton.firstStepButton.col )) {

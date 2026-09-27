@@ -15,6 +15,10 @@ float patternValue(int value) {
     return value / 15.f;
 }
 
+float divisorValue(int value) {
+    return (value - 1.f) / (768.f - 1.f);
+}
+
 }
 
 UNIT_TEST("Routing") {
@@ -95,5 +99,55 @@ UNIT_TEST("Routing") {
         track.writeRouted(Routing::Target::GateProbabilityBias, 3, 3.f);
         expectEqual(3, track.gateProbabilityBias());
         Routing::setRouted(Routing::Target::GateProbabilityBias, 1 << 0, false);
+    }
+
+    CASE("Routed divisor modulation snaps to known musical divisors") {
+        int16_t discrete = 0;
+        bool active = false;
+        bool initialized = false;
+
+        float out = Routing::stabilizeTargetValue(Routing::Target::Divisor, divisorValue(7), discrete, active, initialized);
+        expectTrue(near(out, divisorValue(6)));
+
+        out = Routing::stabilizeTargetValue(Routing::Target::Divisor, divisorValue(8), discrete, active, initialized);
+        expectTrue(near(out, divisorValue(8)));
+
+        out = Routing::stabilizeTargetValue(Routing::Target::Divisor, divisorValue(10), discrete, active, initialized);
+        expectTrue(near(out, divisorValue(9)));
+    }
+
+    CASE("Route divisor min and max edit through known musical divisors") {
+        Routing::Route route;
+        route.setTarget(Routing::Target::Divisor);
+
+        FixedStringBuilder<32> min;
+        route.printMin(min);
+        expectEqual((const char *)min, "6 1/32");
+
+        route.editMin(1, false);
+        min.reset();
+        route.printMin(min);
+        expectEqual((const char *)min, "8 1/16T");
+
+        route.editMin(1, false);
+        min.reset();
+        route.printMin(min);
+        expectEqual((const char *)min, "9 1/32.");
+
+        route.setMax(divisorValue(25));
+        FixedStringBuilder<32> max;
+        route.printMax(max);
+        expectEqual((const char *)max, "24 1/8");
+    }
+
+    CASE("Routing writes quantized divisor values to sequences") {
+        Project project;
+        project.clear();
+        project.setTrackMode(0, Track::TrackMode::Note);
+
+        Routing::setRouted(Routing::Target::Divisor, 1 << 0, true);
+        project.routing().writeTarget(Routing::Target::Divisor, 1 << 0, divisorValue(7));
+        expectEqual(6, project.track(0).noteTrack().sequence(0).divisor());
+        Routing::setRouted(Routing::Target::Divisor, 1 << 0, false);
     }
 }

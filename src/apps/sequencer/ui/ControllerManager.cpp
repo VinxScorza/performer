@@ -61,6 +61,7 @@ void ControllerManager::connect(uint16_t vendorId, uint16_t productId) {
 }
 
 void ControllerManager::disconnect() {
+    clearPerformanceFillDivisorEditTracks();
     if (_controller) {
         _controllerContainer.destroy(_controller);
         _controller = nullptr;
@@ -111,6 +112,36 @@ bool ControllerManager::recvMidi(MidiPort port, uint8_t cable, const MidiMessage
     }
 
     return false;
+}
+
+void ControllerManager::setPerformanceFillDivisorEditTrack(int trackIndex, bool active) {
+    if (trackIndex < 0 || trackIndex >= CONFIG_TRACK_COUNT) {
+        return;
+    }
+
+    const uint8_t bit = 1 << trackIndex;
+    if (active) {
+        _performanceFillDivisorEditTracks |= bit;
+    } else {
+        _performanceFillDivisorEditTracks &= ~bit;
+    }
+}
+
+void ControllerManager::clearPerformanceFillDivisorEditTracks() {
+    _performanceFillDivisorEditTracks = 0;
+}
+
+bool ControllerManager::editPerformanceFillDivisor(int value) {
+    if (!_performanceFillDivisorEditTracks) {
+        return false;
+    }
+
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        if (_performanceFillDivisorEditTracks & (1 << trackIndex)) {
+            _model.project().editTrackFillDivisorOverride(trackIndex, value);
+        }
+    }
+    return true;
 }
 
 bool ControllerManager::sendMidi(uint8_t cable, const MidiMessage &message) {

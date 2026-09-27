@@ -78,6 +78,11 @@ private:
         MonitorMode,
         RecordMode,
         MidiInput,
+        MidiInputNotes,
+        MidiInputCc,
+        MidiInputProgramChange,
+        MidiInputPitchBend,
+        MidiInputAftertouch,
         MidiIntegrationMode,
         MidiProgramOffset,
         CvGateInput,
@@ -101,6 +106,11 @@ private:
         case MonitorMode:       return "Monitor Mode";
         case RecordMode:        return "Record Mode";
         case MidiInput:         return "MIDI Input";
+        case MidiInputNotes:    return "MIDI Notes";
+        case MidiInputCc:       return "MIDI CC";
+        case MidiInputProgramChange: return "MIDI Pgm";
+        case MidiInputPitchBend:    return "MIDI Bend";
+        case MidiInputAftertouch:   return "MIDI After";
         case MidiIntegrationMode:   return "MIDI Integr.";
         case MidiProgramOffset:     return "MIDI Pgm Off.";
         case CvGateInput:       return "CV/Gate Input";
@@ -151,6 +161,21 @@ private:
             break;
         case MidiInput:
             _project.printMidiInput(str);
+            break;
+        case MidiInputNotes:
+            _project.printMidiInputEventEnabled(Project::MidiInputEvent::Notes, str);
+            break;
+        case MidiInputCc:
+            _project.printMidiInputEventEnabled(Project::MidiInputEvent::ControlChange, str);
+            break;
+        case MidiInputProgramChange:
+            _project.printMidiInputEventEnabled(Project::MidiInputEvent::ProgramChange, str);
+            break;
+        case MidiInputPitchBend:
+            _project.printMidiInputEventEnabled(Project::MidiInputEvent::PitchBend, str);
+            break;
+        case MidiInputAftertouch:
+            _project.printMidiInputEventEnabled(Project::MidiInputEvent::Aftertouch, str);
             break;
         case MidiIntegrationMode:
             _project.printMidiIntegrationMode(str);
@@ -211,6 +236,21 @@ private:
             break;
         case MidiInput:
             _project.editMidiInput(value, shift);
+            break;
+        case MidiInputNotes:
+            _project.editMidiInputEventEnabled(Project::MidiInputEvent::Notes, value, shift);
+            break;
+        case MidiInputCc:
+            _project.editMidiInputEventEnabled(Project::MidiInputEvent::ControlChange, value, shift);
+            break;
+        case MidiInputProgramChange:
+            _project.editMidiInputEventEnabled(Project::MidiInputEvent::ProgramChange, value, shift);
+            break;
+        case MidiInputPitchBend:
+            _project.editMidiInputEventEnabled(Project::MidiInputEvent::PitchBend, value, shift);
+            break;
+        case MidiInputAftertouch:
+            _project.editMidiInputEventEnabled(Project::MidiInputEvent::Aftertouch, value, shift);
             break;
        case MidiIntegrationMode:
             _project.editMidiIntegrationMode(value, shift);

@@ -140,7 +140,7 @@ void ClipBoard::pasteNoteSequence(NoteSequence &noteSequence) const {
 }
 
 void ClipBoard::pasteNoteSequenceSteps(NoteSequence &noteSequence, const SelectedSteps &selectedSteps) const {
-    if (canPasteNoteSequenceSteps()) {
+    if (canPasteNoteSequenceSteps() && !pasteNoteSequenceStepsRequiresDestination(selectedSteps)) {
         const auto &noteSequenceSteps = _container.as<NoteSequenceSteps>();
         ModelUtils::copySteps(noteSequenceSteps.sequence.steps(), noteSequenceSteps.selected, noteSequence.steps(), selectedSteps);
     }
@@ -155,7 +155,7 @@ void ClipBoard::pasteCurveSequence(CurveSequence &curveSequence) const {
 }
 
 void ClipBoard::pasteCurveSequenceSteps(CurveSequence &curveSequence, const SelectedSteps &selectedSteps) const {
-    if (canPasteCurveSequenceSteps()) {
+    if (canPasteCurveSequenceSteps() && !pasteCurveSequenceStepsRequiresDestination(selectedSteps)) {
         const auto &curveSequenceSteps = _container.as<CurveSequenceSteps>();
         ModelUtils::copySteps(curveSequenceSteps.sequence.steps(), curveSequenceSteps.selected, curveSequence.steps(), selectedSteps);
     }
@@ -170,7 +170,7 @@ void ClipBoard::pasteStochasticSequence(StochasticSequence &sequence) const {
 }
 
 void ClipBoard::pasteStochasticSequenceSteps(StochasticSequence &sequence, const SelectedSteps &selectedSteps) const {
-    if (canPasteStochasticSequenceSteps()) {
+    if (canPasteStochasticSequenceSteps() && !pasteStochasticSequenceStepsRequiresDestination(selectedSteps)) {
         const auto &stochasticSequenceSteps = _container.as<StochasticSequenceSteps>();
         ModelUtils::copySteps(stochasticSequenceSteps.sequence.steps(), stochasticSequenceSteps.selected, sequence.steps(), selectedSteps);
     }
@@ -185,7 +185,7 @@ void ClipBoard::pasteLogicSequence(LogicSequence &sequence) const {
 }
 
 void ClipBoard::pasteLogicSequenceSteps(LogicSequence &sequence, const SelectedSteps &selectedSteps) const {
-    if (canPasteLogicSequenceSteps()) {
+    if (canPasteLogicSequenceSteps() && !pasteLogicSequenceStepsRequiresDestination(selectedSteps)) {
         const auto &logicSequenceSteps = _container.as<LogicSequenceSteps>();
         ModelUtils::copySteps(logicSequenceSteps.sequence.steps(), logicSequenceSteps.selected, sequence.steps(), selectedSteps);
     }
@@ -199,7 +199,7 @@ void ClipBoard::pasteArpSequence(ArpSequence &sequence) const {
 }
 
 void ClipBoard::pasteArpSequenceSteps(ArpSequence &sequence, const SelectedSteps &selectedSteps) const {
-    if (canPasteArpSequenceSteps()) {
+    if (canPasteArpSequenceSteps() && !pasteArpSequenceStepsRequiresDestination(selectedSteps)) {
         const auto &arpSequenceSteps = _container.as<ArpSequenceSteps>();
         ModelUtils::copySteps(arpSequenceSteps.sequence.steps(), arpSequenceSteps.selected, sequence.steps(), selectedSteps);
     }
@@ -254,12 +254,20 @@ bool ClipBoard::canPasteNoteSequenceSteps() const {
     return _type == Type::NoteSequenceSteps;
 }
 
+bool ClipBoard::pasteNoteSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const {
+    return canPasteNoteSequenceSteps() && _container.as<NoteSequenceSteps>().selected.any() && selectedSteps.none();
+}
+
 bool ClipBoard::canPasteCurveSequence() const {
     return _type == Type::CurveSequence;
 }
 
 bool ClipBoard::canPasteCurveSequenceSteps() const {
     return _type == Type::CurveSequenceSteps;
+}
+
+bool ClipBoard::pasteCurveSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const {
+    return canPasteCurveSequenceSteps() && _container.as<CurveSequenceSteps>().selected.any() && selectedSteps.none();
 }
 
 bool ClipBoard::canPasteStochasticSequence() const {
@@ -270,6 +278,10 @@ bool ClipBoard::canPasteStochasticSequenceSteps() const {
     return _type == Type::StochasticSequenceSteps;
 }
 
+bool ClipBoard::pasteStochasticSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const {
+    return canPasteStochasticSequenceSteps() && _container.as<StochasticSequenceSteps>().selected.any() && selectedSteps.none();
+}
+
 bool ClipBoard::canPasteLogicSequence() const {
     return _type == Type::LogicSequence;
 }
@@ -278,12 +290,20 @@ bool ClipBoard::canPasteLogicSequenceSteps() const {
     return _type == Type::LogicSequenceSteps;
 }
 
+bool ClipBoard::pasteLogicSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const {
+    return canPasteLogicSequenceSteps() && _container.as<LogicSequenceSteps>().selected.any() && selectedSteps.none();
+}
+
 bool ClipBoard::canPasteArpSequence() const {
     return _type == Type::ArpSequence;
 }
 
 bool ClipBoard::canPasteArpSequenceSteps() const {
     return _type == Type::ArpSequenceSteps;
+}
+
+bool ClipBoard::pasteArpSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const {
+    return canPasteArpSequenceSteps() && _container.as<ArpSequenceSteps>().selected.any() && selectedSteps.none();
 }
 
 bool ClipBoard::canPastePattern() const {

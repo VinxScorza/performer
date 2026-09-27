@@ -87,7 +87,7 @@ UNIT_TEST("VoltageModeRegression") {
         expectTrue(!almostEqual(actual, expectedSemitone));
     }
 
-    CASE("Arp selected minor pentatonic scale masks legacy semitone bypass") {
+    CASE("Arp selected minor pentatonic scale converts legacy semitone slots to scale degrees") {
         Project project;
         project.clear();
         project.setSelectedTrackIndex(0);
@@ -103,18 +103,46 @@ UNIT_TEST("VoltageModeRegression") {
 
         auto &step = sequence.step(0);
         step.clear();
-        step.setNote(1);
+        step.setNote(3); // Eb is semitone slot 3, scale degree 1 in C minor pentatonic.
         step.setBypassScale(true);
         step.setNoteOctaveProbability(0);
         step.setNoteVariationProbability(0);
 
         const auto &scale = sequence.selectedScale(project.scale());
         float actual = EngineTestHooks::evalArpStepNoteForScale(step, 0, scale, 0, 0, 0, sequence, false);
-        float expectedSelectedScale = scale.noteToVolts(step.note());
-        float expectedBypass = Scale::get(0).noteToVolts(step.note());
+        float expectedSelectedScale = scale.noteToVolts(1);
+        float wrongScaleDegreeInterpretation = scale.noteToVolts(step.note());
 
         expectTrue(almostEqual(actual, expectedSelectedScale));
-        expectTrue(!almostEqual(actual, expectedBypass));
+        expectTrue(!almostEqual(actual, wrongScaleDegreeInterpretation));
+    }
+
+    CASE("Arp selected minor pentatonic scale masks off-scale legacy semitone slots") {
+        Project project;
+        project.clear();
+        project.setSelectedTrackIndex(0);
+        project.setSelectedPatternIndex(0);
+        project.setTrackMode(0, Track::TrackMode::Arp);
+
+        const int minorPentatonicIndex = findScaleIndexByName("Minor Pent.");
+        expectTrue(minorPentatonicIndex >= 0);
+
+        auto &sequence = project.selectedArpSequence();
+        sequence.setScale(minorPentatonicIndex);
+
+        auto &offScaleStep = sequence.step(1);
+        offScaleStep.clear();
+        offScaleStep.setNote(1); // C# is not present in C minor pentatonic.
+        offScaleStep.setBypassScale(true);
+
+        auto &inScaleStep = sequence.step(3);
+        inScaleStep.clear();
+        inScaleStep.setNote(3); // Eb is present.
+        inScaleStep.setBypassScale(true);
+
+        const auto &scale = sequence.selectedScale(project.scale());
+        expectTrue(!EngineTestHooks::arpPitchSlotActiveForScale(offScaleStep, 1, scale));
+        expectTrue(EngineTestHooks::arpPitchSlotActiveForScale(inScaleStep, 3, scale));
     }
 
     CASE("Arp semitones scale keeps explicit chromatic behavior") {
@@ -158,15 +186,15 @@ UNIT_TEST("VoltageModeRegression") {
 
         auto &step = sequence.step(0);
         step.clear();
-        step.setNote(0);
+        step.setNote(3); // Eb
         step.setBypassScale(true);
         step.setNoteOctaveProbability(0);
         step.setNoteVariationProbability(0);
 
         const auto &scale = sequence.selectedScale(project.scale());
         float actual = EngineTestHooks::evalArpStepNoteForScale(step, 0, scale, 0, 0, 1, sequence, false, true);
-        float expectedScale = scale.noteToVolts(1);
-        float expectedChromaticRootShift = Scale::get(0).noteToVolts(1);
+        float expectedScale = scale.noteToVolts(2); // Eb slot converted to degree 1, then transposed to degree 2.
+        float expectedChromaticRootShift = Scale::get(0).noteToVolts(4);
 
         expectTrue(almostEqual(actual, expectedScale));
         expectTrue(!almostEqual(actual, expectedChromaticRootShift));
@@ -204,7 +232,7 @@ UNIT_TEST("VoltageModeRegression") {
         expectTrue(!almostEqual(actual, expectedSemitone));
     }
 
-    CASE("Stochastic selected minor pentatonic scale masks legacy semitone bypass") {
+    CASE("Stochastic selected minor pentatonic scale converts legacy semitone slots to scale degrees") {
         Project project;
         project.clear();
         project.setSelectedTrackIndex(0);
@@ -220,18 +248,46 @@ UNIT_TEST("VoltageModeRegression") {
 
         auto &step = sequence.step(0);
         step.clear();
-        step.setNote(1);
+        step.setNote(3); // Eb is semitone slot 3, scale degree 1 in C minor pentatonic.
         step.setBypassScale(true);
         step.setNoteOctaveProbability(0);
         step.setNoteVariationProbability(0);
 
         const auto &scale = sequence.selectedScale(project.scale());
         float actual = EngineTestHooks::evalStochasticStepNoteForScale(step, 0, scale, 0, 0, 0, sequence, false);
-        float expectedSelectedScale = scale.noteToVolts(step.note());
-        float expectedBypass = Scale::get(0).noteToVolts(step.note());
+        float expectedSelectedScale = scale.noteToVolts(1);
+        float wrongScaleDegreeInterpretation = scale.noteToVolts(step.note());
 
         expectTrue(almostEqual(actual, expectedSelectedScale));
-        expectTrue(!almostEqual(actual, expectedBypass));
+        expectTrue(!almostEqual(actual, wrongScaleDegreeInterpretation));
+    }
+
+    CASE("Stochastic selected minor pentatonic scale masks off-scale legacy semitone slots") {
+        Project project;
+        project.clear();
+        project.setSelectedTrackIndex(0);
+        project.setSelectedPatternIndex(0);
+        project.setTrackMode(0, Track::TrackMode::Stochastic);
+
+        const int minorPentatonicIndex = findScaleIndexByName("Minor Pent.");
+        expectTrue(minorPentatonicIndex >= 0);
+
+        auto &sequence = project.selectedStochasticSequence();
+        sequence.setScale(minorPentatonicIndex);
+
+        auto &offScaleStep = sequence.step(1);
+        offScaleStep.clear();
+        offScaleStep.setNote(1); // C# is not present in C minor pentatonic.
+        offScaleStep.setBypassScale(true);
+
+        auto &inScaleStep = sequence.step(3);
+        inScaleStep.clear();
+        inScaleStep.setNote(3); // Eb is present.
+        inScaleStep.setBypassScale(true);
+
+        const auto &scale = sequence.selectedScale(project.scale());
+        expectTrue(!EngineTestHooks::stochasticPitchSlotActiveForScale(offScaleStep, 1, scale));
+        expectTrue(EngineTestHooks::stochasticPitchSlotActiveForScale(inScaleStep, 3, scale));
     }
 
     CASE("Stochastic semitones scale keeps explicit chromatic behavior") {
@@ -275,15 +331,15 @@ UNIT_TEST("VoltageModeRegression") {
 
         auto &step = sequence.step(0);
         step.clear();
-        step.setNote(0);
+        step.setNote(3); // Eb
         step.setBypassScale(true);
         step.setNoteOctaveProbability(0);
         step.setNoteVariationProbability(0);
 
         const auto &scale = sequence.selectedScale(project.scale());
         float actual = EngineTestHooks::evalStochasticStepNoteForScale(step, 0, scale, 0, 0, 1, sequence, false, true);
-        float expectedScale = scale.noteToVolts(1);
-        float expectedChromaticRootShift = Scale::get(0).noteToVolts(1);
+        float expectedScale = scale.noteToVolts(2); // Eb slot converted to degree 1, then transposed to degree 2.
+        float expectedChromaticRootShift = Scale::get(0).noteToVolts(4);
 
         expectTrue(almostEqual(actual, expectedScale));
         expectTrue(!almostEqual(actual, expectedChromaticRootShift));

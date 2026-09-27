@@ -66,6 +66,8 @@ void register_project(py::module &m) {
         .def_property("recordMode", &Project::recordMode, &Project::setRecordMode)
         .def_property("midiInputMode", &Project::midiInputMode, &Project::setMidiInputMode)
         .def_property_readonly("midiInputSource", [] (Project &project) { return &project.midiInputSource(); })
+        .def("midiInputEventEnabled", &Project::midiInputEventEnabled, "event"_a)
+        .def("setMidiInputEventEnabled", &Project::setMidiInputEventEnabled, "event"_a, "enabled"_a)
         .def_property("cvGateInput", &Project::cvGateInput, &Project::setCvGateInput)
         .def_property("curveCvInput", &Project::curveCvInput, &Project::setCurveCvInput)
         .def_property_readonly("clockSetup", [] (Project &project) { return &project.clockSetup(); })
@@ -125,6 +127,15 @@ void register_project(py::module &m) {
         .value("Off", Types::MidiInputMode::Off)
         .value("All", Types::MidiInputMode::All)
         .value("Source", Types::MidiInputMode::Source)
+        .export_values()
+    ;
+
+    py::enum_<Project::MidiInputEvent>(project, "MidiInputEvent")
+        .value("Notes", Project::MidiInputEvent::Notes)
+        .value("ControlChange", Project::MidiInputEvent::ControlChange)
+        .value("ProgramChange", Project::MidiInputEvent::ProgramChange)
+        .value("PitchBend", Project::MidiInputEvent::PitchBend)
+        .value("Aftertouch", Project::MidiInputEvent::Aftertouch)
         .export_values()
     ;
 
@@ -853,6 +864,16 @@ void register_project(py::module &m) {
     // ------------------------------------------------------------------------
     // PlayState
     // ------------------------------------------------------------------------
+
+    py::class_<PlayState> playState(m, "PlayState");
+    playState
+        .def("trackFillAmount", [] (PlayState &playState, int trackIndex) {
+            return playState.trackState(trackIndex).fillAmount();
+        }, "trackIndex"_a)
+        .def("trackFillDivisorOverride", [] (PlayState &playState, int trackIndex) {
+            return playState.trackState(trackIndex).fillDivisorOverride();
+        }, "trackIndex"_a)
+    ;
 
     // ------------------------------------------------------------------------
     // Routing

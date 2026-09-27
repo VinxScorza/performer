@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Vinx PER|FORMER Firmware | Westlicht Eurorack Sequencer Fork</title>
-  <meta name="description" content="Download the Vinx Scorza PER|FORMER firmware, read the manual or printable PDF, launch the web simulator, and follow Launchpad-focused updates for the Westlicht eurorack sequencer.">
+  <meta name="description" content="Download stable and beta Vinx Scorza PER|FORMER firmware, read the manual or printable PDF, and try the 0.4.6 beta web simulator for the Westlicht eurorack sequencer.">
   <link rel="canonical" href="https://vinxscorza.github.io/performer/">
   <meta name="theme-color" content="#252525">
   <meta name="robots" content="index,follow">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Vinx PER|FORMER">
   <meta property="og:title" content="Vinx PER|FORMER Firmware | Westlicht Eurorack Sequencer Fork">
-  <meta property="og:description" content="Download the Vinx Scorza PER|FORMER firmware, read the manual or printable PDF, launch the web simulator, and follow Launchpad-focused updates for the Westlicht eurorack sequencer.">
+  <meta property="og:description" content="Download stable and beta Vinx Scorza PER|FORMER firmware, read the manual or printable PDF, and try the 0.4.6 beta web simulator.">
   <meta property="og:url" content="https://vinxscorza.github.io/performer/">
   <meta property="og:image" content="https://vinxscorza.github.io/performer/assets/vinx-performer-social.png">
   <meta property="og:image:secure_url" content="https://vinxscorza.github.io/performer/assets/vinx-performer-social.png">
@@ -21,7 +21,7 @@
   <meta property="og:image:alt" content="Vinx PER|FORMER firmware social preview">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Vinx PER|FORMER Firmware | Westlicht Eurorack Sequencer Fork">
-  <meta name="twitter:description" content="Download the Vinx Scorza PER|FORMER firmware, read the manual or printable PDF, launch the web simulator, and follow Launchpad-focused updates for the Westlicht eurorack sequencer.">
+  <meta name="twitter:description" content="Download stable and beta Vinx Scorza PER|FORMER firmware, read the manual or printable PDF, and try the 0.4.6 beta web simulator.">
   <meta name="twitter:image" content="https://vinxscorza.github.io/performer/assets/vinx-performer-social.png">
   <meta name="twitter:image:alt" content="Vinx PER|FORMER firmware social preview">
   <link rel="stylesheet" href="style.css">
@@ -53,8 +53,8 @@
       <section class="home-cta" aria-label="Primary links">
         <div class="home-cta-grid">
           <a class="home-cta-link" href="https://github.com/VinxScorza/performer/releases" target="_blank" rel="noopener noreferrer">
-            <span class="home-cta-title">Download UPDATE.DAT</span>
-            <span class="home-cta-meta">Latest release asset on GitHub</span>
+            <span class="home-cta-title">Firmware Downloads</span>
+            <span class="home-cta-meta">Stable v0.4.5 and beta v0.4.6-beta.1</span>
           </a>
           <a class="home-cta-link" href="manual/index.html">
             <span class="home-cta-title">User Manual</span>
@@ -71,14 +71,21 @@
         </div>
       </section>
 
+      <section class="notice warning" aria-label="Beta project compatibility warning">
+        <p><strong>Important project compatibility warning</strong></p>
+        <p>
+          The 0.4.6 beta can open projects saved by 0.4.4 and 0.4.5, but saving them upgrades the file to <code>Version41</code>. Firmware 0.4.5 and earlier cannot reopen that upgraded file. <strong>Back up the SD card or keep a separate copy of every project before opening and saving it with the beta.</strong>
+        </p>
+      </section>
+
       <section class="download-panel" aria-labelledby="firmware-download">
-        <h2 id="firmware-download">Firmware Download</h2>
+        <h2 id="firmware-download">Stable Firmware</h2>
         <div class="download-grid">
           <div class="download-primary">
-            <p class="download-label">Current firmware</p>
+            <p class="download-label">Current stable</p>
             <p class="download-version">Vinx FW v0.4.5</p>
             <p>
-              Download the latest <strong>UPDATE.DAT</strong> from
+              Download the stable <strong>UPDATE.DAT</strong> from
               <a href="https://github.com/VinxScorza/performer/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a>,
               copy it to the root of the SD card, then update from the PER|FORMER bootloader.
             </p>
@@ -114,6 +121,45 @@
         </p>
       </section>
 
+      <section class="download-panel" aria-labelledby="beta-firmware-download">
+        <h2 id="beta-firmware-download">Beta Firmware</h2>
+        <div class="download-grid">
+          <div class="download-primary">
+            <p class="download-label">Current beta</p>
+            <p class="download-version">Vinx FW v0.4.6-beta.1</p>
+            <p>
+              This prerelease identifies as <strong>0.4.6</strong> on the module. It updates saved projects to <code>Version41</code>, adds project-level MIDI input filters, and includes the current editing, Fill, routing, and scale fixes. <strong>v0.4.5 remains the stable release.</strong>
+            </p>
+            <p class="download-actions">
+              <a href="https://github.com/VinxScorza/performer/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a>
+              <span aria-hidden="true">|</span>
+              <a href="manual/index.html#appendix-firmware-update">Firmware update manual</a>
+            </p>
+          </div>
+          <dl class="download-facts">
+            <div>
+              <dt>File</dt>
+              <dd><code>UPDATE.DAT</code></dd>
+            </div>
+            <div>
+              <dt>Size</dt>
+              <dd><code>758,040 bytes</code></dd>
+            </div>
+            <div>
+              <dt>MD5</dt>
+              <dd><code>fe24653b56880af9611a066954fd2e0b</code></dd>
+            </div>
+            <div>
+              <dt>SHA-256</dt>
+              <dd><code>5dc2fa9f9ff148097023efa1138e69dad13bbf85ac9e8de96647506289dec432</code></dd>
+            </div>
+          </dl>
+        </div>
+        <p class="download-note">
+          <strong>Back up the SD card before testing.</strong> Projects from <code>v0.4.4</code> and <code>v0.4.5</code> load in this beta, but after the beta saves them as <code>Version41</code>, firmware <code>v0.4.5</code> and earlier cannot reopen those saved files. Keep the original project files separately if you may return to older firmware.
+        </p>
+      </section>
+
       <section id="about">
         <p>
           PER|FORMER is a eurorack sequencer module designed for both live performance and work in the studio.<br>
@@ -127,7 +173,7 @@
         <p>
           <strong>If you believe free software has value, accept that the work of the people who develop it has value too. Free as in freedom does not mean free labor. If this project is useful to you, consider supporting the people behind it. <a href="donate/index.html">DONATE</a>.</strong><br>
           If you notice any bug or weird behavior, please <a href="https://github.com/VinxScorza/performer/issues" target="_blank" rel="noopener noreferrer">report it</a>. This fork moves fast, and I really need the feedback.<br>
-          Documentation note: the <a href="manual/index.html">User Manual</a> and <a href="cheatsheet/index.html">LP Cheatsheet</a> are aligned with the current firmware behavior, including the appendix, Launchpad material, and simulator notes.
+          Documentation note: the <a href="manual/index.html">User Manual</a> and <a href="cheatsheet/index.html">LP Cheatsheet</a> include the current <code>v0.4.6-beta.1</code> behavior, while the site keeps <code>v0.4.5</code> clearly marked as the stable release.
         </p>
       </section>
 
@@ -152,22 +198,27 @@
           <li>External <code>16-step Editing Mode</code> adds direct note/gate editing for Note tracks with 16-knob + 16-pad controllers.</li>
           <li>Core sequencing gained bank-aware range editing, chain-aware note ties, improved step selection, <code>Curve</code> gate timing layers, and per-track <code>Gate/Trigger</code> output behavior.</li>
           <li>Clock/reset behavior, scale handling, Voltage Mode paths, and Arp/Stochastic scale-safe transpose were tightened for more predictable performance use.</li>
+          <li>In the <code>0.4.6</code> beta, selected-step Copy/Paste/Duplicate is safer across Note, Curve, Stochastic, Logic, and Arp, and double-clicking a track button provides direct access to its Steps editor where available.</li>
+          <li>Held Fill controls can temporarily change a track's playback divisor from the module encoder, including fills initiated from Launchpad, without replacing the divisor stored in the sequence.</li>
         </ul>
         <h4 class="section-callout">Memory, Runtime &amp; Build Robustness</h4>
         <ul>
           <li>Reduced STM32 memory pressure and improved runtime efficiency, with additional hardening around the heaviest generator paths.</li>
-          <li>Build and simulator paths were cleaned up and aligned with current firmware behavior.</li>
+          <li>Build and simulator paths were cleaned up and aligned with current firmware behavior. The Vagrant setup now stops on errors, verifies the CMake download checksum, and installs the required CMake and Python tooling.</li>
         </ul>
         <h4 class="section-callout">Core Engine &amp; Safety</h4>
         <ul>
           <li>Generator and modal UI paths were hardened against wrong-target apply/cancel behavior, stale state, and controller retargeting edge cases.</li>
           <li>Routing/CV control now treats continuous, discrete, and trigger-like targets more safely and filters writes by compatible track mode.</li>
           <li><code>Load</code>, <code>Save</code>, <code>Save As</code>, project browsing, and slower SD-card boot paths were hardened to reduce race and reboot-prone behavior.</li>
+          <li>The <code>0.4.6</code> beta adds per-project filters for MIDI Notes, CC, Program Change, Pitch Bend, and Aftertouch. Their state is stored in project format <code>Version41</code>; custom Program Change mapping is not included.</li>
+          <li>Routing Divisor Min/Max now follows valid musical divisions, while Stochastic and the related Arp pitch path preserve scale-note interpretation across project reloads.</li>
         </ul>
         <h4 class="section-callout">Docs, Site &amp; Ecosystem</h4>
         <ul>
           <li>The site now separates roles clearly: Home for overview, Features for the curated feature map, User Manual for practical use, Build Guide for hardware/build/simulator setup, and Cheatsheet for Launchpad reference.</li>
           <li>The online manual includes search/navigation and a printable <a href="manual/vinx-performer-user-manual.pdf">manual PDF</a>.</li>
+          <li>The Web Simulator now runs the <code>0.4.6</code> beta firmware, with its beta status shown separately from the stable <code>v0.4.5</code> download.</li>
         </ul>
         <p>
           And much more across the wider firmware line.<br>
@@ -183,6 +234,7 @@
             <a href="manual/index.html#manual-validation-scope">User Manual validation section</a>.
           </p>
           <ul class="validation-scope-list">
+            <li><span class="status-chip status-chip-pending">Beta validation</span> The <code>v0.4.6-beta.1</code> firmware and simulators build successfully; the focused real-hardware upgrade smoke test remains to be completed.</li>
             <li><span class="status-chip status-chip-validated">Validated</span> <code>16-step Editing Mode</code> maintainer-side hardware validation is on <code>Launch Control XL</code> (<code>Factory Preset #1</code>).</li>
             <li><span class="status-chip status-chip-pending">Pending hardware test</span> <code>BeatStep Pro</code> template/mapping is code-supported but still needs dedicated maintainer-side on-device validation.</li>
             <li><span class="status-chip status-chip-partial">Partially validated</span> <code>Voltage Mode</code> is fixed across <code>Note</code>/<code>Arp</code>/<code>Stochastic</code>; uncommon <code>notesPerOctave &gt; 12</code> cases on Arp/Stochastic still benefit from broader field tests.</li>

@@ -4,6 +4,7 @@
 #include "controllers/launchpad/LaunchpadController.h"
 #include "controllers/knobpad/KnobPad16Controller.h"
 
+#include "Config.h"
 #include "model/Model.h"
 
 #include "engine/Engine.h"
@@ -65,6 +66,10 @@ public:
     PageManager *pageManager() const { return _pageManager; }
     Pages *pages() const { return _pages; }
 
+    void setPerformanceFillDivisorEditTrack(int trackIndex, bool active);
+    void clearPerformanceFillDivisorEditTracks();
+    bool editPerformanceFillDivisor(int value);
+
     static const ControllerInfo *findController(uint16_t vendorId, uint16_t productId) {
         for (size_t i = 0; i < sizeof(controllerInfos) / sizeof(controllerInfos[0]); ++i) {
             auto info = &controllerInfos[i];
@@ -86,6 +91,8 @@ private:
     PageManager *_pageManager = nullptr;
     Pages *_pages = nullptr;
     UiPageKind _uiPageKind = UiPageKind::Other;
+
+    uint8_t _performanceFillDivisorEditTracks = 0;
 
     friend class Controller;
 };

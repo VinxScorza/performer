@@ -1,11 +1,31 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$provision_script = <<-SCRIPT
+$provision_script = <<-'SCRIPT'
+
+set -eu
 
 echo "Installing dependencies ..."
 sudo apt-get update
-sudo apt-get install -y git python libtool autoconf cmake libusb-1.0.0-dev libftdi-dev pkg-config
+sudo apt-get install -y git python python3 python3-dev build-essential libtool autoconf cmake libusb-1.0.0-dev libftdi-dev pkg-config wget ca-certificates
+
+echo "Installing CMake 3.26.4 ..."
+(
+    cmake_tmp_dir=$(mktemp -d)
+    trap 'rm -rf "$cmake_tmp_dir"' EXIT
+    cd "$cmake_tmp_dir"
+
+    cmake_installer=cmake-3.26.4-linux-x86_64.sh
+    # Official checksum: https://github.com/Kitware/CMake/releases/download/v3.26.4/cmake-3.26.4-SHA-256.txt
+    cmake_sha256=413e59e94b9a3eed2d73f8fc85520d505e514e95005471504d8bebe844970d67
+    wget --https-only --timeout=30 --tries=3 -O "$cmake_installer" "https://github.com/Kitware/CMake/releases/download/v3.26.4/$cmake_installer"
+    printf '%s  %s\n' "$cmake_sha256" "$cmake_installer" > installer.sha256
+    sha256sum --check installer.sha256
+    sudo sh "$cmake_installer" --skip-license --prefix=/usr/local
+)
+hash -r
+cmake --version
+python3 --version
 
 echo "Installing toolchain ..."
 cd /vagrant

@@ -1,10 +1,13 @@
 #include "Routing.h"
 
+#include "KnownDivisor.h"
 #include "Project.h"
 #include "ProjectVersion.h"
 
 #include <algorithm>
 #include <cmath>
+
+static int quantizedDivisor(float value);
 
 //----------------------------------------
 // Routing::CvSource
@@ -198,6 +201,9 @@ uint8_t Routing::supportedTracks(Target target, uint8_t tracks) const {
 
 void Routing::writeTarget(Target target, uint8_t tracks, float normalized) {
     float floatValue = denormalizeTargetValue(target, normalized);
+    if (target == Target::Divisor) {
+        floatValue = quantizedDivisor(floatValue);
+    }
     int intValue = std::round(floatValue);
 
     if (isProjectTarget(target)) {
@@ -503,6 +509,40 @@ static const TargetInfo targetInfos[int(Routing::Target::Last)] = {
     [int(Routing::Target::LengthModifier)]                  = { -8,     8,      -8,     8,      8       },
 };
 
+static int divisorIndexNearest(float value) {
+    int bestIndex = 0;
+    float bestDistance = std::fabs(value - float(knownDivisors[0].divisor));
+    for (int i = 1; i < numKnownDivisors; ++i) {
+        const float distance = std::fabs(value - float(knownDivisors[i].divisor));
+        if (distance < bestDistance) {
+            bestIndex = i;
+            bestDistance = distance;
+        }
+    }
+    return bestIndex;
+}
+
+static int quantizedDivisor(float value) {
+    return knownDivisors[divisorIndexNearest(value)].divisor;
+}
+
+static int adjustedDivisor(float value, int offset) {
+    int index = divisorIndexNearest(value);
+    index = clamp(index + offset, 0, numKnownDivisors - 1);
+    return knownDivisors[index].divisor;
+}
+
+static float normalizedDivisor(float value) {
+    const auto &info = targetInfos[int(Routing::Target::Divisor)];
+    return clamp((value - info.min) / (info.max - info.min), 0.f, 1.f);
+}
+
+static float divisorStabilizerMargin(int currentDivisor, int nextDivisor) {
+    const auto &info = targetInfos[int(Routing::Target::Divisor)];
+    const float distance = std::fabs(float(nextDivisor - currentDivisor)) / float(info.max - info.min);
+    return std::min(0.02f, std::max(0.00005f, distance * 0.1f));
+}
+
 float Routing::stabilizeTargetValue(Target target, float normalized, int16_t &lastDiscreteValue, bool &lastBooleanValue, bool &initialized) {
     normalized = clamp(normalized, 0.f, 1.f);
 
@@ -524,6 +564,35 @@ float Routing::stabilizeTargetValue(Target target, float normalized, int16_t &la
 
     if (!isDiscreteTarget(target)) {
         return normalized;
+    }
+
+    if (target == Target::Divisor) {
+        const float value = denormalizeTargetValue(target, normalized);
+        const int candidate = quantizedDivisor(value);
+
+        if (!initialized) {
+            lastDiscreteValue = candidate;
+            initialized = true;
+            return normalizeTargetValue(target, lastDiscreteValue);
+        }
+
+        lastDiscreteValue = quantizedDivisor(lastDiscreteValue);
+        const int currentIndex = divisorIndexNearest(lastDiscreteValue);
+        if (candidate > lastDiscreteValue && currentIndex < numKnownDivisors - 1) {
+            const int nextDivisor = knownDivisors[currentIndex + 1].divisor;
+            const float boundary = normalizedDivisor((float(lastDiscreteValue) + float(nextDivisor)) * 0.5f);
+            if (normalized > boundary + divisorStabilizerMargin(lastDiscreteValue, nextDivisor)) {
+                lastDiscreteValue = candidate;
+            }
+        } else if (candidate < lastDiscreteValue && currentIndex > 0) {
+            const int prevDivisor = knownDivisors[currentIndex - 1].divisor;
+            const float boundary = normalizedDivisor((float(lastDiscreteValue) + float(prevDivisor)) * 0.5f);
+            if (normalized < boundary - divisorStabilizerMargin(lastDiscreteValue, prevDivisor)) {
+                lastDiscreteValue = candidate;
+            }
+        }
+
+        return normalizeTargetValue(target, lastDiscreteValue);
     }
 
     const auto &info = targetInfos[int(target)];
@@ -572,6 +641,13 @@ float Routing::targetValueStep(Routing::Target target, bool shift) {
     return 1.f / (info.max - info.min) * (shift ? info.shiftStep : 1);
 }
 
+float Routing::adjustTargetValue(Routing::Target target, float normalized, int value, bool shift) {
+    if (target == Target::Divisor) {
+        return normalizeTargetValue(target, adjustedDivisor(denormalizeTargetValue(target, normalized), value));
+    }
+    return normalized + value * targetValueStep(target, shift);
+}
+
 void Routing::printTargetValue(Routing::Target target, float normalized, StringBuilder &str) {
     float value = denormalizeTargetValue(target, normalized);
     int intValue = std::round(value);
@@ -611,7 +687,7 @@ void Routing::printTargetValue(Routing::Target target, float normalized, StringB
         str("%+.1f%%", value * 12.5f);
         break;
     case Target::Divisor:
-        ModelUtils::printDivisor(str, intValue);
+        ModelUtils::printDivisor(str, quantizedDivisor(value));
         break;
     case Target::RunMode:
         str("%s", Types::runModeName(Types::RunMode(intValue)));

@@ -345,6 +345,15 @@ pre code {
   color: var(--muted);
 }
 
+.site-version-banner-warning {
+  margin: 7px 0 0;
+  padding-top: 7px;
+  border-top: 1px solid rgba(214, 164, 77, 0.32);
+  color: #d6a44d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .home-cta {
   margin: 0 0 26px;
   padding: 14px 16px 18px;

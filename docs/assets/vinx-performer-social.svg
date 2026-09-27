@@ -11,7 +11,7 @@
   <rect x="64" y="64" width="1072" height="502" fill="#2d2d2d" stroke="#e4d38a" stroke-width="3"/>
   <rect x="96" y="96" width="1008" height="438" fill="none" stroke="#111111" stroke-width="2"/>
   <text x="110" y="186" fill="#ffffff" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="74" font-weight="700" letter-spacing="5">PER|FORMER</text>
-  <text x="112" y="246" fill="#e4d38a" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="4">VINX FIRMWARE v0.4.5</text>
+  <text x="112" y="246" fill="#e4d38a" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="4">VINX FIRMWARE v0.4.6 · BETA</text>
   <text x="112" y="328" fill="#f2f2f2" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34">Westlicht eurorack sequencer fork</text>
   <text x="112" y="382" fill="#bbbbbb" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="28">Generators · Launchpad workflow · 16-step editing</text>
   <text x="112" y="424" fill="#bbbbbb" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="28">Web simulator · Manual · Firmware downloads</text>

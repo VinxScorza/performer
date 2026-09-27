@@ -119,6 +119,9 @@ enum ProjectVersion {
     // add per-track gate output mode (Gate/Trigger)
     Version40 = 40,
 
+    // added project MIDI input event filter
+    Version41 = 41,
+
 
     // automatically derive latest version
     Last,

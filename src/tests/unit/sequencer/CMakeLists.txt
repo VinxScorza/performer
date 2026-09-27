@@ -11,6 +11,7 @@ if(${PLATFORM} STREQUAL "sim")
 endif()
 
 target_link_libraries(TestGeneratorSemantics sequencer_shared)
+target_link_libraries(TestNoteSequence sequencer_shared)
 target_link_libraries(TestProjectScaleRemap sequencer_shared)
 target_link_libraries(TestRouting sequencer_shared)
 if(${PLATFORM} STREQUAL "sim")

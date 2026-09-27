@@ -20,6 +20,11 @@ THEME_JS = DOCS_ROOT / "theme.js"
 EXCLUDED_FOR_VERSION_CHECK = {
     DOCS_ROOT / "forks" / "index.html",
 }
+ALLOWED_VERSION_LITERALS = {
+    DOCS_ROOT / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6-beta.1"},
+    DOCS_ROOT / "features" / "index.html": {"v0.4.5", "v0.4.6-beta.1"},
+    DOCS_ROOT / "manual" / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6-beta.1"},
+}
 EXCLUDED_FOR_THEME_REQUIREMENT = {
     DOCS_ROOT / "testdrive" / "sim" / "sequencer.html",
 }
@@ -86,11 +91,11 @@ def parse_html(path: Path) -> HtmlScanParser:
     return parser
 
 
-def extract_current_version() -> str:
+def extract_theme_version(variable_name: str) -> str:
     content = THEME_JS.read_text(encoding="utf-8")
-    match = re.search(r'vinxFirmwareVersion\s*=\s*"([^"]+)"', content)
+    match = re.search(rf'{re.escape(variable_name)}\s*=\s*"([^"]+)"', content)
     if not match:
-        raise RuntimeError("Cannot find vinxFirmwareVersion in docs/theme.js")
+        raise RuntimeError(f"Cannot find {variable_name} in docs/theme.js")
     return match.group(1)
 
 
@@ -166,24 +171,25 @@ def check_links(html_files: list[Path], ids_by_file: dict[Path, set[str]]) -> li
 
 def check_version_consistency(html_files: list[Path], current_version: str) -> list[str]:
     errors: list[str] = []
-    literal_version_re = re.compile(r"\bv\d+\.\d+\.\d+\b")
+    literal_version_re = re.compile(r"\bv\d+\.\d+\.\d+(?:-[A-Za-z0-9.*-]+)?")
 
     for html_file in html_files:
         if html_file in EXCLUDED_FOR_VERSION_CHECK:
             continue
 
         content = html_file.read_text(encoding="utf-8")
+        allowed_versions = ALLOWED_VERSION_LITERALS.get(html_file, {current_version})
         for match in literal_version_re.finditer(content):
             literal = match.group(0)
             # Historical lineage marker like `v0.3.2-vinx.*` is allowed.
-            if content[match.end() :].startswith("-vinx"):
+            if "-vinx" in literal:
                 continue
-            if literal != current_version:
+            if literal not in allowed_versions:
                 line = content.count("\n", 0, match.start()) + 1
                 errors.append(
                     f"{html_file.relative_to(REPO_ROOT)}:{line} "
                     f"contains version literal '{literal}' "
-                    f"(expected '{current_version}' or no literal)"
+                    f"(allowed here: {', '.join(sorted(allowed_versions))})"
                 )
 
     return errors
@@ -213,15 +219,17 @@ def main() -> int:
         print("ERROR: no html files found under docs/", file=sys.stderr)
         return 1
 
-    current_version = extract_current_version()
-    print(f"[docs-ci] Current firmware version source: {current_version}")
+    stable_version = extract_theme_version("vinxFirmwareVersion")
+    beta_version = extract_theme_version("vinxBetaVersion")
+    print(f"[docs-ci] Stable firmware version source: {stable_version}")
+    print(f"[docs-ci] Beta firmware version source: {beta_version}")
     print(f"[docs-ci] HTML files scanned: {len(html_files)}")
 
     ids_by_file = {path: parse_html(path).ids for path in html_files}
 
     link_errors = check_links(html_files, ids_by_file)
     theme_errors = check_theme_inclusion(html_files)
-    version_errors = check_version_consistency(html_files, current_version)
+    version_errors = check_version_consistency(html_files, stable_version)
 
     all_errors = link_errors + theme_errors + version_errors
     if all_errors:

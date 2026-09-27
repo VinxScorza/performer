@@ -63,6 +63,12 @@
             This documentation line is aligned through the active development line. If you want the exact chronological log, including inherited upstream history and older <code>v0.3.2-vinx.*</code> releases, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
           </p>
           <p>
+            Current documentation target: <strong><code>v0.4.6-beta.1</code></strong>. The firmware reports <code>0.4.6</code> on the module, while <code>v0.4.5</code> remains the stable release.
+          </p>
+          <div class="notice warning">
+            <p><strong>Important project compatibility warning:</strong> the 0.4.6 beta can open projects saved by 0.4.4 and 0.4.5, but saving upgrades them to <code>Version41</code>. Firmware 0.4.5 and earlier cannot reopen the upgraded file. Back up the SD card or keep a separate copy of every project before opening and saving it with the beta.</p>
+          </div>
+          <p>
             Known limits and real-hardware validation status (including external clock scope, Voltage Mode edge-cases, and BeatStep Pro coverage) are tracked centrally in
             <a href="../manual/index.html#manual-validation-scope">User Manual - Known Limits / Validation Scope</a>.
           </p>
@@ -85,6 +91,9 @@
               <li>Scale-selection limits were fixed so the full built-in plus user-scale set is reachable again across <code>Project</code>, <code>Note</code>, <code>Logic</code>, <code>Stochastic</code>, and <code>Arp</code>.</li>
               <li><code>Voltage Mode</code> is now coherent across <code>Note</code>, <code>Arp</code>, and <code>Stochastic</code>: octave wrapping follows the intended <code>1.2V</code> span, non-chromatic user scales are preserved on the covered paths, and routed transpose on <code>Arp</code>/<code>Stochastic</code> remains inside the selected scale/root instead of shifting the root chromatically.</li>
               <li>Project-scale quantization remap now preserves octave register on Note tracks (Project <code>Scale</code> path with sequence <code>Scale = Default</code>), avoiding octave-collapse when changing Project scale.</li>
+              <li>Stochastic note-pool playback now remains consistent after save/reload with non-chromatic scales; legacy chromatic slots are masked or translated against the active scale without progressive note drift, with the related Arp pitch-slot path aligned to the same rule.</li>
+              <li>Selected-step Copy/Paste/Duplicate is selection-aware across Note, Curve, Stochastic, Logic, and Arp editors, with explicit destination selection, preserved gaps, automatic Last Step extension, and guarded no-room handling.</li>
+              <li>Held Fill controls can temporarily override playback division on independent tracks from the module encoder, including fills initiated from Launchpad, while preserving the sequence's stored divisor. Linked tracks continue to inherit timing and divisor from their source track.</li>
             </ul>
           </article>
         </div>
@@ -230,6 +239,7 @@
               <li>Discrete targets use hysteresis to reduce boundary jitter, while boolean and trigger-like targets use stable threshold behavior instead of flickering around the midpoint.</li>
               <li>Track-target compatibility is checked before writing routed values, so a route only affects tracks whose current mode actually supports that target.</li>
               <li>Previously exposed Stochastic bias targets now write the corresponding routed values instead of silently doing nothing.</li>
+              <li>Divisor Min/Max editing and routed modulation now move through the known musical divisor table instead of exposing intermediate numeric values, with additional stabilization near division boundaries.</li>
             </ul>
           </article>
         </div>
@@ -247,6 +257,7 @@
               <li><code>Random</code> and <code>Acid</code> rendering was cleaned up with better lane alignment and clearer visual separation.</li>
               <li>Step graphics were refined to make gate offset, length, retrigger, condition, and slide states easier to read at a glance.</li>
               <li>UI load was reduced by lowering refresh to <code>30 fps</code> and skipping redraws when the frame is unchanged.</li>
+              <li>Double-clicking a track button opens that track's Steps editor wherever the active page does not reserve track buttons for a page-specific action.</li>
             </ul>
           </article>
         </div>
@@ -267,6 +278,7 @@
               <li><code>Menu Wrap</code> was added as an on-by-default preference for cyclic list navigation.</li>
               <li>Screensaver behavior, wake behavior, and the <code>System</code> landing tab were refined for more predictable daily use.</li>
               <li>Memory footprint was improved versus the upstream baseline, with lower SRAM/CCRAM pressure compared to Mebitek <code>0.3.2</code>.</li>
+              <li>Projects can independently allow or reject MIDI Notes, CC, Program Change, Pitch Bend, and Aftertouch while leaving Clock and Transport handling unchanged. These filters default to enabled for existing projects; Note Off remains accepted when Notes are disabled so active notes can still be released.</li>
             </ul>
           </article>
         </div>
@@ -283,6 +295,7 @@
               <li>The simulator stack now works as two complementary tools: the browser-based <code>Web Simulator</code> for immediate access and quick checks, and the native <code>Desktop Simulator</code> for deeper MIDI/controller workflows and development work.</li>
               <li>The <code>Desktop Simulator</code> gained configurable DIN/USB MIDI routing via CLI, starts with MIDI disabled by default, and includes built-in status/tracing support (<code>--trace-midi</code>, <code>--trace-dio</code>).</li>
               <li>Launchpad support was improved with model inference and port mirroring to keep controller behavior more predictable in simulator sessions.</li>
+              <li>The Web Simulator is synchronized with the <code>0.4.6</code> beta behavior, while the site continues to identify <code>v0.4.5</code> as the stable firmware line.</li>
             </ul>
           </article>
         </div>
@@ -318,6 +331,7 @@
               <li>External clock modes (<code>Reset Pulse</code> / <code>Reset Gate</code>) still benefit from real hardware validation.</li>
               <li><code>Voltage Mode</code> and scale/root-safe transpose are aligned on the covered <code>Note</code> / <code>Arp</code> / <code>Stochastic</code> paths; uncommon <code>notesPerOctave &gt; 12</code> Arp/Stochastic cases still benefit from broader testing.</li>
               <li>Desktop Simulator USB MIDI has been validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.</li>
+              <li>The <code>v0.4.6-beta.1</code> desktop, WebAssembly, STM32, browser-load, UI, and C++ checks have passed; the dedicated real-hardware smoke test from <code>v0.4.5</code> is still pending.</li>
             </ul>
           </article>
         </div>
@@ -330,6 +344,7 @@
             <ul>
               <li>Transition from <code>v0.3.2-vinx.*</code> lineage to standalone semantic versioning (<code>v0.x.y</code>) starting from the first standalone Vinx release.</li>
               <li>Previous lineage retained for documentation/reference only.</li>
+              <li><code>v0.4.6-beta.1</code> introduces project format <code>Version41</code> for persisted MIDI input filters. Older <code>Version40</code> projects load with all filters enabled; users should retain an older project copy before saving if they may downgrade to <code>v0.4.5</code>.</li>
             </ul>
           </article>
         </div>

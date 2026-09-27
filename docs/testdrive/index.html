@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Vinx PER|FORMER Web Simulator | Browser Test Drive</title>
-  <meta name="description" content="Run the Vinx Scorza PER|FORMER firmware browser simulator and test the current sequencing workflow online.">
+  <meta name="description" content="Run the Vinx Scorza PER|FORMER 0.4.6 beta browser simulator and test the current sequencing workflow online.">
   <link rel="canonical" href="https://vinxscorza.github.io/performer/testdrive/">
   <meta name="theme-color" content="#252525">
   <meta name="robots" content="index,follow">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Vinx PER|FORMER">
   <meta property="og:title" content="Vinx PER|FORMER Web Simulator | Browser Test Drive">
-  <meta property="og:description" content="Run the Vinx Scorza PER|FORMER firmware browser simulator and test the current sequencing workflow online.">
+  <meta property="og:description" content="Run the Vinx Scorza PER|FORMER 0.4.6 beta browser simulator and test the current sequencing workflow online.">
   <meta property="og:url" content="https://vinxscorza.github.io/performer/testdrive/">
   <meta property="og:image" content="https://vinxscorza.github.io/performer/assets/vinx-performer-social.png">
   <meta property="og:image:secure_url" content="https://vinxscorza.github.io/performer/assets/vinx-performer-social.png">
@@ -21,7 +21,7 @@
   <meta property="og:image:alt" content="Vinx PER|FORMER firmware social preview">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Vinx PER|FORMER Web Simulator | Browser Test Drive">
-  <meta name="twitter:description" content="Run the Vinx Scorza PER|FORMER firmware browser simulator and test the current sequencing workflow online.">
+  <meta name="twitter:description" content="Run the Vinx Scorza PER|FORMER 0.4.6 beta browser simulator and test the current sequencing workflow online.">
   <meta name="twitter:image" content="https://vinxscorza.github.io/performer/assets/vinx-performer-social.png">
   <meta name="twitter:image:alt" content="Vinx PER|FORMER firmware social preview">
   <link rel="stylesheet" href="../style.css">
@@ -52,6 +52,10 @@
     <main id="main_content" class="inner">
       <section>
         <div class="simulator-shell">
+          <p>Simulator firmware: <strong>0.4.6 — beta</strong>. The latest stable firmware release remains 0.4.5.</p>
+          <div class="notice warning">
+            <p><strong>Hardware project warning:</strong> saving a project with the 0.4.6 beta upgrades it to <code>Version41</code>. Firmware 0.4.5 and earlier cannot reopen that saved file. Back up the module's SD card or keep a separate project copy before testing the beta on hardware.</p>
+          </div>
           <iframe
             class="simulator-frame"
             src="./sim/sequencer.html"

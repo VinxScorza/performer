@@ -90,6 +90,13 @@ void TopPage::keyPress(KeyPressEvent &event) {
     auto &pages = _manager.pages();
     const auto &key = event.key();
 
+    if (key.isTrackSelect() && event.count() == 2) {
+        _project.setSelectedTrackIndex(key.trackSelect());
+        setMode(Mode::SequenceEdit);
+        event.consume();
+        return;
+    }
+
     if (key.isTrackSelect()) {
         _project.setSelectedTrackIndex(key.trackSelect());
         if (_mode == Mode::Project ||

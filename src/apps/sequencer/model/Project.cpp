@@ -12,6 +12,37 @@ Project::Project() :
     clear();
 }
 
+void Project::editTrackFillDivisorOverride(int trackIndex, int value, bool shift) {
+    if (trackIndex < 0 || trackIndex >= CONFIG_TRACK_COUNT) {
+        return;
+    }
+
+    auto &track = _tracks[trackIndex];
+    auto &trackState = _playState.trackState(trackIndex);
+    int patternIndex = trackState.pattern();
+
+    switch (track.trackMode()) {
+    case Track::TrackMode::Note:
+        trackState.editFillDivisorOverride(track.noteTrack().sequence(patternIndex).divisor(), value, shift);
+        break;
+    case Track::TrackMode::Curve:
+        trackState.editFillDivisorOverride(track.curveTrack().sequence(patternIndex).divisor(), value, shift);
+        break;
+    case Track::TrackMode::Stochastic:
+        trackState.editFillDivisorOverride(track.stochasticTrack().sequence(patternIndex).divisor(), value, shift);
+        break;
+    case Track::TrackMode::Logic:
+        trackState.editFillDivisorOverride(track.logicTrack().sequence(patternIndex).divisor(), value, shift);
+        break;
+    case Track::TrackMode::Arp:
+        trackState.editFillDivisorOverride(track.arpTrack().sequence(patternIndex).divisor(), value, shift);
+        break;
+    case Track::TrackMode::MidiCv:
+    case Track::TrackMode::Last:
+        break;
+    }
+}
+
 void Project::writeRouted(Routing::Target target, int intValue, float floatValue) {
     switch (target) {
     case Routing::Target::Tempo:
@@ -38,6 +69,7 @@ void Project::clear() {
     setMonitorMode(Types::MonitorMode::Always);
     setRecordMode(Types::RecordMode::Overdub);
     setMidiInputMode(Types::MidiInputMode::All);
+    _midiInputFilter = MidiInputFilterAll;
     setMidiIntegrationMode(Types::MidiIntegrationMode::None);
     setMidiProgramOffset(0);
     setCvGateInput(Types::CvGateInput::Off);
@@ -220,6 +252,7 @@ void Project::write(VersionedSerializedWriter &writer) const {
     writer.write(_recordMode);
     writer.write(_midiInputMode);
     _midiInputSource.write(writer);
+    writer.write(_midiInputFilter);
     writer.write(_midiIntegrationMode);
     writer.write(_midiProgramOffset);
     writer.write(_cvGateInput);
@@ -266,6 +299,10 @@ bool Project::read(VersionedSerializedReader &reader) {
     if (reader.dataVersion() >= ProjectVersion::Version29) {
         reader.read(_midiInputMode);
         _midiInputSource.read(reader);
+    }
+    if (reader.dataVersion() >= ProjectVersion::Version41) {
+        reader.read(_midiInputFilter);
+        _midiInputFilter &= MidiInputFilterAll;
     }
     if (reader.dataVersion() >= ProjectVersion::Version32) {
         reader.skip<bool>(ProjectVersion::Version32, ProjectVersion::Version38);

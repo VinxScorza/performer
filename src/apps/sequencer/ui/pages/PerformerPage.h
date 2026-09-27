@@ -23,7 +23,10 @@ public:
 
 private:
     void updateFills();
-    bool isKeySelected();
+    bool fillAmountEditTrackSelected(int trackIndex) const;
+    bool fillDivisorEditTrackSelected(int trackIndex) const;
+    bool hasFillAmountEditSelection() const;
+    bool hasFillEditSelection() const;
 
     bool _modal = false;
     bool _latching = false;

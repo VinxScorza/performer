@@ -33,6 +33,17 @@ public:
     typedef std::array<uint8_t, CONFIG_CHANNEL_COUNT> CvOutputTrackArray;
     typedef std::array<uint8_t, CONFIG_CHANNEL_COUNT> GateOutputArray;
 
+    enum class MidiInputEvent : uint8_t {
+        Notes,
+        ControlChange,
+        ProgramChange,
+        PitchBend,
+        Aftertouch,
+        Last
+    };
+
+    static constexpr uint8_t MidiInputFilterAll = (1 << int(MidiInputEvent::Last)) - 1;
+
     Project();
 
     //----------------------------------------
@@ -260,6 +271,28 @@ public:
     const MidiSourceConfig &midiInputSource() const { return _midiInputSource; }
           MidiSourceConfig &midiInputSource()       { return _midiInputSource; }
 
+    bool midiInputEventEnabled(MidiInputEvent event) const {
+        return (_midiInputFilter & midiInputEventMask(event)) != 0;
+    }
+
+    void setMidiInputEventEnabled(MidiInputEvent event, bool enabled) {
+        uint8_t mask = midiInputEventMask(event);
+        if (enabled) {
+            _midiInputFilter |= mask;
+        } else {
+            _midiInputFilter &= ~mask;
+        }
+        _midiInputFilter &= MidiInputFilterAll;
+    }
+
+    void editMidiInputEventEnabled(MidiInputEvent event, int value, bool shift) {
+        setMidiInputEventEnabled(event, value > 0);
+    }
+
+    void printMidiInputEventEnabled(MidiInputEvent event, StringBuilder &str) const {
+        ModelUtils::printYesNo(str, midiInputEventEnabled(event));
+    }
+
     // midiIntegrationMode
 
     void editMidiIntegrationMode(int value, bool shift) {
@@ -344,6 +377,8 @@ public:
 
     const Track &track(int index) const { return _tracks[index]; }
           Track &track(int index)       { return _tracks[index]; }
+
+    void editTrackFillDivisorOverride(int trackIndex, int value, bool shift = false);
 
     // cvOutputTrack
 
@@ -681,6 +716,7 @@ private:
     Types::MonitorMode _monitorMode = Types::MonitorMode::Always;
     Types::MidiInputMode _midiInputMode = Types::MidiInputMode::All;
     MidiSourceConfig _midiInputSource;
+    uint8_t _midiInputFilter = MidiInputFilterAll;
     Types::MidiIntegrationMode _midiIntegrationMode = Types::MidiIntegrationMode::None;
     uint8_t _midiProgramOffset = 0;
     Types::CvGateInput _cvGateInput = Types::CvGateInput::Off;
@@ -712,4 +748,8 @@ private:
     ArpSequence::Layer _selectedArpSequenceLayer = ArpSequence::Layer(0);
 
     Observable<Event, 2> _observable;
+
+    static constexpr uint8_t midiInputEventMask(MidiInputEvent event) {
+        return event == MidiInputEvent::Last ? 0 : (1 << int(event));
+    }
 };

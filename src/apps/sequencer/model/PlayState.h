@@ -45,6 +45,25 @@ public:
             str("%d%%", fillAmount());
         }
 
+        // fillDivisorOverride
+
+        int fillDivisorOverride() const { return _fillDivisorOverride; }
+        void setFillDivisorOverride(int fillDivisorOverride) {
+            _fillDivisorOverride = ModelUtils::clampDivisor(fillDivisorOverride);
+        }
+
+        void clearFillDivisorOverride() {
+            _fillDivisorOverride = 0;
+        }
+
+        int playbackDivisor(int divisor) const {
+            return fill() && _fillDivisorOverride ? _fillDivisorOverride : divisor;
+        }
+
+        void editFillDivisorOverride(int baseDivisor, int value, bool shift) {
+            setFillDivisorOverride(ModelUtils::adjustedByDivisor(playbackDivisor(baseDivisor), value, shift));
+        }
+
         //----------------------------------------
         // State
         //----------------------------------------
@@ -139,6 +158,7 @@ public:
                     _state &= ~FillHold;
                 }
             } else {
+                clearFillDivisorOverride();
                 if (!(_state & FillHold)) {
                     _state &= ~Fill;
                 }
@@ -157,6 +177,7 @@ public:
         uint8_t _pattern;
         uint8_t _requestedPattern;
         uint8_t _fillAmount;
+        uint16_t _fillDivisorOverride;
 
         friend class PlayState;
         friend class Engine;

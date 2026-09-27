@@ -19,7 +19,7 @@ project(sequencer)
 enable_testing()
 
 # Fix per pybind11
-if(NOT CMAKE_SYSTEM_NAME MATCHES "Emscripten")
+if(PLATFORM STREQUAL "sim" AND NOT CMAKE_SYSTEM_NAME MATCHES "Emscripten")
     set(PYBIND11_FINDPYTHON ON)
     find_package(Python REQUIRED COMPONENTS Interpreter Development)
 endif()

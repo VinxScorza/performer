@@ -112,6 +112,12 @@ make setup_sim</code></pre>
 cd performer
 vagrant up
 vagrant ssh</code></pre>
+        <p>
+          The current Vagrant provisioning installs CMake <code>3.26.4</code> and the required Python 3 packages, verifies the official CMake installer SHA-256 checksum, and stops immediately when a setup command fails. This path was tested from a fresh VM through <code>make setup_stm32</code>, a complete sequencer build, and generation of <code>UPDATE.DAT</code>.
+        </p>
+        <p>
+          The VM exposes two CPUs, but unrestricted <code>make -j</code> can still start more than two jobs and consume too much memory. Use <code>make -j2</code> as the normal VM build command; use <code>make -j1</code> on tighter hosts. If build tools report clock-skew warnings, check that host and guest date, time, and time zone agree before rebuilding from a clean tree.
+        </p>
       </section>
 
       <section>
@@ -129,6 +135,9 @@ make -j
 </code></pre>
         <p>
           The sequencer build generates an <code>UPDATE.DAT</code> file suitable for firmware updates through the bootloader.
+        </p>
+        <p>
+          Inside the Vagrant VM, prefer <code>make -j2</code> to keep parallelism within the available memory.
         </p>
         <p>
           For full hardware assembly, flashing, and sourcing notes, refer to the original build guide:

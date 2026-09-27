@@ -10,6 +10,7 @@ void PlayState::TrackState::clear() {
     _pattern = 0;
     _requestedPattern = 0;
     _fillAmount = 100;
+    _fillDivisorOverride = 0;
 }
 
 void PlayState::TrackState::write(VersionedSerializedWriter &writer) const {
@@ -27,6 +28,7 @@ void PlayState::TrackState::read(VersionedSerializedReader &reader) {
     setMute(muteValue);
     reader.read(_pattern);
     reader.read(_fillAmount, ProjectVersion::Version12);
+    _fillDivisorOverride = 0;
 }
 
 // PlayState::SongState

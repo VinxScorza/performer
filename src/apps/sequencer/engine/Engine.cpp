@@ -32,6 +32,35 @@ Types::GateOutputMode trackGateOutputMode(const Track &track) {
     return Types::GateOutputMode::Gate;
 }
 
+Project::MidiInputEvent midiInputEventForMessage(const MidiMessage &message) {
+    if (message.isNoteOn() || message.isNoteOff()) {
+        return Project::MidiInputEvent::Notes;
+    }
+    if (message.isControlChange()) {
+        return Project::MidiInputEvent::ControlChange;
+    }
+    if (message.isProgramChange()) {
+        return Project::MidiInputEvent::ProgramChange;
+    }
+    if (message.isPitchBend()) {
+        return Project::MidiInputEvent::PitchBend;
+    }
+    if (message.isKeyPressure() || message.isChannelPressure()) {
+        return Project::MidiInputEvent::Aftertouch;
+    }
+    return Project::MidiInputEvent::Last;
+}
+
+bool midiInputFilterAllows(const Project &project, const MidiMessage &message) {
+    // Always accept Note Off so disabling the Notes filter while a key is held
+    // cannot leave a monitored or routed note active.
+    if (message.isNoteOff()) {
+        return true;
+    }
+    auto event = midiInputEventForMessage(message);
+    return event == Project::MidiInputEvent::Last || project.midiInputEventEnabled(event);
+}
+
 }
 
 Engine::Engine(Model &model, ClockTimer &clockTimer, Adc &adc, Dac &dac, Dio &dio, GateOutput &gateOutput, Midi &midi, UsbMidi &usbMidi) :
@@ -871,6 +900,10 @@ void Engine::receiveMidi(MidiPort port, uint8_t cable, const MidiMessage &messag
 
     // discard all messages not from cable 0
     if (cable != 0) {
+        return;
+    }
+
+    if (port != MidiPort::CvGate && !midiInputFilterAllows(_project, message)) {
         return;
     }
 

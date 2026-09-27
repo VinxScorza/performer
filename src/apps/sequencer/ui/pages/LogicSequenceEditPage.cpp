@@ -11,6 +11,7 @@
 #include "engine/SequenceUtils.h"
 #include "engine/generators/ChaosEntropyGenerator.h"
 
+#include "model/ModelUtils.h"
 #include "model/Scale.h"
 #include "model/UserSettings.h"
 
@@ -1211,17 +1212,35 @@ void LogicSequenceEditPage::initSequence() {
 }
 
 void LogicSequenceEditPage::copySequence() {
+    const bool copiedSelection = _stepSelection.any();
     _model.clipBoard().copyLogicSequenceSteps(_project.selectedLogicSequence(), _stepSelection.selected());
+    if (copiedSelection) {
+        _stepSelection.clear();
+    }
     showMessage("STEPS COPIED");
 }
 
 void LogicSequenceEditPage::pasteSequence() {
+    if (_model.clipBoard().pasteLogicSequenceStepsRequiresDestination(_stepSelection.selected())) {
+        showMessage("SELECT DEST");
+        return;
+    }
     _model.clipBoard().pasteLogicSequenceSteps(_project.selectedLogicSequence(), _stepSelection.selected());
     showMessage("STEPS PASTED");
 }
 
 void LogicSequenceEditPage::duplicateSequence() {
-    _project.selectedLogicSequence().duplicateSteps();
+    auto &sequence = _project.selectedLogicSequence();
+    if (_stepSelection.any()) {
+        auto duplicated = ModelUtils::duplicateSelectedSequenceSteps(sequence, _stepSelection.selected());
+        if (duplicated.none()) {
+            showMessage("NO ROOM");
+            return;
+        }
+        _stepSelection.setPersisted(duplicated);
+    } else {
+        sequence.duplicateSteps();
+    }
     showMessage("STEPS DUPLICATED");
 }
 

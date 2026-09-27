@@ -3,6 +3,8 @@
   const invertTheme = "invert";
   const stickyOffset = 10;
   const vinxFirmwareVersion = "v0.4.5";
+  const vinxBetaVersion = "v0.4.6-beta.1";
+  const vinxBetaDisplayVersion = "0.4.6";
   let stickyButtons = [];
 
   function applyTheme(theme) {
@@ -71,6 +73,12 @@
     document.querySelectorAll("[data-vinx-version]").forEach((node) => {
       node.textContent = vinxFirmwareVersion;
     });
+    document.querySelectorAll("[data-vinx-beta-version]").forEach((node) => {
+      node.textContent = vinxBetaVersion;
+    });
+    document.querySelectorAll("[data-vinx-beta-display-version]").forEach((node) => {
+      node.textContent = vinxBetaDisplayVersion;
+    });
   }
 
   function injectVersionBanner() {
@@ -81,13 +89,18 @@
 
     const banner = document.createElement("section");
     banner.className = "site-version-banner";
-    banner.setAttribute("aria-label", "Firmware line");
+    banner.setAttribute("aria-label", "Firmware releases");
 
     const line = document.createElement("p");
     line.className = "site-version-banner-text";
-    line.innerHTML = "Current firmware line: <code data-vinx-version></code> \u2022 <a href=\"https://github.com/VinxScorza/performer/releases\" target=\"_blank\" rel=\"noopener noreferrer\">Releases</a>";
+    line.innerHTML = "Stable firmware: <strong><code data-vinx-version></code></strong> \u2022 Beta: <strong><code data-vinx-beta-version></code></strong> (module display: <code data-vinx-beta-display-version></code>) \u2022 <a href=\"https://github.com/VinxScorza/performer/releases\" target=\"_blank\" rel=\"noopener noreferrer\">Releases</a>";
+
+    const warning = document.createElement("p");
+    warning.className = "site-version-banner-warning";
+    warning.innerHTML = "<strong>Beta project warning:</strong> saving a project in 0.4.6 upgrades it to Version41. Firmware 0.4.5 and earlier cannot reopen that saved file. Back up the SD card or keep a separate project copy before saving with the beta.";
 
     banner.appendChild(line);
+    banner.appendChild(warning);
     mainContent.insertBefore(banner, mainContent.firstChild);
   }
 

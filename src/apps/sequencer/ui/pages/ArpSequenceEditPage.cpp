@@ -9,6 +9,7 @@
 #include "ui/painters/WindowPainter.h"
 
 #include "engine/generators/ChaosEntropyGenerator.h"
+#include "model/ModelUtils.h"
 #include "model/Scale.h"
 #include "model/UserSettings.h"
 
@@ -1111,17 +1112,35 @@ bool ArpSequenceEditPage::initLayerToArpDefaults() {
 }
 
 void ArpSequenceEditPage::copySequence() {
+    const bool copiedSelection = _stepSelection.any();
     _model.clipBoard().copyArpSequenceSteps(_project.selectedArpSequence(), _stepSelection.selected());
+    if (copiedSelection) {
+        _stepSelection.clear();
+    }
     showMessage("STEPS COPIED");
 }
 
 void ArpSequenceEditPage::pasteSequence() {
+    if (_model.clipBoard().pasteArpSequenceStepsRequiresDestination(_stepSelection.selected())) {
+        showMessage("SELECT DEST");
+        return;
+    }
     _model.clipBoard().pasteArpSequenceSteps(_project.selectedArpSequence(), _stepSelection.selected());
     showMessage("STEPS PASTED");
 }
 
 void ArpSequenceEditPage::duplicateSequence() {
-    _project.selectedArpSequence().duplicateSteps();
+    auto &sequence = _project.selectedArpSequence();
+    if (_stepSelection.any()) {
+        auto duplicated = ModelUtils::duplicateSelectedSequenceSteps(sequence, _stepSelection.selected());
+        if (duplicated.none()) {
+            showMessage("NO ROOM");
+            return;
+        }
+        _stepSelection.setPersisted(duplicated);
+    } else {
+        sequence.duplicateSteps();
+    }
     showMessage("STEPS DUPLICATED");
 }
 

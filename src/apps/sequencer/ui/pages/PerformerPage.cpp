@@ -84,7 +84,7 @@ void PerformerPage::draw(Canvas &canvas) {
         SequencePainter::drawSequenceProgress(canvas, x, y + h + 2, w, 2, trackEngine.sequenceProgress());
 
         // draw fill & fill amount amount
-        bool pressed = pageKeyState()[MatrixMap::fromStep(trackIndex)];
+        bool pressed = fillAmountEditTrackSelected(trackIndex) || fillDivisorEditTrackSelected(trackIndex);
         canvas.setColor(pressed ? Color::Medium : Color::Low);
         canvas.fillRect(x, y + h + 6, w, 4);
         canvas.setColor(pressed ? Color::Bright : Color::Medium);
@@ -115,7 +115,7 @@ void PerformerPage::updateLeds(Leds &leds) {
 void PerformerPage::keyDown(KeyEvent &event) {
     const auto &key = event.key();
 
-    if (key.isEncoder() && !isKeySelected()) {
+    if (key.isEncoder() && !hasFillEditSelection()) {
         _project.setTempo(_projectTempo);
     }
 
@@ -223,6 +223,10 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
     }
 
     if (key.isTrackSelect()) {
+        if (pageKeyState()[MatrixMap::fromFunction(int(Function::Fill))]) {
+            event.consume();
+            return;
+        }
         if (key.shiftModifier()) {
             playState.toggleSoloTrack(key.track(), executeType);
         } else {
@@ -234,15 +238,23 @@ void PerformerPage::keyPress(KeyPressEvent &event) {
 
 void PerformerPage::encoder(EncoderEvent &event) {
 
-    if (!isKeySelected()) {
+    if (!hasFillEditSelection()) {
         _project.setTempo(_project.tempo()+event.value());
-    } else {    
+    } else if (hasFillAmountEditSelection()) {
         for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
-            if (pageKeyState()[MatrixMap::fromStep(trackIndex)]) {
+            if (fillAmountEditTrackSelected(trackIndex)) {
                 _project.playState().trackState(trackIndex).editFillAmount(event.value(), false);
             }
         }
+    } else {
+        for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+            if (fillDivisorEditTrackSelected(trackIndex)) {
+                _project.editTrackFillDivisorOverride(trackIndex, event.value());
+            }
+        }
     }
+
+    event.consume();
 }
 
 void PerformerPage::updateFills() {
@@ -256,9 +268,46 @@ void PerformerPage::updateFills() {
     }
 }
 
-bool PerformerPage::isKeySelected() {
+bool PerformerPage::fillAmountEditTrackSelected(int trackIndex) const {
+    return pageKeyState()[MatrixMap::fromStep(trackIndex)];
+}
+
+bool PerformerPage::fillDivisorEditTrackSelected(int trackIndex) const {
+    const bool directFillTrackSelected = pageKeyState()[MatrixMap::fromStep(8 + trackIndex)];
+    const bool fillPressed = pageKeyState()[MatrixMap::fromFunction(int(Function::Fill))];
+    const bool fillTrackSelected = fillPressed && pageKeyState()[MatrixMap::fromTrack(trackIndex)];
+
+    if (directFillTrackSelected || fillTrackSelected) {
+        return true;
+    }
+
+    if (!fillPressed) {
+        return false;
+    }
+
+    for (int index = 0; index < 8; ++index) {
+        if (pageKeyState()[MatrixMap::fromStep(index)] ||
+            pageKeyState()[MatrixMap::fromStep(8 + index)] ||
+            pageKeyState()[MatrixMap::fromTrack(index)]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool PerformerPage::hasFillAmountEditSelection() const {
     for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
-        if (pageKeyState()[MatrixMap::fromStep(trackIndex)]) {
+        if (fillAmountEditTrackSelected(trackIndex)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool PerformerPage::hasFillEditSelection() const {
+    for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
+        if (fillAmountEditTrackSelected(trackIndex) || fillDivisorEditTrackSelected(trackIndex)) {
             return true;
         }
     }

@@ -109,6 +109,12 @@ public:
         _first = 0;
     }
 
+    void setPersisted(const std::bitset<N> &selected) {
+        _selected = selected;
+        _mode = selected.any() ? Mode::Persist : Mode::Immediate;
+        _first = firstSetIndex();
+    }
+
     void shiftLeft(int firstStep = 0, int lastStep = N) {
         rotateL(_selected, 1, firstStep, lastStep);
     }

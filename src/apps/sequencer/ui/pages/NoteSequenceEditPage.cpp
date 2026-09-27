@@ -5,6 +5,7 @@
 
 #include "model/NoteSequence.h"
 #include "model/FileManager.h"
+#include "model/ModelUtils.h"
 #include "ui/LedPainter.h"
 #include "ui/painters/SequencePainter.h"
 #include "ui/painters/WindowPainter.h"
@@ -1143,17 +1144,35 @@ void NoteSequenceEditPage::initSequence() {
 }
 
 void NoteSequenceEditPage::copySequence() {
+    const bool copiedSelection = _stepSelection.any();
     _model.clipBoard().copyNoteSequenceSteps(_project.selectedNoteSequence(), _stepSelection.selected());
+    if (copiedSelection) {
+        _stepSelection.clear();
+    }
     showMessage("STEPS COPIED");
 }
 
 void NoteSequenceEditPage::pasteSequence() {
+    if (_model.clipBoard().pasteNoteSequenceStepsRequiresDestination(_stepSelection.selected())) {
+        showMessage("SELECT DEST");
+        return;
+    }
     _model.clipBoard().pasteNoteSequenceSteps(_project.selectedNoteSequence(), _stepSelection.selected());
     showMessage("STEPS PASTED");
 }
 
 void NoteSequenceEditPage::duplicateSequence() {
-    _project.selectedNoteSequence().duplicateSteps();
+    auto &sequence = _project.selectedNoteSequence();
+    if (_stepSelection.any()) {
+        auto duplicated = ModelUtils::duplicateSelectedSequenceSteps(sequence, _stepSelection.selected());
+        if (duplicated.none()) {
+            showMessage("NO ROOM");
+            return;
+        }
+        _stepSelection.setPersisted(duplicated);
+    } else {
+        sequence.duplicateSteps();
+    }
     showMessage("STEPS DUPLICATED");
 }
 

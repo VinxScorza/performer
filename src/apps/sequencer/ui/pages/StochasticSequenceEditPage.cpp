@@ -9,6 +9,7 @@
 #include "ui/painters/WindowPainter.h"
 
 #include "engine/generators/ChaosEntropyGenerator.h"
+#include "model/ModelUtils.h"
 #include "model/Scale.h"
 #include "model/UserSettings.h"
 
@@ -1031,7 +1032,7 @@ void StochasticSequenceEditPage::initSequence() {
 }
 
 void StochasticSequenceEditPage::copySequence() {
-    
+    const bool copiedSelection = _stepSelection.any();
 
     if (_project.selectedStochasticSequence().useLoop()) {
         auto lockedSteps = _engine.selectedTrackEngine().as<StochasticEngine>().lockedSteps();
@@ -1062,15 +1063,32 @@ void StochasticSequenceEditPage::copySequence() {
         _model.clipBoard().copyStochasticSequenceSteps(_project.selectedStochasticSequence(), _stepSelection.selected());
         showMessage("STEPS COPIED");
     }
+    if (copiedSelection) {
+        _stepSelection.clear();
+    }
 }
 
 void StochasticSequenceEditPage::pasteSequence() {
+    if (_model.clipBoard().pasteStochasticSequenceStepsRequiresDestination(_stepSelection.selected())) {
+        showMessage("SELECT DEST");
+        return;
+    }
     _model.clipBoard().pasteStochasticSequenceSteps(_project.selectedStochasticSequence(), _stepSelection.selected());
     showMessage("STEPS PASTED");
 }
 
 void StochasticSequenceEditPage::duplicateSequence() {
-    _project.selectedStochasticSequence().duplicateSteps();
+    auto &sequence = _project.selectedStochasticSequence();
+    if (_stepSelection.any()) {
+        auto duplicated = ModelUtils::duplicateSelectedSequenceSteps(sequence, _stepSelection.selected());
+        if (duplicated.none()) {
+            showMessage("NO ROOM");
+            return;
+        }
+        _stepSelection.setPersisted(duplicated);
+    } else {
+        sequence.duplicateSteps();
+    }
     showMessage("STEPS DUPLICATED");
 }
 

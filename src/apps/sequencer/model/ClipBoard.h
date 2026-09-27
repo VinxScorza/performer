@@ -60,14 +60,19 @@ public:
     bool canPasteTrack() const;
     bool canPasteNoteSequence() const;
     bool canPasteNoteSequenceSteps() const;
+    bool pasteNoteSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const;
     bool canPasteCurveSequence() const;
     bool canPasteCurveSequenceSteps() const;
+    bool pasteCurveSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const;
     bool canPasteStochasticSequence() const;
     bool canPasteStochasticSequenceSteps() const;
+    bool pasteStochasticSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const;
     bool canPasteLogicSequence() const;
     bool canPasteLogicSequenceSteps() const;
+    bool pasteLogicSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const;
     bool canPasteArpSequence() const;
     bool canPasteArpSequenceSteps() const;    
+    bool pasteArpSequenceStepsRequiresDestination(const SelectedSteps &selectedSteps) const;
     bool canPastePattern() const;
     bool canPasteUserScale() const;
 

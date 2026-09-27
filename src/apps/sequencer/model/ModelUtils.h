@@ -156,6 +156,53 @@ static void duplicateSteps(std::array<Step, N> &steps, int firstStep, int lastSt
 }
 
 template<typename Step, size_t N>
+static std::bitset<N> duplicateSelectedSteps(std::array<Step, N> &steps, const std::bitset<N> &selected) {
+    std::bitset<N> duplicated;
+    if (selected.none()) {
+        return duplicated;
+    }
+
+    int first = -1;
+    int last = -1;
+    for (int i = 0; i < int(N); ++i) {
+        if (selected[i]) {
+            if (first < 0) {
+                first = i;
+            }
+            last = i;
+        }
+    }
+
+    const int span = last - first + 1;
+    for (int src = first; src <= last; ++src) {
+        if (!selected[src]) {
+            continue;
+        }
+        const int dst = src + span;
+        if (dst < int(N)) {
+            steps[dst] = steps[src];
+            duplicated.set(dst);
+        }
+    }
+    return duplicated;
+}
+
+template<typename Sequence, size_t N>
+static std::bitset<N> duplicateSelectedSequenceSteps(Sequence &sequence, const std::bitset<N> &selected) {
+    auto duplicated = duplicateSelectedSteps(sequence.steps(), selected);
+    int lastDuplicated = -1;
+    for (int i = 0; i < int(duplicated.size()); ++i) {
+        if (duplicated[i]) {
+            lastDuplicated = i;
+        }
+    }
+    if (lastDuplicated > sequence.lastStep()) {
+        sequence.setLastStep(lastDuplicated);
+    }
+    return duplicated;
+}
+
+template<typename Step, size_t N>
 static void copySteps(
     const std::array<Step, N> &src, const std::bitset<N> &srcSelected,
     std::array<Step, N> &dst, const std::bitset<N> &dstSelected

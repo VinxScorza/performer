@@ -481,7 +481,7 @@ public:
         }
 
         void editMin(int value, bool shift) {
-            setMin(min() + value * targetValueStep(_target, shift));
+            setMin(adjustTargetValue(_target, min(), value, shift));
         }
 
         void printMin(StringBuilder &str) const {
@@ -499,7 +499,7 @@ public:
         }
 
         void editMax(int value, bool shift) {
-            setMax(max() + value * targetValueStep(_target, shift));
+            setMax(adjustTargetValue(_target, max(), value, shift));
         }
 
         void printMax(StringBuilder &str) const {
@@ -602,6 +602,7 @@ private:
     static float denormalizeTargetValue(Target target, float normalized);
     static std::pair<float, float> normalizedDefaultRange(Target target);
     static float targetValueStep(Target target, bool shift);
+    static float adjustTargetValue(Target target, float normalized, int value, bool shift);
     static void printTargetValue(Target target, float normalized, StringBuilder &str);
 
     Project &_project;

@@ -169,6 +169,15 @@
           This manual is the main practical reference for the Vinx Scorza fork. It explains how to use the firmware, how the main workflows behave, and where the current validation limits are.
         </p>
         <p>
+          This revision describes <strong><code>v0.4.6-beta.1</code></strong>. The module displays firmware version <code>0.4.6</code>; <code>v0.4.5</code> remains the stable release.
+        </p>
+        <div class="notice warning">
+          <p><strong>Important project compatibility warning</strong></p>
+          <p>
+            The 0.4.6 beta can open projects saved by 0.4.4 and 0.4.5, but saving them upgrades the file to <code>Version41</code>. Firmware 0.4.5 and earlier cannot reopen that upgraded file. <strong>Back up the SD card or keep a separate copy of every project before opening and saving it with the beta.</strong>
+          </p>
+        </div>
+        <p>
           The <a href="../index.html">Home</a> page gives the quick overview, and <a href="../features/index.html">Features</a> gives the curated feature map. This manual is where operational detail belongs: page behavior, generator semantics, routing targets, Launchpad workflows, calibration, firmware update procedure, and practical notes.
         </p>
         <p>
@@ -328,6 +337,8 @@
             <tr><td style="text-align: left"><code>PAGE + PLAY</code></td><td style="text-align: left">Global</td><td style="text-align: left">Toggle record mode.</td></tr>
             <tr><td style="text-align: left"><code>SHIFT + PLAY</code></td><td style="text-align: left">Global</td><td style="text-align: left">Pause/continue or restart clock depending on Clock page <code>Shift Mode</code>.</td></tr>
             <tr><td style="text-align: left"><code>PAGE</code> + page key</td><td style="text-align: left">Global</td><td style="text-align: left">Jump directly to target page (Clock, Pattern, Performer, Project, Layout, Routing, MIDI Output, User Scale, Steps, Sequence, Track, Song, Monitor, System, Overview).</td></tr>
+            <tr><td style="text-align: left"><code>T1..T8</code></td><td style="text-align: left">Project-like pages</td><td style="text-align: left">Select the track and jump directly to <code>Steps</code> from Project, Layout, Routing, MIDI Output, User Scale, or Clock.</td></tr>
+            <tr><td style="text-align: left">Double-click <code>T1..T8</code></td><td style="text-align: left">Where not reserved by the active page</td><td style="text-align: left">Select the track and jump directly to <code>Steps</code> / <code>Sequence Edit</code>.</td></tr>
             <tr><td style="text-align: left">Double-click <code>F1..F5</code></td><td style="text-align: left">Where supported</td><td style="text-align: left">Quick page access: Project, Layout, Routing, MIDI Output, User Scale.</td></tr>
             <tr><td style="text-align: left"><code>PAGE + SHIFT + F5</code></td><td style="text-align: left">Steps editors</td><td style="text-align: left">Open machine <code>GEN</code> selector.</td></tr>
             <tr><td style="text-align: left"><code>PAGE + S7</code></td><td style="text-align: left">Step editors</td><td style="text-align: left"><code>Undo/Redo</code> (1-level) on <code>Note</code>/<code>Curve</code>/<code>Logic</code>; on <code>Stochastic</code> it toggles loop behavior.</td></tr>
@@ -505,6 +516,9 @@
         <p>
           The <em>Note</em> layer defines the probability that an enabled note is chosen. It also carries slide, octave, and octave-probability controls. Stochastic note slots are chromatic internally, but selected musical scales can mask that source material in the current firmware.
         </p>
+        <p>
+          In firmware <code>0.4.6</code>, the Stochastic note pool is rebuilt consistently when a project is loaded. With a non-chromatic scale, legacy chromatic slots outside the active scale are masked or translated instead of shifting the saved note pool after reload. The related Arpeggiator pitch-slot path follows the same scale-aware rule.
+        </p>
 
         <h3 id="concepts-logic-track">Logic Track</h3>
         <p>
@@ -680,6 +694,9 @@
         <p>
           There are 8 track buttons: <code>T1</code> to <code>T8</code>. These buttons are generally used to select the active track, but they are also used to select pages in combination with <code>PAGE</code> and to trigger additional functions depending on the active page.
         </p>
+        <p>
+          On Project-like pages (<em>Project</em>, <em>Layout</em>, <em>Routing</em>, <em>MIDI Output</em>, <em>User Scale</em>, and <em>Clock</em>), pressing <code>T1</code> to <code>T8</code> selects that track and jumps directly to <em>Steps</em>. Double-clicking a track button is a broader shortcut to select that track and enter <em>Steps</em> / <em>Sequence Edit</em>, except on pages where track buttons are reserved for page-specific performance actions.
+        </p>
         <h4>Step Buttons</h4>
         <p>
           There are 16 step buttons: <code>S1</code> to <code>S16</code>. These buttons are generally used to select steps in a sequence, but they are also used to select pages in combination with <code>PAGE</code> and to trigger additional context-specific functions.
@@ -833,6 +850,11 @@
             <tr><td style="text-align: left">Monitor Mode</td><td style="text-align: left">Always, Stopped, Off</td><td style="text-align: left">Controls live monitoring behavior.</td></tr>
             <tr><td style="text-align: left">Record Mode</td><td style="text-align: left">Overdub, Overwrite, Step Record</td><td style="text-align: left">Selects the recording mode.</td></tr>
             <tr><td style="text-align: left">MIDI Input</td><td style="text-align: left">Off, All, MIDI, USB</td><td style="text-align: left">Source used for monitoring and recording.</td></tr>
+            <tr><td style="text-align: left">MIDI Notes</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Allow or block new MIDI Note On messages. Note Off remains accepted so a note that was already active can always be released.</td></tr>
+            <tr><td style="text-align: left">MIDI CC</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Allow or block incoming MIDI Control Change messages.</td></tr>
+            <tr><td style="text-align: left">MIDI Pgm</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Allow or block incoming MIDI Program Change messages.</td></tr>
+            <tr><td style="text-align: left">MIDI Bend</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Allow or block incoming MIDI Pitch Bend messages.</td></tr>
+            <tr><td style="text-align: left">MIDI After</td><td style="text-align: left">Yes, No</td><td style="text-align: left">Allow or block incoming key and channel aftertouch messages.</td></tr>
             <tr><td style="text-align: left">MIDI Integration</td><td style="text-align: left">Off, Program Changes, Malekko</td><td style="text-align: left">Program change or bus integration mode.</td></tr>
             <tr><td style="text-align: left">CV/Gate Input</td><td style="text-align: left">Off, CV1/CV2, CV3/CV4</td><td style="text-align: left">Enables CV/Gate monitoring and recording.</td></tr>
             <tr><td style="text-align: left">Steps to Stop</td><td style="text-align: left">Off, 1 - 64</td><td style="text-align: left">Auto-stop after a set step count.</td></tr>
@@ -842,6 +864,9 @@
         </table>
         <p>
           In practical use, <em>Monitor Mode</em>, <em>Record Mode</em>, <em>MIDI Input</em>, and <em>CV/Gate Input</em> define the live-input behavior for the whole project. They are the first place to check when monitoring, recording, or external note entry does not behave as expected.
+        </p>
+        <p>
+          The five MIDI event filters are project settings and default to <code>Yes</code>, including when an older project is loaded. They affect MIDI and USB MIDI input after source selection; Clock and Transport messages are not part of this filter group. When <code>MIDI Notes</code> is set to <code>No</code>, new Note On messages are blocked, while Note Off remains accepted so notes that were already active can be released. Project format <code>Version41</code> is required because each project now stores these five filter settings. Firmware <code>0.4.6</code> can load older <code>Version40</code> projects, but firmware <code>v0.4.5</code> and earlier expect the previous file layout and cannot validate a project saved with the additional field: the integrity check fails and the load is discarded. Keep the older project copy separately before saving with the beta.
         </p>
         <p>
           Double-clicking <code>F1</code> - <code>F5</code> provides shortcuts into Project, Layout, Routing, MIDI Output and User Scale.
@@ -1447,14 +1472,17 @@
           </thead>
           <tbody>
             <tr><td style="text-align: left"><code>F1</code></td><td style="text-align: left">Init Layer</td><td style="text-align: left">Initialize only the active layer. If a step selection exists it is applied there first; otherwise the whole current track layer is initialized.</td></tr>
-            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected steps to the clipboard.</td></tr>
-            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste steps in the clipboard to the selected steps.</td></tr>
-            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Duplicate</td><td style="text-align: left">Doubles the length of the sequence between First Step and Last Step and copies the first half to the second half.</td></tr>
+            <tr><td style="text-align: left"><code>F2</code></td><td style="text-align: left">Copy</td><td style="text-align: left">Copy the selected steps to the clipboard. After copying an explicit step selection, the source selection is cleared.</td></tr>
+            <tr><td style="text-align: left"><code>F3</code></td><td style="text-align: left">Paste</td><td style="text-align: left">Paste steps in the clipboard to the selected destination steps.</td></tr>
+            <tr><td style="text-align: left"><code>F4</code></td><td style="text-align: left">Duplicate</td><td style="text-align: left">Duplicate the current step selection after its source span; without a step selection, duplicate the First/Last sequence range.</td></tr>
             <tr><td style="text-align: left"><code>F5</code></td><td style="text-align: left">Gen</td><td style="text-align: left">Open the generator workflow for the active layer. If a persistent step selection exists, generators target that selection first.</td></tr>
           </tbody>
         </table>
         <p>
-          Copy and paste only works with steps selected in persistent mode. When more steps are pasted than copied to the clipboard, the steps are repeated multiple times. This means that for example one can copy 2 steps and then paste them to 8 steps, creating a repetition of the two copied steps.
+          When copying explicitly selected steps, select the destination steps before pasting. If no destination is selected, paste is blocked with <code>SELECT DEST</code> to avoid overwriting an entire pattern by accident. When more steps are pasted than copied to the clipboard, the copied steps are repeated across the destination selection. For example, one can copy 2 steps and paste them to 8 selected destination steps, creating a repetition of the two copied steps.
+        </p>
+        <p>
+          Duplicate is selection-aware: with a persistent step selection, the selected block is copied immediately after its source span and the duplicated steps become the new selection. Gaps inside a non-contiguous selection are preserved. If there is no room to duplicate any selected step, the action is blocked with <code>NO ROOM</code>. Without a persistent step selection, Duplicate keeps the classic sequence-range behavior based on First Step and Last Step.
         </p>
         <p>
           In generator pages, double-tapping <code>SHIFT</code> keeps the same selection logic: if nothing is selected it selects all available steps, and if a selection already exists it clears it. This is especially useful when switching between tightly targeted generation and whole-range preview.
@@ -1469,17 +1497,20 @@
               <th style="text-align: left">Button</th>
               <th style="text-align: left">Note Track</th>
               <th style="text-align: left">Curve Track</th>
+              <th style="text-align: left">Stochastic Track</th>
+              <th style="text-align: left">Logic Track</th>
+              <th style="text-align: left">Arp Track</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td style="text-align: left"><code>S9</code></td><td style="text-align: left">First Step</td><td style="text-align: left">First Step</td></tr>
-            <tr><td style="text-align: left"><code>S10</code></td><td style="text-align: left">Last Step</td><td style="text-align: left">Last Step</td></tr>
-            <tr><td style="text-align: left"><code>S11</code></td><td style="text-align: left">Run Mode</td><td style="text-align: left">Run Mode</td></tr>
-            <tr><td style="text-align: left"><code>S12</code></td><td style="text-align: left">Divisor</td><td style="text-align: left">Divisor</td></tr>
-            <tr><td style="text-align: left"><code>S13</code></td><td style="text-align: left">Reset Measure</td><td style="text-align: left">Reset Measure</td></tr>
-            <tr><td style="text-align: left"><code>S14</code></td><td style="text-align: left">Scale</td><td style="text-align: left">Range</td></tr>
-            <tr><td style="text-align: left"><code>S15</code></td><td style="text-align: left">Root Note</td><td style="text-align: left">-</td></tr>
-            <tr><td style="text-align: left"><code>S16</code></td><td style="text-align: left">-</td><td style="text-align: left">-</td></tr>
+            <tr><td style="text-align: left"><code>S9</code></td><td style="text-align: left">First Step</td><td style="text-align: left">First Step</td><td style="text-align: left">Seq First Step</td><td style="text-align: left">First Step</td><td style="text-align: left">Arp Divisor</td></tr>
+            <tr><td style="text-align: left"><code>S10</code></td><td style="text-align: left">Last Step</td><td style="text-align: left">Last Step</td><td style="text-align: left">Seq Last Step</td><td style="text-align: left">Last Step</td><td style="text-align: left">Arp Mode</td></tr>
+            <tr><td style="text-align: left"><code>S11</code></td><td style="text-align: left">Run Mode</td><td style="text-align: left">Run Mode</td><td style="text-align: left">Run Mode</td><td style="text-align: left">Run Mode</td><td style="text-align: left">Arp Octaves</td></tr>
+            <tr><td style="text-align: left"><code>S12</code></td><td style="text-align: left">Divisor</td><td style="text-align: left">Divisor</td><td style="text-align: left">Divisor</td><td style="text-align: left">Divisor</td><td style="text-align: left">Divisor</td></tr>
+            <tr><td style="text-align: left"><code>S13</code></td><td style="text-align: left">Reset Measure</td><td style="text-align: left">Reset Measure</td><td style="text-align: left">Reset Measure</td><td style="text-align: left">Reset Measure</td><td style="text-align: left">Reset Measure</td></tr>
+            <tr><td style="text-align: left"><code>S14</code></td><td style="text-align: left">Scale</td><td style="text-align: left">Range</td><td style="text-align: left">Scale</td><td style="text-align: left">Scale</td><td style="text-align: left">Scale</td></tr>
+            <tr><td style="text-align: left"><code>S15</code></td><td style="text-align: left">Root Note</td><td style="text-align: left">-</td><td style="text-align: left">Root Note</td><td style="text-align: left">Root Note</td><td style="text-align: left">Root Note</td></tr>
+            <tr><td style="text-align: left"><code>S16</code></td><td style="text-align: left">-</td><td style="text-align: left">-</td><td style="text-align: left">-</td><td style="text-align: left">-</td><td style="text-align: left">-</td></tr>
           </tbody>
         </table>
         <p>
@@ -1490,9 +1521,6 @@
         </p>
         <p>
           Note: Pressing the <code>ENCODER</code> while rotating it has the same effect as pressing <code>SHIFT</code> when editing the same parameter through the menu.
-        </p>
-        <p>
-          Note: In an Arpeggiator track <code>S9</code> changes the arpeggiator rate, <code>S10</code> the arpeggiator mode and <code>S11</code> the arpeggiator octaves.
         </p>
 
         <h3 id="pages-generators">Generators</h3>
@@ -1884,6 +1912,7 @@
             <tr><td style="text-align: left">Sync Actions</td><td style="text-align: left">Hold <code>F2</code> to execute on sync measure.</td></tr>
             <tr><td style="text-align: left">Fill</td><td style="text-align: left">Trigger temporary or latched fills per track or globally.</td></tr>
             <tr><td style="text-align: left">Fill Amount</td><td style="text-align: left">Hold step buttons and turn the encoder to adjust fill probability per track.</td></tr>
+            <tr><td style="text-align: left">Fill Divisor</td><td style="text-align: left">Hold a per-track or global Fill control and turn the encoder to change playback division temporarily.</td></tr>
           </tbody>
         </table>
         <h4>Live Workflow</h4>
@@ -1908,6 +1937,12 @@
         <h4>Fills</h4>
         <p>
           Hold <code>S9</code> - <code>S16</code> to temporarily enable fills per track. Use <code>SHIFT</code> + <code>S9</code> - <code>S16</code> to latch fill on a track. Hold <code>F4</code> to fill all tracks temporarily, or use <code>SHIFT</code> + <code>F4</code> to latch fill globally.
+        </p>
+        <p>
+          While a Fill control is held, rotate the encoder to step through playback divisions for the affected track or tracks. This is a temporary performance override: releasing the Fill returns playback to the divisor stored in each sequence. Holding <code>S1</code> - <code>S8</code> and rotating the encoder keeps its existing role of editing Fill Amount. A per-track Fill started from Launchpad also selects that track for the same temporary divisor edit on the module encoder.
+        </p>
+        <p>
+          Linked tracks continue to follow the timing and divisor inherited from their source track. The temporary Fill divisor control therefore changes independent track playback; it does not replace the divisor inherited by a linked track.
         </p>
 
         <h3 id="pages-routing">Routing</h3>
@@ -1955,6 +1990,15 @@
         </p>
         <p>
           The commit-based behavior matters here: editing a route does not immediately destabilize the running patch. You can set up the source, target, and range first, then commit when the mapping actually looks right.
+        </p>
+        <p>
+          Routing targets are interpreted according to the kind of parameter being controlled. Continuous targets, such as tempo, swing, fill amount, slide time, curve offset, curve minimum and curve maximum, move smoothly across their mapped range. Discrete targets, such as pattern, divisor, run mode, scale, root note or sequence boundaries, snap to valid values with stabilization to avoid jitter near boundaries. Boolean or trigger-like targets, such as play, record, tap tempo, mute and fill, use threshold behavior rather than continuous movement. <code>Reseed</code> and <code>REC Step</code> are also trigger-like: an incoming gate-style event causes a reseed or advances the step-record cursor.
+        </p>
+        <p>
+          For the <code>Divisor</code> target, Min and Max editing moves directly through the known musical divisor list rather than exposing intermediate integer values. Routed CV or MIDI is quantized to the same list and uses a small boundary margin to prevent noisy signals from rapidly switching between adjacent divisions.
+        </p>
+        <p>
+          Track-scoped routes are also filtered by track mode. For example, curve offset/min/max targets only apply to Curve tracks, scale/root targets apply to note-oriented tracks, and <code>REC Step</code> applies to Note-track step recording. If a target is not meaningful for a selected track mode, the firmware rejects or ignores that pairing rather than forcing an unsafe write.
         </p>
         <h3 id="pages-midi-output">MIDI Output</h3>
         <p>
@@ -2220,6 +2264,9 @@
         <h4>Step Recording</h4>
         <p>
           In Step Record mode, each played note fills the next step in the active Note sequence. Slides can be recorded by moving pitch bend while holding a note, and ties can be recorded by moving the modulation control while holding a note. Recording starts at the first step and wraps around at the last step.
+        </p>
+        <p>
+          While Step Record is active, the current recording step is shown in the step editor. Use <code>SHIFT + PREV</code> or <code>SHIFT + NEXT</code> to move the record cursor backward or forward without writing a note; this can be used to leave rests in the sequence. The same cursor is exposed as the routing target <code>REC Step</code>: when routed, a gate-style event advances the step-record cursor externally.
         </p>
         <h4>Project Input Settings</h4>
         <p>
@@ -2508,6 +2555,8 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
             <tr><td style="text-align: left">Length Bias</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
             <tr><td style="text-align: left">Note P. Bias</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
             <tr><td style="text-align: left">Shape P. Bias</td><td style="text-align: left">Track</td><td style="text-align: left"></td></tr>
+            <tr><td style="text-align: left">Curve Min</td><td style="text-align: left">Curve Track</td><td style="text-align: left">Minimum output level for Curve tracks.</td></tr>
+            <tr><td style="text-align: left">Curve Max</td><td style="text-align: left">Curve Track</td><td style="text-align: left">Maximum output level for Curve tracks.</td></tr>
             <tr><td style="text-align: left">First Step</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
             <tr><td style="text-align: left">Last Step</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
             <tr><td style="text-align: left">Run Mode</td><td style="text-align: left">Sequence</td><td style="text-align: left"></td></tr>
@@ -2552,6 +2601,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         <h3 id="appendix-midi-program-change">MIDI Program Change</h3>
         <p>
           The sequencer can send and receive MIDI program change messages when that behavior is enabled in the Project settings. Program changes are associated with global pattern changes rather than with per-track pattern selection.
+        </p>
+        <p>
+          Incoming Program Change can be enabled or disabled per project with <code>MIDI Pgm</code>. This filter does not add a custom mapping table: accepted Program Change messages continue to use the existing fixed pattern mapping and the configured program offset.
         </p>
         <p>
           In sync mode, they are sent slightly before the end of the sequence so the receiving hardware has time to acknowledge the request.
@@ -3093,6 +3145,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
         <h3 id="appendix-firmware-update">Firmware Update</h3>
         <p>
+          The current beta package is tagged <code>v0.4.6-beta.1</code>, while the version shown on the module is <code>0.4.6</code>. The current stable release is <code>v0.4.5</code>.
+        </p>
+        <p>
           Use the following steps to update the sequencer firmware:
         </p>
         <ul>
@@ -3115,6 +3170,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         </p>
         <p>
           SD boot robustness note: startup tolerances for slower cards include a longer SD-init wait window and watchdog feed during long init waits, reducing loading-screen reboot loops on borderline media while keeping runtime watchdog behavior strict.
+        </p>
+        <p>
+          <strong>Before installing the beta, back up the SD card.</strong> The beta reads projects from <code>v0.4.4</code> and <code>v0.4.5</code>, but saving writes project format <code>Version41</code>. Firmware <code>v0.4.5</code> and earlier cannot reopen a project after it has been saved in that format, so keep the original project files separately if you may reinstall older firmware.
         </p>
         <p>
           For release history and fork-specific changes, see the <a href="../features/index.html">Features</a> page.

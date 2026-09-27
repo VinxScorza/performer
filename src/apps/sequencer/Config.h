@@ -4,10 +4,10 @@
 
 // Version tag
 #define CONFIG_VERSION_MAGIC            0xfadebabe
-#define CONFIG_VERSION_NAME             "0.4.5"
+#define CONFIG_VERSION_NAME             "0.4.6"
 #define CONFIG_VERSION_MAJOR            0
 #define CONFIG_VERSION_MINOR            4
-#define CONFIG_VERSION_REVISION         5
+#define CONFIG_VERSION_REVISION         6
 
 // Task priorities
 #define CONFIG_DRIVER_TASK_PRIORITY     5

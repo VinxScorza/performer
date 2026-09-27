@@ -10,6 +10,8 @@ namespace EngineTestHooks {
 
 float evalArpStepNoteForScale(const ArpSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, const ArpSequence &sequence, bool useVariation = false, bool forceScaleTransposition = false);
 float evalStochasticStepNoteForScale(const StochasticSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, const StochasticSequence &sequence, bool useVariation = false, bool forceScaleTransposition = false);
+bool arpPitchSlotActiveForScale(const ArpSequence::Step &step, int slotIndex, const Scale &scale, bool forceScaleTransposition = false);
+bool stochasticPitchSlotActiveForScale(const StochasticSequence::Step &step, int slotIndex, const Scale &scale, bool forceScaleTransposition = false);
 
 } // namespace EngineTestHooks
 

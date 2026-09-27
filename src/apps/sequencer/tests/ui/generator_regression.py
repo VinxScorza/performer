@@ -93,6 +93,16 @@ class GeneratorRegressionTest(tf.UiTest):
         self.controller.midi(1, tf.core.MidiMessage.makeNoteOn(0, note, 127)).wait(10)
         self.controller.midi(1, tf.core.MidiMessage.makeNoteOff(0, note, 0)).wait(10)
 
+    def _lp_scene_down(self, scene_index):
+        # Launchpad Mk2 scene mapping.
+        note = 11 + 10 * (7 - scene_index) + 8
+        self.controller.midi(1, tf.core.MidiMessage.makeNoteOn(0, note, 127)).wait(10)
+
+    def _lp_scene_up(self, scene_index):
+        # Launchpad Mk2 scene mapping.
+        note = 11 + 10 * (7 - scene_index) + 8
+        self.controller.midi(1, tf.core.MidiMessage.makeNoteOff(0, note, 0)).wait(10)
+
     def _lp_toggle_generators_mode(self):
         # LP TOP 8 + TOP 4 toggle: hold Shift (TOP 8), press Function 4 (index 3), release Shift.
         self._lp_function_down(7)
@@ -591,6 +601,28 @@ class GeneratorRegressionTest(tf.UiTest):
             self._lp_press_scene(0)  # TRK 1
             self.assertEqual(p.selectedTrackIndex, 0, f"{page}: selected track")
             self.assertTrue(self.env.sequencer.isNoteSequenceEditPageTop, f"{page}: jump to Steps")
+
+    def test_launchpad_fill_track_encoder_edits_divisor(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        self._lp_connect()
+        initial_tempo = p.tempo
+        initial_divisor = p.selectedNoteSequence.divisor
+        initial_amount = p.playState.trackFillAmount(0)
+
+        self._lp_function_down(6)  # Fill
+        self._lp_scene_down(0)     # T1 fill
+        c.right().wait(20)
+        self.assertGreater(p.playState.trackFillDivisorOverride(0), initial_divisor)
+        self.assertEqual(p.selectedNoteSequence.divisor, initial_divisor)
+        self._lp_scene_up(0)
+        self._lp_function_up(6)
+
+        self.assertEqual(p.playState.trackFillDivisorOverride(0), 0)
+        self.assertEqual(p.selectedNoteSequence.divisor, initial_divisor)
+        self.assertEqual(p.playState.trackFillAmount(0), initial_amount)
+        self.assertAlmostEqual(p.tempo, initial_tempo, places=1)
 
     def test_launchpad_grid8_runs_init_layer_in_generators_mode(self):
         c = self.controller

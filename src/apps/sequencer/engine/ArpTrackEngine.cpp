@@ -23,6 +23,9 @@
 static Random rng;
 
 static int activePitchSlotCount(const Scale &scale) {
+    if (scale.isChromatic()) {
+        return 12;
+    }
     return clamp(scale.notesPerOctave(), 1, 12);
 }
 
@@ -36,6 +39,32 @@ static int wrappedPitchSlotIndex(int note, int slotCount) {
 
 static bool useLegacySemitoneBypass(const Scale &scale, bool forceScaleTransposition) {
     return !forceScaleTransposition && &scale == &Scale::get(0);
+}
+
+static int legacyChromaticPitchSlot(int note) {
+    int octave = roundDownDivide(note, 12);
+    return note - octave * 12;
+}
+
+static bool useLegacyChromaticPitchSlot(const ArpSequence::Step &step, const Scale &scale, bool forceScaleTransposition) {
+    return step.bypassScale() && scale.isChromatic() && !useLegacySemitoneBypass(scale, forceScaleTransposition);
+}
+
+static bool isPitchSlotActive(const ArpSequence::Step &step, int slotIndex, const Scale &scale, bool forceScaleTransposition) {
+    if (useLegacyChromaticPitchSlot(step, scale, forceScaleTransposition)) {
+        return scale.isNotePresent(legacyChromaticPitchSlot(step.note()));
+    }
+    return slotIndex < clamp(scale.notesPerOctave(), 1, 12);
+}
+
+static int legacyChromaticPitchSlotToScaleNote(const Scale &scale, int note) {
+    int octave = roundDownDivide(note, 12);
+    int slot = note - octave * 12;
+    int noteIndex = scale.getNoteIndex(slot);
+    if (noteIndex < 0) {
+        noteIndex = 0;
+    }
+    return octave * scale.notesPerOctave() + noteIndex;
 }
 
 bool sortTaskByProbRev(const ArpStep& lhs, const ArpStep& rhs) {
@@ -188,7 +217,10 @@ static float evalStepNote(const ArpSequence::Step &step, int probabilityBias, co
         }
         return bypassScale.noteToVolts(note) + (bypassScale.isChromatic() ? rootNote : 0) * (1.f / 12.f);
     }
-    int note = step.note() + evalTransposition(scale, octave, transpose);
+    int note = useLegacyChromaticPitchSlot(step, scale, forceScaleTransposition)
+        ? legacyChromaticPitchSlotToScaleNote(scale, step.note())
+        : step.note();
+    note += evalTransposition(scale, octave, transpose);
     int probability = clamp(step.noteOctaveProbability() + probabilityBias, -1, ArpSequence::NoteOctaveProbability::Max);
     if (useVariation && int(rng.nextRange(ArpSequence::NoteOctaveProbability::Range)) <= probability && probability != 0) {
         int oct = step.noteOctave() + sequence.lowOctaveRange() + ( std::rand() % ( sequence.highOctaveRange() - sequence.lowOctaveRange() + 1 ) );
@@ -207,6 +239,10 @@ static float evalStepNote(const ArpSequence::Step &step, int probabilityBias, co
 #if defined(PLATFORM_SIM)
 float EngineTestHooks::evalArpStepNoteForScale(const ArpSequence::Step &step, int probabilityBias, const Scale &scale, int rootNote, int octave, int transpose, const ArpSequence &sequence, bool useVariation, bool forceScaleTransposition) {
     return evalStepNote(step, probabilityBias, scale, rootNote, octave, transpose, sequence, useVariation, forceScaleTransposition);
+}
+
+bool EngineTestHooks::arpPitchSlotActiveForScale(const ArpSequence::Step &step, int slotIndex, const Scale &scale, bool forceScaleTransposition) {
+    return isPitchSlotActive(step, slotIndex, scale, forceScaleTransposition);
 }
 #endif
 
@@ -290,9 +326,9 @@ TrackEngine::TickResult ArpTrackEngine::tick(uint32_t tick) {
         }
     } else {
 
-        uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+        uint32_t divisor = _trackState.playbackDivisor(sequence.divisor()) * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
         if (_arpTrack.midiKeyboard() ) {
-            divisor = _arpeggiator.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+            divisor = _trackState.playbackDivisor(_arpeggiator.divisor()) * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
         }
         uint32_t resetDivisor = sequence.resetMeasure() * _engine.measureDivisor();
         uint32_t relativeTick = resetDivisor == 0 ? tick : tick % resetDivisor;
@@ -539,7 +575,7 @@ void ArpTrackEngine::triggerStep(uint32_t tick, uint32_t divisor, bool forNextSt
 
     if (_noteCount == 0 && sequence.hasSteps()) {
         for (int i = 0; i < pitchSlots; ++i) {
-            if (sequence.step(i).gate()) {
+            if (sequence.step(i).gate() && isPitchSlotActive(sequence.step(i), i, sequenceScale, forceScaleTransposition)) {
                 addNote(sequence.step(i).note(), i, Type::Sequencer, sequence.step(i).noteOctave());
             }
         }
@@ -647,11 +683,12 @@ void ArpTrackEngine::recordStep(uint32_t tick, uint32_t divisor) {
     const auto &scale = activeSequence().selectedScale(_model.project().scale());
     const int notesPerOctave = clamp(scale.notesPerOctave(), 1, 128);
     const int pitchSlots = activePitchSlotCount(scale);
+    const int pitchSlotStride = scale.isChromatic() ? 12 : notesPerOctave;
 
-    auto writeStep = [this, divisor, &stepWritten, notesPerOctave, pitchSlots] (int note, int lengthTicks) {
+    auto writeStep = [this, divisor, &stepWritten, pitchSlots, pitchSlotStride] (int note, int lengthTicks) {
 
         int stepNote = noteFromMidiNote(note);
-        int octave = roundDownDivide(stepNote, notesPerOctave);
+        int octave = roundDownDivide(stepNote, pitchSlotStride);
         
         int stepNoteCleared = wrappedPitchSlotIndex(stepNote, pitchSlots);
         auto &step = _sequence->step(stepNoteCleared);
@@ -707,7 +744,7 @@ int ArpTrackEngine::noteFromMidiNote(uint8_t midiNote) const {
     float volts = (int(midiNote) - 60) * semitoneVolts;
 
     if (scale.isChromatic()) {
-        volts -= rootNote * semitoneVolts;
+        return int(midiNote) - 60 - rootNote;
     } else {
         // Non-chromatic scales ignore root-note transposition here, matching the existing behavior.
     }
@@ -781,7 +818,7 @@ void ArpTrackEngine::advanceStep() {
     _noteIndex = 0;
     _noteCount = _notes.size();
     const auto &sequence = activeSequence();
-    uint32_t divisor = sequence.divisor() * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
+    uint32_t divisor = _trackState.playbackDivisor(sequence.divisor()) * (CONFIG_PPQN / CONFIG_SEQUENCE_PPQN);
     uint32_t resetDivisor = sequence.resetMeasure() * _engine.measureDivisor();
     uint32_t relativeTick = resetDivisor == 0 ? _engine.tick() : _engine.tick() % resetDivisor;
     int absoluteStep = int(relativeTick / divisor);

@@ -39,6 +39,7 @@ void LaunchpadController::sequenceSceneSolo(const Button &button) {
 void LaunchpadController::sequenceSceneFill(const Button &button, bool active) {
     if (button.isScene()) {
         _project.playState().fillTrack(button.scene(), active);
+        _manager.setPerformanceFillDivisorEditTrack(button.scene(), active);
     }
 }
 
@@ -87,6 +88,7 @@ void LaunchpadController::patternSceneMute(const Button &button) {
 void LaunchpadController::patternSceneFill(const Button &button, bool active) {
     if (button.isScene()) {
         _project.playState().fillTrack(button.scene(), active);
+        _manager.setPerformanceFillDivisorEditTrack(button.scene(), active);
     }
 }
 
@@ -112,6 +114,7 @@ void LaunchpadController::performerSceneSolo(const Button &button) {
 void LaunchpadController::performerSceneFill(const Button &button, bool active) {
     if (button.isScene()) {
         _project.playState().fillTrack(button.scene(), active);
+        _manager.setPerformanceFillDivisorEditTrack(button.scene(), active);
     }
 }
 
