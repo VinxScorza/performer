@@ -2,8 +2,17 @@ name: CI
 
 on:
   push:
+  workflow_dispatch:
   pull_request:
     branches: [ "master" ]
+
+permissions:
+  contents: read
+
+# Match the Vagrant CMake version and the locally verified WebAssembly SDK.
+env:
+  CMAKE_VERSION: "3.26.4"
+  EMSDK_VERSION: "4.0.15"
 
 jobs:
   docs_checks:
@@ -11,85 +20,130 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         submodules: recursive
     - name: Run docs checks
       run: python3 scripts/check_docs_ci.py
 
   stm32:
+    permissions:
+      contents: write
     name: Hardware Platform (STM32)
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         submodules: recursive
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.11'
+    - name: Install CMake
+      run: python -m pip install "cmake==$CMAKE_VERSION"
     - name: Setup
       run: make setup_stm32
     - name: Build
-      run: (cd build/stm32/release && make -j)
+      run: cmake --build build/stm32/release --parallel 2
     - name: Deploy
       run: make deploy
     - name: Release
       if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         draft: true
+        prerelease: ${{ contains(github.ref_name, '-beta.') }}
         files: build/deploy/**/*
   sim_linux:
     name: Simulator Platform (Linux)
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         submodules: recursive
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.11'
+    - name: Install CMake
+      run: python -m pip install "cmake==$CMAKE_VERSION"
     - name: Update
       run: sudo apt update
     - name: Install Dependencies
       run: sudo apt install -y libsdl2-dev libasound2-dev mesa-common-dev python3 python3-dev
     - name: Setup
-      run: make setup_sim
+      # Use the same interpreter for pybind11 and the UI tests.
+      run: >-
+        cmake -S . -B build/sim/release
+        -DCMAKE_BUILD_TYPE=Release -DPLATFORM=sim
+        -DPython_EXECUTABLE="$(command -v python)"
     - name: Build
-      run: (cd build/sim/release && make -j)
-    - name: Test
-      run: (cd build/sim/release && make test)
+      run: cmake --build build/sim/release --parallel 2
+    - name: Test C++
+      run: ctest --test-dir build/sim/release --output-on-failure
+    - name: Test UI
+      working-directory: src/apps/sequencer/tests
+      run: python -m unittest discover -s ui -p '*.py' -v
   sim_macos:
     name: Simulator Platform (macos)
-    runs-on: macos-11
+    runs-on: macos-15-intel
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         submodules: recursive
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.11'
+    - name: Install CMake
+      run: python -m pip install "cmake==$CMAKE_VERSION"
     - name: Install Dependencies
       run: brew install sdl2
     - name: Setup
-      run: make setup_sim
+      # Use the same interpreter for pybind11 and the UI tests.
+      run: >-
+        cmake -S . -B build/sim/release
+        -DCMAKE_BUILD_TYPE=Release -DPLATFORM=sim
+        -DPython_EXECUTABLE="$(command -v python)"
     - name: Build
-      run: (cd build/sim/release && make -j)
-    - name: Test
-      run: (cd build/sim/release && make test)
+      run: cmake --build build/sim/release --parallel 2
+    - name: Test C++
+      run: ctest --test-dir build/sim/release --output-on-failure
+    - name: Test UI
+      working-directory: src/apps/sequencer/tests
+      run: python -m unittest discover -s ui -p '*.py' -v
   sim_wasm:
+    permissions:
+      contents: write
     name: Simulation Platform (WebAssembly)
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
       with:
         submodules: recursive
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.11'
+    - name: Install CMake
+      run: python -m pip install "cmake==$CMAKE_VERSION"
     - name: Setup emsdk
       run: |
         git clone https://github.com/emscripten-core/emsdk.git
-        ./emsdk/emsdk install latest
-        ./emsdk/emsdk activate latest
+        ./emsdk/emsdk install "$EMSDK_VERSION"
+        ./emsdk/emsdk activate "$EMSDK_VERSION"
     - name: Setup
       run: |
         source ./emsdk/emsdk_env.sh
         make setup_www
     - name: Build
-      run: (cd build/sim/www && make -j)
+      run: |
+        source ./emsdk/emsdk_env.sh
+        cmake --build build/sim/www --parallel 2
     - name: Deploy
       run: make deploy-simulator
     - name: Release
