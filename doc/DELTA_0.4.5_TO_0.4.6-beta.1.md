@@ -83,4 +83,4 @@ La beta lascia quindi **16 byte di SRAM statica in meno** rispetto alla 0.4.5. R
 
 ## Esito
 
-Il delta software rispetto alla 0.4.5 è coerente con changelog e manuale e non mostra incompatibilità operative inattese oltre alla conversione irreversibile del progetto dopo il salvataggio in `Version41`. La beta è pronta per lo smoke test sul Performer; la validazione hardware resta l'ultimo controllo prima della pubblicazione.
+Il delta software rispetto alla 0.4.5 è coerente con changelog e manuale e non mostra incompatibilità operative inattese oltre alla conversione irreversibile del progetto dopo il salvataggio in `Version41`. La beta è pubblicata per lo smoke test sul Performer; la validazione hardware resta ancora da completare e il feedback dei beta tester è particolarmente utile.
