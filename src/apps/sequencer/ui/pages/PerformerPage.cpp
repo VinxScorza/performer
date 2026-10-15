@@ -16,6 +16,8 @@ enum class Function {
     Cancel  = 4
 };
 
+static constexpr int GlobalFillSelection = CONFIG_TRACK_COUNT;
+
 float _projectTempo;
 
 PerformerPage::PerformerPage(PageManager &manager, PageContext &context) :
@@ -26,6 +28,13 @@ void PerformerPage::enter() {
     _latching = false;
     _syncing = false;
     _projectTempo = _project.originalTempo();
+    bool anyFillActive = false;
+    for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+        anyFillActive |= _project.playState().trackState(trackIndex).fill();
+    }
+    if (!anyFillActive) {
+        _latchedFillCount = 0;
+    }
 }
 
 void PerformerPage::exit() {
@@ -128,6 +137,11 @@ void PerformerPage::keyDown(KeyEvent &event) {
             _syncing = true;
             break;
         case Function::Fill:
+            if (key.shiftModifier()) {
+                rememberLatchedFill(GlobalFillSelection);
+            } else {
+                forgetLatchedFill(GlobalFillSelection);
+            }
             updateFills();
             break;
         default:
@@ -137,6 +151,14 @@ void PerformerPage::keyDown(KeyEvent &event) {
     }
 
     if (key.isStep()) {
+        if (key.step() >= 8) {
+            int trackIndex = key.step() - 8;
+            if (key.shiftModifier()) {
+                rememberLatchedFill(trackIndex);
+            } else {
+                forgetLatchedFill(trackIndex);
+            }
+        }
         updateFills();
         event.consume();
     }
@@ -247,9 +269,23 @@ void PerformerPage::encoder(EncoderEvent &event) {
             }
         }
     } else {
+        bool heldFillSelected = false;
         for (int trackIndex = 0; trackIndex < 8; ++trackIndex) {
             if (fillDivisorEditTrackSelected(trackIndex)) {
                 _project.editTrackFillDivisorOverride(trackIndex, event.value());
+                heldFillSelected = true;
+            }
+        }
+        if (!heldFillSelected) {
+            int selection = latchedFillEditSelection();
+            if (selection == GlobalFillSelection) {
+                for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                    if (_project.playState().trackState(trackIndex).fill()) {
+                        _project.editTrackFillDivisorOverride(trackIndex, event.value());
+                    }
+                }
+            } else if (selection >= 0) {
+                _project.editTrackFillDivisorOverride(selection, event.value());
             }
         }
     }
@@ -311,5 +347,39 @@ bool PerformerPage::hasFillEditSelection() const {
             return true;
         }
     }
-    return false;
+    return latchedFillEditSelection() >= 0;
+}
+
+int PerformerPage::latchedFillEditSelection() const {
+    const auto &playState = _project.playState();
+    for (int i = _latchedFillCount - 1; i >= 0; --i) {
+        int selection = _latchedFillOrder[i];
+        if (selection == GlobalFillSelection) {
+            for (int trackIndex = 0; trackIndex < CONFIG_TRACK_COUNT; ++trackIndex) {
+                if (playState.trackState(trackIndex).fill()) {
+                    return selection;
+                }
+            }
+        } else if (playState.trackState(selection).fill()) {
+            return selection;
+        }
+    }
+    return -1;
+}
+
+void PerformerPage::rememberLatchedFill(int selection) {
+    forgetLatchedFill(selection);
+    _latchedFillOrder[_latchedFillCount++] = int8_t(selection);
+}
+
+void PerformerPage::forgetLatchedFill(int selection) {
+    for (int i = 0; i < _latchedFillCount; ++i) {
+        if (_latchedFillOrder[i] == selection) {
+            for (int j = i; j + 1 < _latchedFillCount; ++j) {
+                _latchedFillOrder[j] = _latchedFillOrder[j + 1];
+            }
+            --_latchedFillCount;
+            return;
+        }
+    }
 }

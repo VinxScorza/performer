@@ -190,6 +190,85 @@ class ProjectPageTest(tf.UiTest):
         self.assertEqual(p.playState.trackFillAmount(0), initial_amount)
         self.assertAlmostEqual(p.tempo, initial_tempo, places=1)
 
+    def test_performer_latched_fill_track_encoder_edits_divisor(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        initial_tempo = p.tempo
+        initial_divisor = p.selectedNoteSequence.divisor
+
+        c.selectPage("perf")
+        c.down("shift").press("step9").up("shift").wait(20)
+
+        c.selectPage("project")
+        c.selectPage("perf")
+
+        c.right().wait(20)
+        self.assertGreater(p.playState.trackFillDivisorOverride(0), initial_divisor)
+        self.assertEqual(p.selectedNoteSequence.divisor, initial_divisor)
+        self.assertAlmostEqual(p.tempo, initial_tempo, places=1)
+
+        c.press("step9").wait(20)
+        self.assertEqual(p.playState.trackFillDivisorOverride(0), 0)
+
+    def test_performer_latched_fill_keeps_divisor_edited_while_held(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        initial_divisor = p.selectedNoteSequence.divisor
+
+        c.selectPage("perf")
+        c.down("shift").down("step9").wait(10)
+        c.right().wait(10)
+        held_divisor = p.playState.trackFillDivisorOverride(0)
+        self.assertGreater(held_divisor, initial_divisor)
+
+        c.up("step9").up("shift").wait(20)
+        self.assertEqual(p.playState.trackFillDivisorOverride(0), held_divisor)
+
+        c.press("step9").wait(20)
+        self.assertEqual(p.playState.trackFillDivisorOverride(0), 0)
+
+    def test_performer_encoder_edits_last_latched_fill_track(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        initial_tempo = p.tempo
+        initial_divisor = p.selectedNoteSequence.divisor
+
+        c.selectPage("perf")
+        c.down("shift").press("step9").press("step10").up("shift").wait(20)
+        c.right().wait(20)
+
+        self.assertEqual(p.playState.trackFillDivisorOverride(0), 0)
+        self.assertGreater(p.playState.trackFillDivisorOverride(1), initial_divisor)
+        self.assertAlmostEqual(p.tempo, initial_tempo, places=1)
+
+        c.press("step10").wait(20)
+        self.assertEqual(p.playState.trackFillDivisorOverride(1), 0)
+        c.right().wait(20)
+        self.assertGreater(p.playState.trackFillDivisorOverride(0), initial_divisor)
+        self.assertAlmostEqual(p.tempo, initial_tempo, places=1)
+
+    def test_performer_encoder_edits_global_latched_fill(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        initial_tempo = p.tempo
+        initial_divisor = p.selectedNoteSequence.divisor
+
+        c.selectPage("perf")
+        c.down("shift").press("f4").up("shift").wait(20)
+        c.right().wait(20)
+
+        self.assertGreater(p.playState.trackFillDivisorOverride(0), initial_divisor)
+        self.assertGreater(p.playState.trackFillDivisorOverride(1), initial_divisor)
+        self.assertAlmostEqual(p.tempo, initial_tempo, places=1)
+
+        c.press("f4").wait(20)
+        self.assertEqual(p.playState.trackFillDivisorOverride(0), 0)
+        self.assertEqual(p.playState.trackFillDivisorOverride(1), 0)
+
     def test_performer_fill_track_button_encoder_edits_divisor(self):
         c = self.controller
         p = self.env.sequencer.model.project

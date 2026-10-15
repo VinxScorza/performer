@@ -2,6 +2,9 @@
 
 #include "BasePage.h"
 
+#include <array>
+#include <cstdint>
+
 class PerformerPage : public BasePage {
 public:
     PerformerPage(PageManager &manager, PageContext &context);
@@ -27,8 +30,13 @@ private:
     bool fillDivisorEditTrackSelected(int trackIndex) const;
     bool hasFillAmountEditSelection() const;
     bool hasFillEditSelection() const;
+    int latchedFillEditSelection() const;
+    void rememberLatchedFill(int selection);
+    void forgetLatchedFill(int selection);
 
     bool _modal = false;
     bool _latching = false;
     bool _syncing = false;
+    std::array<int8_t, CONFIG_TRACK_COUNT + 1> _latchedFillOrder{};
+    int _latchedFillCount = 0;
 };

@@ -158,8 +158,8 @@ public:
                     _state &= ~FillHold;
                 }
             } else {
-                clearFillDivisorOverride();
                 if (!(_state & FillHold)) {
+                    clearFillDivisorOverride();
                     _state &= ~Fill;
                 }
             }
