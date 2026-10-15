@@ -269,6 +269,24 @@ class ProjectPageTest(tf.UiTest):
         self.assertEqual(p.playState.trackFillDivisorOverride(0), 0)
         self.assertEqual(p.playState.trackFillDivisorOverride(1), 0)
 
+    def test_performer_latest_latch_switches_between_global_and_track(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        c.selectPage("perf")
+        c.down("shift").press("step9").press("f4").up("shift").wait(20)
+        c.right().wait(20)
+
+        global_track1 = p.playState.trackFillDivisorOverride(0)
+        global_track2 = p.playState.trackFillDivisorOverride(1)
+        self.assertGreater(global_track1, 0)
+        self.assertGreater(global_track2, 0)
+
+        c.down("shift").press("step10").up("shift").wait(20)
+        c.right().wait(20)
+        self.assertEqual(p.playState.trackFillDivisorOverride(0), global_track1)
+        self.assertGreater(p.playState.trackFillDivisorOverride(1), global_track2)
+
     def test_performer_fill_track_button_encoder_edits_divisor(self):
         c = self.controller
         p = self.env.sequencer.model.project
