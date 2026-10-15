@@ -84,6 +84,32 @@ class ProjectPageTest(tf.UiTest):
         c.midi(0, tf.core.MidiMessage.makeNoteOn(0, 60, 100)).wait(20)
         self.assertLess(p.tempo, 130)
 
+    def test_midi_notes_filter_blocks_step_editing(self):
+        c = self.controller
+        p = self.env.sequencer.model.project
+
+        p.selectedTrackIndex = 0
+        p.setTrackMode(0, p.tracks[0].TrackMode.Note)
+        c.selectPage("steps")
+        sequence = p.selectedNoteSequence
+        p.selectedNoteSequenceLayer = sequence.Layer.Note
+
+        c.down("shift").press("step1").up("shift").wait(20)
+        sequence.steps[0].gate = False
+        sequence.steps[0].note = 0
+
+        c.midi(0, tf.core.MidiMessage.makeNoteOn(0, 72, 100)).wait(20)
+        self.assertTrue(sequence.steps[0].gate)
+        self.assertNotEqual(sequence.steps[0].note, 0)
+
+        sequence.steps[0].gate = False
+        sequence.steps[0].note = 0
+        p.setMidiInputEventEnabled(tf.sequencer.Project.MidiInputEvent.Notes, False)
+
+        c.midi(0, tf.core.MidiMessage.makeNoteOn(0, 74, 100)).wait(20)
+        self.assertFalse(sequence.steps[0].gate)
+        self.assertEqual(sequence.steps[0].note, 0)
+
     def test_performer_fill_amount_lane_encoder_edits_fill_amount(self):
         c = self.controller
         p = self.env.sequencer.model.project

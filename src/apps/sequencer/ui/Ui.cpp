@@ -235,6 +235,12 @@ void Ui::handleMidi() {
         } else {
             // only process events from cable 0
             if (receiveEvent.cable == 0) {
+                // The engine filters MIDI input separately, so apply the Notes
+                // setting here before an editor can change selected steps.
+                if (receiveEvent.message.isNoteOn() &&
+                    !_model.project().midiInputEventEnabled(Project::MidiInputEvent::Notes)) {
+                    continue;
+                }
                 MidiEvent midiEvent(receiveEvent.port, receiveEvent.message);
                 _pageManager.dispatchEvent(midiEvent);
             }
