@@ -55,6 +55,7 @@
         <p>
           A small curated selection of PER|FORMER firmware lines that matter to this ecosystem, including the original line and a few forks I know, respect, or keep an eye on.
         </p>
+        <p>Release details update from GitHub when available. Beta releases are listed separately from stable versions.</p>
       </section>
 
       <section>
@@ -131,8 +132,10 @@
             A personal experimental line shaped by real performance use, custom behavior, focused UI/interaction changes, and a more radical generator workflow.
           </p>
           <p class="fork-card-detail">First release: Mar 20, 2026</p>
-          <p class="fork-card-detail" data-latest-release="VinxScorza/performer">Latest release: check GitHub</p>
-          <p class="fork-card-detail" data-latest-version="VinxScorza/performer">Latest version: check GitHub</p>
+          <p class="fork-card-detail" data-latest-release="VinxScorza/performer" data-release-label="Latest stable release">Latest stable release: Jul 07, 2026</p>
+          <p class="fork-card-detail" data-latest-version="VinxScorza/performer" data-version-label="Latest stable version">Latest stable version: v0.4.5</p>
+          <p class="fork-card-detail" data-latest-beta-release="VinxScorza/performer">Latest beta release: Nov 02, 2026</p>
+          <p class="fork-card-detail" data-beta-releases="VinxScorza/performer">Beta releases: <a href="https://github.com/VinxScorza/performer/releases/tag/v0.4.6-beta.2" target="_blank" rel="noopener noreferrer">v0.4.6-beta.2</a> / <a href="https://github.com/VinxScorza/performer/releases/tag/v0.4.6-beta.1" target="_blank" rel="noopener noreferrer">v0.4.6-beta.1</a></p>
           <p class="fork-card-links">
             <a href="https://github.com/VinxScorza/performer" target="_blank" rel="noopener noreferrer">GitHub</a>
             <span class="fork-card-separator"> / </span>
@@ -179,27 +182,73 @@
 
       const releaseByRepo = new Map();
 
-      const loadRelease = async (repo) => {
-        const response = await fetch("https://api.github.com/repos/" + repo + "/releases/latest", {
+      const loadReleases = async (repo) => {
+        const response = await fetch("https://api.github.com/repos/" + repo + "/releases?per_page=100", {
           headers: { Accept: "application/vnd.github+json" },
         });
         if (!response.ok) {
           throw new Error("HTTP " + response.status);
         }
         const payload = await response.json();
-        if (!payload || !payload.tag_name || !payload.published_at) {
+        if (!Array.isArray(payload)) {
           throw new Error("Missing release data");
         }
+        const published = payload
+          .filter((release) => !release.draft && release.tag_name && release.published_at)
+          .sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
+        const betas = published.filter((release) => /beta/i.test(release.tag_name));
+        const stable = published.find((release) => !release.prerelease && !/beta/i.test(release.tag_name));
+        const latest = stable || published[0];
         releaseByRepo.set(repo, {
-          version: payload.tag_name,
-          releaseDate: dateFormatter.format(new Date(payload.published_at)),
+          version: latest?.tag_name,
+          releaseDate: latest ? dateFormatter.format(new Date(latest.published_at)) : null,
+          betas,
+        });
+      };
+
+      const showBetaReleases = (repo, entry) => {
+        if (!entry?.betas.length) {
+          return;
+        }
+        const versionNode = versionNodes.find((node) => node.dataset.latestVersion === repo);
+        const card = versionNode?.closest(".fork-card");
+        if (!card) {
+          return;
+        }
+        const links = card.querySelector(".fork-card-links");
+        let dateNode = card.querySelector("[data-latest-beta-release]");
+        let listNode = card.querySelector("[data-beta-releases]");
+        if (!dateNode) {
+          dateNode = document.createElement("p");
+          dateNode.className = "fork-card-detail";
+          dateNode.dataset.latestBetaRelease = repo;
+          links.before(dateNode);
+        }
+        if (!listNode) {
+          listNode = document.createElement("p");
+          listNode.className = "fork-card-detail";
+          listNode.dataset.betaReleases = repo;
+          links.before(listNode);
+        }
+        dateNode.textContent = "Latest beta release: " + dateFormatter.format(new Date(entry.betas[0].published_at));
+        listNode.replaceChildren("Beta releases: ");
+        entry.betas.forEach((release, index) => {
+          if (index) {
+            listNode.append(" / ");
+          }
+          const link = document.createElement("a");
+          link.href = release.html_url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = release.tag_name;
+          listNode.append(link);
         });
       };
 
       Promise.all(
         repos.map(async (repo) => {
           try {
-            await loadRelease(repo);
+            await loadReleases(repo);
           } catch (error) {
             console.warn("[forks] latest release update failed for " + repo, error);
           }
@@ -208,18 +257,20 @@
         releaseNodes.forEach((node) => {
           const repo = node.dataset.latestRelease;
           const entry = repo ? releaseByRepo.get(repo) : null;
-          if (entry) {
-            node.textContent = "Latest release: " + entry.releaseDate;
+          if (entry?.releaseDate) {
+            node.textContent = (node.dataset.releaseLabel || "Latest release") + ": " + entry.releaseDate;
           }
         });
 
         versionNodes.forEach((node) => {
           const repo = node.dataset.latestVersion;
           const entry = repo ? releaseByRepo.get(repo) : null;
-          if (entry) {
-            node.textContent = "Latest version: " + entry.version;
+          if (entry?.version) {
+            node.textContent = (node.dataset.versionLabel || "Latest version") + ": " + entry.version;
           }
         });
+
+        repos.forEach((repo) => showBetaReleases(repo, releaseByRepo.get(repo)));
       });
     })();
   </script>
