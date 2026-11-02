@@ -1,89 +1,89 @@
-# PER|FORMER — verifica del delta operativo 0.4.5 → 0.4.6-beta.2
+# PER|FORMER — operational delta and smoke test: v0.4.5 → v0.4.6-beta.2
 
-Stato della verifica: **build e test locali superati; i due cambiamenti della beta.2 non sono ancora verificati sul modulo**. Il blocco all'avvio con una SD esistente segnalato in [#22](https://github.com/VinxScorza/performer/issues/22) resta da chiarire.
+Validation status: **local builds, automated tests, and CI passed; the two beta.2 changes have not yet been tested on the module**. The startup hang with an existing SD card reported in [#22](https://github.com/VinxScorza/performer/issues/22) is still under investigation.
 
-La baseline è il tag `0.4.5`. Per il firmware, il tag contiene gli stessi sorgenti del commit di release `cfc19cf9`; il commit successivo riguarda soltanto presentazione e licenza.
+The baseline is the `0.4.5` tag. For firmware comparison, that tag has the same sources as release commit `cfc19cf9`; the following commit changed only presentation and licensing.
 
-> **ATTENZIONE — prima di provare la beta fare un backup della SD.** La 0.4.6-beta.2 apre i progetti della 0.4.5, ma al primo salvataggio li converte da `Version40` a `Version41`. Da quel momento la 0.4.5 e le versioni precedenti non riescono più a rileggerli: il controllo del file fallisce e il progetto viene scartato. Conservare quindi una copia originale dei progetti 0.4.5 separata da quella usata con la beta.
+> **IMPORTANT — back up the SD card before testing this beta.** Beta.2 can open v0.4.5 projects, but saving converts them from `Version40` to `Version41`. Firmware v0.4.5 and earlier then reject the upgraded file during its integrity check and cannot load it. Keep an untouched copy of each original v0.4.5 project, separate from the copy used with the beta.
 
-## Delta funzionale
+## Functional changes
 
-| Area | Differenza rispetto alla 0.4.5 | Verifica eseguita | Da verificare sul modulo |
+| Area | Change from v0.4.5 | Verification completed | Check on the module |
 |---|---|---|---|
-| Progetti | Il formato passa a `Version41` per salvare i filtri MIDI. I progetti `Version40` si aprono con tutti i nuovi filtri attivi. | Percorso di lettura e inizializzazione controllato; build STM32 riuscita. | Apertura di un progetto reale 0.4.5, salvataggio con un altro nome e ricaricamento. |
-| MIDI input | Nuovi filtri per Notes, CC, Program Change, Pitch Bend e Aftertouch. La beta.2 impedisce anche ai Note On filtrati di modificare gli step selezionati nell'editor Note. Note Off resta accettato; la mappatura Program Change resta fissa. | Test UI sulla modifica degli step e test automatici su filtri e Note On/Off; CC e Program Change confermati su hardware nella beta.1. | Ripetere il caso Note Trig/step selezionati su hardware con `MIDI Notes = No`; provare Bend, Aftertouch e persistenza dei filtri. |
-| Copy/Paste/Duplicate | Comportamento uniforme nei cinque editor Note, Curve, Stochastic, Logic e Arp. Paste richiede una destinazione esplicita; Duplicate conserva gli spazi della selezione, estende Last Step e segnala `NO ROOM`. | Test C++; funzionamento generale confermato su hardware nella beta.1. | Eventuale passaggio aggiuntivo nei singoli editor non coperti dal resoconto hardware. |
-| Navigazione | Il doppio clic su `T1..T8` entra direttamente nell'editor Steps quando la pagina non usa già quei tasti per un'altra funzione. | Test UI e conferma su hardware nella beta.1. | Nessuna nuova prova specifica per la beta.2. |
-| Fill | Durante il Fill l'encoder cambia temporaneamente il divisore senza alterare quello salvato. Nella beta.2 funziona anche senza tenere premuto il tasto dopo aver agganciato Fill; con più Fill vale l'ultimo agganciato, o tutte le tracce Fill attive se l'ultimo è globale. | Test UI sulle priorità e sul ripristino; Fill momentaneo, agganciato e globale confermati su hardware nella beta.1. | Provare l'encoder con Fill agganciato, più tracce, Fill globale e ritorno al divisore salvato dopo lo sgancio. |
-| Tracce collegate | Il comportamento resta quello della 0.4.5: una traccia collegata eredita timing e divisore dalla traccia principale. Il nuovo divisore Fill agisce sulle tracce indipendenti e non sostituisce quello ereditato. | Percorsi di playback controllati nel codice e comportamento documentato nel manuale. | Una prova con una traccia indipendente e una collegata. |
-| Routing Divisor | Min, Max e modulazione percorrono divisori musicali validi; i valori vengono quantizzati e stabilizzati vicino alle soglie. | Test C++; confermato su hardware con CC da Octatrack nella beta.1. | Eventuale verifica aggiuntiva con CV vicino a una soglia. |
-| Scale Stochastic/Arp | Corretto il ripristino dei pitch slot cromatici legacy quando il progetto usa una scala non cromatica; lo stesso percorso è allineato in Arp. | Test C++; comportamento Stochastic/Arp confermato su hardware nella beta.1. | Eventuale controllo di migrazione su un progetto reale 0.4.5. |
-| Build Vagrant | Provisioning arrestato al primo errore, checksum SHA-256 dell'installer CMake verificato, dipendenze Python aggiornate. | Build pulita in VM già confermata dal contributore fino alla generazione di `UPDATE.DAT`. | Nessuna prova operativa sul modulo specifica. |
+| Projects | The format moves to `Version41` to store MIDI input filters. `Version40` projects load with all new filters enabled. | Load and initialization paths reviewed; STM32 build passed. | Open a real v0.4.5 project, save a copy under a new name, and reload it. |
+| MIDI input | New filters for Notes, CC, Program Change, Pitch Bend, and Aftertouch. Beta.2 also prevents filtered Note On messages from editing selected Note steps. Note Off remains accepted; Program Change mapping remains fixed. | UI test for selected-step editing and automated tests for filtering and Note On/Off; CC and Program Change confirmed on hardware with beta.1. | Repeat the Note Trig/selected-step case with `MIDI Notes = No`; test Bend, Aftertouch, and saved filter settings. |
+| Copy/Paste/Duplicate | Selection-aware behavior across Note, Curve, Stochastic, Logic, and Arp. Paste requires an explicit destination; Duplicate preserves selection gaps, extends Last Step, and reports `NO ROOM`. | C++ tests; overall behavior confirmed on hardware with beta.1. | Optionally check each editor not covered in the hardware report. |
+| Navigation | Double-clicking `T1..T8` opens the selected track's Steps editor when the active page does not reserve those keys. | UI tests and beta.1 hardware confirmation. | No beta.2-specific check required. |
+| Fill | The encoder temporarily changes playback division during Fill without changing the stored divisor. Beta.2 also works without holding the button after Fill is latched. With multiple latches, the most recently latched track has priority; a global latch selected last affects all active Fill tracks. | UI tests for priority and restoration; momentary, latched, and global Fill confirmed on hardware with beta.1. | Test the encoder with one latch, multiple latches, global Fill, and restoration after unlatching. |
+| Linked tracks | As in v0.4.5, a linked track inherits timing and divisor from its source track. The Fill divisor override affects independent tracks and does not replace an inherited divisor. | Playback paths reviewed and behavior documented in the manual. | Compare one independent track with one linked track. |
+| Routing Divisor | Min, Max, and modulation move through valid musical divisions; routed values are quantized and stabilized near boundaries. | C++ tests; confirmed on hardware with an Octatrack CC in beta.1. | Optionally test CV near a division boundary. |
+| Stochastic/Arp scale | Legacy chromatic pitch slots are interpreted consistently after reloading a project with a non-chromatic scale; the related Arp path follows the same rule. | C++ tests; Stochastic and Arp behavior confirmed on hardware with beta.1. | Optionally test migration with a real v0.4.5 project. |
+| Vagrant build | Provisioning stops on error, verifies the CMake installer SHA-256, and installs compatible Python dependencies. | Contributor confirmed a clean VM build through `UPDATE.DAT` generation. | No module-specific check required. |
 
-## Copertura già superata
+## Checks completed
 
-- build desktop del simulatore;
-- 53 test UI del simulatore;
-- 13 eseguibili di test C++;
-- build STM32 Release e generazione di `UPDATE.DAT`;
-- build WebAssembly e caricamento della nuova build beta.2 nel browser, con display funzionante e senza errori in console;
-- checksum del firmware, versione `0.4.6`, limiti della flash e vettori iniziali;
-- controllo dei link del sito e della coerenza tra release stabile `v0.4.5` e beta `v0.4.6-beta.2`.
+- Desktop simulator build and 53 UI tests.
+- Thirteen C++ test executables.
+- STM32 Release build and `UPDATE.DAT` generation.
+- WebAssembly build and browser loading with a working display and no console errors.
+- Firmware checksum, display version `0.4.6`, flash limit, and initial vectors.
+- Website link/version check distinguishing stable `v0.4.5` from beta `v0.4.6-beta.2`.
+- All five CI jobs for the release tag: docs, STM32, Linux simulator, macOS simulator, and WebAssembly.
 
-Questi controlli verificano logica, compilazione e integrazione, ma non sostituiscono la prova di CV, gate, MIDI, encoder, tasti e SD sul Performer fisico.
+These checks cover logic, compilation, and integration. They do not replace testing CV, gates, MIDI, encoder, buttons, and SD-card behavior on a physical Performer.
 
-## Smoke test ridotto dalla 0.4.5
+## Focused smoke test from v0.4.5
 
-Durata indicativa: 15–20 minuti, più una breve prova Launchpad se disponibile.
+Estimated time: 15–20 minutes, plus a short optional Launchpad check.
 
-### 1. Preparazione
+### 1. Prepare
 
-- [ ] Con la 0.4.5, aprire un progetto che contenga almeno Note, Curve, Stochastic o Arp, un routing Divisor e impostazioni MIDI riconoscibili. Preparare anche una SD di prova separata: in #22 è stato segnalato un blocco all'avvio con una SD già usata.
-- [ ] Fare un backup completo della SD o copiare separatamente il progetto originale. Non usare l'unica copia per il test.
-- [ ] Annotare BPM, divisori, scala/root, pattern attivo e comportamento essenziale di CV/gate.
+- [ ] On v0.4.5, open a project with at least a Note, Curve, Stochastic, or Arp track; a Divisor route; and recognizable MIDI settings. Prepare a separate test SD card: issue #22 reports a startup hang with an existing card.
+- [ ] Back up the entire SD card or make a separate copy of the original project. Do not use your only copy for this test.
+- [ ] Record the BPM, divisors, scale/root, active pattern, and basic CV/gate behavior.
 
-### 2. Aggiornamento e compatibilità
+### 2. Update and check compatibility
 
-- [ ] Installare `UPDATE.DAT` della `v0.4.6-beta.2` e verificare che il modulo mostri `0.4.6`.
-- [ ] Verificare l'avvio prima con la SD di prova, poi con una copia della SD abituale. Se si blocca su `LOADING`, non alterare l'originale: annotare la differenza e riprovare sulla copia rinominando `LAST.DAT`.
-- [ ] Aprire la copia del progetto 0.4.5. Verificare tracce, pattern, BPM, routing, scale e uscite.
-- [ ] Aprire Project e controllare che MIDI Notes, CC, Pgm, Bend e After risultino tutti `Yes`.
+- [ ] Install `UPDATE.DAT` from `v0.4.6-beta.2` and confirm that the module displays `0.4.6`.
+- [ ] Test startup with the separate test card first, then with a copy of the usual card. If it hangs on `LOADING`, leave the original untouched; record which copy hangs and retry on the copy after renaming `LAST.DAT`.
+- [ ] Open the copied v0.4.5 project. Check tracks, patterns, BPM, routing, scales, and outputs.
+- [ ] On the Project page, confirm that MIDI Notes, CC, Pgm, Bend, and After initially read `Yes`.
 
-### 3. Funzioni modificate
+### 3. Changed functions
 
-- [ ] Su Note copiare alcuni step. Paste senza selezionare la destinazione deve mostrare `SELECT DEST`; dopo aver selezionato gli step di arrivo deve incollare correttamente.
-- [ ] Duplicare una selezione continua e una con spazi. La nuova selezione deve spostarsi sulla copia; sull'ultimo step deve comparire `NO ROOM` senza modifiche. Ripetere rapidamente su Curve, Logic, Stochastic e Arp.
-- [ ] Dalla pagina Track fare doppio clic su un tasto traccia e verificare l'ingresso nell'editor Steps corretto.
-- [ ] In Performer attivare il Fill di una traccia indipendente e girare l'encoder. Deve cambiare soltanto il divisore temporaneo; al rilascio devono tornare ritmo e divisore originali. Il controllo Fill Amount deve continuare a modificare la quantità di Fill.
-- [ ] Agganciare Fill con `SHIFT + S9`, poi girare l'encoder senza tenere premuto il tasto: cambia il divisore temporaneo di T1. Agganciare un'altra traccia: l'encoder segue l'ultima. Agganciare Fill globale con `SHIFT + F4`: l'encoder agisce sulle tracce Fill attive. Sganciare e verificare il ritorno ai divisori salvati.
-- [ ] Ripetere su una traccia collegata: deve continuare a seguire timing e divisore della traccia principale.
-- [ ] Muovere lentamente il routing Divisor tra due divisioni. Devono comparire soltanto divisioni valide, senza continui salti avanti e indietro vicino alla soglia.
-- [ ] Ricaricare un progetto con Stochastic o Arp su una scala non cromatica e verificare che le note restino nella scala e nel registro attesi.
+- [ ] Copy a few Note steps. Paste without selecting a destination should show `SELECT DEST`; selecting destination steps should then paste correctly.
+- [ ] Duplicate a continuous selection and one with gaps. The new selection should move to the copy, Last Step should extend when needed, and an attempt with no room should show `NO ROOM` without changing data. Repeat briefly in Curve, Logic, Stochastic, and Arp.
+- [ ] On the Track page, double-click a track key and confirm that the correct Steps editor opens.
+- [ ] On the Performer page, hold Fill for an independent track and turn the encoder. Only the temporary divisor should change; the original rhythm and stored divisor should return on release. Fill Amount must still work.
+- [ ] Latch Fill with `SHIFT + S9`, then turn the encoder without holding the button: T1's temporary divisor should change. Latch another track: the encoder should follow the latest latch. Latch global Fill with `SHIFT + F4`: the encoder should affect all active Fill tracks. Unlatch and confirm restoration.
+- [ ] Repeat with a linked track: it should continue to inherit timing and divisor from its source track.
+- [ ] Move a Divisor route slowly across a division boundary. Only valid divisions should appear, without repeated switching near the boundary.
+- [ ] Reload a project with Stochastic or Arp on a non-chromatic scale and check that notes remain in the expected scale and register.
 
-### 4. MIDI e salvataggio
+### 4. MIDI and saving
 
-- [ ] Tenere una nota MIDI, impostare MIDI Notes su `No` e rilasciare la nota: il Note Off deve chiudere correttamente il gate. Nuovi Note On devono essere bloccati.
-- [ ] Aprire l'editor Note, selezionare gli step con doppio `SHIFT` e inviare Note Trig MIDI. Con `MIDI Notes = No`, pitch e gate selezionati devono restare invariati; con `Yes`, il normale inserimento da MIDI deve tornare disponibile.
-- [ ] Provare almeno un CC assegnato a un routing; se disponibili, provare anche Program Change, Pitch Bend e Aftertouch, alternando `Yes` e `No`.
-- [ ] Salvare **la copia di prova con un nome nuovo**, riavviare e ricaricarla. Filtri MIDI e modifiche devono essere conservati; il divisore temporaneo del Fill non deve essere stato salvato.
+- [ ] Hold a MIDI note, set MIDI Notes to `No`, and release it: Note Off should close the gate. New Note On messages should be blocked.
+- [ ] Open the Note editor, select all steps with double `SHIFT`, and send MIDI Note Trigs. With `MIDI Notes = No`, selected pitches and gates should stay unchanged; with `Yes`, normal MIDI note entry should work again.
+- [ ] Test at least one CC assigned to a route. If available, toggle `Yes`/`No` for Program Change, Pitch Bend, and Aftertouch with suitable destinations.
+- [ ] Save **the test copy under a new name**, restart, and reload it. MIDI filters and edits should persist; the temporary Fill divisor should not be saved.
 
-### 5. Controllo finale
+### 5. Final check
 
-- [ ] Lasciare il progetto in riproduzione per almeno due minuti, cambiando pattern e usando Fill. Non devono verificarsi blocchi, riavvii o gate sospesi.
-- [ ] Conservare intatta la copia originale 0.4.5. Se si ritorna alla versione stabile, ripartire da quella copia e non dal file salvato dalla beta.
+- [ ] Let the project play for at least two minutes while changing patterns and using Fill. Check for hangs, restarts, and stuck gates.
+- [ ] Keep the original v0.4.5 project untouched. If returning to stable firmware, load that original copy, not a project saved by the beta.
 
-## Memoria rispetto alla 0.4.5
+## Memory compared with v0.4.5
 
-Le due versioni sono state ricompilate con la stessa toolchain GNU ARM 6.3.1.
+Both local versions were rebuilt with the same GNU ARM 6.3.1 toolchain.
 
-| Regione | Libera 0.4.5 | Libera 0.4.6-beta.2 | Delta |
+| Region | Free in v0.4.5 | Free in beta.2 local build | Change in free space |
 |---|---:|---:|---:|
-| Flash applicazione | 242216 B | 223004 B | −19212 B |
-| SRAM dopo dati statici | 16244 B | 16228 B | **−16 B** |
-| CCMRAM dopo dati statici | 14768 B | 14756 B | −12 B |
+| Application flash | 242216 B | 223004 B | −19212 B |
+| SRAM after static data | 16244 B | 16228 B | **−16 B** |
+| CCMRAM after static data | 14768 B | 14756 B | −12 B |
 
-La beta lascia quindi **16 byte di SRAM statica in meno** rispetto alla 0.4.5. Rispetto alla beta.1, la SRAM è invariata, mentre la CCMRAM libera diminuisce di 12 byte e la flash libera di 2012 byte. Questi numeri non misurano il picco runtime di stack e heap, che richiede una misura sul modulo.
+The local beta.2 build therefore has **16 fewer bytes of free static SRAM** than v0.4.5. Compared with the local beta.1 build, SRAM is unchanged, free CCMRAM is down by 12 bytes, and free flash is down by 2012 bytes. The CI-distributed beta.2 firmware leaves 222684 B of application flash, 320 B less than the local beta.2 build; CI SRAM/CCMRAM static sections were not measured directly. These figures do not measure peak runtime stack or heap use, which needs a check on the module.
 
-## Esito
+## Outcome
 
-La beta.2 è in preparazione. I due cambiamenti nuovi superano i controlli locali, ma mancano la prova sul Performer e la diagnosi dell'avvio con la SD segnalato in #22. Non considerare questa build una release stabile; mantenere intatta la copia dei progetti precedente al salvataggio in `Version41`.
+Beta.2 is published as a prerelease. Local checks and CI passed, but the two new behaviors still need physical hardware testing. The SD-card startup report in #22 remains open. Keep the pre-beta project copy untouched before any save in `Version41`.

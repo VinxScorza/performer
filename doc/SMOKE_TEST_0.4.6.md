@@ -1,59 +1,59 @@
-# PER|FORMER — smoke test di aggiornamento 0.4.4 → 0.4.6-beta.2
+# PER|FORMER — direct upgrade smoke test: v0.4.4 → v0.4.6-beta.2
 
-Durata indicativa: 25–35 minuti, più la prova Launchpad facoltativa. Esito hardware: DA ESEGUIRE.
-Partenza: firmware 0.4.4 e progetti salvati con quella versione. Il percorso è diretto alla 0.4.6-beta.2, senza installazione intermedia della 0.4.5. Il firmware installato mostra 0.4.6; il suffisso beta appartiene al tag e al pacchetto di release. La checklist include anche le novità e le correzioni della 0.4.5, che resta la versione stabile.
+Estimated time: 25–35 minutes, plus an optional Launchpad check. Hardware result: **NOT YET RUN**.
+Start with v0.4.4 firmware and projects saved by that version. This is a direct upgrade to beta.2; v0.4.5 does not need to be installed in between. The installed firmware displays `0.4.6`; beta status belongs to the release tag and package. The checklist also covers changes introduced in v0.4.5, which remains the stable version.
 
-> **ATTENZIONE — compatibilità dei progetti:** la 0.4.6 beta apre i progetti di 0.4.4 e 0.4.5, ma quando li salva li aggiorna al formato `Version41`. La 0.4.5 e le versioni precedenti non possono riaprire il file aggiornato. Prima della prova fare una copia completa della SD oppure conservare separatamente una copia di ogni progetto originale.
+> **IMPORTANT — project compatibility:** the 0.4.6 beta opens v0.4.4 and v0.4.5 projects, but saving upgrades them to `Version41`. Firmware v0.4.5 and earlier cannot reopen an upgraded file. Back up the entire SD card or keep a separate copy of every original project before testing.
 
-## Riferimento iniziale sulla 0.4.4
+## Baseline on v0.4.4
 
-- [ ] Confermare 0.4.4 in System. Salvare un progetto di riferimento con almeno Note, Curve, Arp e Stochastic, due pattern, un routing CV/CC e impostazioni di scala/root riconoscibili. Fare una copia della SD prima dell'aggiornamento.
-- [ ] Annotare BPM, sorgente clock, divisori, First/Last, scale/root, mute e configurazione MIDI. Registrare o annotare una breve riproduzione delle tracce deterministiche. Sulle tracce casuali confrontare scala, registro e controlli, non pretendere la stessa successione di note.
-- [ ] Verificare Play/Stop, cambio pattern, ingresso in Note/System e apertura della lista Load. Questo è il riferimento per riconoscere eventuali regressioni dopo l'aggiornamento.
+- [ ] Confirm `0.4.4` on the System page. Save a reference project with at least Note, Curve, Arp, and Stochastic tracks, two patterns, a CV/CC route, and recognizable scale/root settings. Copy the SD card before upgrading.
+- [ ] Record BPM, clock source, divisors, First/Last Step, scale/root, mutes, and MIDI configuration. Record or note a short playback of deterministic tracks. For random tracks, compare scale, register, and settings rather than expecting identical note sequences.
+- [ ] Check Play/Stop, pattern changes, entry to Note/System, and the Load list. Use these observations to spot regressions after upgrading.
 
-## Installazione e avvio
+## Installation and startup
 
-- [ ] Copiare il file del pacchetto `v0.4.6-beta.2` nella root della SD con nome `UPDATE.DAT`.
-- [ ] Accendere tenendo premuto l'encoder, oppure entrare in System → Update e tenere premuto l'encoder. Il bootloader deve riconoscere la versione 0.4.6 e verificare il file. Confermare YES e attendere il completamento senza togliere alimentazione.
-- [ ] Verificare 0.4.6 in System, display e pulsanti funzionanti, nessun riavvio inatteso.
-- [ ] Provare l'avvio con una SD di prova separata e poi con una copia della SD abituale. Se resta su `LOADING`, non modificare la scheda originale: annotare quale copia si blocca e riprovare sulla copia rinominando `LAST.DAT`. Questo controllo segue il problema ancora aperto in [#22](https://github.com/VinxScorza/performer/issues/22).
-- [ ] Caricare la copia del progetto 0.4.4: pattern, tracce, routing, BPM, divisori e impostazioni MIDI devono essere presenti. Tutti i nuovi filtri MIDI devono inizialmente risultare abilitati. Avviare e fermare la riproduzione, controllando CV e gate e confrontando il riferimento; le correzioni di scala Arp/Stochastic vanno verificate nella sezione dedicata.
+- [ ] Put the `v0.4.6-beta.2` package's `UPDATE.DAT` in the SD card root.
+- [ ] Power on while holding the encoder, or open System → Update and hold the encoder. The bootloader should recognize version `0.4.6` and verify the file. Confirm YES and wait for completion without removing power.
+- [ ] Confirm `0.4.6` on the System page; check the display and buttons and watch for unexpected restarts.
+- [ ] Try startup with a separate test SD card, then with a copy of the usual card. If the module remains on `LOADING`, do not alter the original card. Record which copy hangs, then retry on the copy after renaming `LAST.DAT`. This follows the still-open report in [#22](https://github.com/VinxScorza/performer/issues/22).
+- [ ] Load the copied v0.4.4 project. Check patterns, tracks, routing, BPM, divisors, and MIDI settings. All new MIDI filters should initially be enabled. Start and stop playback, check CV/gates against the baseline, and review Arp/Stochastic scale behavior below.
 
-## Novità e correzioni introdotte dopo la 0.4.4, incluse nella 0.4.5
+## Changes since v0.4.4, including v0.4.5
 
-- [ ] Su Note aprire Acid → Eucl Phrase. Generare una frase, variare i parametri euclidei e confrontare originale/anteprima con A/B. Cancel deve ripristinare gli step originali; rientrare, generare e usare Apply deve conservare la nuova frase. Verificare anche dal Launchpad Generators Mode, se disponibile.
-- [ ] Su una copia del pattern, aprire Chaos → Wreck Pattern, generare, provare A/B e Cancel. Ripetere con Apply, poi entrare in Note e System. Nessun riavvio, blocco o modifica rimasta dopo Cancel. Ripetere il ciclo almeno cinque volte per intercettare i problemi di stabilità più evidenti.
-- [ ] Sul routing provare un parametro continuo (ad esempio tempo), uno discreto (pattern o divisore) e uno booleano (mute/fill): movimento continuo nel primo caso, scatti validi nel secondo, attivazione/disattivazione stabile nel terzo. Provare una destinazione Curve su una traccia Note: l'abbinamento deve essere rifiutato o ignorato, senza corruzione della traccia.
-- [ ] Aprire e scorrere Load con la SD abituale, caricare due progetti e provare Save As. Nessun riavvio o blocco; il progetto originale 0.4.4 deve restare intatto.
+- [ ] On a Note track, open Acid → Eucl Phrase. Generate a phrase, vary the Euclidean parameters, and compare original/preview with A/B. Cancel should restore the original steps; Apply should keep a newly generated phrase. If available, repeat from Launchpad Generators Mode.
+- [ ] On a pattern copy, open Chaos → Wreck Pattern, generate, try A/B and Cancel. Repeat with Apply, then visit Note and System. Check for restarts, hangs, or changes left behind by Cancel. Repeat the cycle at least five times to catch obvious stability problems.
+- [ ] Test Routing with one continuous target (such as tempo), one discrete target (pattern or divisor), and one boolean target (mute/fill). Expect smooth movement, valid steps, and stable on/off behavior respectively. Try a Curve-only target on a Note track: the incompatible route should be rejected or ignored without corrupting the track.
+- [ ] Browse Load with the usual SD-card copy, load two projects, and try Save As. Check for restarts or hangs and keep the original v0.4.4 project untouched.
 
-## Editing e navigazione
+## Editing and navigation
 
-- [ ] Su Note, creare quattro step riconoscibili, selezionarli e usare Copy. La selezione deve sparire; Paste senza destinazione deve mostrare `SELECT DEST` e lasciare invariato il pattern. Selezionare quattro destinazioni e incollare: devono corrispondere alla sorgente.
-- [ ] Selezionare gli step 1–4 e usare Duplicate: copia su 5–8, nuova selezione su 5–8, Last Step esteso se necessario. Provare anche una selezione non contigua: la distanza fra gli step deve essere conservata.
-- [ ] Selezionare solo l'ultimo step disponibile e duplicare: `NO ROOM`, nessuna modifica. Senza selezione, verificare la duplicazione classica del range First/Last.
-- [ ] Ripetere copia/incolla e duplicazione almeno una volta su Curve, Logic, Stochastic e Arp.
-- [ ] Dalla pagina Track, doppio clic su un tasto traccia: ingresso nell'editor della traccia corretta. Dalla pagina Project, singolo clic sulla traccia: ingresso in Steps.
+- [ ] On Note, create four recognizable steps, select them, and use Copy. The source selection should clear. Paste without a destination should show `SELECT DEST` and leave the pattern unchanged. Select four destination steps and paste; they should match the source.
+- [ ] Select steps 1–4 and use Duplicate: the copy should land on 5–8, the selection should move to 5–8, and Last Step should extend if needed. Also duplicate a non-contiguous selection; its gaps should be preserved.
+- [ ] Select only the last available step and duplicate: expect `NO ROOM` and no data change. With no selection, check the usual First/Last range duplication.
+- [ ] Repeat Copy/Paste and Duplicate at least once on Curve, Logic, Stochastic, and Arp.
+- [ ] On the Track page, double-click a track key and check that the correct editor opens. On the Project page, a single track-key press should open Steps.
 
-## Fill temporaneo
+## Temporary Fill divisor
 
-- [ ] Impostare una Note con ritmo regolare e divisore noto. In Performer, tenere premuto S9 (Fill T1), girare l'encoder: cambia la velocità della traccia, non il BPM globale. Rilasciare S9: ritorna il divisore originale; verificare anche il valore nella pagina Sequence.
-- [ ] Tenere S1 e girare l'encoder: cambia la quantità di Fill di T1, non il divisore e non il BPM.
-- [ ] Provare il Fill globale e ripetere il cambio di velocità su Curve, Logic, Stochastic e Arp con sequenze indipendenti, senza track link. Nessun blocco o gate rimasto alto al termine della prova.
-- [ ] In Performer, agganciare Fill su T1 con `SHIFT + S9`. Girare l'encoder senza tenere premuto il tasto: il divisore temporaneo deve cambiare. Agganciare poi T2: l'encoder deve seguire T2. Agganciare Fill globale con `SHIFT + F4`: l'encoder deve agire sulle tracce Fill attive. Sganciare e verificare il ritorno ai divisori salvati.
-- [ ] Se disponibile, attivare il Fill di una traccia dal Launchpad e girare l'encoder del modulo; verificare variazione temporanea e ritorno al rilascio. Disconnettere il controller dopo il rilascio e verificare il normale uso dell'encoder.
+- [ ] Set a Note track to a regular rhythm with a known divisor. On the Performer page, hold S9 (Fill T1) and turn the encoder: the track rate should change, not the global BPM. Release S9: the original divisor should return. Check the stored value on the Sequence page.
+- [ ] Hold S1 and turn the encoder: it should change T1 Fill Amount, not divisor or BPM.
+- [ ] Try global Fill and the temporary rate change on independent Curve, Logic, Stochastic, and Arp tracks, with no track links. Check for hangs or stuck gates after Fill ends.
+- [ ] On the Performer page, latch T1 Fill with `SHIFT + S9`. Turn the encoder without holding the button: its temporary divisor should change. Latch T2: the encoder should follow T2. Latch global Fill with `SHIFT + F4`: the encoder should affect all active Fill tracks. Unlatch and check that stored divisors return.
+- [ ] If available, start a track Fill from Launchpad and turn the module encoder; check the temporary change and restoration on release. Disconnect the controller after release and verify normal encoder use.
 
-## MIDI e scale
+## MIDI and scales
 
-- [ ] Collegare una sorgente MIDI alla porta e al canale configurati. Con `MIDI Notes` abilitato, tenere una nota, disabilitare il filtro e rilasciare la nota: il Note Off deve essere accettato e la nota/gate deve chiudersi. Con il filtro disabilitato, verificare che nuovi Note On siano bloccati; riabilitarlo e riprovare.
-- [ ] Nell'editor Note, selezionare gli step con doppio `SHIFT` e inviare Note Trig MIDI come nel report #22. Con `MIDI Notes = No`, pitch e gate degli step devono restare invariati. Riabilitare Notes e controllare che l'inserimento MIDI funzioni di nuovo.
-- [ ] Con un CC assegnato a un routing riconoscibile, verificare che `MIDI CC = No` ne blocchi l'effetto e `Yes` lo ripristini. Provare allo stesso modo Program Change con integrazione abilitata, Pitch Bend e Aftertouch con destinazioni configurate.
-- [ ] Salvare il progetto con alcuni filtri disabilitati, ricaricarlo e verificare che i valori siano conservati.
-- [ ] Su Arp e Stochastic, provare la pentatonica minore di Do con posizioni cromatiche legacy/bypass: Mi bemolle deve restare Mi bemolle e Do diesis deve essere escluso dalla selezione delle note. Ascoltare o misurare l'intonazione; poi verificare anche la modalità Semitones.
-- [ ] Assegnare CV o CC al Divisor, muoverlo lentamente e fermarsi vicino a un cambio di divisione. Le divisioni devono essere valide e non oscillare continuamente con piccole fluttuazioni del segnale.
+- [ ] Connect a MIDI source to the configured port and channel. With MIDI Notes enabled, hold a note, disable the filter, then release the note: Note Off should still close the note/gate. With the filter disabled, new Note On messages should be blocked; re-enable it and retry.
+- [ ] In the Note editor, select all steps with double `SHIFT` and send MIDI Note Trigs as reported in issue #22. With `MIDI Notes = No`, selected pitches and gates should remain unchanged. Re-enable Notes and check that MIDI note entry works again.
+- [ ] With a CC assigned to an obvious route, check that `MIDI CC = No` blocks its effect and `Yes` restores it. Where suitable destinations are configured, test Program Change, Pitch Bend, and Aftertouch in the same way.
+- [ ] Save the project with some filters disabled, reload it, and check that the filter values persist.
+- [ ] On Arp and Stochastic, try C minor pentatonic with legacy/bypass chromatic pitch positions: E-flat should remain E-flat, and C-sharp should be excluded from the note selection. Listen or measure pitch, then check Semitones mode.
+- [ ] Route CV or CC to Divisor, move it slowly, and hold near a division boundary. Divisions should remain valid and should not repeatedly switch with small input fluctuations.
 
-## Chiusura
+## Final checks
 
-- [ ] Lasciare suonare per almeno due minuti cambiando pattern e usando Fill. Nessun crash, riavvio o arresto inatteso.
-- [ ] Salvare con un nome nuovo, riavviare e ricaricare: note, routing e filtri MIDI devono essere conservati; il divisore temporaneo del Fill non deve alterare quello memorizzato nella sequenza.
+- [ ] Play for at least two minutes while changing patterns and using Fill. Check for crashes, restarts, or unexpected stops.
+- [ ] Save under a new name, restart, and reload. Notes, routing, and MIDI filters should persist; the temporary Fill divisor should not change the stored sequence divisor.
 
-Annotare per ogni errore: tipo di traccia, pattern, clock interno/esterno, controller collegati, sequenza di tasti e risultato osservato. Il superamento di questa checklist è uno smoke test, non una validazione completa di tutte le funzioni.
+For any failure, record track type, pattern, internal/external clock, connected controllers, the exact key sequence, and the observed result. Passing this checklist is a smoke test, not complete validation of every feature.
