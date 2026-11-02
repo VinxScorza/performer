@@ -21,9 +21,9 @@ EXCLUDED_FOR_VERSION_CHECK = {
     DOCS_ROOT / "forks" / "index.html",
 }
 ALLOWED_VERSION_LITERALS = {
-    DOCS_ROOT / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6-beta.1"},
-    DOCS_ROOT / "features" / "index.html": {"v0.4.5", "v0.4.6-beta.1"},
-    DOCS_ROOT / "manual" / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6-beta.1"},
+    DOCS_ROOT / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6-beta.2"},
+    DOCS_ROOT / "features" / "index.html": {"v0.4.5", "v0.4.6-beta.1", "v0.4.6-beta.2"},
+    DOCS_ROOT / "manual" / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6-beta.2"},
 }
 EXCLUDED_FOR_THEME_REQUIREMENT = {
     DOCS_ROOT / "testdrive" / "sim" / "sequencer.html",

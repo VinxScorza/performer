@@ -63,7 +63,7 @@
             This documentation line is aligned through the active development line. If you want the exact chronological log, including inherited upstream history and older <code>v0.3.2-vinx.*</code> releases, the repository <a href="https://github.com/VinxScorza/performer/blob/master/CHANGELOG.md" target="_blank" rel="noopener noreferrer">CHANGELOG.md</a> remains the technical reference.
           </p>
           <p>
-            Current documentation target: <strong><code>v0.4.6-beta.1</code></strong>. The firmware reports <code>0.4.6</code> on the module, while <code>v0.4.5</code> remains the stable release.
+            Current documentation target: <strong><code>v0.4.6-beta.2</code></strong>. The firmware reports <code>0.4.6</code> on the module, while <code>v0.4.5</code> remains the stable release.
           </p>
           <div class="notice warning">
             <p><strong>Important project compatibility warning:</strong> the 0.4.6 beta can open projects saved by 0.4.4 and 0.4.5, but saving upgrades them to <code>Version41</code>. Firmware 0.4.5 and earlier cannot reopen the upgraded file. Back up the SD card or keep a separate copy of every project before opening and saving it with the beta.</p>
@@ -93,7 +93,7 @@
               <li>Project-scale quantization remap now preserves octave register on Note tracks (Project <code>Scale</code> path with sequence <code>Scale = Default</code>), avoiding octave-collapse when changing Project scale.</li>
               <li>Stochastic note-pool playback now remains consistent after save/reload with non-chromatic scales; legacy chromatic slots are masked or translated against the active scale without progressive note drift, with the related Arp pitch-slot path aligned to the same rule.</li>
               <li>Selected-step Copy/Paste/Duplicate is selection-aware across Note, Curve, Stochastic, Logic, and Arp editors, with explicit destination selection, preserved gaps, automatic Last Step extension, and guarded no-room handling.</li>
-              <li>Held Fill controls can temporarily override playback division on independent tracks from the module encoder, including fills initiated from Launchpad, while preserving the sequence's stored divisor. Linked tracks continue to inherit timing and divisor from their source track.</li>
+              <li>Fill controls can temporarily override playback division on independent tracks from the module encoder, including fills initiated from Launchpad. Beta.2 lets the encoder edit a latched Fill without holding its button; the most recently latched track is selected, or all active Fill tracks when the global latch was last. The stored divisor is preserved, and linked tracks still inherit timing from their source track.</li>
             </ul>
           </article>
         </div>
@@ -278,7 +278,7 @@
               <li><code>Menu Wrap</code> was added as an on-by-default preference for cyclic list navigation.</li>
               <li>Screensaver behavior, wake behavior, and the <code>System</code> landing tab were refined for more predictable daily use.</li>
               <li>Memory footprint was improved versus the upstream baseline, with lower SRAM/CCRAM pressure compared to Mebitek <code>0.3.2</code>.</li>
-              <li>Projects can independently allow or reject MIDI Notes, CC, Program Change, Pitch Bend, and Aftertouch while leaving Clock and Transport handling unchanged. These filters default to enabled for existing projects; Note Off remains accepted when Notes are disabled so active notes can still be released.</li>
+              <li>Projects can independently allow or reject MIDI Notes, CC, Program Change, Pitch Bend, and Aftertouch while leaving Clock and Transport handling unchanged. These filters default to enabled for existing projects; Note Off remains accepted when Notes are disabled so active notes can still be released. Beta.2 also prevents filtered Note On events from changing selected steps in the Note editor.</li>
             </ul>
           </article>
         </div>
@@ -331,7 +331,7 @@
               <li>External clock modes (<code>Reset Pulse</code> / <code>Reset Gate</code>) still benefit from real hardware validation.</li>
               <li><code>Voltage Mode</code> and scale/root-safe transpose are aligned on the covered <code>Note</code> / <code>Arp</code> / <code>Stochastic</code> paths; uncommon <code>notesPerOctave &gt; 12</code> Arp/Stochastic cases still benefit from broader testing.</li>
               <li>Desktop Simulator USB MIDI has been validated well on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>, but not yet across other Launchpads or operating systems.</li>
-              <li>The <code>v0.4.6-beta.1</code> desktop, WebAssembly, STM32, browser-load, UI, and C++ checks have passed; the dedicated real-hardware smoke test from <code>v0.4.5</code> is still pending.</li>
+              <li>The <code>v0.4.6-beta.2</code> desktop UI/C++ tests and local STM32/WebAssembly builds have passed. The two beta.2 changes still need hardware testing; the SD-card startup report in <a href="https://github.com/VinxScorza/performer/issues/22">issue #22</a> is still open.</li>
             </ul>
           </article>
         </div>

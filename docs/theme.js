@@ -3,7 +3,7 @@
   const invertTheme = "invert";
   const stickyOffset = 10;
   const vinxFirmwareVersion = "v0.4.5";
-  const vinxBetaVersion = "v0.4.6-beta.1";
+  const vinxBetaVersion = "v0.4.6-beta.2";
   const vinxBetaDisplayVersion = "0.4.6";
   let stickyButtons = [];
 

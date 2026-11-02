@@ -4,6 +4,12 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. From the first standalone Vinx release onward, Vinx uses standalone semantic versioning (`v0.x.y`) while preserving the earlier `v0.3.2-vinx.*` entries as historical lineage. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
+# v0.4.6-beta.2
+- **Project compatibility warning:** saving an older project still upgrades it to `Version41`; `v0.4.5` and earlier cannot reopen the saved file. Keep an untouched copy of the original project or SD card before testing.
+- Fix the MIDI Notes editor problem reported in [#22](https://github.com/VinxScorza/performer/issues/22): when `MIDI Notes = No`, incoming Note On messages no longer reach the Note step editor and alter selected pitches or gates. Note Off remains accepted.
+- Extend latched Fill control on the Performer page: after `SHIFT + S9..S16`, the encoder alone edits that track's temporary divisor. With several latched tracks it follows the most recently latched one; a global latch selected last edits all active Fill tracks. Holding a Fill control keeps its existing priority, and releasing an active latched Fill no longer clears its temporary divisor prematurely.
+- The SD-card startup report in #22 is still being investigated. The two new changes have passed simulator and STM32/WebAssembly builds but still need hardware verification; this remains a beta. `v0.4.5` is the stable release, and the module still displays `0.4.6`.
+
 # v0.4.6-beta.1
 - **Project compatibility warning:** opening a `v0.4.4` or `v0.4.5` project works, but saving it in this beta upgrades it to `Version41`. Firmware `v0.4.5` and earlier cannot reopen the upgraded file. Back up the SD card or keep a separate copy of each project before saving with the beta.
 - Start the `v0.4.6` beta line while keeping `v0.4.5` as the current stable release. The version shown on the module remains `0.4.6`; the beta state is carried by the release tag.

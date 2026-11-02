@@ -169,7 +169,7 @@
           This manual is the main practical reference for the Vinx Scorza fork. It explains how to use the firmware, how the main workflows behave, and where the current validation limits are.
         </p>
         <p>
-          This revision describes <strong><code>v0.4.6-beta.1</code></strong>. The module displays firmware version <code>0.4.6</code>; <code>v0.4.5</code> remains the stable release.
+          This revision describes <strong><code>v0.4.6-beta.2</code></strong>. The module displays firmware version <code>0.4.6</code>; <code>v0.4.5</code> remains the stable release.
         </p>
         <div class="notice warning">
           <p><strong>Important project compatibility warning</strong></p>
@@ -866,7 +866,7 @@
           In practical use, <em>Monitor Mode</em>, <em>Record Mode</em>, <em>MIDI Input</em>, and <em>CV/Gate Input</em> define the live-input behavior for the whole project. They are the first place to check when monitoring, recording, or external note entry does not behave as expected.
         </p>
         <p>
-          The five MIDI event filters are project settings and default to <code>Yes</code>, including when an older project is loaded. They affect MIDI and USB MIDI input after source selection; Clock and Transport messages are not part of this filter group. When <code>MIDI Notes</code> is set to <code>No</code>, new Note On messages are blocked, while Note Off remains accepted so notes that were already active can be released. Project format <code>Version41</code> is required because each project now stores these five filter settings. Firmware <code>0.4.6</code> can load older <code>Version40</code> projects, but firmware <code>v0.4.5</code> and earlier expect the previous file layout and cannot validate a project saved with the additional field: the integrity check fails and the load is discarded. Keep the older project copy separately before saving with the beta.
+          The five MIDI event filters are project settings and default to <code>Yes</code>, including when an older project is loaded. They affect MIDI and USB MIDI input after source selection; Clock and Transport messages are not part of this filter group. When <code>MIDI Notes</code> is set to <code>No</code>, new Note On messages are blocked, including in the Note step editor, so incoming notes cannot change selected steps. Note Off remains accepted so notes that were already active can be released. Project format <code>Version41</code> is required because each project now stores these five filter settings. Firmware <code>0.4.6</code> can load older <code>Version40</code> projects, but firmware <code>v0.4.5</code> and earlier expect the previous file layout and cannot validate a project saved with the additional field: the integrity check fails and the load is discarded. Keep the older project copy separately before saving with the beta.
         </p>
         <p>
           Double-clicking <code>F1</code> - <code>F5</code> provides shortcuts into Project, Layout, Routing, MIDI Output and User Scale.
@@ -1939,7 +1939,7 @@
           Hold <code>S9</code> - <code>S16</code> to temporarily enable fills per track. Use <code>SHIFT</code> + <code>S9</code> - <code>S16</code> to latch fill on a track. Hold <code>F4</code> to fill all tracks temporarily, or use <code>SHIFT</code> + <code>F4</code> to latch fill globally.
         </p>
         <p>
-          While a Fill control is held, rotate the encoder to step through playback divisions for the affected track or tracks. This is a temporary performance override: releasing the Fill returns playback to the divisor stored in each sequence. Holding <code>S1</code> - <code>S8</code> and rotating the encoder keeps its existing role of editing Fill Amount. A per-track Fill started from Launchpad also selects that track for the same temporary divisor edit on the module encoder.
+          While a Fill control is held, rotate the encoder to step through playback divisions for the affected track or tracks. Releasing a momentary Fill returns playback to the divisor stored in each sequence. After latching a track Fill with <code>SHIFT</code> + <code>S9</code> - <code>S16</code>, the encoder alone edits that track's temporary divisor; it remains active until Fill is unlatched. If several tracks are latched, the most recently latched track is selected. If global Fill was latched last with <code>SHIFT</code> + <code>F4</code>, the encoder edits all active Fill tracks. A currently held Fill control takes priority over a latch. Holding <code>S1</code> - <code>S8</code> and rotating the encoder still edits Fill Amount. A per-track Fill started from Launchpad also selects that track for the same temporary divisor edit on the module encoder.
         </p>
         <p>
           Linked tracks continue to follow the timing and divisor inherited from their source track. The temporary Fill divisor control therefore changes independent track playback; it does not replace the divisor inherited by a linked track.
@@ -3145,7 +3145,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
         <h3 id="appendix-firmware-update">Firmware Update</h3>
         <p>
-          The current beta package is tagged <code>v0.4.6-beta.1</code>, while the version shown on the module is <code>0.4.6</code>. The current stable release is <code>v0.4.5</code>.
+          The current beta package is tagged <code>v0.4.6-beta.2</code>, while the version shown on the module is <code>0.4.6</code>. The current stable release is <code>v0.4.5</code>.
         </p>
         <p>
           Use the following steps to update the sequencer firmware:
@@ -3173,6 +3173,9 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
         </p>
         <p>
           <strong>Before installing the beta, back up the SD card.</strong> The beta reads projects from <code>v0.4.4</code> and <code>v0.4.5</code>, but saving writes project format <code>Version41</code>. Firmware <code>v0.4.5</code> and earlier cannot reopen a project after it has been saved in that format, so keep the original project files separately if you may reinstall older firmware.
+        </p>
+        <p>
+          Beta.2 hardware note: the MIDI Notes step-editor fix and one-handed latched Fill control still need testing on the module. A startup hang with one existing SD card is under investigation in <a href="https://github.com/VinxScorza/performer/issues/22" target="_blank" rel="noopener noreferrer">issue #22</a>. Keep the original card backed up; for diagnosis, try a separate empty card and a copy of the old card with <code>LAST.DAT</code> renamed. Do not alter the original card.
         </p>
         <p>
           For release history and fork-specific changes, see the <a href="../features/index.html">Features</a> page.

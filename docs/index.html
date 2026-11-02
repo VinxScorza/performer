@@ -54,7 +54,7 @@
         <div class="home-cta-grid">
           <a class="home-cta-link" href="https://github.com/VinxScorza/performer/releases" target="_blank" rel="noopener noreferrer">
             <span class="home-cta-title">Firmware Downloads</span>
-            <span class="home-cta-meta">Stable v0.4.5 and beta v0.4.6-beta.1</span>
+            <span class="home-cta-meta">Stable v0.4.5 and beta v0.4.6-beta.2</span>
           </a>
           <a class="home-cta-link" href="manual/index.html">
             <span class="home-cta-title">User Manual</span>
@@ -126,12 +126,12 @@
         <div class="download-grid">
           <div class="download-primary">
             <p class="download-label">Current beta</p>
-            <p class="download-version">Vinx FW v0.4.6-beta.1</p>
+            <p class="download-version">Vinx FW v0.4.6-beta.2</p>
             <p>
-              This prerelease identifies as <strong>0.4.6</strong> on the module. It updates saved projects to <code>Version41</code>, adds project-level MIDI input filters, and includes the current editing, Fill, routing, and scale fixes. <strong>v0.4.5 remains the stable release.</strong>
+              This prerelease identifies as <strong>0.4.6</strong> on the module. Beta.2 prevents filtered MIDI notes from changing selected steps and adds one-handed divisor control for latched Fill. It also includes the beta.1 editing, routing, and scale fixes. <strong>v0.4.5 remains the stable release.</strong>
             </p>
             <p class="download-actions">
-              <a href="https://github.com/VinxScorza/performer/releases/tag/v0.4.6-beta.1" target="_blank" rel="noopener noreferrer">Beta release + assets</a>
+              <a href="https://github.com/VinxScorza/performer/releases/tag/v0.4.6-beta.2" target="_blank" rel="noopener noreferrer">Beta release + assets</a>
               <span aria-hidden="true">|</span>
               <a href="manual/index.html#appendix-firmware-update">Firmware update manual</a>
             </p>
@@ -142,16 +142,8 @@
               <dd><code>UPDATE.DAT</code></dd>
             </div>
             <div>
-              <dt>Size</dt>
-              <dd><code>758,040 bytes</code></dd>
-            </div>
-            <div>
-              <dt>MD5</dt>
-              <dd><code>fe24653b56880af9611a066954fd2e0b</code></dd>
-            </div>
-            <div>
-              <dt>SHA-256</dt>
-              <dd><code>5dc2fa9f9ff148097023efa1138e69dad13bbf85ac9e8de96647506289dec432</code></dd>
+              <dt>Checksum</dt>
+              <dd>Verify the SHA-256 listed with the release assets.</dd>
             </div>
           </dl>
         </div>
@@ -173,7 +165,7 @@
         <p>
           <strong>If you believe free software has value, accept that the work of the people who develop it has value too. Free as in freedom does not mean free labor. If this project is useful to you, consider supporting the people behind it. <a href="donate/index.html">DONATE</a>.</strong><br>
           If you notice any bug or weird behavior, please <a href="https://github.com/VinxScorza/performer/issues" target="_blank" rel="noopener noreferrer">report it</a>. This fork moves fast, and I really need the feedback.<br>
-          Documentation note: the <a href="manual/index.html">User Manual</a> and <a href="cheatsheet/index.html">LP Cheatsheet</a> include the current <code>v0.4.6-beta.1</code> behavior, while the site keeps <code>v0.4.5</code> clearly marked as the stable release.
+          Documentation note: the <a href="manual/index.html">User Manual</a> and <a href="cheatsheet/index.html">LP Cheatsheet</a> include the current <code>v0.4.6-beta.2</code> behavior, while the site keeps <code>v0.4.5</code> clearly marked as the stable release.
         </p>
       </section>
 
@@ -199,7 +191,7 @@
           <li>Core sequencing gained bank-aware range editing, chain-aware note ties, improved step selection, <code>Curve</code> gate timing layers, and per-track <code>Gate/Trigger</code> output behavior.</li>
           <li>Clock/reset behavior, scale handling, Voltage Mode paths, and Arp/Stochastic scale-safe transpose were tightened for more predictable performance use.</li>
           <li>In the <code>0.4.6</code> beta, selected-step Copy/Paste/Duplicate is safer across Note, Curve, Stochastic, Logic, and Arp, and double-clicking a track button provides direct access to its Steps editor where available.</li>
-          <li>Held Fill controls can temporarily change a track's playback divisor from the module encoder, including fills initiated from Launchpad, without replacing the divisor stored in the sequence.</li>
+          <li>Fill controls can temporarily change a track's playback divisor from the module encoder, including fills initiated from Launchpad. Beta.2 also lets the encoder edit a latched Fill without holding its button; the stored sequence divisor is unchanged.</li>
         </ul>
         <h4 class="section-callout">Memory, Runtime &amp; Build Robustness</h4>
         <ul>
@@ -211,7 +203,7 @@
           <li>Generator and modal UI paths were hardened against wrong-target apply/cancel behavior, stale state, and controller retargeting edge cases.</li>
           <li>Routing/CV control now treats continuous, discrete, and trigger-like targets more safely and filters writes by compatible track mode.</li>
           <li><code>Load</code>, <code>Save</code>, <code>Save As</code>, project browsing, and slower SD-card boot paths were hardened to reduce race and reboot-prone behavior.</li>
-          <li>The <code>0.4.6</code> beta adds per-project filters for MIDI Notes, CC, Program Change, Pitch Bend, and Aftertouch. Their state is stored in project format <code>Version41</code>; custom Program Change mapping is not included.</li>
+          <li>The <code>0.4.6</code> beta adds per-project filters for MIDI Notes, CC, Program Change, Pitch Bend, and Aftertouch. Beta.2 also applies the Notes filter to the Note step editor. Filter state is stored in project format <code>Version41</code>; custom Program Change mapping is not included.</li>
           <li>Routing Divisor Min/Max now follows valid musical divisions, while Stochastic and the related Arp pitch path preserve scale-note interpretation across project reloads.</li>
         </ul>
         <h4 class="section-callout">Docs, Site &amp; Ecosystem</h4>
@@ -234,7 +226,7 @@
             <a href="manual/index.html#manual-validation-scope">User Manual validation section</a>.
           </p>
           <ul class="validation-scope-list">
-            <li><span class="status-chip status-chip-pending">Beta validation</span> The <code>v0.4.6-beta.1</code> firmware and simulators build successfully; the focused real-hardware upgrade smoke test remains to be completed.</li>
+            <li><span class="status-chip status-chip-pending">Beta validation</span> The <code>v0.4.6-beta.2</code> firmware and simulators build locally. The MIDI Notes editor fix and latched Fill control still need a hardware test; the SD-card startup report in <a href="https://github.com/VinxScorza/performer/issues/22">issue #22</a> remains open.</li>
             <li><span class="status-chip status-chip-validated">Validated</span> <code>16-step Editing Mode</code> maintainer-side hardware validation is on <code>Launch Control XL</code> (<code>Factory Preset #1</code>).</li>
             <li><span class="status-chip status-chip-pending">Pending hardware test</span> <code>BeatStep Pro</code> template/mapping is code-supported but still needs dedicated maintainer-side on-device validation.</li>
             <li><span class="status-chip status-chip-partial">Partially validated</span> <code>Voltage Mode</code> is fixed across <code>Note</code>/<code>Arp</code>/<code>Stochastic</code>; uncommon <code>notesPerOctave &gt; 12</code> cases on Arp/Stochastic still benefit from broader field tests.</li>

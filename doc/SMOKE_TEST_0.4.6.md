@@ -1,7 +1,7 @@
-# PER|FORMER — smoke test di aggiornamento 0.4.4 → 0.4.6-beta.1
+# PER|FORMER — smoke test di aggiornamento 0.4.4 → 0.4.6-beta.2
 
 Durata indicativa: 25–35 minuti, più la prova Launchpad facoltativa. Esito hardware: DA ESEGUIRE.
-Partenza: firmware 0.4.4 e progetti salvati con quella versione. Il percorso è diretto alla 0.4.6-beta.1, senza installazione intermedia della 0.4.5. Il firmware installato mostra 0.4.6; il suffisso beta appartiene al tag e al pacchetto di release. La checklist include anche le novità e le correzioni della 0.4.5, che resta la versione stabile.
+Partenza: firmware 0.4.4 e progetti salvati con quella versione. Il percorso è diretto alla 0.4.6-beta.2, senza installazione intermedia della 0.4.5. Il firmware installato mostra 0.4.6; il suffisso beta appartiene al tag e al pacchetto di release. La checklist include anche le novità e le correzioni della 0.4.5, che resta la versione stabile.
 
 > **ATTENZIONE — compatibilità dei progetti:** la 0.4.6 beta apre i progetti di 0.4.4 e 0.4.5, ma quando li salva li aggiorna al formato `Version41`. La 0.4.5 e le versioni precedenti non possono riaprire il file aggiornato. Prima della prova fare una copia completa della SD oppure conservare separatamente una copia di ogni progetto originale.
 
@@ -13,9 +13,10 @@ Partenza: firmware 0.4.4 e progetti salvati con quella versione. Il percorso è 
 
 ## Installazione e avvio
 
-- [ ] Copiare il file del pacchetto `v0.4.6-beta.1` nella root della SD con nome `UPDATE.DAT`.
+- [ ] Copiare il file del pacchetto `v0.4.6-beta.2` nella root della SD con nome `UPDATE.DAT`.
 - [ ] Accendere tenendo premuto l'encoder, oppure entrare in System → Update e tenere premuto l'encoder. Il bootloader deve riconoscere la versione 0.4.6 e verificare il file. Confermare YES e attendere il completamento senza togliere alimentazione.
 - [ ] Verificare 0.4.6 in System, display e pulsanti funzionanti, nessun riavvio inatteso.
+- [ ] Provare l'avvio con una SD di prova separata e poi con una copia della SD abituale. Se resta su `LOADING`, non modificare la scheda originale: annotare quale copia si blocca e riprovare sulla copia rinominando `LAST.DAT`. Questo controllo segue il problema ancora aperto in [#22](https://github.com/VinxScorza/performer/issues/22).
 - [ ] Caricare la copia del progetto 0.4.4: pattern, tracce, routing, BPM, divisori e impostazioni MIDI devono essere presenti. Tutti i nuovi filtri MIDI devono inizialmente risultare abilitati. Avviare e fermare la riproduzione, controllando CV e gate e confrontando il riferimento; le correzioni di scala Arp/Stochastic vanno verificate nella sezione dedicata.
 
 ## Novità e correzioni introdotte dopo la 0.4.4, incluse nella 0.4.5
@@ -38,11 +39,13 @@ Partenza: firmware 0.4.4 e progetti salvati con quella versione. Il percorso è 
 - [ ] Impostare una Note con ritmo regolare e divisore noto. In Performer, tenere premuto S9 (Fill T1), girare l'encoder: cambia la velocità della traccia, non il BPM globale. Rilasciare S9: ritorna il divisore originale; verificare anche il valore nella pagina Sequence.
 - [ ] Tenere S1 e girare l'encoder: cambia la quantità di Fill di T1, non il divisore e non il BPM.
 - [ ] Provare il Fill globale e ripetere il cambio di velocità su Curve, Logic, Stochastic e Arp con sequenze indipendenti, senza track link. Nessun blocco o gate rimasto alto al termine della prova.
+- [ ] In Performer, agganciare Fill su T1 con `SHIFT + S9`. Girare l'encoder senza tenere premuto il tasto: il divisore temporaneo deve cambiare. Agganciare poi T2: l'encoder deve seguire T2. Agganciare Fill globale con `SHIFT + F4`: l'encoder deve agire sulle tracce Fill attive. Sganciare e verificare il ritorno ai divisori salvati.
 - [ ] Se disponibile, attivare il Fill di una traccia dal Launchpad e girare l'encoder del modulo; verificare variazione temporanea e ritorno al rilascio. Disconnettere il controller dopo il rilascio e verificare il normale uso dell'encoder.
 
 ## MIDI e scale
 
 - [ ] Collegare una sorgente MIDI alla porta e al canale configurati. Con `MIDI Notes` abilitato, tenere una nota, disabilitare il filtro e rilasciare la nota: il Note Off deve essere accettato e la nota/gate deve chiudersi. Con il filtro disabilitato, verificare che nuovi Note On siano bloccati; riabilitarlo e riprovare.
+- [ ] Nell'editor Note, selezionare gli step con doppio `SHIFT` e inviare Note Trig MIDI come nel report #22. Con `MIDI Notes = No`, pitch e gate degli step devono restare invariati. Riabilitare Notes e controllare che l'inserimento MIDI funzioni di nuovo.
 - [ ] Con un CC assegnato a un routing riconoscibile, verificare che `MIDI CC = No` ne blocchi l'effetto e `Yes` lo ripristini. Provare allo stesso modo Program Change con integrazione abilitata, Pitch Bend e Aftertouch con destinazioni configurate.
 - [ ] Salvare il progetto con alcuni filtri disabilitati, ricaricarlo e verificare che i valori siano conservati.
 - [ ] Su Arp e Stochastic, provare la pentatonica minore di Do con posizioni cromatiche legacy/bypass: Mi bemolle deve restare Mi bemolle e Do diesis deve essere escluso dalla selezione delle note. Ascoltare o misurare l'intonazione; poi verificare anche la modalità Semitones.
