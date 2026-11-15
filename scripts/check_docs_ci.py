@@ -21,9 +21,9 @@ EXCLUDED_FOR_VERSION_CHECK = {
     DOCS_ROOT / "forks" / "index.html",
 }
 ALLOWED_VERSION_LITERALS = {
-    DOCS_ROOT / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6-beta.2"},
-    DOCS_ROOT / "features" / "index.html": {"v0.4.5", "v0.4.6-beta.1", "v0.4.6-beta.2"},
-    DOCS_ROOT / "manual" / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6-beta.2"},
+    DOCS_ROOT / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6"},
+    DOCS_ROOT / "features" / "index.html": {"v0.4.5", "v0.4.6-beta.1", "v0.4.6-beta.2", "v0.4.6"},
+    DOCS_ROOT / "manual" / "index.html": {"v0.4.4", "v0.4.5", "v0.4.6"},
 }
 EXCLUDED_FOR_THEME_REQUIREMENT = {
     DOCS_ROOT / "testdrive" / "sim" / "sequencer.html",
@@ -220,9 +220,7 @@ def main() -> int:
         return 1
 
     stable_version = extract_theme_version("vinxFirmwareVersion")
-    beta_version = extract_theme_version("vinxBetaVersion")
     print(f"[docs-ci] Stable firmware version source: {stable_version}")
-    print(f"[docs-ci] Beta firmware version source: {beta_version}")
     print(f"[docs-ci] HTML files scanned: {len(html_files)}")
 
     ids_by_file = {path: parse_html(path).ids for path in html_files}

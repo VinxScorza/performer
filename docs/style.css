@@ -487,59 +487,6 @@ pre code {
   color: var(--muted);
 }
 
-.validation-scope-panel {
-  margin: 0 0 26px;
-  padding: 14px 16px 16px;
-  border: 1px solid rgba(233, 201, 97, 0.34);
-  border-radius: 0;
-  background: rgba(233, 201, 97, 0.08);
-  box-shadow: 0 8px 22px var(--shadow);
-}
-
-.validation-scope-panel h2,
-.validation-scope-panel h3 {
-  margin-left: 0 !important;
-}
-
-.validation-scope-list {
-  margin: 12px 0 0;
-  padding-left: 18px;
-}
-
-.validation-scope-list li + li {
-  margin-top: 8px;
-}
-
-.status-chip {
-  display: inline-block;
-  margin-right: 6px;
-  padding: 2px 7px;
-  border-radius: 0;
-  border: 1px solid rgba(203, 178, 111, 0.36);
-  background: rgba(203, 178, 111, 0.14);
-  color: var(--table-first-col-text);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  vertical-align: middle;
-}
-
-.status-chip-validated {
-  border-color: rgba(111, 161, 77, 0.52);
-  background: rgba(111, 161, 77, 0.2);
-}
-
-.status-chip-partial {
-  border-color: rgba(214, 164, 77, 0.52);
-  background: rgba(214, 164, 77, 0.2);
-}
-
-.status-chip-pending {
-  border-color: rgba(187, 187, 187, 0.52);
-  background: rgba(187, 187, 187, 0.16);
-}
-
 #main_content h2 {
   margin: 0 0 14px;
   font-size: 28px;

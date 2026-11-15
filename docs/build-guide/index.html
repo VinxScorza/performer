@@ -67,10 +67,6 @@
         <p>
           If you just want the browser-based build, use the published <a href="../testdrive/index.html">Web Simulator</a> instead of the local desktop flow described below.
         </p>
-        <p>
-          For up-to-date known limits and validation status (hardware test scope, BeatStep Pro status, Voltage Mode edge-cases, controller limits), see
-          <a href="../manual/index.html#manual-validation-scope">User Manual - Known Limits / Validation Scope</a>.
-        </p>
       </section>
 
       <section>
@@ -184,9 +180,7 @@ make -j
   --usb-midi-in "Launchpad Mini MK3 LPMiniMK3 DAW Out" \
   --usb-midi-out "Launchpad Mini MK3 LPMiniMK3 DAW In"</code></pre>
         <p>
-          Validation note: the simulator-side USB MIDI workflow is currently maintainer-validated on
-          <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>. For the current cross-device scope, use
-          <a href="../manual/index.html#manual-validation-scope">User Manual - Known Limits / Validation Scope</a>.
+          The simulator-side USB MIDI workflow has been tested on macOS with <code>Launchpad Mini MK3</code>.
         </p>
         <p>
           The simulator also infers the Launchpad model from the selected USB port names, so a Mini MK3 is no longer
@@ -227,10 +221,6 @@ make -j
         </p>
         <p>
           USB hubs, including externally powered hubs, are not supported. The current firmware architecture does not implement hub-based multi-device handling on top of the STM32 USB Host stack, so devices connected through a hub are not enumerated by the firmware and cannot establish a usable controller connection.
-        </p>
-        <p>
-          Validation status for <code>Launch Control XL</code>, <code>BeatStep Pro</code>, simulator USB MIDI, and controller concurrency is tracked in
-          <a href="../manual/index.html#manual-validation-scope">User Manual - Known Limits / Validation Scope</a>.
         </p>
       </section>
 

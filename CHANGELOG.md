@@ -4,6 +4,12 @@
 
 <sub>Starting from `v0.3.2-vinx.1` (16 March 2026), this changelog includes changes specific to the Vinx Scorza fork. All entries below `v0.3.2-vinx.1` are inherited from the Mebitek fork history and are kept here as upstream reference. From the first standalone Vinx release onward, Vinx uses standalone semantic versioning (`v0.x.y`) while preserving the earlier `v0.3.2-vinx.*` entries as historical lineage. I try to preserve backward compatibility with older projects, settings, and workflows where possible, but I do not guarantee it for Vinx-specific changes.</sub>
 
+# v0.4.6
+- Promote the 0.4.6 beta line to a stable release without further firmware changes after beta.2. This release includes the editing, MIDI input filtering, Fill, Routing Divisor, and scale fixes recorded below.
+- **Project compatibility warning:** v0.4.6 opens projects from v0.4.4 and v0.4.5, but saving upgrades them to `Version41`. Firmware v0.4.5 and earlier cannot reopen the upgraded files. Back up the SD card or keep separate copies of original projects before saving.
+- The MIDI Notes step-editor fix and one-handed latched Fill control passed automated tests and builds; dedicated hardware checks of those paths remain pending.
+- A startup hang with one existing SD card remains under investigation in [#22](https://github.com/VinxScorza/performer/issues/22). Keep the original card backed up and report any recurrence.
+
 # v0.4.6-beta.2
 - **Project compatibility warning:** saving an older project still upgrades it to `Version41`; `v0.4.5` and earlier cannot reopen the saved file. Keep an untouched copy of the original project or SD card before testing.
 - Fix the MIDI Notes editor problem reported in [#22](https://github.com/VinxScorza/performer/issues/22): when `MIDI Notes = No`, incoming Note On messages no longer reach the Note step editor and alter selected pitches or gates. Note Off remains accepted.

@@ -69,7 +69,6 @@
             <nav class="manual-sidebar-nav">
               <ul>
                 <li><a href="#manual-overview">User Manual</a></li>
-                <li><a href="#manual-validation-scope">Known Limits / Validation Scope</a></li>
                 <li><a href="#manual-toc">Table of Contents</a></li>
                 <li><a href="#introduction">Introduction</a>
                   <ul>
@@ -166,15 +165,15 @@
       <section>
         <h3 id="manual-overview">User Manual</h3>
         <p>
-          This manual is the main practical reference for the Vinx Scorza fork. It explains how to use the firmware, how the main workflows behave, and where the current validation limits are.
+          This manual is the main practical reference for the Vinx Scorza fork. It explains how to use the firmware and how the main workflows behave.
         </p>
         <p>
-          This revision describes <strong><code>v0.4.6-beta.2</code></strong>. The module displays firmware version <code>0.4.6</code>; <code>v0.4.5</code> remains the stable release.
+          This revision describes <strong><code>v0.4.6</code></strong>, the current stable release and the version shown on the module.
         </p>
         <div class="notice warning">
           <p><strong>Important project compatibility warning</strong></p>
           <p>
-            The 0.4.6 beta can open projects saved by 0.4.4 and 0.4.5, but saving them upgrades the file to <code>Version41</code>. Firmware 0.4.5 and earlier cannot reopen that upgraded file. <strong>Back up the SD card or keep a separate copy of every project before opening and saving it with the beta.</strong>
+            Firmware 0.4.6 can open projects saved by 0.4.4 and 0.4.5, but saving upgrades the file to <code>Version41</code>. Firmware 0.4.5 and earlier cannot reopen the upgraded file. <strong>Back up the SD card or keep a separate copy of every original project before saving with 0.4.6.</strong>
           </p>
         </div>
         <p>
@@ -184,11 +183,7 @@
           It is intentionally practical rather than promotional: it avoids release-note repetition, but keeps concrete controls, mappings, limits, and exception rules whenever they affect how the firmware is actually used.
         </p>
         <p>
-          Known limits and hardware validation status are tracked in
-          <a href="#manual-validation-scope">Known Limits / Validation Scope</a>.
-        </p>
-        <p>
-          Scale and <code>Voltage Mode</code> behavior are covered in <a href="#pages-user-scale">User Scale</a>, with current hardware-validation status tracked separately.
+          Scale and <code>Voltage Mode</code> behavior are covered in <a href="#pages-user-scale">User Scale</a>.
         </p>
         <p>
           Search, sidebar navigation, and appendix tables are intended to make this manual usable as both a learning path and a reference while working on the module.
@@ -203,58 +198,6 @@
         </p>
       </section>
 
-      <section class="validation-scope-panel">
-        <h3 id="manual-validation-scope">Known Limits / Validation Scope</h3>
-        <p>
-          This table is the canonical validation snapshot for the firmware line. It is intentionally explicit about what is already confirmed in real use and what still needs broader hardware coverage.
-        </p>
-        <table>
-          <thead>
-            <tr>
-              <th style="text-align: left">Area</th>
-              <th style="text-align: left">Status</th>
-              <th style="text-align: left">Current scope / practical note</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="text-align: left">16-step Editing Mode (LCXL)</td>
-              <td style="text-align: left"><span class="status-chip status-chip-validated">Validated</span></td>
-              <td style="text-align: left">Maintainer-side on-device validation is on <code>Launch Control XL</code> using <code>Factory Preset #1</code>.</td>
-            </tr>
-            <tr>
-              <td style="text-align: left">16-step Editing Mode (BSP)</td>
-              <td style="text-align: left"><span class="status-chip status-chip-pending">Pending hardware test</span></td>
-              <td style="text-align: left">Template/mapping is code-supported; dedicated maintainer-side on-device validation is still pending. Template download: <a href="../doc/PERFORMERstep16_BSP.beatsteppro" target="_blank" rel="noopener noreferrer"><code>PERFORMERstep16_BSP.beatsteppro</code></a>.</td>
-            </tr>
-            <tr>
-              <td style="text-align: left">Voltage Mode (Note/Arp/Stochastic)</td>
-              <td style="text-align: left"><span class="status-chip status-chip-partial">Partially validated</span></td>
-              <td style="text-align: left">Cross-track behavior is aligned (including octave wrapping on <code>1.2V</code> span). Additional field testing is still useful for uncommon scales, especially <code>notesPerOctave &gt; 12</code> on Arp/Stochastic paths.</td>
-            </tr>
-            <tr>
-              <td style="text-align: left">External clock modes</td>
-              <td style="text-align: left"><span class="status-chip status-chip-partial">Partially validated</span></td>
-              <td style="text-align: left"><code>Reset Pulse</code> / <code>Reset Gate</code> behavior is stabilized, but broader hardware testing across different clock sources/modules remains recommended.</td>
-            </tr>
-            <tr>
-              <td style="text-align: left">Desktop Simulator USB MIDI</td>
-              <td style="text-align: left"><span class="status-chip status-chip-partial">Partially validated</span></td>
-              <td style="text-align: left">Validated on <code>macOS / OS X</code> with <code>Launchpad Mini MK3</code>; coverage on other Launchpads and OS combinations is still incomplete.</td>
-            </tr>
-            <tr>
-              <td style="text-align: left">External controller concurrency</td>
-              <td style="text-align: left"><span class="status-chip status-chip-pending">Known architecture limit</span></td>
-              <td style="text-align: left">One active external USB controller workflow at a time. USB hubs (including powered hubs) are not supported by the current firmware USB host stack.</td>
-            </tr>
-            <tr>
-              <td style="text-align: left">Save/Load reboot issue hardening</td>
-              <td style="text-align: left"><span class="status-chip status-chip-partial">Strong partial hardening</span></td>
-              <td style="text-align: left"><code>Save</code>/<code>Save As</code>/<code>Load</code> races were strongly mitigated (serialized tasks + UI-thread result dispatch), but full architectural closure is still in progress.</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
 
       <section>
         <h3 id="manual-video">Video Walkthrough</h3>
@@ -270,7 +213,6 @@
           Use this compact outline for the main structure. For detailed navigation, use the sidebar and search.
         </p>
         <ul>
-          <li><a href="#manual-validation-scope">Known Limits / Validation Scope</a></li>
           <li><a href="#introduction">Introduction</a></li>
           <li><a href="#introduction-shortcuts">Shortcuts and Key Combinations</a></li>
           <li><a href="#concepts">Concepts</a></li>
@@ -866,7 +808,7 @@
           In practical use, <em>Monitor Mode</em>, <em>Record Mode</em>, <em>MIDI Input</em>, and <em>CV/Gate Input</em> define the live-input behavior for the whole project. They are the first place to check when monitoring, recording, or external note entry does not behave as expected.
         </p>
         <p>
-          The five MIDI event filters are project settings and default to <code>Yes</code>, including when an older project is loaded. They affect MIDI and USB MIDI input after source selection; Clock and Transport messages are not part of this filter group. When <code>MIDI Notes</code> is set to <code>No</code>, new Note On messages are blocked, including in the Note step editor, so incoming notes cannot change selected steps. Note Off remains accepted so notes that were already active can be released. Project format <code>Version41</code> is required because each project now stores these five filter settings. Firmware <code>0.4.6</code> can load older <code>Version40</code> projects, but firmware <code>v0.4.5</code> and earlier expect the previous file layout and cannot validate a project saved with the additional field: the integrity check fails and the load is discarded. Keep the older project copy separately before saving with the beta.
+          The five MIDI event filters are project settings and default to <code>Yes</code>, including when an older project is loaded. They affect MIDI and USB MIDI input after source selection; Clock and Transport messages are not part of this filter group. When <code>MIDI Notes</code> is set to <code>No</code>, new Note On messages are blocked, including in the Note step editor, so incoming notes cannot change selected steps. Note Off remains accepted so notes that were already active can be released. Project format <code>Version41</code> is required because each project now stores these five filter settings. Firmware <code>0.4.6</code> can load older <code>Version40</code> projects, but firmware <code>v0.4.5</code> and earlier expect the previous file layout and cannot validate a project saved with the additional field: the integrity check fails and the load is discarded. Keep the older project copy separately before saving with v0.4.6.
         </p>
         <p>
           Double-clicking <code>F1</code> - <code>F5</code> provides shortcuts into Project, Layout, Routing, MIDI Output and User Scale.
@@ -2057,7 +1999,7 @@
           Note: the items defined in a user scale represent a single octave of the scale. The remaining octaves are inferred by repetition.
         </p>
         <p>
-          MIDI note capture on Note, Stochastic and Arpeggiator tracks follows the octave span of the active scale, so voltage-mode user scales are interpreted according to their own octave range instead of assuming fixed <code>1V/oct</code>. Validation scope for these cross-track Voltage Mode workflows is tracked in <a href="#manual-validation-scope">Known Limits / Validation Scope</a>.
+          MIDI note capture on Note, Stochastic and Arpeggiator tracks follows the octave span of the active scale, so voltage-mode user scales are interpreted according to their own octave range instead of assuming fixed <code>1V/oct</code>.
         </p>
         <p>
           On Stochastic and Arpeggiator tracks, routed transpose stays inside the selected scale/root context on the covered paths instead of shifting the selected scale root chromatically. Explicit <code>Semitones</code> keeps the chromatic legacy behavior.
@@ -2292,9 +2234,6 @@
         <h4>Arpeggiator and Stochastic Input Notes</h4>
         <p>
           The Arpeggiator track can work both from programmed step content and from live input notes. Stochastic and Arpeggiator note entry also inherit the active scale logic, which is why scale and root-note settings matter even outside plain Note sequencing.
-        </p>
-        <p>
-          For these less standard note-entry workflows, especially with user scales in <code>Voltage Mode</code>, refer to <a href="#manual-validation-scope">Known Limits / Validation Scope</a> for the current hardware-validation perimeter.
         </p>
 
         <h3 id="appendix-clock-input-modes">Clock Input Modes</h3>
@@ -2617,7 +2556,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           This section is aligned with the current Vinx fork implementation and updated together with firmware behavior changes.
         </p>
         <p>
-          Validation status for Launchpad hardware coverage is tracked in <a href="#manual-validation-scope">Known Limits / Validation Scope</a>. This chapter uses <code>Launchpad Mini MK3</code> as the primary reference workflow.
+          This chapter uses <code>Launchpad Mini MK3</code> as the primary reference workflow.
         </p>
         <p>
           The following Launchpad controllers have been tested and are working:
@@ -2921,9 +2860,6 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           Operational intent: use the 16 knobs to edit <code>Note</code> values and the 16 pads to toggle <code>Gate</code> states on the currently visible bank (<code>steps 1..16</code> in the current section).
         </p>
         <p>
-          Validation status for <em>Launch Control XL</em> and <em>BeatStep Pro</em> on this workflow is maintained in <a href="#manual-validation-scope">Known Limits / Validation Scope</a>.
-        </p>
-        <p>
           Entry/exit is explicit through controller-side <code>Prev + Next</code> together. On <em>Launch Control XL</em> this is <code>Track Select &lt; + &gt;</code>. In common <em>BeatStep Pro</em> templates it is <code>Ptn 1 + Ptn 2</code>.
         </p>
         <p>
@@ -3072,7 +3008,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           The <em>Desktop Simulator</em> accepts separate DIN and USB MIDI port assignments from the command line, starts with MIDI disabled by default, and exposes lightweight status indicators plus terminal tracing for MIDI and digital outputs. This makes it useful not just as a demo build, but as a real development and testing tool for clock, MIDI, USB, and Launchpad behavior.
         </p>
         <p>
-          Desktop Simulator USB MIDI validation scope (including OS/device coverage) is tracked in <a href="#manual-validation-scope">Known Limits / Validation Scope</a>.
+          Desktop Simulator USB MIDI has been tested on macOS with Launchpad Mini MK3.
         </p>
         <p>
           For concrete build and launch commands, see the <a href="../build-guide/index.html">Build Guide</a> and the <a href="../testdrive/index.html">Web Simulator</a> page.
@@ -3145,7 +3081,7 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
 
         <h3 id="appendix-firmware-update">Firmware Update</h3>
         <p>
-          The current beta package is tagged <code>v0.4.6-beta.2</code>, while the version shown on the module is <code>0.4.6</code>. The current stable release is <code>v0.4.5</code>.
+          The current stable release is <code>v0.4.6</code>, which is also the version shown on the module.
         </p>
         <p>
           Use the following steps to update the sequencer firmware:
@@ -3172,10 +3108,10 @@ Random Walk:  7 8 7 8 1 2 1 2 3 2 3 4 5 4 3 4 ...</code></pre>
           SD boot robustness note: startup tolerances for slower cards include a longer SD-init wait window and watchdog feed during long init waits, reducing loading-screen reboot loops on borderline media while keeping runtime watchdog behavior strict.
         </p>
         <p>
-          <strong>Before installing the beta, back up the SD card.</strong> The beta reads projects from <code>v0.4.4</code> and <code>v0.4.5</code>, but saving writes project format <code>Version41</code>. Firmware <code>v0.4.5</code> and earlier cannot reopen a project after it has been saved in that format, so keep the original project files separately if you may reinstall older firmware.
+          <strong>Before installing v0.4.6, back up the SD card.</strong> It reads projects from <code>v0.4.4</code> and <code>v0.4.5</code>, but saving writes project format <code>Version41</code>. Firmware <code>v0.4.5</code> and earlier cannot reopen a project after it has been saved in that format, so keep the original project files separately if you may reinstall older firmware.
         </p>
         <p>
-          Beta.2 hardware note: the MIDI Notes step-editor fix and one-handed latched Fill control still need testing on the module. A startup hang with one existing SD card is under investigation in <a href="https://github.com/VinxScorza/performer/issues/22" target="_blank" rel="noopener noreferrer">issue #22</a>. Keep the original card backed up; for diagnosis, try a separate empty card and a copy of the old card with <code>LAST.DAT</code> renamed. Do not alter the original card.
+          Hardware note: dedicated checks of the MIDI Notes step-editor fix and one-handed latched Fill control are still pending. A startup hang with one existing SD card remains under investigation in <a href="https://github.com/VinxScorza/performer/issues/22" target="_blank" rel="noopener noreferrer">issue #22</a>. Keep the original card backed up; for diagnosis, try a separate empty card and a copy of the old card with <code>LAST.DAT</code> renamed. Do not alter the original card.
         </p>
         <p>
           For release history and fork-specific changes, see the <a href="../features/index.html">Features</a> page.

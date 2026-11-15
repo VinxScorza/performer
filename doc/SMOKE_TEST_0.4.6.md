@@ -1,9 +1,9 @@
-# PER|FORMER — direct upgrade smoke test: v0.4.4 → v0.4.6-beta.2
+# PER|FORMER — direct upgrade smoke test: v0.4.4 → v0.4.6
 
 Estimated time: 25–35 minutes, plus an optional Launchpad check. Hardware result: **NOT YET RUN**.
-Start with v0.4.4 firmware and projects saved by that version. This is a direct upgrade to beta.2; v0.4.5 does not need to be installed in between. The installed firmware displays `0.4.6`; beta status belongs to the release tag and package. The checklist also covers changes introduced in v0.4.5, which remains the stable version.
+Start with v0.4.4 firmware and projects saved by that version. This is a direct upgrade to v0.4.6; v0.4.5 does not need to be installed in between. The installed firmware displays `0.4.6`. The checklist also covers changes introduced in v0.4.5.
 
-> **IMPORTANT — project compatibility:** the 0.4.6 beta opens v0.4.4 and v0.4.5 projects, but saving upgrades them to `Version41`. Firmware v0.4.5 and earlier cannot reopen an upgraded file. Back up the entire SD card or keep a separate copy of every original project before testing.
+> **IMPORTANT — project compatibility:** v0.4.6 opens v0.4.4 and v0.4.5 projects, but saving upgrades them to `Version41`. Firmware v0.4.5 and earlier cannot reopen an upgraded file. Back up the entire SD card or keep a separate copy of every original project before saving with v0.4.6.
 
 ## Baseline on v0.4.4
 
@@ -13,7 +13,7 @@ Start with v0.4.4 firmware and projects saved by that version. This is a direct 
 
 ## Installation and startup
 
-- [ ] Put the `v0.4.6-beta.2` package's `UPDATE.DAT` in the SD card root.
+- [ ] Put the `v0.4.6` package's `UPDATE.DAT` in the SD card root.
 - [ ] Power on while holding the encoder, or open System → Update and hold the encoder. The bootloader should recognize version `0.4.6` and verify the file. Confirm YES and wait for completion without removing power.
 - [ ] Confirm `0.4.6` on the System page; check the display and buttons and watch for unexpected restarts.
 - [ ] Try startup with a separate test SD card, then with a copy of the usual card. If the module remains on `LOADING`, do not alter the original card. Record which copy hangs, then retry on the copy after renaming `LAST.DAT`. This follows the still-open report in [#22](https://github.com/VinxScorza/performer/issues/22).
