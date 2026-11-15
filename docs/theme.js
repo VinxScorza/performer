@@ -74,6 +74,9 @@
   }
 
   function injectVersionBanner() {
+    if (document.body.dataset.project === "id") {
+      return;
+    }
     const mainContent = document.getElementById("main_content");
     if (!mainContent || mainContent.querySelector(":scope > .site-version-banner")) {
       return;

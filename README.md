@@ -2,7 +2,7 @@
 
 # Vinx PER|FORMER firmware v0.4.6
 
-## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Click for FEATURES</a>
+## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Click for FEATURES</a> · <a href="https://vinxperformer.github.io/vinxformer-id/">VINX|FORMER ID</a>
 
 PER|FORMER is a eurorack sequencer module designed for both live performance and work in the studio.
 This firmware is a personal fork of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a> of the <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">original Westlicht PER|FORMER firmware</a>, shaped by real performance use, custom behavior, and focused interaction and UI changes.
@@ -13,6 +13,10 @@ Website, downloads, manual, web simulator, Launchpad cheatsheet, feature overvie
 `v0.4.6` is the current stable release. The firmware identifies as `0.4.6` on the module.
 
 > **Important project compatibility warning:** `v0.4.6` can open projects saved by `v0.4.4` and `v0.4.5`, but saving upgrades them to `Version41`. Firmware `v0.4.5` and earlier cannot reopen the upgraded files. Back up the SD card or keep a separate copy of each original project before saving with v0.4.6.
+
+## Project Direction
+
+Vinx PER|FORMER is moving to a maintenance-focused phase. I will continue investigating reported problems and fixing issues where possible, and I will consider feature requests case by case. Future updates may address those fixes or accepted requests. I do not plan new features here based on my own ideas; that work has moved to [VINX|FORMER ID](https://vinxperformer.github.io/vinxformer-id/), a separate, more personal fork with [public development source](https://github.com/vinxperformer/vinxformer-id). There is no planned release schedule for Vinx PER|FORMER.
 
 ## v0.4.6 Highlights
 

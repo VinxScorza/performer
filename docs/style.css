@@ -7,6 +7,7 @@
   --link: #e4d38a;
   --link-hover: #fff2b0;
   --accent: #6fa14d;
+  --id-accent: #58dcc2;
   --shadow: rgba(0, 0, 0, 0.45);
   --manual-sidebar-offset: 20px;
   --body-bg: #1f1f1f;
@@ -82,6 +83,7 @@
   --link: #7d5a00;
   --link-hover: #4e3900;
   --accent: #4d7a34;
+  --id-accent: #087b70;
   --shadow: rgba(48, 38, 20, 0.15);
   --body-bg: #f8f4ea;
   --body-pattern-a: #f7f2e6;
@@ -222,9 +224,9 @@ pre code {
 .site-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 20px;
+  gap: 10px 14px;
   margin-bottom: 28px;
-  font-size: 15px;
+  font-size: 14px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -252,6 +254,27 @@ pre code {
 .site-nav a {
   color: var(--nav-text);
 }
+
+.site-nav a.nav-id,
+#main_content a.id-inline {
+  color: var(--id-accent);
+  font-weight: 700;
+}
+
+.site-nav a.nav-id:hover,
+.site-nav a.nav-id:focus-visible,
+#main_content a.id-inline:hover,
+#main_content a.id-inline:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.site-nav a.nav-id[aria-current="page"],
+.site-nav a.nav-id[aria-current="page"]::before {
+  color: var(--id-accent);
+}
+
+body[data-project="id"] #project_title { color: var(--id-accent); }
 
 .site-theme-toggle {
   position: absolute;
@@ -1101,6 +1124,42 @@ strong {
   text-align: center;
 }
 
+.forks-closing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.forks-closing-grid .fork-card-spotlight { width: 100%; }
+.fork-card-id {
+  border-color: var(--id-accent);
+  background: linear-gradient(180deg, rgba(88, 220, 194, 0.1), var(--surface-bg));
+}
+.fork-card-id .fork-card-meta,
+.fork-card-id .fork-card-title,
+.fork-card-id .fork-card-links a { color: var(--id-accent); }
+
+.id-bridge {
+  max-width: 720px;
+  margin: 0 auto;
+  border: 1px solid var(--id-accent);
+  padding: 24px;
+  background: linear-gradient(180deg, rgba(88, 220, 194, 0.08), var(--surface-bg));
+}
+.id-bridge h2 { color: var(--id-accent); }
+.id-bridge-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+#main_content .id-bridge-links a {
+  display: inline-block;
+  padding: 10px 14px;
+  border: 1px solid var(--id-accent);
+  color: var(--id-accent);
+  font-weight: 700;
+}
+#main_content .id-bridge-links a:first-child {
+  background: var(--id-accent);
+  color: var(--bg);
+}
+
 .forks-closing {
   margin-top: 34px;
 }
@@ -1501,6 +1560,8 @@ strong {
   .card-grid {
     grid-template-columns: 1fr;
   }
+
+  .forks-closing-grid { grid-template-columns: 1fr; }
 
   .svg-embed {
     min-height: 560px;
