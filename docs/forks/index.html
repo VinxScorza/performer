@@ -56,7 +56,7 @@
         <p>
           A small curated selection of PER|FORMER firmware lines that matter to this ecosystem, including the original line and a few forks I know, respect, or keep an eye on.
         </p>
-        <p>Release details update from GitHub when available. Beta releases are listed separately from stable versions.</p>
+        <p>Release details update from GitHub when available.</p>
       </section>
 
       <section>
@@ -136,8 +136,6 @@
           <p class="fork-card-detail">First release: Mar 20, 2026</p>
           <p class="fork-card-detail" data-latest-release="VinxScorza/performer" data-release-label="Latest stable release">Latest stable release: Nov 15, 2026</p>
           <p class="fork-card-detail" data-latest-version="VinxScorza/performer" data-version-label="Latest stable version">Latest stable version: v0.4.6</p>
-          <p class="fork-card-detail" data-latest-beta-release="VinxScorza/performer">Latest beta release: Nov 02, 2026</p>
-          <p class="fork-card-detail" data-beta-releases="VinxScorza/performer">Beta releases: <a href="https://github.com/VinxScorza/performer/releases/tag/v0.4.6-beta.2" target="_blank" rel="noopener noreferrer">v0.4.6-beta.2</a> / <a href="https://github.com/VinxScorza/performer/releases/tag/v0.4.6-beta.1" target="_blank" rel="noopener noreferrer">v0.4.6-beta.1</a></p>
           <p class="fork-card-links">
             <a href="https://github.com/VinxScorza/performer" target="_blank" rel="noopener noreferrer">GitHub</a>
             <span class="fork-card-separator"> / </span>
@@ -216,52 +214,11 @@
         const published = payload
           .filter((release) => !release.draft && release.tag_name && release.published_at)
           .sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
-        const betas = published.filter((release) => /beta/i.test(release.tag_name));
-        const stable = published.find((release) => !release.prerelease && !/beta/i.test(release.tag_name));
+        const stable = published.find((release) => !release.prerelease);
         const latest = stable || published[0];
         releaseByRepo.set(repo, {
           version: latest?.tag_name,
           releaseDate: latest ? dateFormatter.format(new Date(latest.published_at)) : null,
-          betas,
-        });
-      };
-
-      const showBetaReleases = (repo, entry) => {
-        if (!entry?.betas.length) {
-          return;
-        }
-        const versionNode = versionNodes.find((node) => node.dataset.latestVersion === repo);
-        const card = versionNode?.closest(".fork-card");
-        if (!card) {
-          return;
-        }
-        const links = card.querySelector(".fork-card-links");
-        let dateNode = card.querySelector("[data-latest-beta-release]");
-        let listNode = card.querySelector("[data-beta-releases]");
-        if (!dateNode) {
-          dateNode = document.createElement("p");
-          dateNode.className = "fork-card-detail";
-          dateNode.dataset.latestBetaRelease = repo;
-          links.before(dateNode);
-        }
-        if (!listNode) {
-          listNode = document.createElement("p");
-          listNode.className = "fork-card-detail";
-          listNode.dataset.betaReleases = repo;
-          links.before(listNode);
-        }
-        dateNode.textContent = "Latest beta release: " + dateFormatter.format(new Date(entry.betas[0].published_at));
-        listNode.replaceChildren("Beta releases: ");
-        entry.betas.forEach((release, index) => {
-          if (index) {
-            listNode.append(" / ");
-          }
-          const link = document.createElement("a");
-          link.href = release.html_url;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.textContent = release.tag_name;
-          listNode.append(link);
         });
       };
 
@@ -289,8 +246,6 @@
             node.textContent = (node.dataset.versionLabel || "Latest version") + ": " + entry.version;
           }
         });
-
-        repos.forEach((repo) => showBetaReleases(repo, releaseByRepo.get(repo)));
       });
     })();
   </script>

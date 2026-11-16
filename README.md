@@ -2,7 +2,7 @@
 
 # Vinx PER|FORMER firmware v0.4.6
 
-## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Click for FEATURES</a> · <a href="https://vinxperformer.github.io/vinxformer-id/">VINX|FORMER ID</a>
+## <a href="CHANGELOG.md" target="_blank" rel="noopener noreferrer">Click for CHANGELOG</a> · <a href="https://vinxscorza.github.io/performer/features/" target="_blank" rel="noopener noreferrer">Click for FEATURES</a>
 
 PER|FORMER is a eurorack sequencer module designed for both live performance and work in the studio.
 This firmware is a personal fork of the <a href="https://github.com/mebitek/performer" target="_blank" rel="noopener noreferrer">Mebitek fork</a> of the <a href="https://github.com/westlicht/performer" target="_blank" rel="noopener noreferrer">original Westlicht PER|FORMER firmware</a>, shaped by real performance use, custom behavior, and focused interaction and UI changes.
