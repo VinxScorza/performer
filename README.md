@@ -16,7 +16,7 @@ Website, downloads, manual, web simulator, Launchpad cheatsheet, feature overvie
 
 ## Project Direction
 
-Vinx PER|FORMER is moving to a maintenance-focused phase. I will continue investigating reported problems and fixing issues where possible, and I will consider feature requests case by case. Future updates may address those fixes or accepted requests. I do not plan new features here based on my own ideas; that work has moved to [VINX|FORMER ID](https://vinxperformer.github.io/vinxformer-id/), a separate, more personal fork with [public development source](https://github.com/vinxperformer/vinxformer-id) and an [experimental v0.1.1 firmware release](https://github.com/vinxperformer/vinxformer-id/releases/tag/v0.1.1). There is no planned release schedule for Vinx PER|FORMER.
+Vinx PER|FORMER is moving to a maintenance-focused phase. I will continue investigating reported problems and fixing issues where possible, and I will consider feature requests case by case. Future updates may address those fixes or accepted requests. I do not plan new features here based on my own ideas; that work has moved to [VINX|FORMER ID](https://vinxperformer.github.io/vinxformer-id/), a separate, more personal fork with [public development source](https://github.com/vinxperformer/vinxformer-id) and a [v0.1.7 firmware release](https://github.com/vinxperformer/vinxformer-id/releases/tag/v0.1.7). There is no planned release schedule for Vinx PER|FORMER.
 
 ## v0.4.6 Highlights
 
